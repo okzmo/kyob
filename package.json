@@ -1,0 +1,27 @@
+{
+  "name": "kyob",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "web": "pnpm --filter web dev"
+  },
+  "keywords": [
+    
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=23.8.0"
+  },
+  "packageManager": "pnpm@10.3.0",
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ],
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

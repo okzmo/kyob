@@ -1,0 +1,144 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import ServerButton from '../ui/ServerButton/ServerButton.svelte';
+	import type { Server } from '../../types/types';
+	import { windows } from '../../stores/windows.svelte';
+
+	let dragging = $state(false);
+	let startPos = $state({ x: 0, y: 0 });
+	let offset = $state({ x: 0, y: 0 });
+	let totalOffset = $state({ x: 0, y: 0 });
+	let velocity = $state({ x: 0, y: 0 });
+	let lastMousePos = $state({ x: 0, y: 0 });
+	let lastTimestamp = $state(0);
+	let animationFrameId = $state<number | null>(null);
+	let dragDistance = $state(0);
+	let dragStartTime = $state(0);
+
+	function handleMouseDown(e: MouseEvent) {
+		dragging = true;
+		windows.activeWindow = null;
+		startPos = { x: e.clientX, y: e.clientY };
+		lastMousePos = { x: e.clientX, y: e.clientY };
+		lastTimestamp = Date.now();
+		dragStartTime = Date.now();
+		dragDistance = 0;
+
+		if (animationFrameId !== null) {
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = null;
+		}
+
+		velocity = { x: 0, y: 0 };
+	}
+
+	function handleMouseMove(e: MouseEvent) {
+		if (!dragging) return;
+
+		const currentTime = Date.now();
+		const deltaTime = currentTime - lastTimestamp;
+
+		const dx = e.clientX - lastMousePos.x;
+		const dy = e.clientY - lastMousePos.y;
+		dragDistance += Math.sqrt(dx * dx + dy * dy);
+
+		if (deltaTime > 10) {
+			const maxVelocity = 30;
+			velocity = {
+				x: Math.min(
+					Math.max(((e.clientX - lastMousePos.x) / deltaTime) * 8, -maxVelocity),
+					maxVelocity
+				),
+				y: Math.min(
+					Math.max(((e.clientY - lastMousePos.y) / deltaTime) * 8, -maxVelocity),
+					maxVelocity
+				)
+			};
+
+			lastMousePos = { x: e.clientX, y: e.clientY };
+			lastTimestamp = currentTime;
+		}
+
+		const totalDx = e.clientX - startPos.x;
+		const totalDy = e.clientY - startPos.y;
+
+		offset = {
+			x: totalOffset.x + totalDx,
+			y: totalOffset.y + totalDy
+		};
+	}
+
+	function handleMouseUp() {
+		if (dragging) {
+			totalOffset = { ...offset };
+			dragging = false;
+
+			const dragDuration = Date.now() - dragStartTime;
+			const velocityMagnitude = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+			const shouldApplyInertia = velocityMagnitude > 2.0 && dragDistance > 10 && dragDuration < 300;
+
+			if (shouldApplyInertia) {
+				applyInertia();
+			}
+		}
+	}
+
+	function applyInertia() {
+		const resistance = 0.95;
+
+		const animate = () => {
+			velocity.x *= resistance;
+			velocity.y *= resistance;
+
+			offset = {
+				x: offset.x + velocity.x,
+				y: offset.y + velocity.y
+			};
+
+			totalOffset = { ...offset };
+
+			if (Math.abs(velocity.x) < 0.1 && Math.abs(velocity.y) < 0.1) {
+				animationFrameId = null;
+				return;
+			}
+
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animationFrameId = requestAnimationFrame(animate);
+	}
+
+	onMount(() => {
+		window.addEventListener('mousedown', handleMouseDown);
+		window.addEventListener('mouseup', handleMouseUp);
+		window.addEventListener('mousemove', handleMouseMove);
+		window.addEventListener('mouseleave', handleMouseUp);
+
+		return () => {
+			window.removeEventListener('mousedown', handleMouseDown);
+			window.removeEventListener('mouseup', handleMouseUp);
+			window.removeEventListener('mousemove', handleMouseMove);
+			window.removeEventListener('mouseleave', handleMouseUp);
+
+			if (animationFrameId !== null) {
+				cancelAnimationFrame(animationFrameId);
+			}
+		};
+	});
+
+	interface Props {
+		servers: Server[];
+	}
+
+	let { servers }: Props = $props();
+</script>
+
+{#each servers as server (server.id)}
+	<ServerButton
+		name={server.name}
+		serverBg={server.serverBg}
+		href={String(server.id)}
+		x={server.x + offset.x}
+		y={server.y + offset.y}
+	/>
+{/each}
