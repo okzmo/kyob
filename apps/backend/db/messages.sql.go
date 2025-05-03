@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 const createMessage = `-- name: CreateMessage :one
@@ -51,13 +53,17 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 	return i, err
 }
 
-const deleteMessage = `-- name: DeleteMessage :exec
-DELETE FROM messages WHERE id = $1
+const deleteMessage = `-- name: DeleteMessage :execresult
+DELETE FROM messages WHERE id = $1 AND author_id = $2
 `
 
-func (q *Queries) DeleteMessage(ctx context.Context, id int64) error {
-	_, err := q.db.Exec(ctx, deleteMessage, id)
-	return err
+type DeleteMessageParams struct {
+	ID       int64 `json:"id"`
+	AuthorID int64 `json:"author_id"`
+}
+
+func (q *Queries) DeleteMessage(ctx context.Context, arg DeleteMessageParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, deleteMessage, arg.ID, arg.AuthorID)
 }
 
 const getMessage = `-- name: GetMessage :one
@@ -113,4 +119,46 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID int64) (
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateMessageContent = `-- name: UpdateMessageContent :execresult
+UPDATE messages SET content = $1 WHERE id = $2 AND author_id = $3
+`
+
+type UpdateMessageContentParams struct {
+	Content  []byte `json:"content"`
+	ID       int64  `json:"id"`
+	AuthorID int64  `json:"author_id"`
+}
+
+func (q *Queries) UpdateMessageContent(ctx context.Context, arg UpdateMessageContentParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateMessageContent, arg.Content, arg.ID, arg.AuthorID)
+}
+
+const updateMessageMentionsChannels = `-- name: UpdateMessageMentionsChannels :execresult
+UPDATE messages SET mentions_channels = $1 WHERE id = $2 AND author_id = $3
+`
+
+type UpdateMessageMentionsChannelsParams struct {
+	MentionsChannels []int64 `json:"mentions_channels"`
+	ID               int64   `json:"id"`
+	AuthorID         int64   `json:"author_id"`
+}
+
+func (q *Queries) UpdateMessageMentionsChannels(ctx context.Context, arg UpdateMessageMentionsChannelsParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateMessageMentionsChannels, arg.MentionsChannels, arg.ID, arg.AuthorID)
+}
+
+const updateMessageMentionsUsers = `-- name: UpdateMessageMentionsUsers :execresult
+UPDATE messages SET mentions_users = $1 WHERE id = $2 AND author_id = $3
+`
+
+type UpdateMessageMentionsUsersParams struct {
+	MentionsUsers []int64 `json:"mentions_users"`
+	ID            int64   `json:"id"`
+	AuthorID      int64   `json:"author_id"`
+}
+
+func (q *Queries) UpdateMessageMentionsUsers(ctx context.Context, arg UpdateMessageMentionsUsersParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateMessageMentionsUsers, arg.MentionsUsers, arg.ID, arg.AuthorID)
 }

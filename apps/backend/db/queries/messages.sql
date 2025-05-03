@@ -12,5 +12,14 @@ INSERT INTO messages (
 )
 RETURNING *;
 
--- name: DeleteMessage :exec
-DELETE FROM messages WHERE id = $1;
+-- name: UpdateMessageContent :execresult
+UPDATE messages SET content = $1 WHERE id = $2 AND author_id = $3;
+
+-- name: UpdateMessageMentionsUsers :execresult
+UPDATE messages SET mentions_users = $1 WHERE id = $2 AND author_id = $3;
+
+-- name: UpdateMessageMentionsChannels :execresult
+UPDATE messages SET mentions_channels = $1 WHERE id = $2 AND author_id = $3;
+
+-- name: DeleteMessage :execresult
+DELETE FROM messages WHERE id = $1 AND author_id = $2;

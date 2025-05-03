@@ -128,7 +128,9 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = (SELECT server_id FROM server_membership WHERE user_id = $1)
+SELECT DISTINCT s.id, s.owner_id, s.name, s.background, s.description, s.x, s.y, s.private, s.created_at, s.updated_at
+FROM servers s, server_membership sm
+WHERE s.private = false OR (sm.server_id = s.id AND sm.user_id = $1)
 `
 
 func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Server, error) {

@@ -92,11 +92,18 @@ func (q *Queries) GetChannel(ctx context.Context, id int64) (Channel, error) {
 }
 
 const getChannelsFromServer = `-- name: GetChannelsFromServer :many
-SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at FROM channels WHERE server_id = $1
+SELECT DISTINCT c.id, c.server_id, c.name, c.type, c.description, c.users, c.roles, c.x, c.y, c.created_at, c.updated_at
+FROM channels c, server_membership sm 
+WHERE c.server_id = $1 and c.server_id = sm.server_id and sm.user_id = $2
 `
 
-func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID int64) ([]Channel, error) {
-	rows, err := q.db.Query(ctx, getChannelsFromServer, serverID)
+type GetChannelsFromServerParams struct {
+	ServerID int64 `json:"server_id"`
+	UserID   int64 `json:"user_id"`
+}
+
+func (q *Queries) GetChannelsFromServer(ctx context.Context, arg GetChannelsFromServerParams) ([]Channel, error) {
+	rows, err := q.db.Query(ctx, getChannelsFromServer, arg.ServerID, arg.UserID)
 	if err != nil {
 		return nil, err
 	}

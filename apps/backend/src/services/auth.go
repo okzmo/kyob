@@ -17,27 +17,27 @@ var (
 	ErrUserNotFound = errors.New("user not found")
 )
 
-func SignIn(ctx context.Context, emailOrUsername string, password string) (*db.User, *string, error) {
+func SignIn(ctx context.Context, emailOrUsername string, password string) (*string, error) {
 	user, err := db.Query.GetUser(ctx, db.GetUserParams{
 		Email:    emailOrUsername,
 		Username: emailOrUsername,
 	})
 	if err != nil {
-		return nil, nil, ErrUserNotFound
+		return nil, ErrUserNotFound
 	}
 
 	match, err := utils.VerifyPassword(password, user.Password)
 	if err != nil {
 		slog.Error("error on hashing", "err", err)
-		return nil, nil, ErrInvalidHash
+		return nil, ErrInvalidHash
 	} else if !match {
-		return nil, nil, ErrInvalidHash
+		return nil, ErrInvalidHash
 	}
 
 	token, err := utils.GenerateRandomBytes(64)
 	if err != nil {
 		slog.Error("failed generate token", "err", err)
-		return nil, nil, err
+		return nil, err
 	}
 
 	b64Token := base64.RawStdEncoding.EncodeToString(token)
@@ -49,10 +49,10 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*db.U
 	})
 	if err != nil {
 		slog.Error("failed create token", "err", err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &user, &b64Token, nil
+	return &b64Token, nil
 }
 
 func SignUp(ctx context.Context, email string, username string, displayName string, password string) (*string, error) {

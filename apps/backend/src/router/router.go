@@ -29,6 +29,7 @@ func Setup() {
 		r.Route("/authenticated", func(r chi.Router) {
 			r.Use(mid.Auth)
 			r.Post("/logout", handlers.Logout)
+			r.Get("/setup", handlers.Setup)
 			r.Post("/server", handlers.CreateServer)
 			r.Patch("/servers/{id}", handlers.EditServer)
 			r.Delete("/servers/{id}", handlers.DeleteServer)

@@ -8,7 +8,9 @@ SELECT * FROM servers WHERE id = $1 AND owner_id = $2;
 SELECT * FROM servers;
 
 -- name: GetServersFromUser :many
-SELECT * FROM servers WHERE id = (SELECT server_id FROM server_membership WHERE user_id = $1);
+SELECT DISTINCT s.*
+FROM servers s, server_membership sm
+WHERE s.private = false OR (sm.server_id = s.id AND sm.user_id = $1);
 
 -- name: CreateServer :one
 INSERT INTO servers (

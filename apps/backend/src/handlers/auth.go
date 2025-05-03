@@ -6,20 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
 	"github.com/okzmo/kyob/src/services"
 	"github.com/okzmo/kyob/src/utils"
 )
-
-type UserResponse struct {
-	ID          int64       `json:"id"`
-	Email       string      `json:"email"`
-	Username    string      `json:"username"`
-	DisplayName string      `json:"display_name"`
-	Avatar      pgtype.Text `json:"avatar"`
-	About       pgtype.Text `json:"about"`
-}
 
 type signInParams struct {
 	EmailOrUsername string `validate:"required" json:"email_or_username"`
@@ -41,7 +31,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, token, err := services.SignIn(r.Context(), body.EmailOrUsername, body.Password)
+	token, err := services.SignIn(r.Context(), body.EmailOrUsername, body.Password)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
@@ -54,14 +44,6 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := UserResponse{
-		ID:          user.ID,
-		Email:       user.Email,
-		Username:    user.Username,
-		DisplayName: user.DisplayName,
-		Avatar:      user.Avatar,
-		About:       user.About,
-	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    *token,
@@ -71,7 +53,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	})
-	utils.RespondWithJSON(w, http.StatusContinue, res)
+	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
 }
 
 type signUpParams struct {
