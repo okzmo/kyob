@@ -1,1 +1,4 @@
 kyob
+.env
+.env.*
+tmp

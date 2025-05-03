@@ -136,7 +136,7 @@
 {#each servers as server (server.id)}
 	<ServerButton
 		name={server.name}
-		serverBg={server.serverBg}
+		background={server.background}
 		href={String(server.id)}
 		x={server.x + offset.x}
 		y={server.y + offset.y}

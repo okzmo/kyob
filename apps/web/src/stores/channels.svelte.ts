@@ -1,9 +1,9 @@
 import type { Channel } from '../types/types';
 
 const CHANNELS: Channel[] = [
-	{ id: 1, name: 'memes', type: 'text', x: 1200, y: 748, unread: false },
-	{ id: 2, name: 'Général', type: 'text', x: 200, y: 248, unread: false },
-	{ id: 3, name: 'News', type: 'text', x: 1000, y: 500, unread: true }
+	{ id: 1, name: 'memes', type: 'textual', x: 1200, y: 748, unread: false },
+	{ id: 2, name: 'Général', type: 'textual', x: 200, y: 248, unread: false },
+	{ id: 3, name: 'News', type: 'textual', x: 1000, y: 500, unread: true }
 ];
 
 class Channels {

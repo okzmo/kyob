@@ -3,7 +3,6 @@
 	import type { Channel } from '../../types/types';
 	import ChannelButton from '../ui/ChannelButton/ChannelButton.svelte';
 	import { windows } from '../../stores/windows.svelte';
-	import { page } from '$app/state';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });

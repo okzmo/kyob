@@ -3,13 +3,13 @@
 
 	interface Props {
 		name: string;
-		serverBg: string;
+		background: string;
 		href: string;
 		x: number;
 		y: number;
 	}
 
-	let { name, serverBg, href, x, y }: Props = $props();
+	let { name, background, href, x, y }: Props = $props();
 </script>
 
 <button
@@ -21,7 +21,7 @@
 	}}
 >
 	<img
-		src={serverBg}
+		src={background}
 		alt="Server background"
 		class="transition-radius group-hocus:rounded-2xl rounded-[50%]"
 	/>

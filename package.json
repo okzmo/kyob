@@ -5,11 +5,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "web": "pnpm --filter web dev"
+    "web": "pnpm --filter web dev",
+    "backend": "pnpm --filter backend start"
   },
-  "keywords": [
-    
-  ],
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "engines": {

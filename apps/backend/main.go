@@ -1,22 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
-	"time"
+	"log"
 
-	"github.com/anthdm/hollywood/actor"
-	"github.com/okzmo/kyob/src/server"
+	"github.com/joho/godotenv"
+	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/src/router"
 )
 
 func main() {
-	engine, err := actor.NewEngine(actor.NewEngineConfig())
+	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		log.Fatal("Error loading .env file")
 	}
 
-	engine.Spawn(server.NewServer(1), "server", actor.WithID("1"))
-	pid := engine.Registry.GetPID(fmt.Sprintf("server/%d/channel", 1), strconv.Itoa(1))
-	engine.Send(pid, &server.Message{Data: "hello world"})
-	time.Sleep(10 * time.Second)
+	db := db.Setup()
+	defer db.Close()
+
+	router.Setup()
 }

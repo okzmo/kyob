@@ -8,34 +8,16 @@
 	import '@fontsource/outfit/800.css';
 	import '@fontsource/outfit/900.css';
 	import '../app.css';
-	import { goback } from '../stores/goback.svelte';
-	import { page } from '$app/state';
-	import Searchbar from '../components/Searchbar/Searchbar.svelte';
-	import Userbar from '../components/Userbar/Userbar.svelte';
-	import Topbar from '../components/Topbar/Topbar.svelte';
 	import GridDots from '../components/GridDots.svelte';
-	import { windows } from '../stores/windows.svelte';
-	import ChatWindow from '../components/ChatWindow/ChatWindow.svelte';
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 
 	let { children } = $props();
 
-	$effect(() => {
-		if (page.url.pathname === '/') {
-			goback.off();
-		} else {
-			goback.on();
-		}
-	});
+	const queryClient = new QueryClient();
 </script>
 
-<Topbar canGoBack={goback.active} />
-<Userbar />
-<Searchbar />
+<QueryClientProvider client={queryClient}>
+	{@render children()}
+</QueryClientProvider>
 
 <GridDots />
-
-{@render children()}
-
-{#each windows.openWindows as chatWindow (chatWindow.id)}
-	<ChatWindow id={chatWindow.id} serverId={chatWindow.serverId} channelId={chatWindow.channelId} />
-{/each}
