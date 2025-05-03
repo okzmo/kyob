@@ -2,13 +2,13 @@
 SELECT * FROM channels WHERE id = $1;
 
 -- name: GetChannelsFromServer :many
-SELECT * FROM channels WHERE server_id = $1 AND id = (SELECT channel_id FROM channel_membership WHERE user_id = $2);
+SELECT * FROM channels WHERE server_id = $1;
 
 -- name: CreateChannel :one
 INSERT INTO channels (
-  server_id, name, type, description, x, y
+  server_id, name, type, description, users, roles, x, y
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING *;
 

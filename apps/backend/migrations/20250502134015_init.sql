@@ -21,6 +21,7 @@ CREATE TABLE servers(
   description TEXT,
   x INT NOT NULL,
   y INT NOT NULL,
+  private BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -31,6 +32,8 @@ CREATE TABLE channels(
   name VARCHAR(255) NOT NULL,
   type channel_type NOT NULL,
   description TEXT,
+  users BIGINT ARRAY,
+  roles BIGINT ARRAY,
   x INT NOT NULL,
   y INT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -69,14 +72,6 @@ CREATE TABLE server_membership(
   UNIQUE(user_id, server_id)
 );
 
-CREATE TABLE channel_membership(
-  id BIGSERIAL PRIMARY KEY,
-  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  channel_id BIGINT NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
-  joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-  UNIQUE(user_id, channel_id)
-);
-
 CREATE TABLE tokens(
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -91,7 +86,6 @@ CREATE INDEX idx_tokens_token ON tokens(token);
 
 -- migrate:down
 DROP TABLE tokens;
-DROP TABLE channel_membership;
 DROP TABLE server_membership;
 DROP TABLE messages;
 DROP TABLE roles;

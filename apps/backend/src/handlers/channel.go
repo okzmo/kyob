@@ -72,7 +72,7 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 	err = services.EditChannel(r.Context(), id, &body)
 	if err != nil {
 		switch {
-		case errors.Is(err, services.ErrUnauthorizedChannelDeletion):
+		case errors.Is(err, services.ErrUnauthorizedChannelEdition):
 			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot edit this channel.")
 		default:
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())

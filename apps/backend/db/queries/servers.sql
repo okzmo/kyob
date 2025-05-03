@@ -12,11 +12,18 @@ SELECT * FROM servers WHERE id = (SELECT server_id FROM server_membership WHERE 
 
 -- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, background, description, x, y
+  owner_id, name, background, description, x, y, private
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
+
+-- name: JoinServer :exec
+INSERT INTO server_membership (
+  user_id, server_id
+) VALUES (
+  $1, $2
+);
 
 -- name: UpdateServerName :exec
 UPDATE servers SET name = $1 WHERE id = $2 AND owner_id = $3;

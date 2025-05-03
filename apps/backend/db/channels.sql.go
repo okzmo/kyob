@@ -13,11 +13,11 @@ import (
 
 const createChannel = `-- name: CreateChannel :one
 INSERT INTO channels (
-  server_id, name, type, description, x, y
+  server_id, name, type, description, users, roles, x, y
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
-RETURNING id, server_id, name, type, description, x, y, created_at, updated_at
+RETURNING id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
 `
 
 type CreateChannelParams struct {
@@ -25,6 +25,8 @@ type CreateChannelParams struct {
 	Name        string      `json:"name"`
 	Type        ChannelType `json:"type"`
 	Description pgtype.Text `json:"description"`
+	Users       []int64     `json:"users"`
+	Roles       []int64     `json:"roles"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
 }
@@ -35,6 +37,8 @@ func (q *Queries) CreateChannel(ctx context.Context, arg CreateChannelParams) (C
 		arg.Name,
 		arg.Type,
 		arg.Description,
+		arg.Users,
+		arg.Roles,
 		arg.X,
 		arg.Y,
 	)
@@ -45,6 +49,8 @@ func (q *Queries) CreateChannel(ctx context.Context, arg CreateChannelParams) (C
 		&i.Name,
 		&i.Type,
 		&i.Description,
+		&i.Users,
+		&i.Roles,
 		&i.X,
 		&i.Y,
 		&i.CreatedAt,
@@ -63,7 +69,7 @@ func (q *Queries) DeleteChannel(ctx context.Context, id int64) error {
 }
 
 const getChannel = `-- name: GetChannel :one
-SELECT id, server_id, name, type, description, x, y, created_at, updated_at FROM channels WHERE id = $1
+SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at FROM channels WHERE id = $1
 `
 
 func (q *Queries) GetChannel(ctx context.Context, id int64) (Channel, error) {
@@ -75,6 +81,8 @@ func (q *Queries) GetChannel(ctx context.Context, id int64) (Channel, error) {
 		&i.Name,
 		&i.Type,
 		&i.Description,
+		&i.Users,
+		&i.Roles,
 		&i.X,
 		&i.Y,
 		&i.CreatedAt,
@@ -84,16 +92,11 @@ func (q *Queries) GetChannel(ctx context.Context, id int64) (Channel, error) {
 }
 
 const getChannelsFromServer = `-- name: GetChannelsFromServer :many
-SELECT id, server_id, name, type, description, x, y, created_at, updated_at FROM channels WHERE server_id = $1 AND id = (SELECT channel_id FROM channel_membership WHERE user_id = $2)
+SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at FROM channels WHERE server_id = $1
 `
 
-type GetChannelsFromServerParams struct {
-	ServerID int64 `json:"server_id"`
-	UserID   int64 `json:"user_id"`
-}
-
-func (q *Queries) GetChannelsFromServer(ctx context.Context, arg GetChannelsFromServerParams) ([]Channel, error) {
-	rows, err := q.db.Query(ctx, getChannelsFromServer, arg.ServerID, arg.UserID)
+func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID int64) ([]Channel, error) {
+	rows, err := q.db.Query(ctx, getChannelsFromServer, serverID)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +110,8 @@ func (q *Queries) GetChannelsFromServer(ctx context.Context, arg GetChannelsFrom
 			&i.Name,
 			&i.Type,
 			&i.Description,
+			&i.Users,
+			&i.Roles,
 			&i.X,
 			&i.Y,
 			&i.CreatedAt,

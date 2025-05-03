@@ -14,11 +14,11 @@ import (
 
 const createServer = `-- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, background, description, x, y
+  owner_id, name, background, description, x, y, private
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, owner_id, name, background, description, x, y, created_at, updated_at
+RETURNING id, owner_id, name, background, description, x, y, private, created_at, updated_at
 `
 
 type CreateServerParams struct {
@@ -28,6 +28,7 @@ type CreateServerParams struct {
 	Description pgtype.Text `json:"description"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
+	Private     bool        `json:"private"`
 }
 
 func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Server, error) {
@@ -38,6 +39,7 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 		arg.Description,
 		arg.X,
 		arg.Y,
+		arg.Private,
 	)
 	var i Server
 	err := row.Scan(
@@ -48,6 +50,7 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 		&i.Description,
 		&i.X,
 		&i.Y,
+		&i.Private,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -68,7 +71,7 @@ func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgc
 }
 
 const getServer = `-- name: GetServer :one
-SELECT id, owner_id, name, background, description, x, y, created_at, updated_at FROM servers WHERE id = $1
+SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1
 `
 
 func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
@@ -82,6 +85,7 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 		&i.Description,
 		&i.X,
 		&i.Y,
+		&i.Private,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -89,7 +93,7 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 }
 
 const getServers = `-- name: GetServers :many
-SELECT id, owner_id, name, background, description, x, y, created_at, updated_at FROM servers
+SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers
 `
 
 func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
@@ -109,6 +113,7 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 			&i.Description,
 			&i.X,
 			&i.Y,
+			&i.Private,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -123,7 +128,7 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT id, owner_id, name, background, description, x, y, created_at, updated_at FROM servers WHERE id = (SELECT server_id FROM server_membership WHERE user_id = $1)
+SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = (SELECT server_id FROM server_membership WHERE user_id = $1)
 `
 
 func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Server, error) {
@@ -143,6 +148,7 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Serve
 			&i.Description,
 			&i.X,
 			&i.Y,
+			&i.Private,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -156,8 +162,26 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Serve
 	return items, nil
 }
 
+const joinServer = `-- name: JoinServer :exec
+INSERT INTO server_membership (
+  user_id, server_id
+) VALUES (
+  $1, $2
+)
+`
+
+type JoinServerParams struct {
+	UserID   int64 `json:"user_id"`
+	ServerID int64 `json:"server_id"`
+}
+
+func (q *Queries) JoinServer(ctx context.Context, arg JoinServerParams) error {
+	_, err := q.db.Exec(ctx, joinServer, arg.UserID, arg.ServerID)
+	return err
+}
+
 const ownServer = `-- name: OwnServer :execresult
-SELECT id, owner_id, name, background, description, x, y, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
+SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
 `
 
 type OwnServerParams struct {

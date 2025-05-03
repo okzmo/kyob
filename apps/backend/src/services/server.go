@@ -19,6 +19,7 @@ type CreateServerBody struct {
 	Description string `json:"description"`
 	X           int32  `json:"x"`
 	Y           int32  `json:"y"`
+	Private     bool   `json:"private"`
 }
 
 type EditServerBody struct {
@@ -34,8 +35,17 @@ func CreateServer(ctx context.Context, server *CreateServerBody) (*db.Server, er
 		Name:        server.Name,
 		Background:  server.Background,
 		Description: pgtype.Text{String: server.Description, Valid: true},
+		Private:     server.Private,
 		X:           server.X,
 		Y:           server.Y,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+		ServerID: newServer.ID,
+		UserID:   user.ID,
 	})
 	if err != nil {
 		return nil, err

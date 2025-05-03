@@ -60,17 +60,12 @@ type Channel struct {
 	Name        string      `json:"name"`
 	Type        ChannelType `json:"type"`
 	Description pgtype.Text `json:"description"`
+	Users       []int64     `json:"users"`
+	Roles       []int64     `json:"roles"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
-}
-
-type ChannelMembership struct {
-	ID        int64     `json:"id"`
-	UserID    int64     `json:"user_id"`
-	ChannelID int64     `json:"channel_id"`
-	JoinedAt  time.Time `json:"joined_at"`
 }
 
 type Message struct {
@@ -104,6 +99,7 @@ type Server struct {
 	Description pgtype.Text `json:"description"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
+	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }

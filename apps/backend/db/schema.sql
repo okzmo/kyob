@@ -25,37 +25,6 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: channel_membership; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.channel_membership (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
-    joined_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: channel_membership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.channel_membership_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: channel_membership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.channel_membership_id_seq OWNED BY public.channel_membership.id;
-
-
---
 -- Name: channels; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -65,6 +34,8 @@ CREATE TABLE public.channels (
     name character varying(255) NOT NULL,
     type public.channel_type NOT NULL,
     description text,
+    users bigint[],
+    roles bigint[],
     x integer NOT NULL,
     y integer NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -215,6 +186,7 @@ CREATE TABLE public.servers (
     description text,
     x integer NOT NULL,
     y integer NOT NULL,
+    private boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -308,13 +280,6 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: channel_membership id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership ALTER COLUMN id SET DEFAULT nextval('public.channel_membership_id_seq'::regclass);
-
-
---
 -- Name: channels id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -361,22 +326,6 @@ ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.token
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Name: channel_membership channel_membership_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_pkey PRIMARY KEY (id);
-
-
---
--- Name: channel_membership channel_membership_user_id_channel_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_user_id_channel_id_key UNIQUE (user_id, channel_id);
 
 
 --
@@ -486,22 +435,6 @@ CREATE INDEX idx_users_email ON public.users USING btree (email);
 --
 
 CREATE INDEX idx_users_username ON public.users USING btree (username);
-
-
---
--- Name: channel_membership channel_membership_channel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
-
-
---
--- Name: channel_membership channel_membership_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

@@ -18,6 +18,8 @@ type CreateChannelBody struct {
 	Name        string         `validate:"required,max=50" json:"name"`
 	Type        db.ChannelType `validate:"required,oneof=textual voice" json:"type"`
 	Description string         `validate:"max=280" json:"description"`
+	Users       []int64        `json:"users"`
+	Roles       []int64        `json:"roles"`
 	X           int32          `json:"x"`
 	Y           int32          `json:"y"`
 }
@@ -47,6 +49,8 @@ func CreateChannel(ctx context.Context, serverId int, channel *CreateChannelBody
 		Name:        channel.Name,
 		Type:        channel.Type,
 		Description: pgtype.Text{String: channel.Description, Valid: true},
+		Users:       channel.Users,
+		Roles:       channel.Roles,
 		X:           channel.X,
 		Y:           channel.Y,
 	})
