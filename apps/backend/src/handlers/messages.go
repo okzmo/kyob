@@ -35,7 +35,12 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 	err = services.CreateMessage(r.Context(), id, &body)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch {
+		case errors.Is(err, services.ErrUnauthorizedMessageCreation):
+			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot send a message in this channel.")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

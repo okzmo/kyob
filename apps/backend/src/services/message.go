@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	ErrUnauthorizedMessageCreation = errors.New("unauthorized message creation")
 	ErrUnauthorizedMessageEdition  = errors.New("unauthorized message edition")
 	ErrUnauthorizedMessageDeletion = errors.New("unauthorized message deletion")
 )
@@ -26,7 +27,15 @@ type EditMessageBody struct {
 func CreateMessage(ctx context.Context, channelId int, body *CreateMessageBody) error {
 	user := ctx.Value("user").(db.User)
 
-	_, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
+	res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
+		ID:     int64(channelId),
+		UserID: user.ID,
+	})
+	if err != nil || res.RowsAffected() == 0 {
+		return ErrUnauthorizedMessageCreation
+	}
+
+	_, err = db.Query.CreateMessage(ctx, db.CreateMessageParams{
 		AuthorID:         user.ID,
 		ChannelID:        int64(channelId),
 		Content:          body.Content,

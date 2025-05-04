@@ -11,6 +11,19 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+const checkChannelMembership = `-- name: CheckChannelMembership :execresult
+SELECT c.id FROM channels c, server_membership sm WHERE c.id = $1 and c.server_id = sm.server_id and sm.user_id = $2
+`
+
+type CheckChannelMembershipParams struct {
+	ID     int64 `json:"id"`
+	UserID int64 `json:"user_id"`
+}
+
+func (q *Queries) CheckChannelMembership(ctx context.Context, arg CheckChannelMembershipParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, checkChannelMembership, arg.ID, arg.UserID)
+}
+
 const createMessage = `-- name: CreateMessage :one
 INSERT INTO messages (
   author_id, channel_id, content, mentions_users, mentions_channels, attached
