@@ -1,13 +1,17 @@
 <script lang="ts">
 	interface Props {
+		id: number;
 		username: string;
 		displayName: string;
 		time: string;
 	}
-	let { displayName, username, time }: Props = $props();
+	let { id, displayName, username, time }: Props = $props();
 </script>
 
-<div class="flex gap-x-3 px-4 py-2">
+<div
+	id="message-{id}"
+	class="hocus:bg-main-800/50 flex gap-x-3 px-4 py-2 transition-colors duration-100"
+>
 	<img
 		src="/images/cool-avatar-guy.jpg"
 		alt="{username}'s avatar"

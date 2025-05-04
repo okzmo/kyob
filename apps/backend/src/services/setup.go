@@ -10,6 +10,8 @@ import (
 
 type serverWithChannels struct {
 	db.Server
+	// Roles    []db.Role         `json:"roles"`
+	IsMember bool         `json:"is_member"`
 	Channels []db.Channel `json:"channels"`
 }
 
@@ -48,6 +50,14 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	for _, server := range servers {
+		memberRes, err := db.Query.IsMember(ctx, db.IsMemberParams{
+			UserID:   ctxUser.ID,
+			ServerID: server.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
+
 		channels, err := db.Query.GetChannelsFromServer(ctx, db.GetChannelsFromServerParams{
 			UserID:   ctxUser.ID,
 			ServerID: server.ID,
@@ -58,6 +68,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 
 		s := serverWithChannels{
 			server,
+			memberRes.RowsAffected() > 0,
 			[]db.Channel(channels),
 		}
 

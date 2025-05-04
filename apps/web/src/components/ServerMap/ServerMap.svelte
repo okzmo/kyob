@@ -16,6 +16,7 @@
 	let dragStartTime = $state(0);
 
 	function handleMouseDown(e: MouseEvent) {
+		if (e.buttons !== 1) return;
 		dragging = true;
 		windows.activeWindow = null;
 		startPos = { x: e.clientX, y: e.clientY };
@@ -33,7 +34,7 @@
 	}
 
 	function handleMouseMove(e: MouseEvent) {
-		if (!dragging) return;
+		if (!dragging || e.buttons !== 1) return;
 
 		const currentTime = Date.now();
 		const deltaTime = currentTime - lastTimestamp;
@@ -135,6 +136,7 @@
 
 {#each servers as server (server.id)}
 	<ServerButton
+		id={server.id}
 		name={server.name}
 		background={server.background}
 		href={String(server.id)}

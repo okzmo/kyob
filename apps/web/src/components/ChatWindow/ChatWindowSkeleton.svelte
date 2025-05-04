@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
 	import { onMount, type Snippet } from 'svelte';
 	import { windows } from '../../stores/windows.svelte';
 	import type { Channel, Server } from '../../types/types';
@@ -102,8 +103,9 @@
 </script>
 
 <div
+	transition:fly={{ duration: 100, y: 10 }}
 	id={`window-${id}`}
-	class={['absolute flex flex-col', windows.activeWindow === id ? 'z-[51]' : 'z-50 opacity-40']}
+	class={['absolute flex flex-col', windows.activeWindow === id ? 'z-[52]' : 'z-[51] opacity-40']}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
 	<ChatWindowTopBar {id} {server} {channel} />

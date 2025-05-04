@@ -37,7 +37,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, services.ErrUserNotFound):
 			utils.RespondWithError(w, http.StatusNotFound, "No user exist under this email or username.")
 		case errors.Is(err, services.ErrInvalidHash):
-			utils.RespondWithError(w, http.StatusInternalServerError, "The informations are incorrect.")
+			utils.RespondWithError(w, http.StatusUnauthorized, "The informations are incorrect.")
 		default:
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}

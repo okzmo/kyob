@@ -7,6 +7,9 @@ SELECT * FROM servers WHERE id = $1 AND owner_id = $2;
 -- name: GetServers :many
 SELECT * FROM servers;
 
+-- name: IsMember :execresult
+SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2;
+
 -- name: GetServersFromUser :many
 SELECT DISTINCT s.*
 FROM servers s, server_membership sm

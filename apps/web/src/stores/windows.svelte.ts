@@ -5,7 +5,14 @@ class Windows {
 	activeWindow = $state<string | null>();
 
 	createWindow(id: string, serverId: number, channelId: number) {
+		const exist = Boolean(this.openWindows.find((w) => w.id === id));
+		if (exist) {
+			this.activeWindow = id;
+			return;
+		}
+
 		this.openWindows.push({ id, serverId, channelId });
+		this.activeWindow = id;
 	}
 
 	closeWindow(id: string) {

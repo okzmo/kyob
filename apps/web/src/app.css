@@ -21,6 +21,10 @@
 }
 
 @theme {
+	--font-nunito: 'Nunito', sans-serif;
+	--font-outfit: 'Outfit', sans-serif;
+	--font-Vollkorn: 'Vollkorn', serif;
+
 	--color-accent-50: var(--ui-accent-50);
 	--color-accent-100: var(--ui-accent-100);
 	--color-accent-200: var(--ui-accent-200);

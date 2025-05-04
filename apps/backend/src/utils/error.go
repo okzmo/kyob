@@ -9,13 +9,14 @@ import (
 )
 
 type ErrorResponse struct {
-	Error string `json:"error"`
+	Error  string `json:"error"`
+	Status int    `json:"status"`
 }
 
 func RespondWithError(w http.ResponseWriter, code int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(ErrorResponse{Error: message})
+	json.NewEncoder(w).Encode(ErrorResponse{Error: message, Status: code})
 }
 
 func GetValidationMessage(e validator.FieldError) string {

@@ -19,8 +19,8 @@
 
 <ChatWindowSkeleton {id} {channel} {server}>
 	<div class="flex h-[calc(100%-3.75rem)] w-full flex-col-reverse gap-y-2 overflow-auto py-3">
-		{#each { length: 8 }}
-			<ChatWindowMessage displayName="Okzmo" username="okzmo" time="Today at 2:30am" />
+		{#each { length: 8 }, message}
+			<ChatWindowMessage id={message} displayName="Okzmo" username="okzmo" time="Today at 2:30am" />
 		{/each}
 	</div>
 	<ChatWindowInput {channel} {server} />

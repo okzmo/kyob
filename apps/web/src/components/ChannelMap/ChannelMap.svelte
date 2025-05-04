@@ -3,6 +3,8 @@
 	import type { Channel } from '../../types/types';
 	import ChannelButton from '../ui/ChannelButton/ChannelButton.svelte';
 	import { windows } from '../../stores/windows.svelte';
+	import { serversStore } from '../../stores/servers.svelte';
+	import { page } from '$app/state';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });
@@ -127,19 +129,37 @@
 	});
 
 	interface Props {
-		channels: Channel[];
+		channels?: Channel[];
 	}
 
 	let { channels }: Props = $props();
+
+	let isMember = $state(serversStore.isMember(Number(page.params.server_id)));
 </script>
 
-{#each channels as channel (channel.id)}
-	<ChannelButton
-		id={channel.id}
-		name={channel.name}
-		type={channel.type}
-		x={channel.x + offset.x}
-		y={channel.y + offset.y}
-		unread={channel.unread}
-	/>
-{/each}
+{#if !isMember}
+	<button
+		class="bg-accent-100/15 border-accent-100 text-accent-100 hocus:border-green-300 hocus:bg-green-300/15 hocus:text-green-300 fixed top-4 left-1/2 -translate-x-1/2 rounded-2xl border px-5 py-2.5 text-sm transition-colors duration-100 hover:cursor-pointer"
+	>
+		You're in <span class="font-bold">view-only mode</span>. Click this banner to join this realm!
+	</button>
+{/if}
+
+{#if channels}
+	{#each channels as channel (channel.id)}
+		<ChannelButton
+			id={channel.id}
+			name={channel.name}
+			type={channel.type}
+			x={channel.x + offset.x}
+			y={channel.y + offset.y}
+			unread={channel.unread}
+		/>
+	{/each}
+{:else}
+	<h3
+		class="font-outfit text-main-600 fixed top-1/2 left-1/2 -translate-1/2 text-5xl font-bold uppercase"
+	>
+		No channels yet
+	</h3>
+{/if}

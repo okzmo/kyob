@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	interface Props {
+		id: number;
 		name: string;
 		background: string;
 		href: string;
@@ -9,10 +10,11 @@
 		y: number;
 	}
 
-	let { name, background, href, x, y }: Props = $props();
+	let { id, name, background, href, x, y }: Props = $props();
 </script>
 
 <button
+	id="serverButton-{id}"
 	class="group absolute h-[4rem] w-[4rem] hover:cursor-pointer"
 	aria-label={`${name} server background`}
 	style="transform: translate({x}px, {y}px);"
@@ -23,7 +25,7 @@
 	<img
 		src={background}
 		alt="Server background"
-		class="transition-radius group-hocus:rounded-2xl rounded-[50%]"
+		class="transition-radius group-hocus:rounded-2xl h-full w-full rounded-[50%] object-cover"
 	/>
 </button>
 

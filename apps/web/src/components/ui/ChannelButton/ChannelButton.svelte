@@ -6,7 +6,7 @@
 	interface Props {
 		id: number;
 		name: string;
-		type: 'text' | 'voice';
+		type: 'textual' | 'voice';
 		x: number;
 		y: number;
 		unread?: boolean;
@@ -16,6 +16,7 @@
 </script>
 
 <button
+	id="channelButton-{id}"
 	class={[
 		'group hocus:bg-accent-800 hocus:border-accent-100 hocus:text-accent-50 absolute z-50 flex items-center gap-x-2.5 rounded-2xl border px-4 py-3 font-medium transition-colors duration-100 hover:cursor-pointer',
 		unread
@@ -27,7 +28,7 @@
 		windows.createWindow(`window-${id}`, Number(page.params.server_id), id);
 	}}
 >
-	{#if type == 'text'}
+	{#if type == 'textual'}
 		<HashChat height={20} width={20} />
 	{:else if type == 'voice'}
 		div

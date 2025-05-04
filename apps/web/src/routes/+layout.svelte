@@ -9,15 +9,34 @@
 	import '@fontsource/outfit/900.css';
 	import '../app.css';
 	import GridDots from '../components/GridDots.svelte';
-	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { onMount } from 'svelte';
+	import { backend } from '../stores/backend.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { userStore } from '../stores/user.svelte';
+	import { serversStore } from '../stores/servers.svelte';
 
 	let { children } = $props();
 
-	const queryClient = new QueryClient();
+	onMount(async () => {
+		const inAuthPage = ['/signin', '/signup'].includes(page.url.pathname);
+		const res = await backend.getSetup();
+
+		if (res.isErr() && !inAuthPage) {
+			if (res.error.code === 'ERR_SETUP_UNAUTHORIZED') goto('/signin');
+		}
+
+		if (res.isOk() && inAuthPage) {
+			goto('/');
+		}
+
+		if (res.isOk()) {
+			userStore.user = res.value.user;
+			serversStore.servers = res.value.servers;
+		}
+	});
 </script>
 
-<QueryClientProvider client={queryClient}>
-	{@render children()}
-</QueryClientProvider>
+{@render children()}
 
 <GridDots />

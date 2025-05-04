@@ -1,4 +1,5 @@
-import * as z from 'zod';
+export const contextMenuTargets = ['serverButton', 'channelButton', 'message'] as const;
+export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
 export interface Window {
 	id: string;
@@ -6,36 +7,37 @@ export interface Window {
 	serverId: number;
 }
 
-export const ChannelSchema = z.interface({
-	id: z.int(),
-	name: z.string(),
-	type: z.enum(['voice', 'textual']),
-	x: z.int().optional(),
-	y: z.int().optional(),
-	unread: z.boolean().default(false)
-});
+export interface Channel {
+	id: number;
+	name: string;
+	type: 'textual' | 'voice';
+	x: number;
+	y: number;
+	unread: boolean;
+}
 
-export interface Channel extends z.infer<typeof ChannelSchema> {}
+export interface Server {
+	id: number;
+	owner_id: number;
+	name: string;
+	background: string;
+	description?: string;
+	x: number;
+	y: number;
+	is_member: boolean;
+	channels?: Channel[];
+}
 
-export const ServerSchema = z.interface({
-	id: z.int(),
-	name: z.string(),
-	background: z.string(),
-	description: z.string().optional(),
-	x: z.int().optional(),
-	y: z.int().optional()
-});
+export interface User {
+	id: number;
+	email: string;
+	username: string;
+	display_name: string;
+	avatar: string;
+	about?: string;
+}
 
-export interface Server extends z.infer<typeof ServerSchema> {}
-
-export const UserSchema = z.interface({
-	id: z.int(),
-	email: z.email(),
-	username: z.string(),
-	password: z.string().min(8),
-	display_name: z.string(),
-	avatar: z.string(),
-	about: z.string().optional()
-});
-
-export interface User extends z.infer<typeof UserSchema> {}
+export interface Setup {
+	user: User;
+	servers: Server[];
+}

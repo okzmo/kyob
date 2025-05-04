@@ -13,7 +13,7 @@
 		{#if server}
 			<div class="flex items-center gap-x-1.5">
 				<img
-					src={server.serverBg}
+					src={server.background}
 					alt="{server.name} server background"
 					class="h-[1.25rem] w-[1.25rem] rounded-full"
 				/>

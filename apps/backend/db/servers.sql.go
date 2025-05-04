@@ -164,6 +164,19 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Serve
 	return items, nil
 }
 
+const isMember = `-- name: IsMember :execresult
+SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2
+`
+
+type IsMemberParams struct {
+	ServerID int64 `json:"server_id"`
+	UserID   int64 `json:"user_id"`
+}
+
+func (q *Queries) IsMember(ctx context.Context, arg IsMemberParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, isMember, arg.ServerID, arg.UserID)
+}
+
 const joinServer = `-- name: JoinServer :exec
 INSERT INTO server_membership (
   user_id, server_id

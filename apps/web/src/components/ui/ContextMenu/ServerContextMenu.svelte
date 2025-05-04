@@ -1,0 +1,56 @@
+<script lang="ts">
+	import { ContextMenu } from 'bits-ui';
+	import UserInvite from '../icons/UserInvite.svelte';
+	import LogoutIcon from '../icons/LogoutIcon.svelte';
+	import Bin from '../icons/Bin.svelte';
+	import { serversStore } from '../../../stores/servers.svelte';
+	import { userStore } from '../../../stores/user.svelte';
+
+	interface Props {
+		targetId: number;
+	}
+
+	let { targetId }: Props = $props();
+
+	let isOwner = $state(serversStore.isOwner(userStore.user?.id || -1, targetId));
+	let isMember = $state(serversStore.isMember(targetId));
+
+	$effect(() => {
+		isOwner = serversStore.isOwner(userStore.user?.id || -1, targetId);
+		isMember = serversStore.isMember(targetId);
+	});
+</script>
+
+<ContextMenu.Content
+	class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
+>
+	{#if isMember}
+		<ContextMenu.Item
+			class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+		>
+			<p class="flex items-center">Invite people</p>
+			<UserInvite height={20} width={20} />
+		</ContextMenu.Item>
+		{#if isOwner}
+			<ContextMenu.Item
+				class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+			>
+				<p class="flex items-center">Delete server</p>
+				<Bin height={20} width={20} />
+			</ContextMenu.Item>
+		{:else}
+			<ContextMenu.Item
+				class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+			>
+				<p class="flex items-center">Leave server</p>
+				<LogoutIcon height={20} width={20} />
+			</ContextMenu.Item>
+		{/if}
+	{:else}
+		<ContextMenu.Item
+			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none focus-visible:outline-none"
+		>
+			<p class="text-main-600 flex items-center">No interactions available</p>
+		</ContextMenu.Item>
+	{/if}
+</ContextMenu.Content>
