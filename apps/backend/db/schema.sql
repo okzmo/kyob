@@ -11,6 +11,26 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: abilities; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.abilities AS ENUM (
+    'ADMIN',
+    'MANAGE_CHANNELS',
+    'MANAGE_ROLES',
+    'MANAGE_SERVER',
+    'MANAGE_EXPRESSIONS',
+    'CHANGE_NICKNAME',
+    'MANAGE_NICKNAMES',
+    'BAN',
+    'KICK',
+    'MUTE',
+    'ATTACH_FILES',
+    'MANAGE_MESSAGES'
+);
+
+
+--
 -- Name: channel_type; Type: TYPE; Schema: public; Owner: -
 --
 

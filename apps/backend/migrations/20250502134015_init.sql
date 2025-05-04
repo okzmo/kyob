@@ -1,5 +1,6 @@
 -- migrate:up
 CREATE TYPE channel_type AS ENUM ('voice', 'textual');
+CREATE TYPE abilities AS ENUM ('ADMIN', 'MANAGE_CHANNELS', 'MANAGE_ROLES', 'MANAGE_SERVER', 'MANAGE_EXPRESSIONS', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES', 'BAN', 'KICK', 'MUTE', 'ATTACH_FILES', 'MANAGE_MESSAGES');
 
 CREATE TABLE users(
   id BIGSERIAL PRIMARY KEY,
@@ -93,3 +94,4 @@ DROP TABLE channels;
 DROP TABLE servers;
 DROP TABLE users;
 DROP TYPE channel_type;
+DROP TYPE abilities;
