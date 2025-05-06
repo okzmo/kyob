@@ -88,7 +88,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		Name:     "token",
 		Value:    *token,
 		Path:     "/",
-		MaxAge:   time.Now().Add(30 * (24 * time.Hour)).Second(),
+		Expires:  time.Now().Add(30 * (24 * time.Hour)),
 		HttpOnly: true,
 		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
@@ -105,10 +105,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:   "token",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
+		Name:    "token",
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now().Add(-30 * (24 * time.Hour)),
 	})
 	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
 }

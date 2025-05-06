@@ -3,6 +3,7 @@
 	import AuthForm from '../../../components/auth/AuthForm.svelte';
 	import { SignUpSchema } from '../../../types/schemas';
 	import { defaults, superForm } from 'sveltekit-superforms';
+	import { goto } from '$app/navigation';
 
 	let globalError = $state<string | undefined>();
 
@@ -30,6 +31,8 @@
 						const data = await res.json();
 						console.error('signup failed', res.status, data);
 					}
+
+					return goto('/');
 				} catch (err) {
 					console.error(err);
 					globalError = 'Signup failed';

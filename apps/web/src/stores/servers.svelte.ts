@@ -11,6 +11,11 @@ class Servers {
 		return this.servers.find((s) => s.id === id)?.channels;
 	}
 
+	getChannel(serverId: number, channelId: number) {
+		const channels = this.getChannels(serverId);
+		return channels?.find((c) => c.id === channelId);
+	}
+
 	isOwner(userId: number, serverId: number) {
 		return Boolean(this.servers.find((s) => s.id === serverId && s.owner_id === userId));
 	}

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -14,11 +15,32 @@ import (
 func CreateServer(w http.ResponseWriter, r *http.Request) {
 	var body services.CreateServerBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
+	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Failed to parse given image.")
 		return
 	}
+
+	file, fileHeader, err := r.FormFile("avatar")
+	if err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Failed to get image.")
+		return
+	}
+	defer file.Close()
+
+	body.Name = r.FormValue("name")
+	body.Description = r.FormValue("description")
+	body.Private = r.FormValue("private") == "true"
+	cropJSON := r.FormValue("crop")
+	var crop services.Crop
+	if err := json.Unmarshal([]byte(cropJSON), &crop); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid  crop data.")
+		return
+	}
+	body.Crop = crop
 
 	err = validate.Struct(body)
 	if err != nil {
@@ -26,7 +48,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	server, err := services.CreateServer(r.Context(), &body)
+	server, err := services.CreateServer(r.Context(), file, fileHeader, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

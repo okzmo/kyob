@@ -202,7 +202,8 @@ CREATE TABLE public.servers (
     id bigint NOT NULL,
     owner_id bigint NOT NULL,
     name character varying(255) NOT NULL,
-    background character varying(255) NOT NULL,
+    avatar character varying(255),
+    banner character varying(255),
     description text,
     x integer NOT NULL,
     y integer NOT NULL,
@@ -274,6 +275,7 @@ CREATE TABLE public.users (
     password character varying(255) NOT NULL,
     display_name character varying(255) NOT NULL,
     avatar character varying(255),
+    banner character varying(255),
     about text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL

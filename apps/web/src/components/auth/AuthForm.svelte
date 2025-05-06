@@ -134,18 +134,11 @@
 				<p class="text-sm leading-none text-red-400">{$errors.password?.[0]}</p>
 			{/if}
 		</div>
-		{#if type === 'signin'}
-			<button
-				type="submit"
-				class="bg-main-800 hocus:bg-accent-100/35 hocus:text-accent-50 w-full rounded-xl py-3 transition-colors duration-100 hover:cursor-pointer"
-				>Sign in</button
-			>
-		{:else}
-			<button
-				type="submit"
-				class="bg-main-800 hocus:bg-accent-100/35 hocus:text-accent-50 w-full rounded-xl py-3 transition-colors duration-100 hover:cursor-pointer"
-				>Create an account</button
-			>
-		{/if}
+		<button
+			type="submit"
+			class="bg-main-800 hocus:bg-accent-100/35 hocus:text-accent-50 w-full rounded-xl py-3 transition-colors duration-100 hover:cursor-pointer"
+		>
+			{type === 'signin' ? 'Sign in' : 'Create an account'}
+		</button>
 	</form>
 </div>

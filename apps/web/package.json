@@ -42,9 +42,10 @@
 		"@fontsource/nunito": "^5.2.5",
 		"@fontsource/outfit": "^5.2.5",
 		"@fontsource/vollkorn": "^5.2.6",
-		"bits-ui": "^1.4.4",
+		"bits-ui": "^1.4.6",
 		"gsap": "^3.13.0",
 		"ky": "^1.8.1",
-		"neverthrow": "^8.2.0"
+		"neverthrow": "^8.2.0",
+		"svelte-easy-crop": "^4.0.1"
 	}
 }

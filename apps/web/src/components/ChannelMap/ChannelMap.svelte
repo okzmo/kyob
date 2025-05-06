@@ -139,7 +139,7 @@
 
 {#if !isMember}
 	<button
-		class="bg-accent-100/15 border-accent-100 text-accent-100 hocus:border-green-300 hocus:bg-green-300/15 hocus:text-green-300 fixed top-4 left-1/2 -translate-x-1/2 rounded-2xl border px-5 py-2.5 text-sm transition-colors duration-100 hover:cursor-pointer"
+		class="bg-accent-100/15 border-accent-100 text-accent-100 hocus:border-green-300 hocus:bg-green-300/15 hocus:text-green-300 fixed top-4 left-1/2 z-[51] -translate-x-1/2 rounded-2xl border px-5 py-2.5 text-sm transition-colors duration-100 hover:cursor-pointer"
 	>
 		You're in <span class="font-bold">view-only mode</span>. Click this banner to join this realm!
 	</button>

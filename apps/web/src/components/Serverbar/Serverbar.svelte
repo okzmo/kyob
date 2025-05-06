@@ -25,6 +25,6 @@
 			</p>
 			<ServerbarMembers />
 		</div>
-		<img src={server?.background} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full" />
+		<img src={server?.avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full" />
 	</button>
 </div>

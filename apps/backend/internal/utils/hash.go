@@ -34,6 +34,16 @@ func GenerateRandomBytes(n uint32) ([]byte, error) {
 	return b, nil
 }
 
+func GenerateRandomId(n uint32) (string, error) {
+	bytes, err := GenerateRandomBytes(n)
+	if err != nil {
+		return "", err
+	}
+	b64Id := base64.RawStdEncoding.EncodeToString(bytes)
+
+	return b64Id, nil
+}
+
 func HashPassword(password string) (string, error) {
 	salt, err := GenerateRandomBytes(16)
 	if err != nil {

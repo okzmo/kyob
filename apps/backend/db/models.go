@@ -147,7 +147,8 @@ type Server struct {
 	ID          int64       `json:"id"`
 	OwnerID     int64       `json:"owner_id"`
 	Name        string      `json:"name"`
-	Background  string      `json:"background"`
+	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
 	Description pgtype.Text `json:"description"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
@@ -179,6 +180,7 @@ type User struct {
 	Password    string      `json:"password"`
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
 	About       pgtype.Text `json:"about"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`

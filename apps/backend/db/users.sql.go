@@ -17,7 +17,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3, $4, $5
 )
-RETURNING id, email, username, password, display_name, avatar, about, created_at, updated_at
+RETURNING id, email, username, password, display_name, avatar, banner, about, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -44,6 +44,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Password,
 		&i.DisplayName,
 		&i.Avatar,
+		&i.Banner,
 		&i.About,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -61,7 +62,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, username, password, display_name, avatar, about, created_at, updated_at FROM users WHERE email = $1 OR username = $2
+SELECT id, email, username, password, display_name, avatar, banner, about, created_at, updated_at FROM users WHERE email = $1 OR username = $2
 `
 
 type GetUserParams struct {
@@ -79,6 +80,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 		&i.Password,
 		&i.DisplayName,
 		&i.Avatar,
+		&i.Banner,
 		&i.About,
 		&i.CreatedAt,
 		&i.UpdatedAt,

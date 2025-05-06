@@ -3,11 +3,10 @@
 	import ServerButton from '../ui/ServerButton/ServerButton.svelte';
 	import type { Server } from '../../types/types';
 	import { windows } from '../../stores/windows.svelte';
+	import { core } from '../../stores/core.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });
-	let offset = $state({ x: 0, y: 0 });
-	let totalOffset = $state({ x: 0, y: 0 });
 	let velocity = $state({ x: 0, y: 0 });
 	let lastMousePos = $state({ x: 0, y: 0 });
 	let lastTimestamp = $state(0);
@@ -16,7 +15,7 @@
 	let dragStartTime = $state(0);
 
 	function handleMouseDown(e: MouseEvent) {
-		if (e.buttons !== 1) return;
+		if (e.buttons !== 1 || !core.canDragMap) return;
 		dragging = true;
 		windows.activeWindow = null;
 		startPos = { x: e.clientX, y: e.clientY };
@@ -63,15 +62,15 @@
 		const totalDx = e.clientX - startPos.x;
 		const totalDy = e.clientY - startPos.y;
 
-		offset = {
-			x: totalOffset.x + totalDx,
-			y: totalOffset.y + totalDy
+		core.offsetServerMap = {
+			x: core.totalOffsetServerMap.x + totalDx,
+			y: core.totalOffsetServerMap.y + totalDy
 		};
 	}
 
 	function handleMouseUp() {
 		if (dragging) {
-			totalOffset = { ...offset };
+			core.totalOffsetServerMap = { ...core.offsetServerMap };
 			dragging = false;
 
 			const dragDuration = Date.now() - dragStartTime;
@@ -91,12 +90,12 @@
 			velocity.x *= resistance;
 			velocity.y *= resistance;
 
-			offset = {
-				x: offset.x + velocity.x,
-				y: offset.y + velocity.y
+			core.offsetServerMap = {
+				x: core.offsetServerMap.x + velocity.x,
+				y: core.offsetServerMap.y + velocity.y
 			};
 
-			totalOffset = { ...offset };
+			core.totalOffsetServerMap = { ...core.offsetServerMap };
 
 			if (Math.abs(velocity.x) < 0.1 && Math.abs(velocity.y) < 0.1) {
 				animationFrameId = null;
@@ -138,9 +137,9 @@
 	<ServerButton
 		id={server.id}
 		name={server.name}
-		background={server.background}
+		avatar={server.avatar}
 		href={String(server.id)}
-		x={server.x + offset.x}
-		y={server.y + offset.y}
+		x={server.x + core.offsetServerMap.x}
+		y={server.y + core.offsetServerMap.y}
 	/>
 {/each}

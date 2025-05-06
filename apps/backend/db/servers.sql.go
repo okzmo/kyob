@@ -12,19 +12,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const checkServerPosition = `-- name: CheckServerPosition :execresult
+SELECT id FROM servers WHERE (x BETWEEN $1-100 AND $1+100) AND (y BETWEEN $2-100 AND $2+100)
+`
+
+type CheckServerPositionParams struct {
+	Column1 interface{} `json:"column_1"`
+	Column2 interface{} `json:"column_2"`
+}
+
+func (q *Queries) CheckServerPosition(ctx context.Context, arg CheckServerPositionParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, checkServerPosition, arg.Column1, arg.Column2)
+}
+
 const createServer = `-- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, background, description, x, y, private
+  owner_id, name, avatar, description, x, y, private
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, owner_id, name, background, description, x, y, private, created_at, updated_at
+RETURNING id, owner_id, name, avatar, banner, description, x, y, private, created_at, updated_at
 `
 
 type CreateServerParams struct {
 	OwnerID     int64       `json:"owner_id"`
 	Name        string      `json:"name"`
-	Background  string      `json:"background"`
+	Avatar      pgtype.Text `json:"avatar"`
 	Description pgtype.Text `json:"description"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
@@ -35,7 +48,7 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 	row := q.db.QueryRow(ctx, createServer,
 		arg.OwnerID,
 		arg.Name,
-		arg.Background,
+		arg.Avatar,
 		arg.Description,
 		arg.X,
 		arg.Y,
@@ -46,7 +59,8 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 		&i.ID,
 		&i.OwnerID,
 		&i.Name,
-		&i.Background,
+		&i.Avatar,
+		&i.Banner,
 		&i.Description,
 		&i.X,
 		&i.Y,
@@ -71,7 +85,7 @@ func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgc
 }
 
 const getServer = `-- name: GetServer :one
-SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1
+SELECT id, owner_id, name, avatar, banner, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1
 `
 
 func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
@@ -81,7 +95,8 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 		&i.ID,
 		&i.OwnerID,
 		&i.Name,
-		&i.Background,
+		&i.Avatar,
+		&i.Banner,
 		&i.Description,
 		&i.X,
 		&i.Y,
@@ -93,7 +108,7 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 }
 
 const getServers = `-- name: GetServers :many
-SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers
+SELECT id, owner_id, name, avatar, banner, description, x, y, private, created_at, updated_at FROM servers
 `
 
 func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
@@ -109,7 +124,8 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 			&i.ID,
 			&i.OwnerID,
 			&i.Name,
-			&i.Background,
+			&i.Avatar,
+			&i.Banner,
 			&i.Description,
 			&i.X,
 			&i.Y,
@@ -128,7 +144,7 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT DISTINCT s.id, s.owner_id, s.name, s.background, s.description, s.x, s.y, s.private, s.created_at, s.updated_at
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.x, s.y, s.private, s.created_at, s.updated_at
 FROM servers s, server_membership sm
 WHERE s.private = false OR (sm.server_id = s.id AND sm.user_id = $1)
 `
@@ -146,7 +162,8 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]Serve
 			&i.ID,
 			&i.OwnerID,
 			&i.Name,
-			&i.Background,
+			&i.Avatar,
+			&i.Banner,
 			&i.Description,
 			&i.X,
 			&i.Y,
@@ -196,7 +213,7 @@ func (q *Queries) JoinServer(ctx context.Context, arg JoinServerParams) error {
 }
 
 const ownServer = `-- name: OwnServer :execresult
-SELECT id, owner_id, name, background, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
+SELECT id, owner_id, name, avatar, banner, description, x, y, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
 `
 
 type OwnServerParams struct {
@@ -208,18 +225,33 @@ func (q *Queries) OwnServer(ctx context.Context, arg OwnServerParams) (pgconn.Co
 	return q.db.Exec(ctx, ownServer, arg.ID, arg.OwnerID)
 }
 
-const updateServerBackground = `-- name: UpdateServerBackground :exec
-UPDATE servers SET background = $1 WHERE id = $2 AND owner_id = $3
+const updateServerAvatar = `-- name: UpdateServerAvatar :exec
+UPDATE servers SET avatar = $1 WHERE id = $2 AND owner_id = $3
 `
 
-type UpdateServerBackgroundParams struct {
-	Background string `json:"background"`
-	ID         int64  `json:"id"`
-	OwnerID    int64  `json:"owner_id"`
+type UpdateServerAvatarParams struct {
+	Avatar  pgtype.Text `json:"avatar"`
+	ID      int64       `json:"id"`
+	OwnerID int64       `json:"owner_id"`
 }
 
-func (q *Queries) UpdateServerBackground(ctx context.Context, arg UpdateServerBackgroundParams) error {
-	_, err := q.db.Exec(ctx, updateServerBackground, arg.Background, arg.ID, arg.OwnerID)
+func (q *Queries) UpdateServerAvatar(ctx context.Context, arg UpdateServerAvatarParams) error {
+	_, err := q.db.Exec(ctx, updateServerAvatar, arg.Avatar, arg.ID, arg.OwnerID)
+	return err
+}
+
+const updateServerBanner = `-- name: UpdateServerBanner :exec
+UPDATE servers SET banner = $1 WHERE id = $2 AND owner_id = $3
+`
+
+type UpdateServerBannerParams struct {
+	Banner  pgtype.Text `json:"banner"`
+	ID      int64       `json:"id"`
+	OwnerID int64       `json:"owner_id"`
+}
+
+func (q *Queries) UpdateServerBanner(ctx context.Context, arg UpdateServerBannerParams) error {
+	_, err := q.db.Exec(ctx, updateServerBanner, arg.Banner, arg.ID, arg.OwnerID)
 	return err
 }
 

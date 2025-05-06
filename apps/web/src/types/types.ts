@@ -20,7 +20,8 @@ export interface Server {
 	id: number;
 	owner_id: number;
 	name: string;
-	background: string;
+	avatar: string;
+	banner: string;
 	description?: string;
 	x: number;
 	y: number;

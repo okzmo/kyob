@@ -3,6 +3,7 @@
 	import Headphone from '../ui/icons/Headphone.svelte';
 	import Microphone from '../ui/icons/Microphone.svelte';
 	import IconButton from '../ui/IconButton/IconButton.svelte';
+	import { userStore } from '../../stores/user.svelte';
 </script>
 
 <div
@@ -18,7 +19,7 @@
 		/>
 		<div class="flex flex-col">
 			<p class="group-hocus:text-accent-50 text-sm leading-[1.15rem] font-medium transition-colors">
-				Okzmo
+				{userStore.user?.display_name}
 			</p>
 			<p
 				class="text-main-400 group-hocus:text-accent-200 text-sm leading-[1.15rem] transition-colors"

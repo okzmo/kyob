@@ -9,6 +9,7 @@ CREATE TABLE users(
   password VARCHAR(255) NOT NULL,
   display_name VARCHAR(255) NOT NULL,
   avatar VARCHAR(255),
+  banner VARCHAR(255),
   about TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
@@ -18,7 +19,8 @@ CREATE TABLE servers(
   id BIGSERIAL PRIMARY KEY,
   owner_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
-  background VARCHAR(255) NOT NULL,
+  avatar VARCHAR(255),
+  banner VARCHAR(255),
   description TEXT,
   x INT NOT NULL,
   y INT NOT NULL,

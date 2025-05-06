@@ -4,18 +4,18 @@
 	interface Props {
 		id: number;
 		name: string;
-		background: string;
+		avatar: string;
 		href: string;
 		x: number;
 		y: number;
 	}
 
-	let { id, name, background, href, x, y }: Props = $props();
+	let { id, name, avatar, href, x, y }: Props = $props();
 </script>
 
 <button
 	id="serverButton-{id}"
-	class="group absolute h-[4rem] w-[4rem] hover:cursor-pointer"
+	class="group server-button absolute h-[4rem] w-[4rem] hover:cursor-pointer"
 	aria-label={`${name} server background`}
 	style="transform: translate({x}px, {y}px);"
 	onclick={() => {
@@ -23,8 +23,8 @@
 	}}
 >
 	<img
-		src={background}
-		alt="Server background"
+		src={avatar}
+		alt={name.slice(0, 2).toUpperCase()}
 		class="transition-radius group-hocus:rounded-2xl h-full w-full rounded-[50%] object-cover"
 	/>
 </button>

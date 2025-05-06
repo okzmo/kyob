@@ -30,7 +30,7 @@
 						console.error('signin failed', res.status, data);
 						globalError = data.error;
 					}
-					goto('/');
+					return goto('/');
 				} catch (err) {
 					console.error(err);
 					globalError = 'Signin failed';
