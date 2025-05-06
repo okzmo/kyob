@@ -3,6 +3,7 @@
 	import AuthForm from '../../../components/auth/AuthForm.svelte';
 	import { SignInSchema } from '../../../types/schemas';
 	import { defaults, superForm } from 'sveltekit-superforms';
+	import { goto } from '$app/navigation';
 
 	let globalError = $state<string | undefined>();
 
@@ -29,6 +30,7 @@
 						console.error('signin failed', res.status, data);
 						globalError = data.error;
 					}
+					goto('/');
 				} catch (err) {
 					console.error(err);
 					globalError = 'Signin failed';

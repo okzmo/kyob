@@ -2,9 +2,9 @@
 SELECT * FROM channels WHERE id = $1;
 
 -- name: GetChannelsFromServer :many
-SELECT DISTINCT c.*
-FROM channels c, server_membership sm 
-WHERE c.server_id = $1 and c.server_id = sm.server_id and sm.user_id = $2;
+SELECT *
+FROM channels
+WHERE server_id = $1;
 
 -- name: CreateChannel :one
 INSERT INTO channels (

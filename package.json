@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "web": "pnpm --filter web dev",
-    "backend": "pnpm --filter backend start"
+    "backend": "pnpm --filter backend start",
+    "db:down": "pnpm --filter backend db:down",
+    "db:up": "pnpm --filter backend db:up"
   },
   "keywords": [],
   "author": "",
