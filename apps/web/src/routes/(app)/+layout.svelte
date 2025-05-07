@@ -58,7 +58,11 @@
 </script>
 
 <ContextMenu.Root>
-	<ContextMenu.Trigger class="fixed top-0 left-0 h-screen w-screen" oncontextmenu={onContextMenu}>
+	<ContextMenu.Trigger
+		id={page.params.server_id ? `inServer-${page.params.server_id}` : ''}
+		class="fixed top-0 left-0 h-screen w-screen"
+		oncontextmenu={onContextMenu}
+	>
 		<Topbar canGoBack={goback.active} />
 		<Userbar />
 		{#if !page.params.server_id}

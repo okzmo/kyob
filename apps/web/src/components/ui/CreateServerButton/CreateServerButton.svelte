@@ -138,7 +138,7 @@
 							name="avatar"
 							onchange={onFile}
 							aria-label="Realm avatar"
-							class="absolute h-full w-full text-transparent"
+							class="absolute h-full w-full text-transparent hover:cursor-pointer"
 						/>
 						{#if $form.avatar}
 							<Cropper

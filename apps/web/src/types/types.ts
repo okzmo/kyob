@@ -1,4 +1,4 @@
-export const contextMenuTargets = ['serverButton', 'channelButton', 'message'] as const;
+export const contextMenuTargets = ['serverButton', 'channelButton', 'message', 'inServer'] as const;
 export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
 export interface Window {
