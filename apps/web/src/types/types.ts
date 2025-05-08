@@ -35,10 +35,25 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar: string;
+	banner: string;
+	gradient_top?: string;
+	gradient_bottom?: string;
 	about?: string;
+	facts?: {
+		label: string;
+		value: string;
+	}[];
+	links?: {
+		label: string;
+		url: string;
+	}[];
 }
 
 export interface Setup {
 	user: User;
 	servers: Server[];
+}
+
+export interface DefaultResponse {
+	message: string;
 }

@@ -106,7 +106,7 @@ func DeleteServer(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, services.ErrUnauthorizedServerDeletion):
 			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this server.")
 		default:
-			utils.RespondWithError(w, http.StatusUnauthorized, err.Error())
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}

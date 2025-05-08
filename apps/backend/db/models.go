@@ -120,6 +120,25 @@ type Channel struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
+type Fact struct {
+	ID        int64       `json:"id"`
+	UserID    int64       `json:"user_id"`
+	Icon      pgtype.Text `json:"icon"`
+	Label     pgtype.Text `json:"label"`
+	Value     pgtype.Text `json:"value"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+}
+
+type Link struct {
+	ID        int64       `json:"id"`
+	UserID    int64       `json:"user_id"`
+	Label     pgtype.Text `json:"label"`
+	Url       pgtype.Text `json:"url"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+}
+
 type Message struct {
 	ID               int64     `json:"id"`
 	AuthorID         int64     `json:"author_id"`
@@ -174,14 +193,16 @@ type Token struct {
 }
 
 type User struct {
-	ID          int64       `json:"id"`
-	Email       string      `json:"email"`
-	Username    string      `json:"username"`
-	Password    string      `json:"password"`
-	DisplayName string      `json:"display_name"`
-	Avatar      pgtype.Text `json:"avatar"`
-	Banner      pgtype.Text `json:"banner"`
-	About       pgtype.Text `json:"about"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdatedAt   time.Time   `json:"updated_at"`
+	ID             int64       `json:"id"`
+	Email          string      `json:"email"`
+	Username       string      `json:"username"`
+	Password       string      `json:"password"`
+	DisplayName    string      `json:"display_name"`
+	Avatar         pgtype.Text `json:"avatar"`
+	Banner         pgtype.Text `json:"banner"`
+	About          pgtype.Text `json:"about"`
+	GradientTop    pgtype.Text `json:"gradient_top"`
+	GradientBottom pgtype.Text `json:"gradient_bottom"`
+	CreatedAt      time.Time   `json:"created_at"`
+	UpdatedAt      time.Time   `json:"updated_at"`
 }

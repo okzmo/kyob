@@ -111,6 +111,7 @@
 			<form method="post" use:enhance enctype="multipart/form-data">
 				<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
 					<Dialog.Close
+						type="button"
 						class="text-main-400 hocus:text-main-50 absolute top-1/2 right-5 -translate-y-1/2 transition-colors hover:cursor-pointer"
 					>
 						<Close width={18} height={18} />

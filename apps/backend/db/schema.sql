@@ -83,6 +83,73 @@ ALTER SEQUENCE public.channels_id_seq OWNED BY public.channels.id;
 
 
 --
+-- Name: facts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.facts (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    icon character varying(255),
+    label character varying(255),
+    value character varying(255),
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: facts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.facts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: facts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.facts_id_seq OWNED BY public.facts.id;
+
+
+--
+-- Name: links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.links (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    label character varying(255),
+    url character varying(255),
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
+
+
+--
 -- Name: messages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -277,6 +344,8 @@ CREATE TABLE public.users (
     avatar character varying(255),
     banner character varying(255),
     about text,
+    gradient_top character varying(255),
+    gradient_bottom character varying(255),
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -306,6 +375,20 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 --
 
 ALTER TABLE ONLY public.channels ALTER COLUMN id SET DEFAULT nextval('public.channels_id_seq'::regclass);
+
+
+--
+-- Name: facts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.facts ALTER COLUMN id SET DEFAULT nextval('public.facts_id_seq'::regclass);
+
+
+--
+-- Name: links id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links ALTER COLUMN id SET DEFAULT nextval('public.links_id_seq'::regclass);
 
 
 --
@@ -356,6 +439,22 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: facts facts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.facts
+    ADD CONSTRAINT facts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: links links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT links_pkey PRIMARY KEY (id);
 
 
 --
@@ -465,6 +564,22 @@ CREATE INDEX idx_users_username ON public.users USING btree (username);
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: facts facts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.facts
+    ADD CONSTRAINT facts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: links links_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT links_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

@@ -1,8 +1,15 @@
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { Server, Setup } from '../types/types';
-import type { ServerErrors, SetupErrors, StandardError } from '../types/errors';
-import type { CreateServerType } from '../types/schemas';
+import type { Channel, Server, Setup } from '../types/types';
+import type {
+	CreateChannelErrors,
+	CreateServerErrors,
+	DeleteChannelErrors,
+	DeleteServerErrors,
+	SetupErrors,
+	StandardError
+} from '../types/errors';
+import type { CreateChannelType, CreateServerType } from '../types/schemas';
 
 const client = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
@@ -29,13 +36,13 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			if (errBody.status === 401) {
-				return err({ code: 'ERR_SETUP_UNAUTHORIZED', error: errBody.error });
+				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
-	async createServer(body: CreateServerType): Promise<Result<Server, ServerErrors>> {
+	async createServer(body: CreateServerType): Promise<Result<Server, CreateServerErrors>> {
 		try {
 			const formData = new FormData();
 			formData.append('name', body.name);
@@ -58,6 +65,70 @@ class Backend {
 			const errBody = await (error as StandardError).response.json();
 			if (errBody.status === 400) {
 				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async deleteServer(serverId: number): Promise<Result<void, DeleteServerErrors>> {
+		try {
+			const res = await client.delete(`authenticated/servers/${serverId}`);
+
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '' });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 401) {
+				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async createChannel(
+		serverId: number,
+		body: CreateChannelType
+	): Promise<Result<Channel, CreateChannelErrors>> {
+		try {
+			const res = await client.post(`authenticated/channels/${serverId}`, {
+				body: JSON.stringify(body)
+			});
+
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '' });
+			}
+
+			const data = (await res.json()) as Channel;
+
+			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 401) {
+				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async deleteChannel(
+		serverId: number,
+		channelId: number
+	): Promise<Result<void, DeleteChannelErrors>> {
+		try {
+			const res = await client.delete(`authenticated/channels/${serverId}/${channelId}`);
+
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '' });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 401) {
+				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}

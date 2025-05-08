@@ -12,8 +12,8 @@
 
 	let { id, channelId, serverId }: Props = $props();
 
-	const channel = $state(serversStore.getChannel(serverId, channelId));
-	const server = $state(serversStore.getServer(serverId));
+	const channel = $derived(serversStore.getChannel(serverId, channelId));
+	const server = $derived(serversStore.getServer(serverId));
 </script>
 
 <ChatWindowSkeleton {id} {channel} {server}>

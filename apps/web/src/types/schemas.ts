@@ -22,8 +22,15 @@ export const SignInSchema = v.object({
 });
 
 export const CreateServerSchema = v.object({
-	name: v.pipe(v.string(), v.nonEmpty('Please enter a name for your realm.')),
-	description: v.string(),
+	name: v.pipe(
+		v.string(),
+		v.maxLength(50, 'The length must be equal or below 50 characters.'),
+		v.nonEmpty('Please enter a name for your realm.')
+	),
+	description: v.pipe(
+		v.string(),
+		v.maxLength(280, 'The length must be equal or below 280 characters.')
+	),
 	avatar: v.pipe(
 		v.file('Please select an image file.'),
 		v.mimeType(['image/jpeg', 'image/png'], 'Please select a JPEG or PNG file.'),
@@ -39,3 +46,21 @@ export const CreateServerSchema = v.object({
 });
 
 export interface CreateServerType extends v.InferInput<typeof CreateServerSchema> {}
+
+const ChannelType = {
+	Textual: 'textual',
+	Voice: 'voice'
+} as const;
+
+export const CreateChannelSchema = v.object({
+	name: v.pipe(
+		v.string(),
+		v.maxLength(50, 'The length must be equal or below 50 characters.'),
+		v.nonEmpty('Please enter a name for this channel.')
+	),
+	type: v.pipe(v.enum(ChannelType)),
+	x: v.number(),
+	y: v.number()
+});
+
+export interface CreateChannelType extends v.InferInput<typeof CreateChannelSchema> {}

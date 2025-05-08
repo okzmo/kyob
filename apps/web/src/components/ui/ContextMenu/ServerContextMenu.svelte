@@ -5,6 +5,7 @@
 	import Bin from '../icons/Bin.svelte';
 	import { serversStore } from '../../../stores/servers.svelte';
 	import { userStore } from '../../../stores/user.svelte';
+	import { backend } from '../../../stores/backend.svelte';
 
 	interface Props {
 		targetId: number;
@@ -12,13 +13,19 @@
 
 	let { targetId }: Props = $props();
 
-	let isOwner = $state(serversStore.isOwner(userStore.user?.id || -1, targetId));
-	let isMember = $state(serversStore.isMember(targetId));
+	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || -1, targetId));
+	let isMember = $derived(serversStore.isMember(targetId));
 
-	$effect(() => {
-		isOwner = serversStore.isOwner(userStore.user?.id || -1, targetId);
-		isMember = serversStore.isMember(targetId);
-	});
+	async function deleteServer(targetId: number) {
+		const res = await backend.deleteServer(targetId);
+		if (res.isErr()) {
+			console.error(res.error);
+		}
+
+		if (res.isOk()) {
+			serversStore.removeServer(targetId);
+		}
+	}
 </script>
 
 <ContextMenu.Content
@@ -34,6 +41,7 @@
 		{#if isOwner}
 			<ContextMenu.Item
 				class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+				onclick={() => deleteServer(targetId)}
 			>
 				<p class="flex items-center">Delete server</p>
 				<Bin height={20} width={20} />

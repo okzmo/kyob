@@ -84,28 +84,12 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteChannel(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	channelIdParam := chi.URLParam(r, "channel_id")
+	serverIdParam := chi.URLParam(r, "server_id")
+	channelId, _ := strconv.Atoi(channelIdParam)
+	serverId, _ := strconv.Atoi(serverIdParam)
 
-	var body services.DeleteChannelBody
-
-	err = json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = services.DeleteChannel(r.Context(), id, &body)
+	err := services.DeleteChannel(r.Context(), serverId, channelId)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUnauthorizedChannelDeletion):

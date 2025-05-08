@@ -5,6 +5,8 @@
 	import { windows } from '../../stores/windows.svelte';
 	import { serversStore } from '../../stores/servers.svelte';
 	import { page } from '$app/state';
+	import CreateChannelModal from '../ui/ContextMenu/ChannelMapContextMenu/CreateChannelModal.svelte';
+	import { core } from '../../stores/core.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });
@@ -18,6 +20,7 @@
 	let dragStartTime = $state(0);
 
 	function handleMouseDown(e: MouseEvent) {
+		if (e.buttons !== 1 || !core.canDragMap) return;
 		dragging = true;
 		windows.activeWindow = null;
 		startPos = { x: e.clientX, y: e.clientY };
@@ -133,8 +136,7 @@
 	}
 
 	let { channels }: Props = $props();
-
-	let isMember = $state(serversStore.isMember(Number(page.params.server_id)));
+	let isMember = $derived(serversStore.isMember(Number(page.params.server_id)));
 </script>
 
 {#if !isMember}
@@ -158,8 +160,10 @@
 	{/each}
 {:else}
 	<h3
-		class="font-outfit text-main-600 fixed top-1/2 left-1/2 -translate-1/2 text-5xl font-bold uppercase"
+		class="font-outfit text-main-600 fixed top-1/2 left-1/2 -translate-1/2 text-5xl font-bold uppercase select-none"
 	>
 		No channels yet
 	</h3>
 {/if}
+
+<CreateChannelModal />

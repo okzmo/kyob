@@ -16,6 +16,7 @@
 	import { goto } from '$app/navigation';
 	import { userStore } from '../../stores/user.svelte';
 	import { serversStore } from '../../stores/servers.svelte';
+	import { core } from '../../stores/core.svelte';
 
 	let contextMenuTarget: string | undefined = $state();
 	let { children } = $props();
@@ -25,7 +26,7 @@
 		const res = await backend.getSetup();
 
 		if (res.isErr() && !inAuthPage) {
-			if (res.error.code === 'ERR_SETUP_UNAUTHORIZED') goto('/signin');
+			if (res.error.code === 'ERR_UNAUTHORIZED') goto('/signin');
 		}
 
 		if (res.isOk() && inAuthPage) {
@@ -52,6 +53,10 @@
 		if (!contextMenuTargets.includes(identifier)) {
 			e.preventDefault();
 		} else {
+			if (identifier === 'inServer') {
+				core.openCreateChannelModal.x = e.clientX;
+				core.openCreateChannelModal.y = e.clientY;
+			}
 			contextMenuTarget = targetId;
 		}
 	}

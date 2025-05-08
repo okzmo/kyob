@@ -1,6 +1,12 @@
 -- name: GetUser :one
 SELECT * FROM users WHERE email = $1 OR username = $2;
 
+-- name: GetUserFacts :many
+SELECT label, value FROM facts WHERE user_id = $1;
+
+-- name: GetUserLinks :many
+SELECT label, url FROM links WHERE user_id = $1;
+
 -- name: CreateUser :one
 INSERT INTO users (
   email, username, display_name, avatar, password

@@ -16,13 +16,18 @@ type serverWithChannels struct {
 }
 
 type UserResponse struct {
-	ID          int64       `json:"id"`
-	Email       string      `json:"email"`
-	Username    string      `json:"username"`
-	DisplayName string      `json:"display_name"`
-	Avatar      pgtype.Text `json:"avatar"`
-	About       pgtype.Text `json:"about"`
-	CreatedAt   time.Time   `json:"created_at"`
+	ID             int64                `json:"id"`
+	Email          string               `json:"email"`
+	Username       string               `json:"username"`
+	DisplayName    string               `json:"display_name"`
+	Avatar         pgtype.Text          `json:"avatar"`
+	Banner         pgtype.Text          `json:"banner"`
+	GradientTop    pgtype.Text          `json:"gradient_top"`
+	GradientBottom pgtype.Text          `json:"gradient_bottom"`
+	About          pgtype.Text          `json:"about"`
+	CreatedAt      time.Time            `json:"created_at"`
+	Links          []db.GetUserLinksRow `json:"links"`
+	Facts          []db.GetUserFactsRow `json:"facts"`
 }
 
 type SetupResponse struct {
@@ -34,14 +39,30 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	var res SetupResponse
 
 	ctxUser := ctx.Value("user").(db.User)
+
+	facts, err := db.Query.GetUserFacts(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	links, err := db.Query.GetUserLinks(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	res.User = UserResponse{
-		ID:          ctxUser.ID,
-		Email:       ctxUser.Email,
-		Username:    ctxUser.Username,
-		DisplayName: ctxUser.DisplayName,
-		Avatar:      ctxUser.Avatar,
-		About:       ctxUser.About,
-		CreatedAt:   ctxUser.CreatedAt,
+		ID:             ctxUser.ID,
+		Email:          ctxUser.Email,
+		Username:       ctxUser.Username,
+		DisplayName:    ctxUser.DisplayName,
+		Avatar:         ctxUser.Avatar,
+		Banner:         ctxUser.Banner,
+		GradientTop:    ctxUser.GradientTop,
+		GradientBottom: ctxUser.GradientBottom,
+		About:          ctxUser.About,
+		CreatedAt:      ctxUser.CreatedAt,
+		Facts:          facts,
+		Links:          links,
 	}
 
 	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
