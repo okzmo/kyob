@@ -59,6 +59,9 @@ func CreateMessage(ctx context.Context, serverId int, channelId int, body *Creat
 		return nil, err
 	}
 
+	// TODO: create a proto message and send it to the channel actor
+	// channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", serverId), strconv.Itoa(channelId))
+
 	return &MessageResponse{
 		ID:               message.ID,
 		Author:           user,

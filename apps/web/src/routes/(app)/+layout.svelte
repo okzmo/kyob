@@ -36,6 +36,7 @@
 		if (res.isOk()) {
 			userStore.user = res.value.user;
 			serversStore.setupServers(res.value.servers);
+			backend.setupWebsocket(res.value.user.id);
 		}
 	});
 

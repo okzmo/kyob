@@ -12,6 +12,8 @@ import (
 
 func Setup() {
 	handlers.SetupValidation()
+	handlers.SetupWebsocket()
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
@@ -28,6 +30,7 @@ func Setup() {
 		r.Post("/signup", handlers.SignUp)
 		r.Route("/authenticated", func(r chi.Router) {
 			r.Use(mid.Auth)
+			r.Get("/connect/{user_id}", handlers.WS)
 			r.Get("/setup", handlers.Setup)
 			r.Post("/server", handlers.CreateServer)
 			r.Patch("/servers/{id}", handlers.EditServer)

@@ -6,6 +6,7 @@ import (
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/joho/godotenv"
 	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/api/actors"
 	"github.com/okzmo/kyob/internal/api/router"
 )
 
@@ -21,5 +22,7 @@ func main() {
 	db := db.Setup()
 	defer db.Close()
 
+	actors.SetupServersEngine()
+	actors.SetupUsersEngine()
 	router.Setup()
 }

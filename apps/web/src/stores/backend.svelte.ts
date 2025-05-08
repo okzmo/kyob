@@ -20,6 +20,12 @@ const client = ky.create({
 });
 
 class Backend {
+	wsConn = $state<WebSocket>();
+
+	setupWebsocket(userId: number) {
+		this.wsConn = new WebSocket(`ws://localhost:3000/v1/authenticated/connect/${userId}`);
+	}
+
 	async getSetup(): Promise<Result<Setup, SetupErrors>> {
 		try {
 			const res = await client.get('authenticated/setup', {
