@@ -14,6 +14,7 @@ export interface Channel {
 	x: number;
 	y: number;
 	unread: boolean;
+	messages?: Message[];
 }
 
 export interface Server {
@@ -26,7 +27,7 @@ export interface Server {
 	x: number;
 	y: number;
 	is_member: boolean;
-	channels?: Channel[];
+	channels: Record<number, Channel>;
 }
 
 export interface User {
@@ -51,9 +52,20 @@ export interface User {
 
 export interface Setup {
 	user: User;
-	servers: Server[];
+	servers: Record<number, Server>;
 }
 
 export interface DefaultResponse {
 	message: string;
+}
+
+export interface Message {
+	id: number;
+	author: Partial<User>;
+	server_id: number;
+	channel_id: number;
+	content: any;
+	mentions_users: Partial<User>[];
+	mentions_channels: number[];
+	created_at: string;
 }

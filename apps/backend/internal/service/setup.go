@@ -11,8 +11,8 @@ import (
 type serverWithChannels struct {
 	db.Server
 	// Roles    []db.Role         `json:"roles"`
-	IsMember bool         `json:"is_member"`
-	Channels []db.Channel `json:"channels"`
+	IsMember bool                 `json:"is_member"`
+	Channels map[int64]db.Channel `json:"channels"`
 }
 
 type UserResponse struct {
@@ -31,8 +31,8 @@ type UserResponse struct {
 }
 
 type SetupResponse struct {
-	User    UserResponse         `json:"user"`
-	Servers []serverWithChannels `json:"servers"`
+	User    UserResponse                 `json:"user"`
+	Servers map[int64]serverWithChannels `json:"servers"`
 }
 
 func GetSetup(ctx context.Context) (*SetupResponse, error) {
@@ -64,6 +64,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		Facts:          facts,
 		Links:          links,
 	}
+	res.Servers = make(map[int64]serverWithChannels)
 
 	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
 	if err != nil {
@@ -79,18 +80,23 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 			return nil, err
 		}
 
+		channelMap := make(map[int64]db.Channel)
 		channels, err := db.Query.GetChannelsFromServer(ctx, server.ID)
 		if err != nil {
 			return nil, err
 		}
 
+		for _, channel := range channels {
+			channelMap[channel.ID] = channel
+		}
+
 		s := serverWithChannels{
 			server,
 			memberRes.RowsAffected() > 0,
-			[]db.Channel(channels),
+			channelMap,
 		}
 
-		res.Servers = append(res.Servers, s)
+		res.Servers[server.ID] = s
 	}
 
 	return &res, nil

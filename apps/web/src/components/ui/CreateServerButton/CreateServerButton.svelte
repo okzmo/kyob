@@ -35,10 +35,10 @@
 				if (res.isOk()) {
 					const server: Server = {
 						...res.value,
-						is_member: true
+						is_member: true,
+						channels: {}
 					};
-					if (Array.isArray(serversStore.servers)) serversStore.servers.push(server);
-					else serversStore.servers = [server];
+					serversStore.addServer(server);
 
 					modalOpen = false;
 

@@ -156,6 +156,7 @@ ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
 CREATE TABLE public.messages (
     id bigint NOT NULL,
     author_id bigint NOT NULL,
+    server_id bigint NOT NULL,
     channel_id bigint NOT NULL,
     content jsonb NOT NULL,
     mentions_users bigint[],
@@ -596,6 +597,14 @@ ALTER TABLE ONLY public.messages
 
 ALTER TABLE ONLY public.messages
     ADD CONSTRAINT messages_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
+
+
+--
+-- Name: messages messages_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.messages
+    ADD CONSTRAINT messages_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
 
 
 --

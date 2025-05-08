@@ -8,6 +8,11 @@ export interface SetupErrors {
 	error: string;
 }
 
+export interface MessagesErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+}
+
 export interface CreateServerErrors {
 	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNKNOWN';
 	error: string;
@@ -25,5 +30,10 @@ export interface CreateChannelErrors {
 
 export interface DeleteChannelErrors {
 	code: 'ERR_UNAUTHORIZED' | 'ERR_UNKNOWN';
+	error: string;
+}
+
+export interface CreateMessageErrors {
+	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNKNOWN';
 	error: string;
 }

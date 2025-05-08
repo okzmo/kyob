@@ -26,15 +26,16 @@ func (q *Queries) CheckChannelMembership(ctx context.Context, arg CheckChannelMe
 
 const createMessage = `-- name: CreateMessage :one
 INSERT INTO messages (
-  author_id, channel_id, content, mentions_users, mentions_channels, attached
+  author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, author_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at
+RETURNING id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at
 `
 
 type CreateMessageParams struct {
 	AuthorID         int64    `json:"author_id"`
+	ServerID         int64    `json:"server_id"`
 	ChannelID        int64    `json:"channel_id"`
 	Content          []byte   `json:"content"`
 	MentionsUsers    []int64  `json:"mentions_users"`
@@ -45,6 +46,7 @@ type CreateMessageParams struct {
 func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (Message, error) {
 	row := q.db.QueryRow(ctx, createMessage,
 		arg.AuthorID,
+		arg.ServerID,
 		arg.ChannelID,
 		arg.Content,
 		arg.MentionsUsers,
@@ -55,6 +57,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 	err := row.Scan(
 		&i.ID,
 		&i.AuthorID,
+		&i.ServerID,
 		&i.ChannelID,
 		&i.Content,
 		&i.MentionsUsers,
@@ -80,7 +83,7 @@ func (q *Queries) DeleteMessage(ctx context.Context, arg DeleteMessageParams) (p
 }
 
 const getMessage = `-- name: GetMessage :one
-SELECT id, author_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE id = $1
+SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE id = $1
 `
 
 func (q *Queries) GetMessage(ctx context.Context, id int64) (Message, error) {
@@ -89,6 +92,7 @@ func (q *Queries) GetMessage(ctx context.Context, id int64) (Message, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.AuthorID,
+		&i.ServerID,
 		&i.ChannelID,
 		&i.Content,
 		&i.MentionsUsers,
@@ -101,7 +105,7 @@ func (q *Queries) GetMessage(ctx context.Context, id int64) (Message, error) {
 }
 
 const getMessagesFromChannel = `-- name: GetMessagesFromChannel :many
-SELECT id, author_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE channel_id = $1
+SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE channel_id = $1
 `
 
 func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID int64) ([]Message, error) {
@@ -116,6 +120,7 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID int64) (
 		if err := rows.Scan(
 			&i.ID,
 			&i.AuthorID,
+			&i.ServerID,
 			&i.ChannelID,
 			&i.Content,
 			&i.MentionsUsers,

@@ -132,7 +132,7 @@
 	});
 
 	interface Props {
-		channels?: Channel[];
+		channels: Channel[];
 	}
 
 	let { channels }: Props = $props();
@@ -147,7 +147,7 @@
 	</button>
 {/if}
 
-{#if channels}
+{#if channels.length > 0}
 	{#each channels as channel (channel.id)}
 		<ChannelButton
 			id={channel.id}

@@ -35,7 +35,7 @@
 
 		if (res.isOk()) {
 			userStore.user = res.value.user;
-			serversStore.servers = res.value.servers;
+			serversStore.setupServers(res.value.servers);
 		}
 	});
 

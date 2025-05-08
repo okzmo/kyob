@@ -1,6 +1,9 @@
 -- name: GetUser :one
 SELECT * FROM users WHERE email = $1 OR username = $2;
 
+-- name: GetUserById :one
+SELECT * FROM users WHERE id = $1;
+
 -- name: GetUserFacts :many
 SELECT label, value FROM facts WHERE user_id = $1;
 

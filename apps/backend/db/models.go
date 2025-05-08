@@ -142,6 +142,7 @@ type Link struct {
 type Message struct {
 	ID               int64     `json:"id"`
 	AuthorID         int64     `json:"author_id"`
+	ServerID         int64     `json:"server_id"`
 	ChannelID        int64     `json:"channel_id"`
 	Content          []byte    `json:"content"`
 	MentionsUsers    []int64   `json:"mentions_users"`

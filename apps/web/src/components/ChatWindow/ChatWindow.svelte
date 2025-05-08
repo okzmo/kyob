@@ -10,22 +10,41 @@
 		serverId: number;
 	}
 
+	let scrollContent = $state<HTMLElement | null>();
 	let { id, channelId, serverId }: Props = $props();
 
-	const channel = $derived(serversStore.getChannel(serverId, channelId));
 	const server = $derived(serversStore.getServer(serverId));
+	const channel = $derived(serversStore.getChannel(serverId, channelId));
+	const messages = $derived(serversStore.getMessages(serverId, channelId));
+
+	$effect(() => {
+		messages.then(() => {
+			if (scrollContent) scrollContent.scrollTo(0, scrollContent.scrollHeight);
+		});
+	});
 </script>
 
 <ChatWindowSkeleton {id} {channel} {server}>
 	<div
-		class={[
-			'flex w-full flex-col-reverse gap-y-2 overflow-auto py-3',
-			server?.is_member ? 'h-[calc(100%-3.75rem)]' : 'h-full'
-		]}
+		bind:this={scrollContent}
+		class="flex h-full w-full flex-col justify-end gap-y-2 overflow-auto py-3"
 	>
-		{#each { length: 8 }, message}
-			<ChatWindowMessage id={message} displayName="Okzmo" username="okzmo" time="Today at 2:30am" />
-		{/each}
+		{#await messages then allMessages}
+			{#if allMessages}
+				{#each allMessages as message (message.id)}
+					<ChatWindowMessage
+						id={message.id}
+						avatar={message.author.avatar || ''}
+						content={message.content}
+						displayName={message.author.display_name || 'Name'}
+						username={message.author.username || 'username'}
+						time={message.created_at}
+					/>
+				{/each}
+			{:else}
+				no messages
+			{/if}
+		{/await}
 	</div>
 	{#if server?.is_member}
 		<ChatWindowInput {channel} {server} />

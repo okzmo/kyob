@@ -58,3 +58,11 @@ body {
 	color: var(--ui-accent-select-fg);
 	background: var(--ui-accent-select-bg);
 }
+
+.tiptap p.is-editor-empty:first-child::before {
+	color: var(--ui-main-600);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
+}

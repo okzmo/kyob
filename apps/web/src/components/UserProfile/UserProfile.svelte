@@ -41,7 +41,7 @@
 					/>
 				</figure>
 			{:else}
-				<div class="bg-main-800 h-[10rem] w-full"></div>
+				<div class="bg-main-900 h-[10rem] w-full"></div>
 			{/if}
 
 			<figure

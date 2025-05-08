@@ -1,54 +1,74 @@
-import type { Channel, Server } from '../types/types';
+import type { Channel, Message, Server } from '../types/types';
+import { backend } from './backend.svelte';
 
 class Servers {
-	servers = $state<Server[]>([]);
+	servers = $state<Record<number, Server>>({});
 
-	getServer(id: number) {
-		return this.servers.find((s) => s.id === id);
-	}
-
-	getChannels(id: number) {
-		return this.servers.find((s) => s.id === id)?.channels;
-	}
-
-	getChannel(serverId: number, channelId: number) {
-		const channels = this.getChannels(serverId);
-		return channels?.find((c) => c.id === channelId);
+	setupServers(servers: Record<number, Server>) {
+		this.servers = servers;
 	}
 
 	isOwner(userId: number, serverId: number) {
-		return Boolean(this.servers.find((s) => s.id === serverId && s.owner_id === userId));
+		return this.servers[serverId].owner_id === userId;
 	}
 
 	isMember(serverId: number) {
-		return Boolean(this.servers.find((s) => s.id === serverId && s.is_member));
+		return this.servers[serverId]?.is_member;
+	}
+
+	getServers() {
+		return Object.values(this.servers);
+	}
+
+	getServer(id: number) {
+		return this.servers[id];
+	}
+
+	getChannels(id: number) {
+		return Object.values(this.servers[id]?.channels || {});
+	}
+
+	getChannel(serverId: number, channelId: number) {
+		return this.servers[serverId].channels[channelId];
+	}
+
+	async getMessages(serverId: number, channelId: number) {
+		const messages = this.servers[serverId]?.channels[channelId]?.messages;
+
+		if (!messages || messages.length <= 0) {
+			const res = await backend.getMessages(channelId);
+			if (res.isOk()) {
+				this.servers[serverId].channels[channelId].messages = res.value;
+				return this.servers[serverId].channels[channelId].messages;
+			}
+		}
+
+		return messages;
+	}
+
+	addServer(server: Server) {
+		this.servers[server.id] = server;
 	}
 
 	addChannel(serverId: number, channel: Channel) {
-		const serverIdx = this.servers.findIndex((s) => s.id === serverId);
-		if (Array.isArray(this.servers[serverIdx].channels)) {
-			this.servers[serverIdx].channels.push(channel);
-		} else {
-			this.servers[serverIdx].channels = [channel];
-		}
+		if (!this.servers[serverId]) return;
+		this.servers[serverId].channels[channel.id] = channel;
 	}
 
 	removeServer(serverId: number) {
-		for (let i = 0; i < this.servers.length; ++i) {
-			if (this.servers[i].id === serverId) {
-				this.servers.splice(i, 1);
-			}
-		}
+		delete this.servers[serverId];
 	}
 
 	removeChannel(serverId: number, channelId: number) {
-		const serverIdx = this.servers.findIndex((s) => s.id === serverId);
-		if (!this.servers[serverIdx].channels) return;
+		delete this.servers[serverId].channels[channelId];
+	}
 
-		for (let i = 0; i < this.servers[serverIdx].channels.length; ++i) {
-			if (this.servers[serverIdx].channels[i].id === channelId) {
-				this.servers[serverIdx].channels.splice(i, 1);
-			}
+	addMessage(serverId: number, message: Message) {
+		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
+		if (Array.isArray(messages)) {
+			this.servers[serverId].channels[message.channel_id].messages!.push(message);
+		} else {
+			this.servers[serverId].channels[message.channel_id].messages = [message];
 		}
 	}
 }

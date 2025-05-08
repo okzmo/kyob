@@ -12,16 +12,14 @@ import (
 )
 
 func CreateMessage(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "channel_id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	channelIdParam := chi.URLParam(r, "channel_id")
+	serverIdParam := chi.URLParam(r, "server_id")
+	channelId, _ := strconv.Atoi(channelIdParam)
+	serverId, _ := strconv.Atoi(serverIdParam)
 
 	var body services.CreateMessageBody
 
-	err = json.NewDecoder(r.Body).Decode(&body)
+	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -33,7 +31,7 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.CreateMessage(r.Context(), id, &body)
+	message, err := services.CreateMessage(r.Context(), serverId, channelId, &body)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUnauthorizedMessageCreation):
@@ -44,7 +42,7 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, message)
 }
 
 func EditMessage(w http.ResponseWriter, r *http.Request) {
@@ -106,4 +104,14 @@ func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMessages(w http.ResponseWriter, r *http.Request) {
+	idParam := chi.URLParam(r, "channel_id")
+	channelId, _ := strconv.Atoi(idParam)
+
+	messages, err := services.GetMessages(r.Context(), channelId)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusContinue, messages)
 }

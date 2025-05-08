@@ -92,6 +92,30 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 	return i, err
 }
 
+const getUserById = `-- name: GetUserById :one
+SELECT id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at FROM users WHERE id = $1
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.Password,
+		&i.DisplayName,
+		&i.Avatar,
+		&i.Banner,
+		&i.About,
+		&i.GradientTop,
+		&i.GradientBottom,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserFacts = `-- name: GetUserFacts :many
 SELECT label, value FROM facts WHERE user_id = $1
 `
