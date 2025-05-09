@@ -1,7 +1,61 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 package types;
 option go_package = "github.com/okzmo/nyo/proto";
 
-message Setup {
-  uint32 id;
+message WSMessage {
+  string type = 1;
+  oneof content {
+    BroadcastChatMessage chat_message = 2;
+  }
 }
+
+message UserLinksRow {
+	int32 id = 1;
+	string label = 2;
+	string url = 3;
+}
+
+message UserFactsRow {
+	int32 id = 1;
+	string label = 2;
+	string value = 3;
+}
+
+message User {
+  int32 id = 1;
+  string email = 2;
+  string username = 3;
+  string display_name = 4;
+  optional string avatar = 5;
+  optional string banner = 6;
+  optional string gradient_top = 7;
+  optional string gradient_bottom = 8;
+  optional string about = 9;
+  google.protobuf.Timestamp created_at = 10;
+  repeated UserLinksRow links = 11;
+  repeated UserFactsRow facts = 12;
+}
+
+message BroadcastChatMessage {
+  int32 id = 2;
+  User author = 3;
+  int32 server_id = 4;
+  int32 channel_id = 5;
+  bytes content = 6;
+  repeated int32 mentions_users = 7;
+  repeated int32 mentions_channels = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+message IncomingChatMessage {
+	User author = 1;
+	int32 server_id = 2;
+	int32 channel_id = 3;
+	bytes content = 4;
+	repeated int32 mentions_users = 5;
+	repeated int32 mentions_channels = 6;
+}
+
+message ConnectToChannel {}
+message DisconnectFromChannel {}

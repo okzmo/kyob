@@ -8,7 +8,6 @@
 	import { backend } from '../../stores/backend.svelte';
 	import type { Channel, Server } from '../../types/types';
 	import { userStore } from '../../stores/user.svelte';
-	import { serversStore } from '../../stores/servers.svelte';
 
 	interface Props {
 		channel: Channel;
@@ -30,10 +29,6 @@
 		const res = await backend.sendMessage(server.id, channel.id, payload);
 		if (res.isErr()) {
 			console.log(`${res.error.code}: ${res.error.error}`);
-		}
-
-		if (res.isOk()) {
-			serversStore.addMessage(server.id, res.value);
 		}
 
 		editor.commands.clearContent();

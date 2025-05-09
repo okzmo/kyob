@@ -9,6 +9,7 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,26 +22,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Disconnect struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+type WSMessage struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Type  string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// Types that are valid to be assigned to Content:
+	//
+	//	*WSMessage_ChatMessage
+	Content       isWSMessage_Content `protobuf_oneof:"content"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Disconnect) Reset() {
-	*x = Disconnect{}
+func (x *WSMessage) Reset() {
+	*x = WSMessage{}
 	mi := &file_types_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Disconnect) String() string {
+func (x *WSMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Disconnect) ProtoMessage() {}
+func (*WSMessage) ProtoMessage() {}
 
-func (x *Disconnect) ProtoReflect() protoreflect.Message {
+func (x *WSMessage) ProtoReflect() protoreflect.Message {
 	mi := &file_types_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -52,32 +58,67 @@ func (x *Disconnect) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Disconnect.ProtoReflect.Descriptor instead.
-func (*Disconnect) Descriptor() ([]byte, []int) {
+// Deprecated: Use WSMessage.ProtoReflect.Descriptor instead.
+func (*WSMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{0}
 }
 
-type Connect struct {
+func (x *WSMessage) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *WSMessage) GetContent() isWSMessage_Content {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *WSMessage) GetChatMessage() *BroadcastChatMessage {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_ChatMessage); ok {
+			return x.ChatMessage
+		}
+	}
+	return nil
+}
+
+type isWSMessage_Content interface {
+	isWSMessage_Content()
+}
+
+type WSMessage_ChatMessage struct {
+	ChatMessage *BroadcastChatMessage `protobuf:"bytes,2,opt,name=chat_message,json=chatMessage,proto3,oneof"`
+}
+
+func (*WSMessage_ChatMessage) isWSMessage_Content() {}
+
+type UserLinksRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	Url           string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Connect) Reset() {
-	*x = Connect{}
+func (x *UserLinksRow) Reset() {
+	*x = UserLinksRow{}
 	mi := &file_types_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Connect) String() string {
+func (x *UserLinksRow) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Connect) ProtoMessage() {}
+func (*UserLinksRow) ProtoMessage() {}
 
-func (x *Connect) ProtoReflect() protoreflect.Message {
+func (x *UserLinksRow) ProtoReflect() protoreflect.Message {
 	mi := &file_types_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -89,40 +130,55 @@ func (x *Connect) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Connect.ProtoReflect.Descriptor instead.
-func (*Connect) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserLinksRow.ProtoReflect.Descriptor instead.
+func (*UserLinksRow) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Connect) GetUsername() string {
+func (x *UserLinksRow) GetId() int32 {
 	if x != nil {
-		return x.Username
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserLinksRow) GetLabel() string {
+	if x != nil {
+		return x.Label
 	}
 	return ""
 }
 
-type Message struct {
+func (x *UserLinksRow) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type UserFactsRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Message) Reset() {
-	*x = Message{}
+func (x *UserFactsRow) Reset() {
+	*x = UserFactsRow{}
 	mi := &file_types_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Message) String() string {
+func (x *UserFactsRow) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Message) ProtoMessage() {}
+func (*UserFactsRow) ProtoMessage() {}
 
-func (x *Message) ProtoReflect() protoreflect.Message {
+func (x *UserFactsRow) ProtoReflect() protoreflect.Message {
 	mi := &file_types_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -134,37 +190,478 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Message.ProtoReflect.Descriptor instead.
-func (*Message) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserFactsRow.ProtoReflect.Descriptor instead.
+func (*UserFactsRow) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Message) GetUsername() string {
+func (x *UserFactsRow) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserFactsRow) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *UserFactsRow) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type User struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email          string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Username       string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+	DisplayName    string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Avatar         *string                `protobuf:"bytes,5,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	Banner         *string                `protobuf:"bytes,6,opt,name=banner,proto3,oneof" json:"banner,omitempty"`
+	GradientTop    *string                `protobuf:"bytes,7,opt,name=gradient_top,json=gradientTop,proto3,oneof" json:"gradient_top,omitempty"`
+	GradientBottom *string                `protobuf:"bytes,8,opt,name=gradient_bottom,json=gradientBottom,proto3,oneof" json:"gradient_bottom,omitempty"`
+	About          *string                `protobuf:"bytes,9,opt,name=about,proto3,oneof" json:"about,omitempty"`
+	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Links          []*UserLinksRow        `protobuf:"bytes,11,rep,name=links,proto3" json:"links,omitempty"`
+	Facts          []*UserFactsRow        `protobuf:"bytes,12,rep,name=facts,proto3" json:"facts,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *User) Reset() {
+	*x = User{}
+	mi := &file_types_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *User) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*User) ProtoMessage() {}
+
+func (x *User) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use User.ProtoReflect.Descriptor instead.
+func (*User) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *User) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *User) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *User) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *Message) GetMsg() string {
+func (x *User) GetDisplayName() string {
 	if x != nil {
-		return x.Msg
+		return x.DisplayName
 	}
 	return ""
+}
+
+func (x *User) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
+}
+
+func (x *User) GetBanner() string {
+	if x != nil && x.Banner != nil {
+		return *x.Banner
+	}
+	return ""
+}
+
+func (x *User) GetGradientTop() string {
+	if x != nil && x.GradientTop != nil {
+		return *x.GradientTop
+	}
+	return ""
+}
+
+func (x *User) GetGradientBottom() string {
+	if x != nil && x.GradientBottom != nil {
+		return *x.GradientBottom
+	}
+	return ""
+}
+
+func (x *User) GetAbout() string {
+	if x != nil && x.About != nil {
+		return *x.About
+	}
+	return ""
+}
+
+func (x *User) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *User) GetLinks() []*UserLinksRow {
+	if x != nil {
+		return x.Links
+	}
+	return nil
+}
+
+func (x *User) GetFacts() []*UserFactsRow {
+	if x != nil {
+		return x.Facts
+	}
+	return nil
+}
+
+type BroadcastChatMessage struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int32                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Author           *User                  `protobuf:"bytes,3,opt,name=author,proto3" json:"author,omitempty"`
+	ServerId         int32                  `protobuf:"varint,4,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        int32                  `protobuf:"varint,5,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	Content          []byte                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+	MentionsUsers    []int32                `protobuf:"varint,7,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []int32                `protobuf:"varint,8,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *BroadcastChatMessage) Reset() {
+	*x = BroadcastChatMessage{}
+	mi := &file_types_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BroadcastChatMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BroadcastChatMessage) ProtoMessage() {}
+
+func (x *BroadcastChatMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BroadcastChatMessage.ProtoReflect.Descriptor instead.
+func (*BroadcastChatMessage) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *BroadcastChatMessage) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *BroadcastChatMessage) GetAuthor() *User {
+	if x != nil {
+		return x.Author
+	}
+	return nil
+}
+
+func (x *BroadcastChatMessage) GetServerId() int32 {
+	if x != nil {
+		return x.ServerId
+	}
+	return 0
+}
+
+func (x *BroadcastChatMessage) GetChannelId() int32 {
+	if x != nil {
+		return x.ChannelId
+	}
+	return 0
+}
+
+func (x *BroadcastChatMessage) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *BroadcastChatMessage) GetMentionsUsers() []int32 {
+	if x != nil {
+		return x.MentionsUsers
+	}
+	return nil
+}
+
+func (x *BroadcastChatMessage) GetMentionsChannels() []int32 {
+	if x != nil {
+		return x.MentionsChannels
+	}
+	return nil
+}
+
+func (x *BroadcastChatMessage) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type IncomingChatMessage struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Author           *User                  `protobuf:"bytes,1,opt,name=author,proto3" json:"author,omitempty"`
+	ServerId         int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	MentionsUsers    []int32                `protobuf:"varint,5,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []int32                `protobuf:"varint,6,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *IncomingChatMessage) Reset() {
+	*x = IncomingChatMessage{}
+	mi := &file_types_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IncomingChatMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IncomingChatMessage) ProtoMessage() {}
+
+func (x *IncomingChatMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IncomingChatMessage.ProtoReflect.Descriptor instead.
+func (*IncomingChatMessage) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *IncomingChatMessage) GetAuthor() *User {
+	if x != nil {
+		return x.Author
+	}
+	return nil
+}
+
+func (x *IncomingChatMessage) GetServerId() int32 {
+	if x != nil {
+		return x.ServerId
+	}
+	return 0
+}
+
+func (x *IncomingChatMessage) GetChannelId() int32 {
+	if x != nil {
+		return x.ChannelId
+	}
+	return 0
+}
+
+func (x *IncomingChatMessage) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *IncomingChatMessage) GetMentionsUsers() []int32 {
+	if x != nil {
+		return x.MentionsUsers
+	}
+	return nil
+}
+
+func (x *IncomingChatMessage) GetMentionsChannels() []int32 {
+	if x != nil {
+		return x.MentionsChannels
+	}
+	return nil
+}
+
+type ConnectToChannel struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConnectToChannel) Reset() {
+	*x = ConnectToChannel{}
+	mi := &file_types_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConnectToChannel) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConnectToChannel) ProtoMessage() {}
+
+func (x *ConnectToChannel) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConnectToChannel.ProtoReflect.Descriptor instead.
+func (*ConnectToChannel) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{6}
+}
+
+type DisconnectFromChannel struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DisconnectFromChannel) Reset() {
+	*x = DisconnectFromChannel{}
+	mi := &file_types_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DisconnectFromChannel) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DisconnectFromChannel) ProtoMessage() {}
+
+func (x *DisconnectFromChannel) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DisconnectFromChannel.ProtoReflect.Descriptor instead.
+func (*DisconnectFromChannel) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{7}
 }
 
 var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\vtypes.proto\x12\x05types\"\f\n" +
+	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
+	"\tWSMessage\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12@\n" +
+	"\fchat_message\x18\x02 \x01(\v2\x1b.types.BroadcastChatMessageH\x00R\vchatMessageB\t\n" +
+	"\acontent\"F\n" +
+	"\fUserLinksRow\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x05label\x18\x02 \x01(\tR\x05label\x12\x10\n" +
+	"\x03url\x18\x03 \x01(\tR\x03url\"J\n" +
+	"\fUserFactsRow\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x05label\x18\x02 \x01(\tR\x05label\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\"\xec\x03\n" +
+	"\x04User\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\busername\x18\x03 \x01(\tR\busername\x12!\n" +
+	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x1b\n" +
+	"\x06avatar\x18\x05 \x01(\tH\x00R\x06avatar\x88\x01\x01\x12\x1b\n" +
+	"\x06banner\x18\x06 \x01(\tH\x01R\x06banner\x88\x01\x01\x12&\n" +
+	"\fgradient_top\x18\a \x01(\tH\x02R\vgradientTop\x88\x01\x01\x12,\n" +
+	"\x0fgradient_bottom\x18\b \x01(\tH\x03R\x0egradientBottom\x88\x01\x01\x12\x19\n" +
+	"\x05about\x18\t \x01(\tH\x04R\x05about\x88\x01\x01\x129\n" +
 	"\n" +
-	"Disconnect\"%\n" +
-	"\aConnect\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\"7\n" +
-	"\aMessage\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msgB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
+	"\x05links\x18\v \x03(\v2\x13.types.UserLinksRowR\x05links\x12)\n" +
+	"\x05facts\x18\f \x03(\v2\x13.types.UserFactsRowR\x05factsB\t\n" +
+	"\a_avatarB\t\n" +
+	"\a_bannerB\x0f\n" +
+	"\r_gradient_topB\x12\n" +
+	"\x10_gradient_bottomB\b\n" +
+	"\x06_about\"\xb0\x02\n" +
+	"\x14BroadcastChatMessage\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x05R\x02id\x12#\n" +
+	"\x06author\x18\x03 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
+	"\tserver_id\x18\x04 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x05 \x01(\x05R\tchannelId\x12\x18\n" +
+	"\acontent\x18\x06 \x01(\fR\acontent\x12%\n" +
+	"\x0ementions_users\x18\a \x03(\x05R\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\b \x03(\x05R\x10mentionsChannels\x129\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xe4\x01\n" +
+	"\x13IncomingChatMessage\x12#\n" +
+	"\x06author\x18\x01 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x03 \x01(\x05R\tchannelId\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
+	"\x0ementions_users\x18\x05 \x03(\x05R\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\x06 \x03(\x05R\x10mentionsChannels\"\x12\n" +
+	"\x10ConnectToChannel\"\x17\n" +
+	"\x15DisconnectFromChannelB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
 
 var (
 	file_types_proto_rawDescOnce sync.Once
@@ -178,18 +675,31 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_types_proto_goTypes = []any{
-	(*Disconnect)(nil), // 0: types.Disconnect
-	(*Connect)(nil),    // 1: types.Connect
-	(*Message)(nil),    // 2: types.Message
+	(*WSMessage)(nil),             // 0: types.WSMessage
+	(*UserLinksRow)(nil),          // 1: types.UserLinksRow
+	(*UserFactsRow)(nil),          // 2: types.UserFactsRow
+	(*User)(nil),                  // 3: types.User
+	(*BroadcastChatMessage)(nil),  // 4: types.BroadcastChatMessage
+	(*IncomingChatMessage)(nil),   // 5: types.IncomingChatMessage
+	(*ConnectToChannel)(nil),      // 6: types.ConnectToChannel
+	(*DisconnectFromChannel)(nil), // 7: types.DisconnectFromChannel
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	4, // 0: types.WSMessage.chat_message:type_name -> types.BroadcastChatMessage
+	8, // 1: types.User.created_at:type_name -> google.protobuf.Timestamp
+	1, // 2: types.User.links:type_name -> types.UserLinksRow
+	2, // 3: types.User.facts:type_name -> types.UserFactsRow
+	3, // 4: types.BroadcastChatMessage.author:type_name -> types.User
+	8, // 5: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	3, // 6: types.IncomingChatMessage.author:type_name -> types.User
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -197,13 +707,17 @@ func file_types_proto_init() {
 	if File_types_proto != nil {
 		return
 	}
+	file_types_proto_msgTypes[0].OneofWrappers = []any{
+		(*WSMessage_ChatMessage)(nil),
+	}
+	file_types_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

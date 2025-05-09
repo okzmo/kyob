@@ -111,7 +111,10 @@
 	<ChatWindowTopBar {id} {server} {channel} />
 	<div
 		style="width: {width}px; height: {height}px"
-		class="bg-main-900 border-main-800 relative flex items-end overflow-hidden rounded-b-[14px] border-r border-b border-l pb-14"
+		class={[
+			'bg-main-900 border-main-800 relative flex items-end overflow-hidden rounded-b-[14px] border-r border-b border-l',
+			server?.is_member && 'pb-14'
+		]}
 	>
 		{@render children()}
 		<div

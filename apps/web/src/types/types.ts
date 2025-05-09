@@ -65,7 +65,9 @@ export interface Message {
 	server_id: number;
 	channel_id: number;
 	content: any;
-	mentions_users: Partial<User>[];
+	mentions_users: number[];
 	mentions_channels: number[];
 	created_at: string;
 }
+
+export type ActorMessageTypes = 'channel:message';

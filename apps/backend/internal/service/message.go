@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/okzmo/kyob/db"
+	proto "github.com/okzmo/kyob/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var (
@@ -36,19 +38,17 @@ type MessageResponse struct {
 	CreatedAt        time.Time       `json:"created_at"`
 }
 
-func CreateMessage(ctx context.Context, serverId int, channelId int, body *CreateMessageBody) (*MessageResponse, error) {
-	user := ctx.Value("user").(db.User)
-
+func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channelId int32, body *CreateMessageBody) (*proto.BroadcastChatMessage, error) {
 	res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
 		ID:     int64(channelId),
-		UserID: user.ID,
+		UserID: int64(user.Id),
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, ErrUnauthorizedMessageCreation
 	}
 
-	message, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
-		AuthorID:         user.ID,
+	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
+		AuthorID:         int64(user.Id),
 		ServerID:         int64(serverId),
 		ChannelID:        int64(channelId),
 		Content:          body.Content,
@@ -59,19 +59,16 @@ func CreateMessage(ctx context.Context, serverId int, channelId int, body *Creat
 		return nil, err
 	}
 
-	// TODO: create a proto message and send it to the channel actor
-	// channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", serverId), strconv.Itoa(channelId))
+	message := &proto.BroadcastChatMessage{
+		Id:        int32(m.ID),
+		Author:    user,
+		ServerId:  int32(m.ServerID),
+		ChannelId: int32(m.ChannelID),
+		Content:   m.Content,
+		CreatedAt: timestamppb.New(m.CreatedAt),
+	}
 
-	return &MessageResponse{
-		ID:               message.ID,
-		Author:           user,
-		ServerId:         int64(serverId),
-		ChannelId:        int64(channelId),
-		Content:          message.Content,
-		MentionsUsers:    message.MentionsUsers,
-		MentionsChannels: message.MentionsChannels,
-		CreatedAt:        message.CreatedAt,
-	}, nil
+	return message, nil
 }
 
 func EditMessage(ctx context.Context, messageId int, body *EditMessageBody) error {
