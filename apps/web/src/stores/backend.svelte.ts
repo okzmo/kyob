@@ -1,6 +1,6 @@
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { ActorMessageTypes, Channel, Message, Server, Setup, User } from '../types/types';
+import type { ActorMessageTypes, Channel, Message, Server, Setup } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	CreateChannelErrors,

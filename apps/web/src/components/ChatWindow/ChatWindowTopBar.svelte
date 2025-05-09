@@ -9,7 +9,7 @@
 	id={`window-top-bar-${id}`}
 	class="bg-main-800 border-main-600 flex h-[2.375rem] w-full items-center justify-between rounded-t-[14px] border px-2.5"
 >
-	<div class="text-main-400 flex items-center gap-x-2 text-sm">
+	<div class="text-main-400 flex items-center gap-x-2 text-sm select-none">
 		{#if server}
 			<div class="flex items-center gap-x-1.5">
 				<img

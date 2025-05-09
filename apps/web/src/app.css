@@ -17,6 +17,7 @@
 	--ui-main-600: #4b4b58;
 	--ui-main-700: #3b3b45;
 	--ui-main-800: #212126;
+	--ui-main-850: #18181b;
 	--ui-main-900: #121215;
 }
 
@@ -37,6 +38,7 @@
 	--color-main-500: var(--ui-main-500);
 	--color-main-600: var(--ui-main-600);
 	--color-main-800: var(--ui-main-800);
+	--color-main-850: var(--ui-main-850);
 	--color-main-900: var(--ui-main-900);
 }
 

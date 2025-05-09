@@ -55,8 +55,6 @@
 						x: targetX,
 						y: targetY
 					};
-
-					core.activateMapDragging();
 				}
 			}
 		}
@@ -88,18 +86,20 @@
 
 <Dialog.Root
 	onOpenChange={(s) => {
-		if (s) core.deactivateMapDragging();
+		if (s) {
+			core.deactivateMapDragging();
+		} else {
+			core.activateMapDragging();
+		}
 		modalOpen = s;
 	}}
 	open={modalOpen}
 >
 	<Dialog.Trigger
-		class="create-button-server fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-gradient-to-r from-indigo-400 to-rose-500 py-1.5 pr-4 pl-3.5 hover:cursor-pointer"
+		class="bg-accent-100/15 border-accent-100 hocus:bg-accent-100/30 fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-xl border py-1.5 pr-4 pl-3.5 transition-colors duration-100 hover:cursor-pointer"
 	>
-		<span
-			class="flex items-center gap-x-2 bg-gradient-to-r from-indigo-400 to-rose-500 bg-clip-text text-transparent"
-		>
-			<PlusSimple height={16} width={16} class="text-indigo-400" />
+		<span class="text-accent-100 flex items-center gap-x-2">
+			<PlusSimple height={16} width={16} class="text-accent-100" />
 			Create a realm
 		</span>
 	</Dialog.Trigger>

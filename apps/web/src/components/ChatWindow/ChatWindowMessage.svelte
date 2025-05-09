@@ -17,9 +17,9 @@
 	id="message-{id}"
 	class="hocus:bg-main-800/50 flex gap-x-3 px-4 py-2 transition-colors duration-100"
 >
-	<img src={avatar} alt="{username}'s avatar" class="h-[3rem] w-[3rem] rounded-full" />
+	<img src={avatar} alt="{username}'s avatar" class="h-[3rem] w-[3rem] rounded-full select-none" />
 	<div class="pt-1">
-		<div class="flex items-baseline gap-x-3">
+		<div class="flex items-baseline gap-x-3 select-none">
 			<p class="text-sm font-semibold">{displayName}</p>
 			<time class="text-main-600 text-xs">{time}</time>
 		</div>
