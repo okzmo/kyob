@@ -7,9 +7,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/anthdm/hollywood/actor"
 	"github.com/go-chi/chi/v5"
+	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
+	proto "github.com/okzmo/kyob/types"
 )
 
 func CreateServer(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +57,14 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	user := r.Context().Value("user").(db.User)
+	serverPID := actors.ServersEngine.Spawn(actors.NewServer, "server", actor.WithID(strconv.Itoa(int(server.ID))))
+	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
+	actors.UsersEngine.Send(userPID, &proto.NewServerCreated{
+		ServerPID: serverPID.ID,
+		Address:   serverPID.Address,
+	})
 
 	utils.RespondWithJSON(w, http.StatusCreated, server)
 }

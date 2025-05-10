@@ -89,5 +89,9 @@ message NewChannelCreated {
 	repeated int32 users = 1;
 	repeated int32 roles = 2;
 }
+message NewServerCreated {
+	string serverPID = 1;
+	string Address = 2;
+}
 message Connect {}
 message Disconnect {}

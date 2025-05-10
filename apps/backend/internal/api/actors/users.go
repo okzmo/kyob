@@ -68,7 +68,10 @@ func (u *user) Receive(ctx *actor.Context) {
 			},
 		}
 
-		ServersEngine.SendWithSender(actor.NewPID(msg.Address, msg.ChannelPid), &protoTypes.Connect{}, ctx.PID())
+		channelPid := actor.NewPID(msg.Address, msg.ChannelPid)
+		ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{}, ctx.PID())
+		u.channels = append(u.channels, channelPid)
+
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	case *protoTypes.BroadcastChatMessage:
@@ -80,6 +83,10 @@ func (u *user) Receive(ctx *actor.Context) {
 
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	case *protoTypes.NewServerCreated:
+		serverPid := actor.NewPID(msg.Address, msg.ServerPID)
+		u.servers[msg.Address] = serverPid
+		ServersEngine.SendWithSender(serverPid, &protoTypes.Connect{}, ctx.PID())
 	}
 }
 
