@@ -1,6 +1,6 @@
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { ActorMessageTypes, Channel, Message, Server, Setup } from '../types/types';
+import type { Channel, ChannelTypes, Message, Server, Setup } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	CreateChannelErrors,
@@ -46,8 +46,8 @@ class Backend {
 			const wsMess = fromBinary(WSMessageSchema, uint8Array, {
 				readUnknownFields: false
 			});
-			switch (wsMess.type as ActorMessageTypes) {
-				case 'channel:message':
+			switch (wsMess.content.case) {
+				case 'chatMessage':
 					{
 						if (!wsMess.content.value) return;
 						const contentStr = new TextDecoder().decode(wsMess.content.value?.content);
@@ -74,6 +74,21 @@ class Backend {
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
 						serversStore.addMessage(Number(wsMess.content.value?.serverId), message);
+					}
+					break;
+				case 'channelCreation':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						const channel: Channel = {
+							id: value.id,
+							name: value.name,
+							type: value.type as ChannelTypes,
+							unread: false,
+							x: value.x,
+							y: value.y
+						};
+						serversStore.addChannel(value.serverId, channel);
 					}
 					break;
 			}
@@ -160,7 +175,7 @@ class Backend {
 	async createChannel(
 		serverId: number,
 		body: CreateChannelType
-	): Promise<Result<Channel, CreateChannelErrors>> {
+	): Promise<Result<void, CreateChannelErrors>> {
 		try {
 			const res = await client.post(`authenticated/channels/${serverId}`, {
 				body: JSON.stringify(body)
@@ -170,9 +185,7 @@ class Backend {
 				return err({ code: 'ERR_UNKNOWN', error: '' });
 			}
 
-			const data = (await res.json()) as Channel;
-
-			return ok(data);
+			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			if (errBody.status === 401) {

@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { ChannelTypes } from './types';
 
 export const SignUpSchema = v.object({
 	email: v.pipe(
@@ -47,18 +48,13 @@ export const CreateServerSchema = v.object({
 
 export interface CreateServerType extends v.InferInput<typeof CreateServerSchema> {}
 
-const ChannelType = {
-	Textual: 'textual',
-	Voice: 'voice'
-} as const;
-
 export const CreateChannelSchema = v.object({
 	name: v.pipe(
 		v.string(),
 		v.maxLength(50, 'The length must be equal or below 50 characters.'),
 		v.nonEmpty('Please enter a name for this channel.')
 	),
-	type: v.pipe(v.enum(ChannelType)),
+	type: v.pipe(v.enum(ChannelTypes)),
 	x: v.number(),
 	y: v.number()
 });

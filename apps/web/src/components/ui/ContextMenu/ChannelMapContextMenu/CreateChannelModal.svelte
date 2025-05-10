@@ -7,7 +7,6 @@
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
 	import { page } from '$app/state';
-	import { serversStore } from '../../../../stores/servers.svelte';
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateChannelSchema)), {
 		dataType: 'json',
@@ -30,8 +29,6 @@
 				}
 
 				if (res.isOk()) {
-					serversStore.addChannel(serverId, res.value);
-
 					core.openCreateChannelModal.status = false;
 					core.activateMapDragging();
 				}

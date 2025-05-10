@@ -12,26 +12,27 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file types.proto.
  */
 export const file_types: GenFile = /*@__PURE__*/
-  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMiWQoJV1NNZXNzYWdlEgwKBHR5cGUYASABKAkSMwoMY2hhdF9tZXNzYWdlGAIgASgLMhsudHlwZXMuQnJvYWRjYXN0Q2hhdE1lc3NhZ2VIAEIJCgdjb250ZW50IjYKDFVzZXJMaW5rc1JvdxIKCgJpZBgBIAEoBRINCgVsYWJlbBgCIAEoCRILCgN1cmwYAyABKAkiOAoMVXNlckZhY3RzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEg0KBXZhbHVlGAMgASgJIv0CCgRVc2VyEgoKAmlkGAEgASgFEg0KBWVtYWlsGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEhQKDGRpc3BsYXlfbmFtZRgEIAEoCRITCgZhdmF0YXIYBSABKAlIAIgBARITCgZiYW5uZXIYBiABKAlIAYgBARIZCgxncmFkaWVudF90b3AYByABKAlIAogBARIcCg9ncmFkaWVudF9ib3R0b20YCCABKAlIA4gBARISCgVhYm91dBgJIAEoCUgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBWxpbmtzGAsgAygLMhMudHlwZXMuVXNlckxpbmtzUm93EiIKBWZhY3RzGAwgAygLMhMudHlwZXMuVXNlckZhY3RzUm93QgkKB19hdmF0YXJCCQoHX2Jhbm5lckIPCg1fZ3JhZGllbnRfdG9wQhIKEF9ncmFkaWVudF9ib3R0b21CCAoGX2Fib3V0ItoBChRCcm9hZGNhc3RDaGF0TWVzc2FnZRIKCgJpZBgCIAEoBRIbCgZhdXRob3IYAyABKAsyCy50eXBlcy5Vc2VyEhEKCXNlcnZlcl9pZBgEIAEoBRISCgpjaGFubmVsX2lkGAUgASgFEg8KB2NvbnRlbnQYBiABKAwSFgoObWVudGlvbnNfdXNlcnMYByADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYCCADKAUSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAinQEKE0luY29taW5nQ2hhdE1lc3NhZ2USGwoGYXV0aG9yGAEgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBRIPCgdjb250ZW50GAQgASgMEhYKDm1lbnRpb25zX3VzZXJzGAUgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAYgAygFIhIKEENvbm5lY3RUb0NoYW5uZWwiFwoVRGlzY29ubmVjdEZyb21DaGFubmVsQhxaGmdpdGh1Yi5jb20vb2t6bW8vbnlvL3Byb3RvYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMiiAEKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IAEIJCgdjb250ZW50IjYKDFVzZXJMaW5rc1JvdxIKCgJpZBgBIAEoBRINCgVsYWJlbBgCIAEoCRILCgN1cmwYAyABKAkiOAoMVXNlckZhY3RzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEg0KBXZhbHVlGAMgASgJIv0CCgRVc2VyEgoKAmlkGAEgASgFEg0KBWVtYWlsGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEhQKDGRpc3BsYXlfbmFtZRgEIAEoCRITCgZhdmF0YXIYBSABKAlIAIgBARITCgZiYW5uZXIYBiABKAlIAYgBARIZCgxncmFkaWVudF90b3AYByABKAlIAogBARIcCg9ncmFkaWVudF9ib3R0b20YCCABKAlIA4gBARISCgVhYm91dBgJIAEoCUgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBWxpbmtzGAsgAygLMhMudHlwZXMuVXNlckxpbmtzUm93EiIKBWZhY3RzGAwgAygLMhMudHlwZXMuVXNlckZhY3RzUm93QgkKB19hdmF0YXJCCQoHX2Jhbm5lckIPCg1fZ3JhZGllbnRfdG9wQhIKEF9ncmFkaWVudF9ib3R0b21CCAoGX2Fib3V0ItoBChRCcm9hZGNhc3RDaGF0TWVzc2FnZRIKCgJpZBgBIAEoBRIbCgZhdXRob3IYAiABKAsyCy50eXBlcy5Vc2VyEhEKCXNlcnZlcl9pZBgDIAEoBRISCgpjaGFubmVsX2lkGAQgASgFEg8KB2NvbnRlbnQYBSABKAwSFgoObWVudGlvbnNfdXNlcnMYBiADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYByADKAUSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAinQEKE0luY29taW5nQ2hhdE1lc3NhZ2USGwoGYXV0aG9yGAEgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBRIPCgdjb250ZW50GAQgASgMEhYKDm1lbnRpb25zX3VzZXJzGAUgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAYgAygFIrkCChhCcm9hZGNhc3RDaGFubmVsQ3JlYXRpb24SCgoCaWQYASABKAUSEQoJc2VydmVyX2lkGAIgASgFEgwKBG5hbWUYAyABKAkSDAoEdHlwZRgEIAEoCRIYCgtkZXNjcmlwdGlvbhgFIAEoCUgAiAEBEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjaGFubmVsX3BpZBgMIAEoCRIPCgdhZGRyZXNzGA0gASgJQg4KDF9kZXNjcmlwdGlvbiKhAQoTQm9keUNoYW5uZWxDcmVhdGlvbhIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY3JlYXRvcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSEwoLZGVzY3JpcHRpb24YBSABKAkSDQoFdXNlcnMYBiADKAUSDQoFcm9sZXMYByADKAUSCQoBeBgIIAEoBRIJCgF5GAkgASgFIjEKEU5ld0NoYW5uZWxDcmVhdGVkEg0KBXVzZXJzGAEgAygFEg0KBXJvbGVzGAIgAygFIgkKB0Nvbm5lY3QiDAoKRGlzY29ubmVjdEIcWhpnaXRodWIuY29tL29rem1vL255by9wcm90b2IGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message types.WSMessage
  */
 export type WSMessage = Message<"types.WSMessage"> & {
   /**
-   * @generated from field: string type = 1;
-   */
-  type: string;
-
-  /**
    * @generated from oneof types.WSMessage.content
    */
   content: {
     /**
-     * @generated from field: types.BroadcastChatMessage chat_message = 2;
+     * @generated from field: types.BroadcastChatMessage chat_message = 1;
      */
     value: BroadcastChatMessage;
     case: "chatMessage";
+  } | {
+    /**
+     * @generated from field: types.BroadcastChannelCreation channel_creation = 2;
+     */
+    value: BroadcastChannelCreation;
+    case: "channelCreation";
   } | { case: undefined; value?: undefined };
 };
 
@@ -173,42 +174,42 @@ export const UserSchema: GenMessage<User> = /*@__PURE__*/
  */
 export type BroadcastChatMessage = Message<"types.BroadcastChatMessage"> & {
   /**
-   * @generated from field: int32 id = 2;
+   * @generated from field: int32 id = 1;
    */
   id: number;
 
   /**
-   * @generated from field: types.User author = 3;
+   * @generated from field: types.User author = 2;
    */
   author?: User;
 
   /**
-   * @generated from field: int32 server_id = 4;
+   * @generated from field: int32 server_id = 3;
    */
   serverId: number;
 
   /**
-   * @generated from field: int32 channel_id = 5;
+   * @generated from field: int32 channel_id = 4;
    */
   channelId: number;
 
   /**
-   * @generated from field: bytes content = 6;
+   * @generated from field: bytes content = 5;
    */
   content: Uint8Array;
 
   /**
-   * @generated from field: repeated int32 mentions_users = 7;
+   * @generated from field: repeated int32 mentions_users = 6;
    */
   mentionsUsers: number[];
 
   /**
-   * @generated from field: repeated int32 mentions_channels = 8;
+   * @generated from field: repeated int32 mentions_channels = 7;
    */
   mentionsChannels: number[];
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 9;
+   * @generated from field: google.protobuf.Timestamp created_at = 8;
    */
   createdAt?: Timestamp;
 };
@@ -263,28 +264,184 @@ export const IncomingChatMessageSchema: GenMessage<IncomingChatMessage> = /*@__P
   messageDesc(file_types, 5);
 
 /**
- * @generated from message types.ConnectToChannel
+ * @generated from message types.BroadcastChannelCreation
  */
-export type ConnectToChannel = Message<"types.ConnectToChannel"> & {
+export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation"> & {
+  /**
+   * @generated from field: int32 id = 1;
+   */
+  id: number;
+
+  /**
+   * @generated from field: int32 server_id = 2;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string type = 4;
+   */
+  type: string;
+
+  /**
+   * @generated from field: optional string description = 5;
+   */
+  description?: string;
+
+  /**
+   * @generated from field: repeated int32 users = 6;
+   */
+  users: number[];
+
+  /**
+   * @generated from field: repeated int32 roles = 7;
+   */
+  roles: number[];
+
+  /**
+   * @generated from field: int32 x = 8;
+   */
+  x: number;
+
+  /**
+   * @generated from field: int32 y = 9;
+   */
+  y: number;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 10;
+   */
+  createdAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 11;
+   */
+  updatedAt?: Timestamp;
+
+  /**
+   * @generated from field: string channel_pid = 12;
+   */
+  channelPid: string;
+
+  /**
+   * @generated from field: string address = 13;
+   */
+  address: string;
 };
 
 /**
- * Describes the message types.ConnectToChannel.
- * Use `create(ConnectToChannelSchema)` to create a new message.
+ * Describes the message types.BroadcastChannelCreation.
+ * Use `create(BroadcastChannelCreationSchema)` to create a new message.
  */
-export const ConnectToChannelSchema: GenMessage<ConnectToChannel> = /*@__PURE__*/
+export const BroadcastChannelCreationSchema: GenMessage<BroadcastChannelCreation> = /*@__PURE__*/
   messageDesc(file_types, 6);
 
 /**
- * @generated from message types.DisconnectFromChannel
+ * @generated from message types.BodyChannelCreation
  */
-export type DisconnectFromChannel = Message<"types.DisconnectFromChannel"> & {
+export type BodyChannelCreation = Message<"types.BodyChannelCreation"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: int64 creator_id = 2;
+   */
+  creatorId: bigint;
+
+  /**
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string type = 4;
+   */
+  type: string;
+
+  /**
+   * @generated from field: string description = 5;
+   */
+  description: string;
+
+  /**
+   * @generated from field: repeated int32 users = 6;
+   */
+  users: number[];
+
+  /**
+   * @generated from field: repeated int32 roles = 7;
+   */
+  roles: number[];
+
+  /**
+   * @generated from field: int32 x = 8;
+   */
+  x: number;
+
+  /**
+   * @generated from field: int32 y = 9;
+   */
+  y: number;
 };
 
 /**
- * Describes the message types.DisconnectFromChannel.
- * Use `create(DisconnectFromChannelSchema)` to create a new message.
+ * Describes the message types.BodyChannelCreation.
+ * Use `create(BodyChannelCreationSchema)` to create a new message.
  */
-export const DisconnectFromChannelSchema: GenMessage<DisconnectFromChannel> = /*@__PURE__*/
+export const BodyChannelCreationSchema: GenMessage<BodyChannelCreation> = /*@__PURE__*/
   messageDesc(file_types, 7);
+
+/**
+ * @generated from message types.NewChannelCreated
+ */
+export type NewChannelCreated = Message<"types.NewChannelCreated"> & {
+  /**
+   * @generated from field: repeated int32 users = 1;
+   */
+  users: number[];
+
+  /**
+   * @generated from field: repeated int32 roles = 2;
+   */
+  roles: number[];
+};
+
+/**
+ * Describes the message types.NewChannelCreated.
+ * Use `create(NewChannelCreatedSchema)` to create a new message.
+ */
+export const NewChannelCreatedSchema: GenMessage<NewChannelCreated> = /*@__PURE__*/
+  messageDesc(file_types, 8);
+
+/**
+ * @generated from message types.Connect
+ */
+export type Connect = Message<"types.Connect"> & {
+};
+
+/**
+ * Describes the message types.Connect.
+ * Use `create(ConnectSchema)` to create a new message.
+ */
+export const ConnectSchema: GenMessage<Connect> = /*@__PURE__*/
+  messageDesc(file_types, 9);
+
+/**
+ * @generated from message types.Disconnect
+ */
+export type Disconnect = Message<"types.Disconnect"> & {
+};
+
+/**
+ * Describes the message types.Disconnect.
+ * Use `create(DisconnectSchema)` to create a new message.
+ */
+export const DisconnectSchema: GenMessage<Disconnect> = /*@__PURE__*/
+  messageDesc(file_types, 10);
 

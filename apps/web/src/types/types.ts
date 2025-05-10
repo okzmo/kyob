@@ -1,3 +1,9 @@
+export const ChannelTypes = {
+	Textual: 'textual',
+	Voice: 'voice'
+} as const;
+export type ChannelTypes = (typeof ChannelTypes)[keyof typeof ChannelTypes];
+
 export const contextMenuTargets = ['serverButton', 'channelButton', 'message', 'inServer'] as const;
 export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
@@ -10,7 +16,7 @@ export interface Window {
 export interface Channel {
 	id: number;
 	name: string;
-	type: 'textual' | 'voice';
+	type: ChannelTypes;
 	x: number;
 	y: number;
 	unread: boolean;

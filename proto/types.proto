@@ -4,9 +4,9 @@ package types;
 option go_package = "github.com/okzmo/nyo/proto";
 
 message WSMessage {
-  string type = 1;
   oneof content {
-    BroadcastChatMessage chat_message = 2;
+    BroadcastChatMessage chat_message = 1;
+    BroadcastChannelCreation channel_creation = 2;
   }
 }
 
@@ -38,14 +38,14 @@ message User {
 }
 
 message BroadcastChatMessage {
-  int32 id = 2;
-  User author = 3;
-  int32 server_id = 4;
-  int32 channel_id = 5;
-  bytes content = 6;
-  repeated int32 mentions_users = 7;
-  repeated int32 mentions_channels = 8;
-  google.protobuf.Timestamp created_at = 9;
+  int32 id = 1;
+  User author = 2;
+  int32 server_id = 3;
+  int32 channel_id = 4;
+  bytes content = 5;
+  repeated int32 mentions_users = 6;
+  repeated int32 mentions_channels = 7;
+  google.protobuf.Timestamp created_at = 8;
 }
 
 message IncomingChatMessage {
@@ -57,5 +57,37 @@ message IncomingChatMessage {
 	repeated int32 mentions_channels = 6;
 }
 
-message ConnectToChannel {}
-message DisconnectFromChannel {}
+message BroadcastChannelCreation {
+	int32 id = 1;
+	int32 server_id = 2;
+	string name = 3;
+	string type = 4;
+	optional string description = 5;
+	repeated int32 users = 6;
+	repeated int32 roles = 7;
+	int32 x = 8;
+	int32 y = 9;
+	google.protobuf.Timestamp created_at = 10;
+	google.protobuf.Timestamp updated_at = 11;
+  string channel_pid = 12;
+  string address = 13;
+}
+
+message BodyChannelCreation {
+  int32 server_id = 1;
+	int64 creator_id = 2;
+  string name = 3;
+  string type = 4;
+  string description = 5;
+  repeated int32 users = 6;
+  repeated int32 roles = 7;
+  int32 x = 8;
+  int32 y = 9;
+}
+
+message NewChannelCreated {
+	repeated int32 users = 1;
+	repeated int32 roles = 2;
+}
+message Connect {}
+message Disconnect {}

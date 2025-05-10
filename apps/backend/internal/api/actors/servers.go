@@ -9,7 +9,7 @@ import (
 	"github.com/anthdm/hollywood/actor"
 	"github.com/okzmo/kyob/db"
 	services "github.com/okzmo/kyob/internal/service"
-	proto "github.com/okzmo/kyob/types"
+	protoTypes "github.com/okzmo/kyob/types"
 )
 
 var ServersEngine *actor.Engine
@@ -52,15 +52,49 @@ func (s *server) Receive(ctx *actor.Context) {
 			"id", ctx.PID().GetID(),
 		)
 		initializeChannels(ctx.PID().GetID(), ctx, s)
-	case actor.Stopped:
-		slog.Info("server stopped",
-			"id", ctx.PID().GetID(),
-		)
 	case actor.InternalError:
 		slog.Error("server erroring",
 			"id", ctx.PID().GetID(),
 			"err", msg.Err,
 		)
+	case *protoTypes.Connect:
+		sender := ctx.Sender()
+		if _, ok := s.users[sender]; ok {
+			s.logger.Warn("user already connected to this server", "user", ctx.Sender().GetID())
+			return
+		}
+		s.users[sender] = true
+		s.logger.Info("user connected to this server", "user", ctx.Sender().GetID(), "id", ctx.PID())
+	case *protoTypes.Disconnect:
+		sender := ctx.Sender()
+		_, ok := s.users[sender]
+		if !ok {
+			s.logger.Warn("unknown user disconnected", "user", sender, "id", ctx.PID())
+			return
+		}
+		s.logger.Info("user disconnected", "sender", ctx.Sender())
+		delete(s.users, sender)
+	case *protoTypes.BodyChannelCreation:
+		channelToCreate := &services.CreateChannelBody{
+			Name:        msg.Name,
+			Type:        db.ChannelType(msg.Type),
+			Description: msg.Description,
+			X:           msg.X,
+			Y:           msg.Y,
+		}
+
+		channel, err := services.CreateChannel(context.TODO(), msg.CreatorId, msg.ServerId, channelToCreate)
+		if err != nil {
+			slog.Error("failed to create channel", "err", err)
+			return
+		}
+		channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(strconv.Itoa(int(channel.Id))))
+		channel.ChannelPid = channelPid.ID
+		channel.Address = channelPid.Address
+
+		for user := range s.users {
+			UsersEngine.Send(user, channel)
+		}
 	}
 }
 
@@ -71,15 +105,15 @@ func (c *channel) Receive(ctx *actor.Context) {
 			"id", ctx.PID().GetID(),
 			"err", msg.Err,
 		)
-	case *proto.ConnectToChannel:
+	case *protoTypes.Connect:
 		sender := ctx.Sender()
 		if _, ok := c.users[sender]; ok {
 			c.logger.Warn("user already connected", "user", ctx.Sender().GetID())
 			return
 		}
 		c.users[sender] = true
-		c.logger.Info("user connected", "sender", ctx.Sender())
-	case *proto.DisconnectFromChannel:
+		c.logger.Info("user connected", "sender", ctx.Sender().GetID(), "id", ctx.PID())
+	case *protoTypes.Disconnect:
 		sender := ctx.Sender()
 		_, ok := c.users[sender]
 		if !ok {
@@ -88,7 +122,7 @@ func (c *channel) Receive(ctx *actor.Context) {
 		}
 		c.logger.Info("user disconnected", "sender", ctx.Sender())
 		delete(c.users, sender)
-	case *proto.IncomingChatMessage:
+	case *protoTypes.IncomingChatMessage:
 		messageToSend := &services.CreateMessageBody{
 			Content: msg.Content,
 		}

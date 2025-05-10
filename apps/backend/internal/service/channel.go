@@ -6,6 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	proto "github.com/okzmo/kyob/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var (
@@ -34,17 +36,16 @@ type DeleteChannelBody struct {
 	ServerID int `validate:"required" json:"server_id"`
 }
 
-func CreateChannel(ctx context.Context, serverId int, channel *CreateChannelBody) (*db.Channel, error) {
-	user := ctx.Value("user").(db.User)
+func CreateChannel(ctx context.Context, creatorId int64, serverId int32, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
 		ID:      int64(serverId),
-		OwnerID: user.ID,
+		OwnerID: creatorId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, ErrUnauthorizedChannelCreation
 	}
 
-	newChannel, err := db.Query.CreateChannel(ctx, db.CreateChannelParams{
+	c, err := db.Query.CreateChannel(ctx, db.CreateChannelParams{
 		ServerID:    int64(serverId),
 		Name:        channel.Name,
 		Type:        channel.Type,
@@ -58,7 +59,19 @@ func CreateChannel(ctx context.Context, serverId int, channel *CreateChannelBody
 		return nil, err
 	}
 
-	return &newChannel, nil
+	newChannel := &proto.BroadcastChannelCreation{
+		Id:          int32(c.ID),
+		ServerId:    serverId,
+		Name:        c.Name,
+		Description: &c.Description.String,
+		Type:        string(c.Type),
+		X:           c.X,
+		Y:           c.Y,
+		CreatedAt:   timestamppb.New(c.CreatedAt),
+		UpdatedAt:   timestamppb.New(c.UpdatedAt),
+	}
+
+	return newChannel, nil
 }
 
 func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {

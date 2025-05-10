@@ -49,9 +49,30 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.killUser(ctx)
 	case actor.InternalError:
 		slog.Info("user error", "err", msg.Err)
+	case *protoTypes.BroadcastChannelCreation:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_ChannelCreation{
+				ChannelCreation: &protoTypes.BroadcastChannelCreation{
+					Id:          msg.Id,
+					ServerId:    msg.ServerId,
+					Name:        msg.Name,
+					Type:        msg.Type,
+					Description: msg.Description,
+					Users:       msg.Users,
+					Roles:       msg.Roles,
+					X:           msg.X,
+					Y:           msg.Y,
+					CreatedAt:   msg.CreatedAt,
+					UpdatedAt:   msg.UpdatedAt,
+				},
+			},
+		}
+
+		ServersEngine.SendWithSender(actor.NewPID(msg.Address, msg.ChannelPid), &protoTypes.Connect{}, ctx.PID())
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	case *protoTypes.BroadcastChatMessage:
 		msgToSend := &protoTypes.WSMessage{
-			Type: "channel:message",
 			Content: &protoTypes.WSMessage_ChatMessage{
 				ChatMessage: msg,
 			},
@@ -84,19 +105,24 @@ func (u *user) initializeUser(ctx *actor.Context) {
 		serverPID := ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
 		u.servers[serverPID.Address] = serverPID
 
+		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{}, ctx.PID())
 		channels, _ := db.Query.GetChannelsFromServer(context.TODO(), server.ID)
 
 		for _, channel := range channels {
 			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", server.ID), strconv.Itoa(int(channel.ID)))
 			u.channels = append(u.channels, channelPID)
 
-			ServersEngine.SendWithSender(channelPID, &protoTypes.ConnectToChannel{}, ctx.PID())
+			ServersEngine.SendWithSender(channelPID, &protoTypes.Connect{}, ctx.PID())
 		}
 	}
 }
 
 func (u *user) killUser(ctx *actor.Context) {
+	for _, server := range u.servers {
+		ServersEngine.SendWithSender(server, &protoTypes.Disconnect{}, ctx.PID())
+	}
+
 	for _, channel := range u.channels {
-		ServersEngine.SendWithSender(channel, &protoTypes.DisconnectFromChannel{}, ctx.PID())
+		ServersEngine.SendWithSender(channel, &protoTypes.Disconnect{}, ctx.PID())
 	}
 }

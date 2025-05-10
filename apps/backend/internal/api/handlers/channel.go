@@ -7,8 +7,11 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
+	proto "github.com/okzmo/kyob/types"
 )
 
 func CreateChannel(w http.ResponseWriter, r *http.Request) {
@@ -33,18 +36,32 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	channel, err := services.CreateChannel(r.Context(), serverId, &body)
-	if err != nil {
-		switch {
-		case errors.Is(err, services.ErrUnauthorizedChannelCreation):
-			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot create a channel in this server.")
-		default:
-			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		}
-		return
+	user := r.Context().Value("user").(db.User)
+	channelMessage := &proto.BodyChannelCreation{
+		CreatorId:   user.ID,
+		ServerId:    int32(serverId),
+		Name:        body.Name,
+		Type:        string(body.Type),
+		Description: body.Description,
+		X:           body.X,
+		Y:           body.Y,
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, channel)
+	channelPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(serverId))
+	actors.ServersEngine.Send(channelPID, channelMessage)
+
+	// channel, err := services.CreateChannel(r.Context(), serverId, &body)
+	// if err != nil {
+	// 	switch {
+	// 	case errors.Is(err, services.ErrUnauthorizedChannelCreation):
+	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot create a channel in this server.")
+	// 	default:
+	// 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	return
+	// }
+
+	utils.RespondWithJSON(w, http.StatusCreated, DefaultResponse{Message: "success"})
 }
 
 func EditChannel(w http.ResponseWriter, r *http.Request) {
