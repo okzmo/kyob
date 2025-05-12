@@ -23,8 +23,8 @@
 		validators: valibot(CreateServerSchema),
 		async onUpdate({ form }) {
 			if (form.valid) {
-				form.data.x = core.openCreateServerModal.x;
-				form.data.y = core.openCreateServerModal.y;
+				form.data.x = Math.round(core.openCreateServerModal.x - core.totalOffsetServerMap.x - 32);
+				form.data.y = Math.round(core.openCreateServerModal.y - core.totalOffsetServerMap.y - 32);
 
 				const res = await backend.createServer(form.data);
 				if (res.isErr()) {
@@ -41,6 +41,7 @@
 					};
 					serversStore.addServer(server);
 					core.openCreateServerModal.status = false;
+					core.activateMapDragging();
 
 					const targetX = -(server.x - window.innerWidth / 2 + 32);
 					const targetY = -(server.y - window.innerHeight / 2 + 32);

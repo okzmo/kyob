@@ -33,9 +33,9 @@ type CreateServerBody struct {
 	Name        string `validate:"required,max=50" json:"name"`
 	Description string `validate:"max=280" json:"description"`
 	Private     bool   `json:"private"`
-	Crop        Crop   `json:"crop"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
+	Crop        Crop   `validate:"required" json:"crop"`
+	X           int    `validate:"required" json:"x"`
+	Y           int    `validate:"required" json:"y"`
 }
 
 type EditServerBody struct {

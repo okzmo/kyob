@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui';
 	import { core } from '../../../../stores/core.svelte';
-	import UserInvite from '../../icons/UserInvite.svelte';
+	import Plus from '../../icons/Plus.svelte';
+	import JoinIcon from '../../icons/JoinIcon.svelte';
 </script>
 
 <ContextMenu.Content class="bg-main-900 border-main-800 w-[225px] rounded-xl border p-2">
@@ -14,7 +15,7 @@
 	>
 		<div class="flex w-full items-center justify-between">
 			Create realm
-			<UserInvite height={20} width={20} />
+			<Plus height={20} width={20} />
 		</div>
 	</ContextMenu.Item>
 	<ContextMenu.Item
@@ -26,7 +27,7 @@
 	>
 		<div class="flex w-full items-center justify-between">
 			Join realm
-			<UserInvite height={20} width={20} />
+			<JoinIcon height={20} width={20} />
 		</div>
 	</ContextMenu.Item>
 </ContextMenu.Content>

@@ -38,7 +38,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	body.Description = r.FormValue("description")
 	body.Private = r.FormValue("private") == "true"
 	x, errX := strconv.Atoi(r.FormValue("x"))
-	y, errY := strconv.Atoi(r.FormValue("x"))
+	y, errY := strconv.Atoi(r.FormValue("y"))
 	if errX != nil || errY != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid coordinates.")
 	}

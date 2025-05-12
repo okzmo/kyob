@@ -8,7 +8,7 @@
 </script>
 
 <div
-	class="bg-main-900 border-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 rounded-2xl border py-1 pr-2 pl-1 transition-colors duration-100"
+	class="bg-main-900/80 border-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 rounded-2xl border py-1 pr-2 pl-1 backdrop-blur-2xl transition-colors duration-100"
 >
 	<UserProfile user={userStore.user!}>
 		<button

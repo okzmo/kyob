@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
+	import { formatMessageTime } from '../../utils/date';
 
 	interface Props {
 		id: number;
@@ -21,7 +22,7 @@
 	<div class="pt-1">
 		<div class="flex items-baseline gap-x-3 select-none">
 			<p class="text-sm font-semibold">{displayName}</p>
-			<time class="text-main-600 text-xs">{time}</time>
+			<time class="text-main-600 text-xs">{formatMessageTime(time)}</time>
 		</div>
 		<div class="mt-1 flex flex-col gap-y-1">
 			{@html generateHTML(content, [
