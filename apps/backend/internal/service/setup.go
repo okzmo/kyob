@@ -10,6 +10,8 @@ import (
 
 type serverWithChannels struct {
 	db.Server
+	X int `json:"x"`
+	Y int `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
 	IsMember bool                 `json:"is_member"`
 	Channels map[int64]db.Channel `json:"channels"`
@@ -91,7 +93,19 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		}
 
 		s := serverWithChannels{
-			server,
+			db.Server{
+				ID:          server.ID,
+				OwnerID:     server.OwnerID,
+				Name:        server.Name,
+				Avatar:      server.Avatar,
+				Banner:      server.Banner,
+				Description: server.Description,
+				Private:     server.Private,
+				CreatedAt:   server.CreatedAt,
+				UpdatedAt:   server.UpdatedAt,
+			},
+			int(server.X),
+			int(server.Y),
 			memberRes.RowsAffected() > 0,
 			channelMap,
 		}

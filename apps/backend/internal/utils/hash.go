@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	random "math/rand/v2"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -15,6 +16,8 @@ var (
 	ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
 	ErrIncompatibleVersion = errors.New("incompatible version of argon2")
 )
+
+var defaultAlphabet = []rune("_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 type params struct {
 	memory      uint32
@@ -34,14 +37,15 @@ func GenerateRandomBytes(n uint32) ([]byte, error) {
 	return b, nil
 }
 
-func GenerateRandomId(n uint32) (string, error) {
-	bytes, err := GenerateRandomBytes(n)
-	if err != nil {
-		return "", err
-	}
-	b64Id := base64.RawStdEncoding.EncodeToString(bytes)
+func GenerateRandomId(n uint32) string {
+	var id []rune
 
-	return b64Id, nil
+	for range n {
+		idx := random.IntN(len(defaultAlphabet))
+		id = append(id, defaultAlphabet[idx])
+	}
+
+	return string(id)
 }
 
 func HashPassword(password string) (string, error) {

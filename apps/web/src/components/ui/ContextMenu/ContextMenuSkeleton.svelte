@@ -4,6 +4,7 @@
 	import ChannelContextMenu from './ChannelContextMenu.svelte';
 	import MessageContextMenu from './MessageContextMenu.svelte';
 	import ChannelMapContextMenu from './ChannelMapContextMenu/ChannelMapContextMenu.svelte';
+	import ServerMapContextMenu from './ServerMapContextMenu/ServerMapContextMenu.svelte';
 
 	interface Props {
 		target?: string | undefined;
@@ -22,5 +23,7 @@
 		<MessageContextMenu />
 	{:else if target?.includes('inServer')}
 		<ChannelMapContextMenu />
+	{:else if target?.includes('mainMap')}
+		<ServerMapContextMenu />
 	{/if}
 </ContextMenu.Portal>

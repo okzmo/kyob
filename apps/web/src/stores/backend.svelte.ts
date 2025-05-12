@@ -11,7 +11,12 @@ import type {
 	SetupErrors,
 	StandardError
 } from '../types/errors';
-import type { CreateChannelType, CreateMessageType, CreateServerType } from '../types/schemas';
+import type {
+	CreateChannelType,
+	CreateMessageType,
+	CreateServerType,
+	JoinServerType
+} from '../types/schemas';
 import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
@@ -134,9 +139,32 @@ class Backend {
 			formData.append('avatar', body.avatar);
 			formData.append('crop', JSON.stringify(body.crop));
 			formData.append('private', String(body.private));
+			formData.append('x', String(body.x));
+			formData.append('y', String(body.y));
 
 			const res = await client.post('authenticated/server', {
 				body: formData
+			});
+
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '' });
+			}
+			const data = (await res.json()) as Server;
+
+			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 400) {
+				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async joinServer(body: JoinServerType): Promise<Result<Server, CreateServerErrors>> {
+		try {
+			const res = await client.post('authenticated/server', {
+				body: JSON.stringify(body)
 			});
 
 			if (!res.ok) {

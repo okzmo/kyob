@@ -11,23 +11,23 @@ SELECT * FROM servers;
 SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2;
 
 -- name: GetServersFromUser :many
-SELECT DISTINCT s.*
+SELECT DISTINCT s.*, sm.x, sm.y
 FROM servers s, server_membership sm
-WHERE s.private = false OR (sm.server_id = s.id AND sm.user_id = $1);
+WHERE sm.server_id = s.id AND sm.user_id = $1;
 
 -- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, avatar, description, x, y, private
+  owner_id, name, avatar, description, private
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5
 )
 RETURNING *;
 
 -- name: JoinServer :exec
 INSERT INTO server_membership (
-  user_id, server_id
+  user_id, server_id, x, y
 ) VALUES (
-  $1, $2
+  $1, $2, $3, $4
 );
 
 -- name: UpdateServerName :exec

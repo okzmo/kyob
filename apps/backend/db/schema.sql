@@ -239,6 +239,8 @@ CREATE TABLE public.server_membership (
     user_id bigint NOT NULL,
     server_id bigint NOT NULL,
     roles bigint[],
+    x integer NOT NULL,
+    y integer NOT NULL,
     joined_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -273,8 +275,6 @@ CREATE TABLE public.servers (
     avatar character varying(255),
     banner character varying(255),
     description text,
-    x integer NOT NULL,
-    y integer NOT NULL,
     private boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL

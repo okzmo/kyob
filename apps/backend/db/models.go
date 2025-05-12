@@ -170,8 +170,6 @@ type Server struct {
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
 	Description pgtype.Text `json:"description"`
-	X           int32       `json:"x"`
-	Y           int32       `json:"y"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
@@ -182,6 +180,8 @@ type ServerMembership struct {
 	UserID   int64     `json:"user_id"`
 	ServerID int64     `json:"server_id"`
 	Roles    []int64   `json:"roles"`
+	X        int32     `json:"x"`
+	Y        int32     `json:"y"`
 	JoinedAt time.Time `json:"joined_at"`
 }
 

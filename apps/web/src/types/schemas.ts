@@ -43,7 +43,9 @@ export const CreateServerSchema = v.object({
 		width: v.number(),
 		x: v.number(),
 		y: v.number()
-	})
+	}),
+	x: v.number(),
+	y: v.number()
 });
 
 export interface CreateServerType extends v.InferInput<typeof CreateServerSchema> {}
@@ -69,3 +71,11 @@ export const CreateMessageSchema = v.object({
 });
 
 export interface CreateMessageType extends v.InferInput<typeof CreateMessageSchema> {}
+
+export const JoinServerSchema = v.object({
+	invite_id: v.string(),
+	x: v.number(),
+	y: v.number()
+});
+
+export interface JoinServerType extends v.InferInput<typeof JoinServerSchema> {}

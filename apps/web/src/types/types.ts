@@ -4,7 +4,13 @@ export const ChannelTypes = {
 } as const;
 export type ChannelTypes = (typeof ChannelTypes)[keyof typeof ChannelTypes];
 
-export const contextMenuTargets = ['serverButton', 'channelButton', 'message', 'inServer'] as const;
+export const contextMenuTargets = [
+	'serverButton',
+	'channelButton',
+	'message',
+	'inServer',
+	'mainMap'
+] as const;
 export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
 export interface Window {

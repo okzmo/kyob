@@ -9,7 +9,6 @@
 	import { ContextMenu } from 'bits-ui';
 	import ContextMenuSkeleton from '../../components/ui/ContextMenu/ContextMenuSkeleton.svelte';
 	import { contextMenuTargets, type ContextMenuTarget } from '../../types/types';
-	import CreateServerButton from '../../components/ui/CreateServerButton/CreateServerButton.svelte';
 	import Serverbar from '../../components/Serverbar/Serverbar.svelte';
 	import { onMount } from 'svelte';
 	import { backend } from '../../stores/backend.svelte';
@@ -54,9 +53,17 @@
 		if (!contextMenuTargets.includes(identifier)) {
 			e.preventDefault();
 		} else {
-			if (identifier === 'inServer') {
-				core.openCreateChannelModal.x = e.clientX;
-				core.openCreateChannelModal.y = e.clientY;
+			switch (identifier) {
+				case 'inServer':
+					core.openCreateChannelModal.x = e.clientX;
+					core.openCreateChannelModal.y = e.clientY;
+					break;
+				case 'mainMap':
+					core.openCreateServerModal.x = e.clientX;
+					core.openCreateServerModal.y = e.clientY;
+					core.openJoinServerModal.x = e.clientX;
+					core.openJoinServerModal.y = e.clientY;
+					break;
 			}
 			contextMenuTarget = targetId;
 		}
@@ -65,15 +72,13 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger
-		id={page.params.server_id ? `inServer-${page.params.server_id}` : ''}
+		id={page.params.server_id ? `inServer-${page.params.server_id}` : 'mainMap'}
 		class="fixed top-0 left-0 h-screen w-screen"
 		oncontextmenu={onContextMenu}
 	>
 		<Topbar canGoBack={goback.active} />
 		<Userbar />
-		{#if !page.params.server_id}
-			<CreateServerButton />
-		{:else}
+		{#if page.params.server_id}
 			<Serverbar />
 		{/if}
 		<Searchbar />

@@ -37,6 +37,15 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	body.Name = r.FormValue("name")
 	body.Description = r.FormValue("description")
 	body.Private = r.FormValue("private") == "true"
+	x, errX := strconv.Atoi(r.FormValue("x"))
+	y, errY := strconv.Atoi(r.FormValue("x"))
+	if errX != nil || errY != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid coordinates.")
+	}
+
+	body.X = x
+	body.Y = y
+
 	cropJSON := r.FormValue("crop")
 	var crop services.Crop
 	if err := json.Unmarshal([]byte(cropJSON), &crop); err != nil {

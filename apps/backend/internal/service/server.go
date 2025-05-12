@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"mime/multipart"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -33,6 +34,8 @@ type CreateServerBody struct {
 	Description string `validate:"max=280" json:"description"`
 	Private     bool   `json:"private"`
 	Crop        Crop   `json:"crop"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
 }
 
 type EditServerBody struct {
@@ -42,18 +45,28 @@ type EditServerBody struct {
 	Description string `validate:"max=280" json:"description"`
 }
 
-func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, server *CreateServerBody) (*db.Server, error) {
+type ServerResponse struct {
+	ID          int64       `json:"id"`
+	OwnerID     int64       `json:"owner_id"`
+	Name        string      `json:"name"`
+	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
+	Description pgtype.Text `json:"description"`
+	Private     bool        `json:"private"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
+	X           int         `json:"x"`
+	Y           int         `json:"y"`
+}
+
+func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, server *CreateServerBody) (*ServerResponse, error) {
 	image, err := utils.CropImage(file, server.Crop.X, server.Crop.Y, server.Crop.Width, server.Crop.Height)
 	if err != nil {
 		slog.Error("image cropping error", "err", err)
 		return nil, err
 	}
 
-	id, err := utils.GenerateRandomId(8)
-	if err != nil {
-		slog.Error("failed generating random id", "err", err)
-		return nil, err
-	}
+	id := utils.GenerateRandomId(8)
 	imgFileName := fmt.Sprintf("avatar-server-%s.webp", id)
 
 	client := s3.NewFromConfig(GetS3Config())
@@ -67,12 +80,6 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 		return nil, err
 	}
 
-	x, y, err := utils.GenerateRandomCoordinates()
-	if err != nil {
-		slog.Error("failed generating coords", "err", err)
-		return nil, err
-	}
-
 	user := ctx.Value("user").(db.User)
 	newServer, err := db.Query.CreateServer(ctx, db.CreateServerParams{
 		OwnerID:     user.ID,
@@ -80,8 +87,6 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 		Avatar:      pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), imgFileName), Valid: true},
 		Description: pgtype.Text{String: server.Description, Valid: true},
 		Private:     server.Private,
-		X:           x,
-		Y:           y,
 	})
 	if err != nil {
 		return nil, err
@@ -90,12 +95,26 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 	err = db.Query.JoinServer(ctx, db.JoinServerParams{
 		ServerID: newServer.ID,
 		UserID:   user.ID,
+		X:        int32(server.X),
+		Y:        int32(server.Y),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &newServer, nil
+	return &ServerResponse{
+		ID:          newServer.ID,
+		OwnerID:     newServer.OwnerID,
+		Name:        newServer.Name,
+		Avatar:      newServer.Avatar,
+		Banner:      newServer.Banner,
+		Description: newServer.Description,
+		Private:     newServer.Private,
+		CreatedAt:   newServer.CreatedAt,
+		UpdatedAt:   newServer.UpdatedAt,
+		X:           server.X,
+		Y:           server.Y,
+	}, nil
 }
 
 func EditServer(ctx context.Context, id int, body *EditServerBody) error {
