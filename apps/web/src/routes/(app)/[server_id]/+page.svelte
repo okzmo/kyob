@@ -1,12 +1,14 @@
 <script lang="ts">
 	import ChannelMap from '../../../components/ChannelMap/ChannelMap.svelte';
-	import type { Channel } from '../../../types/types';
 	import { serversStore } from '../../../stores/servers.svelte';
 	import { page } from '$app/state';
 
-	let channels = $derived<Channel[] | undefined>(
-		serversStore.getChannels(Number(page.params.server_id))
-	);
+	let server = serversStore.getServer(Number(page.params.server_id));
+	let channels = $derived(serversStore.getChannels(Number(page.params.server_id)));
 </script>
+
+<svelte:head>
+	<title>Kyob | {server.name}</title>
+</svelte:head>
 
 <ChannelMap {channels} />

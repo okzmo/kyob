@@ -5,4 +5,8 @@
 	let servers = $derived(serversStore.getServers());
 </script>
 
+<svelte:head>
+	<title>Kyob | Servers</title>
+</svelte:head>
+
 <ServerMap {servers} />
