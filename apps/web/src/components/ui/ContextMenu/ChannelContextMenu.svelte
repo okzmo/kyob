@@ -23,10 +23,6 @@
 		if (res.isErr()) {
 			console.error(res.error);
 		}
-
-		if (res.isOk()) {
-			serversStore.removeChannel(serverId, channelId);
-		}
 	}
 </script>
 

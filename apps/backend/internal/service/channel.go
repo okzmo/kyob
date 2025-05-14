@@ -107,11 +107,10 @@ func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {
 	return nil
 }
 
-func DeleteChannel(ctx context.Context, serverId int, channelId int) error {
-	user := ctx.Value("user").(db.User)
+func DeleteChannel(ctx context.Context, serverId int, channelId int, userId int64) error {
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
 		ID:      int64(serverId),
-		OwnerID: user.ID,
+		OwnerID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedChannelDeletion

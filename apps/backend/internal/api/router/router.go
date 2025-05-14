@@ -36,7 +36,6 @@ func Setup() {
 			r.Patch("/servers/{id}", handlers.EditServer)
 			r.Delete("/servers/{id}", handlers.DeleteServer)
 			r.Post("/channels/{server_id}", handlers.CreateChannel)
-			r.Get("/channels/{server_id}", handlers.GetChannels)
 			r.Patch("/channels/{channel_id}", handlers.EditChannel)
 			r.Delete("/channels/{server_id}/{channel_id}", handlers.DeleteChannel)
 			r.Post("/messages/{server_id}/{channel_id}", handlers.CreateMessage)

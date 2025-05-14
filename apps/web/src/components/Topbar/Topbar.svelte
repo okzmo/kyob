@@ -20,7 +20,7 @@
 >
 	{#if canGoBack}
 		<button
-			class="text-main-400 group hocus:bg-accent-100/15 flex items-center gap-x-4 rounded-xl py-1.5 pr-4 pl-3 hover:cursor-pointer"
+			class="text-main-400 group hocus:bg-accent-100/15 flex items-center gap-x-4 rounded-xl py-1.5 pr-4 pl-3 transition-colors duration-100 hover:cursor-pointer"
 			onclick={() => goto('/')}
 		>
 			<ArrowLeft

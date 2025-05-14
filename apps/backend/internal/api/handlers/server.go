@@ -71,8 +71,8 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	serverPID := actors.ServersEngine.Spawn(actors.NewServer, "server", actor.WithID(strconv.Itoa(int(server.ID))))
 	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
 	actors.UsersEngine.Send(userPID, &proto.NewServerCreated{
-		ServerPID: serverPID.ID,
-		Address:   serverPID.Address,
+		ActorId:      serverPID.ID,
+		ActorAddress: serverPID.Address,
 	})
 
 	utils.RespondWithJSON(w, http.StatusCreated, server)

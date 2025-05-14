@@ -68,7 +68,7 @@ func (u *user) Receive(ctx *actor.Context) {
 			},
 		}
 
-		channelPid := actor.NewPID(msg.Address, msg.ChannelPid)
+		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
 		ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{}, ctx.PID())
 		u.channels = append(u.channels, channelPid)
 
@@ -84,9 +84,23 @@ func (u *user) Receive(ctx *actor.Context) {
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	case *protoTypes.NewServerCreated:
-		serverPid := actor.NewPID(msg.Address, msg.ServerPID)
-		u.servers[msg.Address] = serverPid
+		serverPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
+		u.servers[msg.ActorAddress] = serverPid
 		ServersEngine.SendWithSender(serverPid, &protoTypes.Connect{}, ctx.PID())
+	case *protoTypes.BroadcastChannelRemoved:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_ChannelRemoved{
+				ChannelRemoved: &protoTypes.BroadcastChannelRemoved{
+					ServerId:  msg.ServerId,
+					ChannelId: msg.ChannelId,
+				},
+			},
+		}
+
+		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
+		ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{}, ctx.PID())
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	}
 }
 

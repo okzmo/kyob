@@ -18,6 +18,13 @@ class Windows {
 	closeWindow(id: string) {
 		this.openWindows = this.openWindows.filter((w) => w.id !== id);
 	}
+
+	closeDeadWindow(channelId: number) {
+		const exist = this.openWindows.find((w) => w.channelId === channelId);
+		if (exist) {
+			this.openWindows = this.openWindows.filter((w) => w.id !== exist.id);
+		}
+	}
 }
 
 export const windows = new Windows();

@@ -2,6 +2,7 @@ package actors
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -89,11 +90,31 @@ func (s *server) Receive(ctx *actor.Context) {
 			return
 		}
 		channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(strconv.Itoa(int(channel.Id))))
-		channel.ChannelPid = channelPid.ID
-		channel.Address = channelPid.Address
+		channel.ActorId = channelPid.ID
+		channel.ActorAddress = channelPid.Address
 
 		for user := range s.users {
 			UsersEngine.Send(user, channel)
+		}
+	case *protoTypes.BodyChannelRemoved:
+		err := services.DeleteChannel(context.TODO(), int(msg.ServerId), int(msg.ChannelId), msg.UserId)
+		if err != nil {
+			slog.Error("failed to delete channel", "err", err)
+			return
+		}
+
+		channelId := fmt.Sprintf("channel/%s", strconv.Itoa(int(msg.ChannelId)))
+		channelPID := ctx.PID().Child(channelId)
+		ctx.Engine().Poison(channelPID)
+		delete(s.channels, channelPID)
+
+		for user := range s.users {
+			UsersEngine.Send(user, &protoTypes.BroadcastChannelRemoved{
+				ServerId:     msg.ServerId,
+				ChannelId:    msg.ChannelId,
+				ActorId:      channelPID.ID,
+				ActorAddress: channelPID.Address,
+			})
 		}
 	}
 }

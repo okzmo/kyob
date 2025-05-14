@@ -7,6 +7,7 @@ message WSMessage {
   oneof content {
     BroadcastChatMessage chat_message = 1;
     BroadcastChannelCreation channel_creation = 2;
+    BroadcastChannelRemoved channel_removed = 3;
   }
 }
 
@@ -37,6 +38,15 @@ message User {
   repeated UserFactsRow facts = 12;
 }
 
+message IncomingChatMessage {
+  User author = 1;
+  int32 server_id = 2;
+  int32 channel_id = 3;
+  bytes content = 4;
+  repeated int32 mentions_users = 5;
+  repeated int32 mentions_channels = 6;
+}
+
 message BroadcastChatMessage {
   int32 id = 1;
   User author = 2;
@@ -48,13 +58,11 @@ message BroadcastChatMessage {
   google.protobuf.Timestamp created_at = 8;
 }
 
-message IncomingChatMessage {
-	User author = 1;
-	int32 server_id = 2;
-	int32 channel_id = 3;
-	bytes content = 4;
-	repeated int32 mentions_users = 5;
-	repeated int32 mentions_channels = 6;
+message BroadcastChannelRemoved {
+	int32 server_id = 1;
+	int32 channel_id = 2;
+  string actor_id = 3;
+  string actor_address = 4;
 }
 
 message BroadcastChannelCreation {
@@ -69,8 +77,8 @@ message BroadcastChannelCreation {
 	int32 y = 9;
 	google.protobuf.Timestamp created_at = 10;
 	google.protobuf.Timestamp updated_at = 11;
-  string channel_pid = 12;
-  string address = 13;
+  string actor_id = 12;
+  string actor_address = 13;
 }
 
 message BodyChannelCreation {
@@ -85,13 +93,16 @@ message BodyChannelCreation {
   int32 y = 9;
 }
 
-message NewChannelCreated {
-	repeated int32 users = 1;
-	repeated int32 roles = 2;
+message BodyChannelRemoved {
+	int32 server_id = 1;
+	int32 channel_id = 2;
+  int64 user_id = 3;
 }
+
 message NewServerCreated {
-	string serverPID = 1;
-	string Address = 2;
+	string actor_id = 1;
+	string actor_address = 2;
 }
+
 message Connect {}
 message Disconnect {}

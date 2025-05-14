@@ -50,17 +50,6 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	channelPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(serverId))
 	actors.ServersEngine.Send(channelPID, channelMessage)
 
-	// channel, err := services.CreateChannel(r.Context(), serverId, &body)
-	// if err != nil {
-	// 	switch {
-	// 	case errors.Is(err, services.ErrUnauthorizedChannelCreation):
-	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot create a channel in this server.")
-	// 	default:
-	// 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-	// 	}
-	// 	return
-	// }
-
 	utils.RespondWithJSON(w, http.StatusCreated, DefaultResponse{Message: "success"})
 }
 
@@ -101,24 +90,30 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteChannel(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user").(db.User)
 	channelIdParam := chi.URLParam(r, "channel_id")
 	serverIdParam := chi.URLParam(r, "server_id")
 	channelId, _ := strconv.Atoi(channelIdParam)
 	serverId, _ := strconv.Atoi(serverIdParam)
 
-	err := services.DeleteChannel(r.Context(), serverId, channelId)
-	if err != nil {
-		switch {
-		case errors.Is(err, services.ErrUnauthorizedChannelDeletion):
-			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this channel.")
-		default:
-			utils.RespondWithError(w, http.StatusUnauthorized, err.Error())
-		}
-		return
+	// err := services.DeleteChannel(r.Context(), serverId, channelId)
+	// if err != nil {
+	// 	switch {
+	// 	case errors.Is(err, services.ErrUnauthorizedChannelDeletion):
+	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this channel.")
+	// 	default:
+	// 		utils.RespondWithError(w, http.StatusUnauthorized, err.Error())
+	// 	}
+	// 	return
+	// }
+
+	protoMessage := &proto.BodyChannelRemoved{
+		ServerId:  int32(serverId),
+		ChannelId: int32(channelId),
+		UserId:    user.ID,
 	}
+	channelPID := actors.ServersEngine.Registry.GetPID("server", serverIdParam)
+	actors.ServersEngine.Send(channelPID, protoMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
-}
-
-func GetChannels(w http.ResponseWriter, r *http.Request) {
 }

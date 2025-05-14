@@ -20,6 +20,7 @@ import type {
 import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
+import { windows } from './windows.svelte';
 
 const client = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
@@ -96,6 +97,12 @@ class Backend {
 						serversStore.addChannel(value.serverId, channel);
 					}
 					break;
+				case 'channelRemoved': {
+					if (!wsMess.content.value) return;
+					const value = wsMess.content.value;
+					serversStore.removeChannel(value.serverId, value.channelId);
+					windows.closeDeadWindow(value.channelId);
+				}
 			}
 		};
 
