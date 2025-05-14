@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -114,6 +115,7 @@ func EditServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteServer(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user").(db.User)
 	idParam := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -121,16 +123,40 @@ func DeleteServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.DeleteServer(r.Context(), id)
+	// err = services.DeleteServer(r.Context(), id)
+	// if err != nil {
+	// 	switch {
+	// 	case errors.Is(err, services.ErrUnauthorizedServerDeletion):
+	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this server.")
+	// 	default:
+	// 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	return
+	// }
+
+	protoMessage := &proto.BodyServerRemoved{
+		ServerId: int32(id),
+		UserId:   user.ID,
+	}
+	serverPID := actors.ServersEngine.Registry.GetPID("server", idParam)
+	actors.ServersEngine.Send(serverPID, protoMessage)
+
+	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+}
+
+func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
+	idParam := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		switch {
-		case errors.Is(err, services.ErrUnauthorizedServerDeletion):
-			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this server.")
-		default:
-			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		}
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	inviteId, err := services.CreateServerInvite(r.Context(), id)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusContinue, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteId)})
 }

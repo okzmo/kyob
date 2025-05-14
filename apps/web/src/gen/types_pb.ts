@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file types.proto.
  */
 export const file_types: GenFile = /*@__PURE__*/
-  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMiwwEKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAQgkKB2NvbnRlbnQiNgoMVXNlckxpbmtzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEgsKA3VybBgDIAEoCSI4CgxVc2VyRmFjdHNSb3cSCgoCaWQYASABKAUSDQoFbGFiZWwYAiABKAkSDQoFdmFsdWUYAyABKAki/QIKBFVzZXISCgoCaWQYASABKAUSDQoFZW1haWwYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSFAoMZGlzcGxheV9uYW1lGAQgASgJEhMKBmF2YXRhchgFIAEoCUgAiAEBEhMKBmJhbm5lchgGIAEoCUgBiAEBEhkKDGdyYWRpZW50X3RvcBgHIAEoCUgCiAEBEhwKD2dyYWRpZW50X2JvdHRvbRgIIAEoCUgDiAEBEhIKBWFib3V0GAkgASgJSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASIgoFbGlua3MYCyADKAsyEy50eXBlcy5Vc2VyTGlua3NSb3cSIgoFZmFjdHMYDCADKAsyEy50eXBlcy5Vc2VyRmFjdHNSb3dCCQoHX2F2YXRhckIJCgdfYmFubmVyQg8KDV9ncmFkaWVudF90b3BCEgoQX2dyYWRpZW50X2JvdHRvbUIICgZfYWJvdXQinQEKE0luY29taW5nQ2hhdE1lc3NhZ2USGwoGYXV0aG9yGAEgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBRIPCgdjb250ZW50GAQgASgMEhYKDm1lbnRpb25zX3VzZXJzGAUgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAYgAygFItoBChRCcm9hZGNhc3RDaGF0TWVzc2FnZRIKCgJpZBgBIAEoBRIbCgZhdXRob3IYAiABKAsyCy50eXBlcy5Vc2VyEhEKCXNlcnZlcl9pZBgDIAEoBRISCgpjaGFubmVsX2lkGAQgASgFEg8KB2NvbnRlbnQYBSABKAwSFgoObWVudGlvbnNfdXNlcnMYBiADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYByADKAUSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiaQoXQnJvYWRjYXN0Q2hhbm5lbFJlbW92ZWQSEQoJc2VydmVyX2lkGAEgASgFEhIKCmNoYW5uZWxfaWQYAiABKAUSEAoIYWN0b3JfaWQYAyABKAkSFQoNYWN0b3JfYWRkcmVzcxgEIAEoCSK8AgoYQnJvYWRjYXN0Q2hhbm5lbENyZWF0aW9uEgoKAmlkGAEgASgFEhEKCXNlcnZlcl9pZBgCIAEoBRIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSGAoLZGVzY3JpcHRpb24YBSABKAlIAIgBARINCgV1c2VycxgGIAMoBRINCgVyb2xlcxgHIAMoBRIJCgF4GAggASgFEgkKAXkYCSABKAUSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIYWN0b3JfaWQYDCABKAkSFQoNYWN0b3JfYWRkcmVzcxgNIAEoCUIOCgxfZGVzY3JpcHRpb24ioQEKE0JvZHlDaGFubmVsQ3JlYXRpb24SEQoJc2VydmVyX2lkGAEgASgFEhIKCmNyZWF0b3JfaWQYAiABKAMSDAoEbmFtZRgDIAEoCRIMCgR0eXBlGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBSJMChJCb2R5Q2hhbm5lbFJlbW92ZWQSEQoJc2VydmVyX2lkGAEgASgFEhIKCmNoYW5uZWxfaWQYAiABKAUSDwoHdXNlcl9pZBgDIAEoAyI7ChBOZXdTZXJ2ZXJDcmVhdGVkEhAKCGFjdG9yX2lkGAEgASgJEhUKDWFjdG9yX2FkZHJlc3MYAiABKAkiCQoHQ29ubmVjdCIMCgpEaXNjb25uZWN0QhxaGmdpdGh1Yi5jb20vb2t6bW8vbnlvL3Byb3RvYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMiwwEKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAQgkKB2NvbnRlbnQiNgoMVXNlckxpbmtzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEgsKA3VybBgDIAEoCSI4CgxVc2VyRmFjdHNSb3cSCgoCaWQYASABKAUSDQoFbGFiZWwYAiABKAkSDQoFdmFsdWUYAyABKAki/QIKBFVzZXISCgoCaWQYASABKAUSDQoFZW1haWwYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSFAoMZGlzcGxheV9uYW1lGAQgASgJEhMKBmF2YXRhchgFIAEoCUgAiAEBEhMKBmJhbm5lchgGIAEoCUgBiAEBEhkKDGdyYWRpZW50X3RvcBgHIAEoCUgCiAEBEhwKD2dyYWRpZW50X2JvdHRvbRgIIAEoCUgDiAEBEhIKBWFib3V0GAkgASgJSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASIgoFbGlua3MYCyADKAsyEy50eXBlcy5Vc2VyTGlua3NSb3cSIgoFZmFjdHMYDCADKAsyEy50eXBlcy5Vc2VyRmFjdHNSb3dCCQoHX2F2YXRhckIJCgdfYmFubmVyQg8KDV9ncmFkaWVudF90b3BCEgoQX2dyYWRpZW50X2JvdHRvbUIICgZfYWJvdXQinQEKE0luY29taW5nQ2hhdE1lc3NhZ2USGwoGYXV0aG9yGAEgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBRIPCgdjb250ZW50GAQgASgMEhYKDm1lbnRpb25zX3VzZXJzGAUgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAYgAygFItoBChRCcm9hZGNhc3RDaGF0TWVzc2FnZRIKCgJpZBgBIAEoBRIbCgZhdXRob3IYAiABKAsyCy50eXBlcy5Vc2VyEhEKCXNlcnZlcl9pZBgDIAEoBRISCgpjaGFubmVsX2lkGAQgASgFEg8KB2NvbnRlbnQYBSABKAwSFgoObWVudGlvbnNfdXNlcnMYBiADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYByADKAUSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiaQoXQnJvYWRjYXN0Q2hhbm5lbFJlbW92ZWQSEQoJc2VydmVyX2lkGAEgASgFEhIKCmNoYW5uZWxfaWQYAiABKAUSEAoIYWN0b3JfaWQYAyABKAkSFQoNYWN0b3JfYWRkcmVzcxgEIAEoCSJUChZCcm9hZGNhc3RTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIQCghhY3Rvcl9pZBgCIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGAMgASgJIrwCChhCcm9hZGNhc3RDaGFubmVsQ3JlYXRpb24SCgoCaWQYASABKAUSEQoJc2VydmVyX2lkGAIgASgFEgwKBG5hbWUYAyABKAkSDAoEdHlwZRgEIAEoCRIYCgtkZXNjcmlwdGlvbhgFIAEoCUgAiAEBEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghhY3Rvcl9pZBgMIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGA0gASgJQg4KDF9kZXNjcmlwdGlvbiKhAQoTQm9keUNoYW5uZWxDcmVhdGlvbhIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY3JlYXRvcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSEwoLZGVzY3JpcHRpb24YBSABKAkSDQoFdXNlcnMYBiADKAUSDQoFcm9sZXMYByADKAUSCQoBeBgIIAEoBRIJCgF5GAkgASgFIkwKEkJvZHlDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY2hhbm5lbF9pZBgCIAEoBRIPCgd1c2VyX2lkGAMgASgDIjcKEUJvZHlTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIPCgd1c2VyX2lkGAIgASgDIjsKEE5ld1NlcnZlckNyZWF0ZWQSEAoIYWN0b3JfaWQYASABKAkSFQoNYWN0b3JfYWRkcmVzcxgCIAEoCSIJCgdDb25uZWN0IgwKCkRpc2Nvbm5lY3RCHFoaZ2l0aHViLmNvbS9va3ptby9ueW8vcHJvdG9iBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message types.WSMessage
@@ -302,6 +302,33 @@ export const BroadcastChannelRemovedSchema: GenMessage<BroadcastChannelRemoved> 
   messageDesc(file_types, 6);
 
 /**
+ * @generated from message types.BroadcastServerRemoved
+ */
+export type BroadcastServerRemoved = Message<"types.BroadcastServerRemoved"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: string actor_id = 2;
+   */
+  actorId: string;
+
+  /**
+   * @generated from field: string actor_address = 3;
+   */
+  actorAddress: string;
+};
+
+/**
+ * Describes the message types.BroadcastServerRemoved.
+ * Use `create(BroadcastServerRemovedSchema)` to create a new message.
+ */
+export const BroadcastServerRemovedSchema: GenMessage<BroadcastServerRemoved> = /*@__PURE__*/
+  messageDesc(file_types, 7);
+
+/**
  * @generated from message types.BroadcastChannelCreation
  */
 export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation"> & {
@@ -376,7 +403,7 @@ export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation">
  * Use `create(BroadcastChannelCreationSchema)` to create a new message.
  */
 export const BroadcastChannelCreationSchema: GenMessage<BroadcastChannelCreation> = /*@__PURE__*/
-  messageDesc(file_types, 7);
+  messageDesc(file_types, 8);
 
 /**
  * @generated from message types.BodyChannelCreation
@@ -433,7 +460,7 @@ export type BodyChannelCreation = Message<"types.BodyChannelCreation"> & {
  * Use `create(BodyChannelCreationSchema)` to create a new message.
  */
 export const BodyChannelCreationSchema: GenMessage<BodyChannelCreation> = /*@__PURE__*/
-  messageDesc(file_types, 8);
+  messageDesc(file_types, 9);
 
 /**
  * @generated from message types.BodyChannelRemoved
@@ -460,7 +487,29 @@ export type BodyChannelRemoved = Message<"types.BodyChannelRemoved"> & {
  * Use `create(BodyChannelRemovedSchema)` to create a new message.
  */
 export const BodyChannelRemovedSchema: GenMessage<BodyChannelRemoved> = /*@__PURE__*/
-  messageDesc(file_types, 9);
+  messageDesc(file_types, 10);
+
+/**
+ * @generated from message types.BodyServerRemoved
+ */
+export type BodyServerRemoved = Message<"types.BodyServerRemoved"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: int64 user_id = 2;
+   */
+  userId: bigint;
+};
+
+/**
+ * Describes the message types.BodyServerRemoved.
+ * Use `create(BodyServerRemovedSchema)` to create a new message.
+ */
+export const BodyServerRemovedSchema: GenMessage<BodyServerRemoved> = /*@__PURE__*/
+  messageDesc(file_types, 11);
 
 /**
  * @generated from message types.NewServerCreated
@@ -482,7 +531,7 @@ export type NewServerCreated = Message<"types.NewServerCreated"> & {
  * Use `create(NewServerCreatedSchema)` to create a new message.
  */
 export const NewServerCreatedSchema: GenMessage<NewServerCreated> = /*@__PURE__*/
-  messageDesc(file_types, 10);
+  messageDesc(file_types, 12);
 
 /**
  * @generated from message types.Connect
@@ -495,7 +544,7 @@ export type Connect = Message<"types.Connect"> & {
  * Use `create(ConnectSchema)` to create a new message.
  */
 export const ConnectSchema: GenMessage<Connect> = /*@__PURE__*/
-  messageDesc(file_types, 11);
+  messageDesc(file_types, 13);
 
 /**
  * @generated from message types.Disconnect
@@ -508,5 +557,5 @@ export type Disconnect = Message<"types.Disconnect"> & {
  * Use `create(DisconnectSchema)` to create a new message.
  */
 export const DisconnectSchema: GenMessage<Disconnect> = /*@__PURE__*/
-  messageDesc(file_types, 12);
+  messageDesc(file_types, 14);
 

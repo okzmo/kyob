@@ -41,21 +41,24 @@
 					};
 					serversStore.addServer(server);
 					core.openCreateServerModal.status = false;
-					core.activateMapDragging();
 
 					const targetX = -(server.x - window.innerWidth / 2 + 32);
 					const targetY = -(server.y - window.innerHeight / 2 + 32);
 
-					await animateCoordinates(
-						core.offsetServerMap,
-						{ x: core.totalOffsetServerMap.x, y: core.totalOffsetServerMap.y },
-						{ x: targetX, y: targetY }
-					);
+					setTimeout(async () => {
+						await animateCoordinates(
+							core.offsetServerMap,
+							{ x: core.totalOffsetServerMap.x, y: core.totalOffsetServerMap.y },
+							{ x: targetX, y: targetY }
+						);
 
-					core.totalOffsetServerMap = {
-						x: targetX,
-						y: targetY
-					};
+						core.totalOffsetServerMap = {
+							x: targetX,
+							y: targetY
+						};
+
+						core.activateMapDragging();
+					}, 800);
 				}
 			}
 		}

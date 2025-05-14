@@ -105,11 +105,20 @@ CREATE TABLE tokens(
   expire_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+CREATE TABLE invites(
+  id BIGSERIAL PRIMARY KEY,
+  server_id BIGINT NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+  invite_id VARCHAR(255) NOT NULL,
+  expire_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_tokens_token ON tokens(token);
+CREATE INDEX idx_invites_invite_id ON invites(invite_id);
 
 -- migrate:down
+DROP TABLE invites;
 DROP TABLE tokens;
 DROP TABLE server_membership;
 DROP TABLE messages;

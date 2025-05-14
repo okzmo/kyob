@@ -33,6 +33,7 @@ func Setup() {
 			r.Get("/connect/{user_id}", handlers.WS)
 			r.Get("/setup", handlers.Setup)
 			r.Post("/server", handlers.CreateServer)
+			r.Get("/server/create_invite/{id}", handlers.CreateServerInvite)
 			r.Patch("/servers/{id}", handlers.EditServer)
 			r.Delete("/servers/{id}", handlers.DeleteServer)
 			r.Post("/channels/{server_id}", handlers.CreateChannel)

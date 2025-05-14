@@ -624,6 +624,66 @@ func (x *BroadcastChannelRemoved) GetActorAddress() string {
 	return ""
 }
 
+type BroadcastServerRemoved struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ActorId       string                 `protobuf:"bytes,2,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
+	ActorAddress  string                 `protobuf:"bytes,3,opt,name=actor_address,json=actorAddress,proto3" json:"actor_address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BroadcastServerRemoved) Reset() {
+	*x = BroadcastServerRemoved{}
+	mi := &file_types_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BroadcastServerRemoved) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BroadcastServerRemoved) ProtoMessage() {}
+
+func (x *BroadcastServerRemoved) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BroadcastServerRemoved.ProtoReflect.Descriptor instead.
+func (*BroadcastServerRemoved) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *BroadcastServerRemoved) GetServerId() int32 {
+	if x != nil {
+		return x.ServerId
+	}
+	return 0
+}
+
+func (x *BroadcastServerRemoved) GetActorId() string {
+	if x != nil {
+		return x.ActorId
+	}
+	return ""
+}
+
+func (x *BroadcastServerRemoved) GetActorAddress() string {
+	if x != nil {
+		return x.ActorAddress
+	}
+	return ""
+}
+
 type BroadcastChannelCreation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -645,7 +705,7 @@ type BroadcastChannelCreation struct {
 
 func (x *BroadcastChannelCreation) Reset() {
 	*x = BroadcastChannelCreation{}
-	mi := &file_types_proto_msgTypes[7]
+	mi := &file_types_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -657,7 +717,7 @@ func (x *BroadcastChannelCreation) String() string {
 func (*BroadcastChannelCreation) ProtoMessage() {}
 
 func (x *BroadcastChannelCreation) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[7]
+	mi := &file_types_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -670,7 +730,7 @@ func (x *BroadcastChannelCreation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastChannelCreation.ProtoReflect.Descriptor instead.
 func (*BroadcastChannelCreation) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{7}
+	return file_types_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BroadcastChannelCreation) GetId() int32 {
@@ -781,7 +841,7 @@ type BodyChannelCreation struct {
 
 func (x *BodyChannelCreation) Reset() {
 	*x = BodyChannelCreation{}
-	mi := &file_types_proto_msgTypes[8]
+	mi := &file_types_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -793,7 +853,7 @@ func (x *BodyChannelCreation) String() string {
 func (*BodyChannelCreation) ProtoMessage() {}
 
 func (x *BodyChannelCreation) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[8]
+	mi := &file_types_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -806,7 +866,7 @@ func (x *BodyChannelCreation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyChannelCreation.ProtoReflect.Descriptor instead.
 func (*BodyChannelCreation) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{8}
+	return file_types_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *BodyChannelCreation) GetServerId() int32 {
@@ -883,7 +943,7 @@ type BodyChannelRemoved struct {
 
 func (x *BodyChannelRemoved) Reset() {
 	*x = BodyChannelRemoved{}
-	mi := &file_types_proto_msgTypes[9]
+	mi := &file_types_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -895,7 +955,7 @@ func (x *BodyChannelRemoved) String() string {
 func (*BodyChannelRemoved) ProtoMessage() {}
 
 func (x *BodyChannelRemoved) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[9]
+	mi := &file_types_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -908,7 +968,7 @@ func (x *BodyChannelRemoved) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyChannelRemoved.ProtoReflect.Descriptor instead.
 func (*BodyChannelRemoved) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{9}
+	return file_types_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BodyChannelRemoved) GetServerId() int32 {
@@ -932,6 +992,58 @@ func (x *BodyChannelRemoved) GetUserId() int64 {
 	return 0
 }
 
+type BodyServerRemoved struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BodyServerRemoved) Reset() {
+	*x = BodyServerRemoved{}
+	mi := &file_types_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BodyServerRemoved) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BodyServerRemoved) ProtoMessage() {}
+
+func (x *BodyServerRemoved) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BodyServerRemoved.ProtoReflect.Descriptor instead.
+func (*BodyServerRemoved) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *BodyServerRemoved) GetServerId() int32 {
+	if x != nil {
+		return x.ServerId
+	}
+	return 0
+}
+
+func (x *BodyServerRemoved) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 type NewServerCreated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ActorId       string                 `protobuf:"bytes,1,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
@@ -942,7 +1054,7 @@ type NewServerCreated struct {
 
 func (x *NewServerCreated) Reset() {
 	*x = NewServerCreated{}
-	mi := &file_types_proto_msgTypes[10]
+	mi := &file_types_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -954,7 +1066,7 @@ func (x *NewServerCreated) String() string {
 func (*NewServerCreated) ProtoMessage() {}
 
 func (x *NewServerCreated) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[10]
+	mi := &file_types_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -967,7 +1079,7 @@ func (x *NewServerCreated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NewServerCreated.ProtoReflect.Descriptor instead.
 func (*NewServerCreated) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{10}
+	return file_types_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *NewServerCreated) GetActorId() string {
@@ -992,7 +1104,7 @@ type Connect struct {
 
 func (x *Connect) Reset() {
 	*x = Connect{}
-	mi := &file_types_proto_msgTypes[11]
+	mi := &file_types_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1004,7 +1116,7 @@ func (x *Connect) String() string {
 func (*Connect) ProtoMessage() {}
 
 func (x *Connect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[11]
+	mi := &file_types_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1017,7 +1129,7 @@ func (x *Connect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Connect.ProtoReflect.Descriptor instead.
 func (*Connect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{11}
+	return file_types_proto_rawDescGZIP(), []int{13}
 }
 
 type Disconnect struct {
@@ -1028,7 +1140,7 @@ type Disconnect struct {
 
 func (x *Disconnect) Reset() {
 	*x = Disconnect{}
-	mi := &file_types_proto_msgTypes[12]
+	mi := &file_types_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1040,7 +1152,7 @@ func (x *Disconnect) String() string {
 func (*Disconnect) ProtoMessage() {}
 
 func (x *Disconnect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[12]
+	mi := &file_types_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1053,7 +1165,7 @@ func (x *Disconnect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Disconnect.ProtoReflect.Descriptor instead.
 func (*Disconnect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{12}
+	return file_types_proto_rawDescGZIP(), []int{14}
 }
 
 var File_types_proto protoreflect.FileDescriptor
@@ -1118,7 +1230,11 @@ const file_types_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x02 \x01(\x05R\tchannelId\x12\x19\n" +
 	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12#\n" +
-	"\ractor_address\x18\x04 \x01(\tR\factorAddress\"\xa4\x03\n" +
+	"\ractor_address\x18\x04 \x01(\tR\factorAddress\"u\n" +
+	"\x16BroadcastServerRemoved\x12\x1b\n" +
+	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x19\n" +
+	"\bactor_id\x18\x02 \x01(\tR\aactorId\x12#\n" +
+	"\ractor_address\x18\x03 \x01(\tR\factorAddress\"\xa4\x03\n" +
 	"\x18BroadcastChannelCreation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x12\n" +
@@ -1152,7 +1268,10 @@ const file_types_proto_rawDesc = "" +
 	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x02 \x01(\x05R\tchannelId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\"R\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\"I\n" +
+	"\x11BodyServerRemoved\x12\x1b\n" +
+	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"R\n" +
 	"\x10NewServerCreated\x12\x19\n" +
 	"\bactor_id\x18\x01 \x01(\tR\aactorId\x12#\n" +
 	"\ractor_address\x18\x02 \x01(\tR\factorAddress\"\t\n" +
@@ -1172,7 +1291,7 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_types_proto_goTypes = []any{
 	(*WSMessage)(nil),                // 0: types.WSMessage
 	(*UserLinksRow)(nil),             // 1: types.UserLinksRow
@@ -1181,26 +1300,28 @@ var file_types_proto_goTypes = []any{
 	(*IncomingChatMessage)(nil),      // 4: types.IncomingChatMessage
 	(*BroadcastChatMessage)(nil),     // 5: types.BroadcastChatMessage
 	(*BroadcastChannelRemoved)(nil),  // 6: types.BroadcastChannelRemoved
-	(*BroadcastChannelCreation)(nil), // 7: types.BroadcastChannelCreation
-	(*BodyChannelCreation)(nil),      // 8: types.BodyChannelCreation
-	(*BodyChannelRemoved)(nil),       // 9: types.BodyChannelRemoved
-	(*NewServerCreated)(nil),         // 10: types.NewServerCreated
-	(*Connect)(nil),                  // 11: types.Connect
-	(*Disconnect)(nil),               // 12: types.Disconnect
-	(*timestamppb.Timestamp)(nil),    // 13: google.protobuf.Timestamp
+	(*BroadcastServerRemoved)(nil),   // 7: types.BroadcastServerRemoved
+	(*BroadcastChannelCreation)(nil), // 8: types.BroadcastChannelCreation
+	(*BodyChannelCreation)(nil),      // 9: types.BodyChannelCreation
+	(*BodyChannelRemoved)(nil),       // 10: types.BodyChannelRemoved
+	(*BodyServerRemoved)(nil),        // 11: types.BodyServerRemoved
+	(*NewServerCreated)(nil),         // 12: types.NewServerCreated
+	(*Connect)(nil),                  // 13: types.Connect
+	(*Disconnect)(nil),               // 14: types.Disconnect
+	(*timestamppb.Timestamp)(nil),    // 15: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
 	5,  // 0: types.WSMessage.chat_message:type_name -> types.BroadcastChatMessage
-	7,  // 1: types.WSMessage.channel_creation:type_name -> types.BroadcastChannelCreation
+	8,  // 1: types.WSMessage.channel_creation:type_name -> types.BroadcastChannelCreation
 	6,  // 2: types.WSMessage.channel_removed:type_name -> types.BroadcastChannelRemoved
-	13, // 3: types.User.created_at:type_name -> google.protobuf.Timestamp
+	15, // 3: types.User.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: types.User.links:type_name -> types.UserLinksRow
 	2,  // 5: types.User.facts:type_name -> types.UserFactsRow
 	3,  // 6: types.IncomingChatMessage.author:type_name -> types.User
 	3,  // 7: types.BroadcastChatMessage.author:type_name -> types.User
-	13, // 8: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	13, // 9: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	13, // 10: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 8: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	15, // 9: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	15, // 10: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
 	11, // [11:11] is the sub-list for method output_type
 	11, // [11:11] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
@@ -1219,14 +1340,14 @@ func file_types_proto_init() {
 		(*WSMessage_ChannelRemoved)(nil),
 	}
 	file_types_proto_msgTypes[3].OneofWrappers = []any{}
-	file_types_proto_msgTypes[7].OneofWrappers = []any{}
+	file_types_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

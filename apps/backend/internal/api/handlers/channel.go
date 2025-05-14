@@ -96,24 +96,13 @@ func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 	channelId, _ := strconv.Atoi(channelIdParam)
 	serverId, _ := strconv.Atoi(serverIdParam)
 
-	// err := services.DeleteChannel(r.Context(), serverId, channelId)
-	// if err != nil {
-	// 	switch {
-	// 	case errors.Is(err, services.ErrUnauthorizedChannelDeletion):
-	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this channel.")
-	// 	default:
-	// 		utils.RespondWithError(w, http.StatusUnauthorized, err.Error())
-	// 	}
-	// 	return
-	// }
-
 	protoMessage := &proto.BodyChannelRemoved{
 		ServerId:  int32(serverId),
 		ChannelId: int32(channelId),
 		UserId:    user.ID,
 	}
-	channelPID := actors.ServersEngine.Registry.GetPID("server", serverIdParam)
-	actors.ServersEngine.Send(channelPID, protoMessage)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverIdParam)
+	actors.ServersEngine.Send(serverPID, protoMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
 }

@@ -130,6 +130,13 @@ type Fact struct {
 	UpdatedAt time.Time   `json:"updated_at"`
 }
 
+type Invite struct {
+	ID       int64     `json:"id"`
+	ServerID int64     `json:"server_id"`
+	InviteID string    `json:"invite_id"`
+	ExpireAt time.Time `json:"expire_at"`
+}
+
 type Link struct {
 	ID        int64       `json:"id"`
 	UserID    int64       `json:"user_id"`

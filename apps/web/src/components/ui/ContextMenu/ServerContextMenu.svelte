@@ -16,14 +16,25 @@
 	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || -1, targetId));
 	let isMember = $derived(serversStore.isMember(targetId));
 
-	async function deleteServer(targetId: number) {
-		const res = await backend.deleteServer(targetId);
+	async function deleteServer(serverId: number) {
+		const res = await backend.deleteServer(serverId);
 		if (res.isErr()) {
 			console.error(res.error);
 		}
 
 		if (res.isOk()) {
 			serversStore.removeServer(targetId);
+		}
+	}
+
+	async function createServerInvite(serverId: number) {
+		const res = await backend.createInvite(serverId);
+		if (res.isErr()) {
+			console.error(res.error);
+		}
+
+		if (res.isOk()) {
+			navigator.clipboard.writeText(res.value);
 		}
 	}
 </script>
@@ -33,6 +44,7 @@
 >
 	{#if isMember}
 		<ContextMenu.Item
+			onclick={() => createServerInvite(targetId)}
 			class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
 		>
 			<p class="flex items-center">Invite people</p>

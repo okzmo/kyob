@@ -48,6 +48,10 @@ func NewChannel() actor.Receiver {
 
 func (s *server) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
+	case actor.Stopped:
+		slog.Info("server stopped",
+			"id", ctx.PID().GetID(),
+		)
 	case actor.Started:
 		slog.Info("server started",
 			"id", ctx.PID().GetID(),
@@ -116,6 +120,14 @@ func (s *server) Receive(ctx *actor.Context) {
 				ActorAddress: channelPID.Address,
 			})
 		}
+	case *protoTypes.BodyServerRemoved:
+		err := services.DeleteServer(context.TODO(), int(msg.ServerId), msg.UserId)
+		if err != nil {
+			slog.Error("failed to delete server", "err", err)
+			return
+		}
+
+		ctx.Engine().Poison(ctx.PID())
 	}
 }
 

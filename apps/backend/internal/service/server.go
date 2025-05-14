@@ -59,6 +59,10 @@ type ServerResponse struct {
 	Y           int         `json:"y"`
 }
 
+type ServerInviteResponse struct {
+	InviteLink string `json:"invite_link"`
+}
+
 func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, server *CreateServerBody) (*ServerResponse, error) {
 	image, err := utils.CropImage(file, server.Crop.X, server.Crop.Y, server.Crop.Width, server.Crop.Height)
 	if err != nil {
@@ -174,16 +178,29 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 	return nil
 }
 
-func DeleteServer(ctx context.Context, id int) error {
-	user := ctx.Value("user").(db.User)
-
+func DeleteServer(ctx context.Context, id int, userId int64) error {
 	res, err := db.Query.DeleteServer(ctx, db.DeleteServerParams{
 		ID:      int64(id),
-		OwnerID: user.ID,
+		OwnerID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedServerDeletion
 	}
 
 	return nil
+}
+
+func CreateServerInvite(ctx context.Context, serverId int) (*string, error) {
+	inviteId := utils.GenerateRandomId(10)
+
+	res, err := db.Query.CreateInvite(ctx, db.CreateInviteParams{
+		ServerID: int64(serverId),
+		InviteID: inviteId,
+		ExpireAt: time.Now().Add(time.Minute * 15),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }

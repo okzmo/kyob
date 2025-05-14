@@ -4,6 +4,7 @@ import type { Channel, ChannelTypes, Message, Server, Setup } from '../types/typ
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	CreateChannelErrors,
+	CreateInviteErrors,
 	CreateMessageErrors,
 	CreateServerErrors,
 	DeleteChannelErrors,
@@ -123,10 +124,10 @@ class Backend {
 				}
 			});
 
-			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
-			}
 			const data = (await res.json()) as Setup;
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
 
 			return ok(data);
 		} catch (error) {
@@ -153,10 +154,10 @@ class Backend {
 				body: formData
 			});
 
-			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
-			}
 			const data = (await res.json()) as Server;
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
 
 			return ok(data);
 		} catch (error) {
@@ -174,10 +175,10 @@ class Backend {
 				body: JSON.stringify(body)
 			});
 
-			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
-			}
 			const data = (await res.json()) as Server;
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
 
 			return ok(data);
 		} catch (error) {
@@ -193,8 +194,9 @@ class Backend {
 		try {
 			const res = await client.delete(`authenticated/servers/${serverId}`);
 
+			const data = await res.json();
 			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
 			return ok();
@@ -216,8 +218,9 @@ class Backend {
 				body: JSON.stringify(body)
 			});
 
+			const data = await res.json();
 			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
 			return ok();
@@ -237,8 +240,9 @@ class Backend {
 		try {
 			const res = await client.delete(`authenticated/channels/${serverId}/${channelId}`);
 
+			const data = await res.json();
 			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
 			return ok();
@@ -261,8 +265,9 @@ class Backend {
 				body: JSON.stringify(body)
 			});
 
+			const data = await res.json();
 			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
 			return ok();
@@ -279,13 +284,28 @@ class Backend {
 		try {
 			const res = await client.get(`authenticated/messages/${channelId}`);
 
+			const data = (await res.json()) as Message[];
 			if (!res.ok) {
-				return err({ code: 'ERR_UNKNOWN', error: '' });
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
-			const data = (await res.json()) as Message[];
-
 			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async createInvite(serverId: number): Promise<Result<string, CreateInviteErrors>> {
+		try {
+			const res = await client.get(`authenticated/server/create_invite/${serverId}`);
+
+			const data = (await res.json()) as { invite_link: string };
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok(data.invite_link);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });

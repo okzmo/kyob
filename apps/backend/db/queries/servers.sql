@@ -47,3 +47,4 @@ DELETE FROM servers WHERE id = $1 AND owner_id = $2;
 
 -- name: CheckServerPosition :execresult
 SELECT id FROM servers WHERE (x BETWEEN $1-100 AND $1+100) AND (y BETWEEN $2-100 AND $2+100);
+

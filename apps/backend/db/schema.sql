@@ -117,6 +117,37 @@ ALTER SEQUENCE public.facts_id_seq OWNED BY public.facts.id;
 
 
 --
+-- Name: invites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.invites (
+    id bigint NOT NULL,
+    server_id bigint NOT NULL,
+    invite_id character varying(255) NOT NULL,
+    expire_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.invites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: invites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.invites_id_seq OWNED BY public.invites.id;
+
+
+--
 -- Name: links; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -386,6 +417,13 @@ ALTER TABLE ONLY public.facts ALTER COLUMN id SET DEFAULT nextval('public.facts_
 
 
 --
+-- Name: invites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invites ALTER COLUMN id SET DEFAULT nextval('public.invites_id_seq'::regclass);
+
+
+--
 -- Name: links id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -448,6 +486,14 @@ ALTER TABLE ONLY public.channels
 
 ALTER TABLE ONLY public.facts
     ADD CONSTRAINT facts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: invites invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invites
+    ADD CONSTRAINT invites_pkey PRIMARY KEY (id);
 
 
 --
@@ -539,6 +585,13 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: idx_invites_invite_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_invites_invite_id ON public.invites USING btree (invite_id);
+
+
+--
 -- Name: idx_tokens_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -573,6 +626,14 @@ ALTER TABLE ONLY public.channels
 
 ALTER TABLE ONLY public.facts
     ADD CONSTRAINT facts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: invites invites_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invites
+    ADD CONSTRAINT invites_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
 
 
 --
