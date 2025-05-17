@@ -7,6 +7,7 @@
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
 	import { page } from '$app/state';
+	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateChannelSchema)), {
 		dataType: 'json',
@@ -46,7 +47,7 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<Dialog.Content
+		<CustomDialogContent
 			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
 		>
 			<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
@@ -99,6 +100,6 @@
 					</button>
 				</div>
 			</form>
-		</Dialog.Content>
+		</CustomDialogContent>
 	</Dialog.Portal>
 </Dialog.Root>

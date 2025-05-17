@@ -73,7 +73,7 @@ export const CreateMessageSchema = v.object({
 export interface CreateMessageType extends v.InferInput<typeof CreateMessageSchema> {}
 
 export const JoinServerSchema = v.object({
-	invite_id: v.string(),
+	invite_url: v.string(),
 	x: v.number(),
 	y: v.number()
 });

@@ -1,6 +1,11 @@
 -- name: GetServer :one
 SELECT * FROM servers WHERE id = $1;
 
+-- name: GetServerWithChannels :one
+SELECT DISTINCT s.*, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=$1) AS member_count
+FROM servers s, server_membership sm
+WHERE s.id = $1 AND sm.server_id = s.id AND sm.user_id = $2;
+
 -- name: OwnServer :execresult
 SELECT * FROM servers WHERE id = $1 AND owner_id = $2;
 
@@ -11,7 +16,7 @@ SELECT * FROM servers;
 SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2;
 
 -- name: GetServersFromUser :many
-SELECT DISTINCT s.*, sm.x, sm.y
+SELECT DISTINCT s.*, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s, server_membership sm
 WHERE sm.server_id = s.id AND sm.user_id = $1;
 

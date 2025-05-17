@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Kyob | {server.name}</title>
+	<title>Kyob | {server?.name}</title>
 </svelte:head>
 
 <ChannelMap {channels} />

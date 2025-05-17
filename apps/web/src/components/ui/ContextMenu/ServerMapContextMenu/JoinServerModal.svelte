@@ -6,6 +6,9 @@
 	import Close from '../../icons/Close.svelte';
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
+	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
+	import { serversStore } from '../../../../stores/servers.svelte';
+	import type { Server } from '../../../../types/types';
 
 	const { form, errors, enhance } = superForm(defaults(valibot(JoinServerSchema)), {
 		dataType: 'json',
@@ -24,6 +27,11 @@
 				}
 
 				if (res.isOk()) {
+					const server: Server = {
+						...res.value
+					};
+
+					serversStore.addServer(server);
 					core.openJoinServerModal.status = false;
 					core.activateMapDragging();
 				}
@@ -41,7 +49,7 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<Dialog.Content
+		<CustomDialogContent
 			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
 		>
 			<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
@@ -66,21 +74,21 @@
 					<div class="flex items-center gap-x-1">
 						<label
 							for="channel-name"
-							class={['text-sm', $errors.invite_id ? 'text-red-400 ' : 'text-main-500']}
+							class={['text-sm', $errors.invite_url ? 'text-red-400 ' : 'text-main-500']}
 							>Invitation link</label
 						>
-						{#if $errors.invite_id}
-							<p class="text-sm text-red-400">- {$errors.invite_id}</p>
+						{#if $errors.invite_url}
+							<p class="text-sm text-red-400">- {$errors.invite_url}</p>
 						{/if}
 					</div>
 					<input
 						id="channel-name"
 						type="text"
-						bind:value={$form.invite_id}
-						placeholder="General"
+						bind:value={$form.invite_url}
+						placeholder="https://kyob.app/invite/123"
 						class={[
 							'bg-main-800 border-main-600 placeholder:text-main-400 mt-1.5 rounded-xl border py-2.5 focus-visible:ring-0',
-							$errors.invite_id ? 'border-red-400' : 'border-main-600'
+							$errors.invite_url ? 'border-red-400' : 'border-main-600'
 						]}
 					/>
 				</div>
@@ -94,6 +102,6 @@
 					</button>
 				</div>
 			</form>
-		</Dialog.Content>
+		</CustomDialogContent>
 	</Dialog.Portal>
 </Dialog.Root>

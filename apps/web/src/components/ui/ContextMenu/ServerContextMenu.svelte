@@ -14,7 +14,6 @@
 	let { targetId }: Props = $props();
 
 	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || -1, targetId));
-	let isMember = $derived(serversStore.isMember(targetId));
 
 	async function deleteServer(serverId: number) {
 		const res = await backend.deleteServer(serverId);
@@ -42,35 +41,27 @@
 <ContextMenu.Content
 	class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
 >
-	{#if isMember}
+	<ContextMenu.Item
+		onclick={() => createServerInvite(targetId)}
+		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+	>
+		<p class="flex items-center">Invite people</p>
+		<UserInvite height={20} width={20} />
+	</ContextMenu.Item>
+	{#if isOwner}
 		<ContextMenu.Item
-			onclick={() => createServerInvite(targetId)}
-			class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+			onclick={() => deleteServer(targetId)}
 		>
-			<p class="flex items-center">Invite people</p>
-			<UserInvite height={20} width={20} />
+			<p class="flex items-center">Delete server</p>
+			<Bin height={20} width={20} />
 		</ContextMenu.Item>
-		{#if isOwner}
-			<ContextMenu.Item
-				class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-				onclick={() => deleteServer(targetId)}
-			>
-				<p class="flex items-center">Delete server</p>
-				<Bin height={20} width={20} />
-			</ContextMenu.Item>
-		{:else}
-			<ContextMenu.Item
-				class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-			>
-				<p class="flex items-center">Leave server</p>
-				<LogoutIcon height={20} width={20} />
-			</ContextMenu.Item>
-		{/if}
 	{:else}
 		<ContextMenu.Item
-			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none focus-visible:outline-none"
+			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
 		>
-			<p class="text-main-600 flex items-center">No interactions available</p>
+			<p class="flex items-center">Leave server</p>
+			<LogoutIcon height={20} width={20} />
 		</ContextMenu.Item>
 	{/if}
 </ContextMenu.Content>

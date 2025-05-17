@@ -9,6 +9,7 @@ import type {
 	CreateServerErrors,
 	DeleteChannelErrors,
 	DeleteServerErrors,
+	JoinServerErrors,
 	SetupErrors,
 	StandardError
 } from '../types/errors';
@@ -98,11 +99,26 @@ class Backend {
 						serversStore.addChannel(value.serverId, channel);
 					}
 					break;
-				case 'channelRemoved': {
+				case 'channelRemoved':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.removeChannel(value.serverId, value.channelId);
+						windows.closeDeadWindow(value.channelId);
+					}
+					break;
+				case 'userConnect':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.connectUser(value.serverId, value.userId, value.users);
+					}
+					break;
+				case 'userDisconnect': {
 					if (!wsMess.content.value) return;
 					const value = wsMess.content.value;
-					serversStore.removeChannel(value.serverId, value.channelId);
-					windows.closeDeadWindow(value.channelId);
+					console.log(value);
+					serversStore.disconnectUser(value.serverId, value.userId);
 				}
 			}
 		};
@@ -131,11 +147,11 @@ class Backend {
 
 			return ok(data);
 		} catch (error) {
-			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 401) {
+			const errBody = await (error as StandardError).response?.json();
+			if (errBody?.status === 401) {
 				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+			return err({ code: 'ERR_UNKNOWN', error: errBody?.error || '' });
 		}
 	}
 
@@ -169,22 +185,25 @@ class Backend {
 		}
 	}
 
-	async joinServer(body: JoinServerType): Promise<Result<Server, CreateServerErrors>> {
+	async joinServer(body: JoinServerType): Promise<Result<Server, JoinServerErrors>> {
 		try {
-			const res = await client.post('authenticated/server', {
+			const res = await client.post('authenticated/server/join', {
 				body: JSON.stringify(body)
 			});
 
-			const data = (await res.json()) as Server;
+			const data = (await res.json()) as { server: Server };
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
-			return ok(data);
+			return ok(data.server);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			if (errBody.status === 400) {
-				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				return err({ code: errBody.code, error: errBody.error });
+			}
+			if (errBody.status === 404) {
+				return err({ code: 'ERR_INVITE_SERVER_NOT_FOUND', error: errBody.error });
 			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}

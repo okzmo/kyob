@@ -51,3 +51,13 @@ export interface CreateInviteErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface JoinServerErrors {
+	code:
+		| 'ERR_INVITE_MISSING_ID'
+		| 'ERR_INVITE_SERVER_NOT_FOUND'
+		| 'ERR_VALIDATION_FAILED'
+		| 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}

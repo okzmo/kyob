@@ -8,16 +8,17 @@ package db
 import (
 	"context"
 	"time"
-
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
-const checkInvite = `-- name: CheckInvite :execresult
-SELECT id FROM invites WHERE invite_id = $1
+const checkInvite = `-- name: CheckInvite :one
+SELECT server_id FROM invites WHERE invite_id = $1 AND expire_at >= NOW()
 `
 
-func (q *Queries) CheckInvite(ctx context.Context, inviteID string) (pgconn.CommandTag, error) {
-	return q.db.Exec(ctx, checkInvite, inviteID)
+func (q *Queries) CheckInvite(ctx context.Context, inviteID string) (int64, error) {
+	row := q.db.QueryRow(ctx, checkInvite, inviteID)
+	var server_id int64
+	err := row.Scan(&server_id)
+	return server_id, err
 }
 
 const createInvite = `-- name: CreateInvite :one

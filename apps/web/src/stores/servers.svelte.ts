@@ -12,10 +12,6 @@ class Servers {
 		return this.servers[serverId].owner_id === userId;
 	}
 
-	isMember(serverId: number) {
-		return this.servers[serverId]?.is_member;
-	}
-
 	getServers() {
 		return Object.values(this.servers);
 	}
@@ -30,6 +26,10 @@ class Servers {
 
 	getChannel(serverId: number, channelId: number) {
 		return this.servers[serverId].channels[channelId];
+	}
+
+	getActiveMembers(serverId: number) {
+		return this.servers[serverId]?.active_count?.length || 0;
 	}
 
 	async getMessages(serverId: number, channelId: number) {
@@ -69,6 +69,30 @@ class Servers {
 			this.servers[serverId].channels[message.channel_id].messages!.push(message);
 		} else {
 			this.servers[serverId].channels[message.channel_id].messages = [message];
+		}
+	}
+	connectUser(serverId: number, userId: number, connectedUsers: number[]) {
+		const server = this.getServer(serverId);
+		if (!server.active_count || server.active_count.length <= 0) {
+			this.servers[server.id].active_count = [];
+		}
+
+		if (connectedUsers?.length > 0) {
+			this.servers[server.id].active_count = connectedUsers;
+		}
+
+		if (!this.servers[server.id].active_count.includes(userId)) {
+			this.servers[server.id].active_count.push(userId);
+		}
+	}
+
+	disconnectUser(serverId: number, userId: number) {
+		const server = this.getServer(serverId);
+		if (!server.active_count) return;
+		for (let i = 0; i < server.active_count.length; ++i) {
+			if (this.servers[server.id].active_count[i] === userId) {
+				this.servers[server.id].active_count.splice(i, 1);
+			}
 		}
 	}
 }

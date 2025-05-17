@@ -123,17 +123,6 @@ func DeleteServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// err = services.DeleteServer(r.Context(), id)
-	// if err != nil {
-	// 	switch {
-	// 	case errors.Is(err, services.ErrUnauthorizedServerDeletion):
-	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot delete this server.")
-	// 	default:
-	// 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-	// 	}
-	// 	return
-	// }
-
 	protoMessage := &proto.BodyServerRemoved{
 		ServerId: int32(id),
 		UserId:   user.ID,
@@ -159,4 +148,48 @@ func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, http.StatusContinue, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteId)})
+}
+
+func JoinServer(w http.ResponseWriter, r *http.Request) {
+	var body services.JoinServerBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error(), "ERR_VALIDATION_FAILED")
+		return
+	}
+
+	server, err := services.JoinServer(r.Context(), body)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrNoIdInInvite):
+			utils.RespondWithError(w, http.StatusBadRequest, "The invite url is invalid.", "ERR_INVITE_MISSING_ID")
+		case errors.Is(err, services.ErrServerNotFound):
+			utils.RespondWithError(w, http.StatusNotFound, "The given url doesn't match any existing realm.")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	user := r.Context().Value("user").(db.User)
+
+	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
+	serverPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
+	actors.ServersEngine.SendWithSender(serverPID, &proto.Connect{}, userPID)
+	actors.ServersEngine.Send(serverPID, &proto.BodyNewUserInServer{
+		ServerId: int32(server.ID),
+		User: &proto.User{
+			Id:          int32(user.ID),
+			DisplayName: user.DisplayName,
+			Avatar:      &user.Avatar.String,
+		},
+	})
+
+	utils.RespondWithJSON(w, http.StatusContinue, services.JoinServerResponse{Server: *server})
 }

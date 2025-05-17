@@ -100,6 +100,52 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 	return i, err
 }
 
+const getServerWithChannels = `-- name: GetServerWithChannels :one
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=$1) AS member_count
+FROM servers s, server_membership sm
+WHERE s.id = $1 AND sm.server_id = s.id AND sm.user_id = $2
+`
+
+type GetServerWithChannelsParams struct {
+	ServerID int64 `json:"server_id"`
+	UserID   int64 `json:"user_id"`
+}
+
+type GetServerWithChannelsRow struct {
+	ID          int64       `json:"id"`
+	OwnerID     int64       `json:"owner_id"`
+	Name        string      `json:"name"`
+	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
+	Description pgtype.Text `json:"description"`
+	Private     bool        `json:"private"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
+	X           int32       `json:"x"`
+	Y           int32       `json:"y"`
+	MemberCount int64       `json:"member_count"`
+}
+
+func (q *Queries) GetServerWithChannels(ctx context.Context, arg GetServerWithChannelsParams) (GetServerWithChannelsRow, error) {
+	row := q.db.QueryRow(ctx, getServerWithChannels, arg.ServerID, arg.UserID)
+	var i GetServerWithChannelsRow
+	err := row.Scan(
+		&i.ID,
+		&i.OwnerID,
+		&i.Name,
+		&i.Avatar,
+		&i.Banner,
+		&i.Description,
+		&i.Private,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.X,
+		&i.Y,
+		&i.MemberCount,
+	)
+	return i, err
+}
+
 const getServers = `-- name: GetServers :many
 SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers
 `
@@ -135,7 +181,7 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s, server_membership sm
 WHERE sm.server_id = s.id AND sm.user_id = $1
 `
@@ -152,6 +198,7 @@ type GetServersFromUserRow struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
+	MemberCount int64       `json:"member_count"`
 }
 
 func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]GetServersFromUserRow, error) {
@@ -175,6 +222,7 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]GetSe
 			&i.UpdatedAt,
 			&i.X,
 			&i.Y,
+			&i.MemberCount,
 		); err != nil {
 			return nil, err
 		}

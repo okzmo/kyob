@@ -4,11 +4,8 @@
 	import type { Server } from '../../types/types';
 	import ServerbarMembers from './ServerbarMembers.svelte';
 
-	let server = $state<Server>();
-
-	$effect(() => {
-		server = serversStore.getServer(Number(page.params.server_id));
-	});
+	let server = $derived<Server>(serversStore.getServer(Number(page.params.server_id)));
+	let activeMembers = $derived(serversStore.getActiveMembers(Number(page.params.server_id)));
 </script>
 
 <div
@@ -23,7 +20,7 @@
 			>
 				{server?.name}
 			</p>
-			<ServerbarMembers />
+			<ServerbarMembers totalMembers={server?.member_count || 0} {activeMembers} />
 		</div>
 		<img src={server?.avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full" />
 	</button>

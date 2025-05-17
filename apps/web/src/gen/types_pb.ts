@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file types.proto.
  */
 export const file_types: GenFile = /*@__PURE__*/
-  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMiwwEKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAQgkKB2NvbnRlbnQiNgoMVXNlckxpbmtzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEgsKA3VybBgDIAEoCSI4CgxVc2VyRmFjdHNSb3cSCgoCaWQYASABKAUSDQoFbGFiZWwYAiABKAkSDQoFdmFsdWUYAyABKAki/QIKBFVzZXISCgoCaWQYASABKAUSDQoFZW1haWwYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSFAoMZGlzcGxheV9uYW1lGAQgASgJEhMKBmF2YXRhchgFIAEoCUgAiAEBEhMKBmJhbm5lchgGIAEoCUgBiAEBEhkKDGdyYWRpZW50X3RvcBgHIAEoCUgCiAEBEhwKD2dyYWRpZW50X2JvdHRvbRgIIAEoCUgDiAEBEhIKBWFib3V0GAkgASgJSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASIgoFbGlua3MYCyADKAsyEy50eXBlcy5Vc2VyTGlua3NSb3cSIgoFZmFjdHMYDCADKAsyEy50eXBlcy5Vc2VyRmFjdHNSb3dCCQoHX2F2YXRhckIJCgdfYmFubmVyQg8KDV9ncmFkaWVudF90b3BCEgoQX2dyYWRpZW50X2JvdHRvbUIICgZfYWJvdXQinQEKE0luY29taW5nQ2hhdE1lc3NhZ2USGwoGYXV0aG9yGAEgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBRIPCgdjb250ZW50GAQgASgMEhYKDm1lbnRpb25zX3VzZXJzGAUgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAYgAygFItoBChRCcm9hZGNhc3RDaGF0TWVzc2FnZRIKCgJpZBgBIAEoBRIbCgZhdXRob3IYAiABKAsyCy50eXBlcy5Vc2VyEhEKCXNlcnZlcl9pZBgDIAEoBRISCgpjaGFubmVsX2lkGAQgASgFEg8KB2NvbnRlbnQYBSABKAwSFgoObWVudGlvbnNfdXNlcnMYBiADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYByADKAUSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiaQoXQnJvYWRjYXN0Q2hhbm5lbFJlbW92ZWQSEQoJc2VydmVyX2lkGAEgASgFEhIKCmNoYW5uZWxfaWQYAiABKAUSEAoIYWN0b3JfaWQYAyABKAkSFQoNYWN0b3JfYWRkcmVzcxgEIAEoCSJUChZCcm9hZGNhc3RTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIQCghhY3Rvcl9pZBgCIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGAMgASgJIrwCChhCcm9hZGNhc3RDaGFubmVsQ3JlYXRpb24SCgoCaWQYASABKAUSEQoJc2VydmVyX2lkGAIgASgFEgwKBG5hbWUYAyABKAkSDAoEdHlwZRgEIAEoCRIYCgtkZXNjcmlwdGlvbhgFIAEoCUgAiAEBEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghhY3Rvcl9pZBgMIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGA0gASgJQg4KDF9kZXNjcmlwdGlvbiKhAQoTQm9keUNoYW5uZWxDcmVhdGlvbhIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY3JlYXRvcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSEwoLZGVzY3JpcHRpb24YBSABKAkSDQoFdXNlcnMYBiADKAUSDQoFcm9sZXMYByADKAUSCQoBeBgIIAEoBRIJCgF5GAkgASgFIkwKEkJvZHlDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY2hhbm5lbF9pZBgCIAEoBRIPCgd1c2VyX2lkGAMgASgDIjcKEUJvZHlTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIPCgd1c2VyX2lkGAIgASgDIjsKEE5ld1NlcnZlckNyZWF0ZWQSEAoIYWN0b3JfaWQYASABKAkSFQoNYWN0b3JfYWRkcmVzcxgCIAEoCSIJCgdDb25uZWN0IgwKCkRpc2Nvbm5lY3RCHFoaZ2l0aHViLmNvbS9va3ptby9ueW8vcHJvdG9iBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMi4AIKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAEjMKCG5ld191c2VyGAQgASgLMh8udHlwZXMuQnJvYWRjYXN0TmV3VXNlckluU2VydmVySAASLwoMdXNlcl9jb25uZWN0GAUgASgLMhcudHlwZXMuQnJvYWRjYXN0Q29ubmVjdEgAEjUKD3VzZXJfZGlzY29ubmVjdBgGIAEoCzIaLnR5cGVzLkJyb2FkY2FzdERpc2Nvbm5lY3RIAEIJCgdjb250ZW50IjYKDFVzZXJMaW5rc1JvdxIKCgJpZBgBIAEoBRINCgVsYWJlbBgCIAEoCRILCgN1cmwYAyABKAkiOAoMVXNlckZhY3RzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEg0KBXZhbHVlGAMgASgJIv0CCgRVc2VyEgoKAmlkGAEgASgFEg0KBWVtYWlsGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEhQKDGRpc3BsYXlfbmFtZRgEIAEoCRITCgZhdmF0YXIYBSABKAlIAIgBARITCgZiYW5uZXIYBiABKAlIAYgBARIZCgxncmFkaWVudF90b3AYByABKAlIAogBARIcCg9ncmFkaWVudF9ib3R0b20YCCABKAlIA4gBARISCgVhYm91dBgJIAEoCUgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBWxpbmtzGAsgAygLMhMudHlwZXMuVXNlckxpbmtzUm93EiIKBWZhY3RzGAwgAygLMhMudHlwZXMuVXNlckZhY3RzUm93QgkKB19hdmF0YXJCCQoHX2Jhbm5lckIPCg1fZ3JhZGllbnRfdG9wQhIKEF9ncmFkaWVudF9ib3R0b21CCAoGX2Fib3V0Ip0BChNJbmNvbWluZ0NoYXRNZXNzYWdlEhsKBmF1dGhvchgBIAEoCzILLnR5cGVzLlVzZXISEQoJc2VydmVyX2lkGAIgASgFEhIKCmNoYW5uZWxfaWQYAyABKAUSDwoHY29udGVudBgEIAEoDBIWCg5tZW50aW9uc191c2VycxgFIAMoBRIZChFtZW50aW9uc19jaGFubmVscxgGIAMoBSLaAQoUQnJvYWRjYXN0Q2hhdE1lc3NhZ2USCgoCaWQYASABKAUSGwoGYXV0aG9yGAIgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAyABKAUSEgoKY2hhbm5lbF9pZBgEIAEoBRIPCgdjb250ZW50GAUgASgMEhYKDm1lbnRpb25zX3VzZXJzGAYgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAcgAygFEi4KCmNyZWF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wImkKF0Jyb2FkY2FzdENoYW5uZWxSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRISCgpjaGFubmVsX2lkGAIgASgFEhAKCGFjdG9yX2lkGAMgASgJEhUKDWFjdG9yX2FkZHJlc3MYBCABKAkiSAoYQnJvYWRjYXN0TmV3VXNlckluU2VydmVyEhEKCXNlcnZlcl9pZBgBIAEoBRIZCgR1c2VyGAIgASgLMgsudHlwZXMuVXNlciJUChZCcm9hZGNhc3RTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIQCghhY3Rvcl9pZBgCIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGAMgASgJIrwCChhCcm9hZGNhc3RDaGFubmVsQ3JlYXRpb24SCgoCaWQYASABKAUSEQoJc2VydmVyX2lkGAIgASgFEgwKBG5hbWUYAyABKAkSDAoEdHlwZRgEIAEoCRIYCgtkZXNjcmlwdGlvbhgFIAEoCUgAiAEBEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghhY3Rvcl9pZBgMIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGA0gASgJQg4KDF9kZXNjcmlwdGlvbiJFChBCcm9hZGNhc3RDb25uZWN0EhEKCXNlcnZlcl9pZBgBIAEoBRIPCgd1c2VyX2lkGAIgASgFEg0KBXVzZXJzGAMgAygFIjkKE0Jyb2FkY2FzdERpc2Nvbm5lY3QSEQoJc2VydmVyX2lkGAEgASgFEg8KB3VzZXJfaWQYAiABKAUioQEKE0JvZHlDaGFubmVsQ3JlYXRpb24SEQoJc2VydmVyX2lkGAEgASgFEhIKCmNyZWF0b3JfaWQYAiABKAMSDAoEbmFtZRgDIAEoCRIMCgR0eXBlGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEg0KBXVzZXJzGAYgAygFEg0KBXJvbGVzGAcgAygFEgkKAXgYCCABKAUSCQoBeRgJIAEoBSJMChJCb2R5Q2hhbm5lbFJlbW92ZWQSEQoJc2VydmVyX2lkGAEgASgFEhIKCmNoYW5uZWxfaWQYAiABKAUSDwoHdXNlcl9pZBgDIAEoAyI3ChFCb2R5U2VydmVyUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSDwoHdXNlcl9pZBgCIAEoAyJDChNCb2R5TmV3VXNlckluU2VydmVyEhEKCXNlcnZlcl9pZBgBIAEoBRIZCgR1c2VyGAIgASgLMgsudHlwZXMuVXNlciI7ChBOZXdTZXJ2ZXJDcmVhdGVkEhAKCGFjdG9yX2lkGAEgASgJEhUKDWFjdG9yX2FkZHJlc3MYAiABKAkiCQoHQ29ubmVjdCIMCgpEaXNjb25uZWN0QhxaGmdpdGh1Yi5jb20vb2t6bW8vbnlvL3Byb3RvYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message types.WSMessage
@@ -39,6 +39,24 @@ export type WSMessage = Message<"types.WSMessage"> & {
      */
     value: BroadcastChannelRemoved;
     case: "channelRemoved";
+  } | {
+    /**
+     * @generated from field: types.BroadcastNewUserInServer new_user = 4;
+     */
+    value: BroadcastNewUserInServer;
+    case: "newUser";
+  } | {
+    /**
+     * @generated from field: types.BroadcastConnect user_connect = 5;
+     */
+    value: BroadcastConnect;
+    case: "userConnect";
+  } | {
+    /**
+     * @generated from field: types.BroadcastDisconnect user_disconnect = 6;
+     */
+    value: BroadcastDisconnect;
+    case: "userDisconnect";
   } | { case: undefined; value?: undefined };
 };
 
@@ -302,6 +320,28 @@ export const BroadcastChannelRemovedSchema: GenMessage<BroadcastChannelRemoved> 
   messageDesc(file_types, 6);
 
 /**
+ * @generated from message types.BroadcastNewUserInServer
+ */
+export type BroadcastNewUserInServer = Message<"types.BroadcastNewUserInServer"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: types.User user = 2;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message types.BroadcastNewUserInServer.
+ * Use `create(BroadcastNewUserInServerSchema)` to create a new message.
+ */
+export const BroadcastNewUserInServerSchema: GenMessage<BroadcastNewUserInServer> = /*@__PURE__*/
+  messageDesc(file_types, 7);
+
+/**
  * @generated from message types.BroadcastServerRemoved
  */
 export type BroadcastServerRemoved = Message<"types.BroadcastServerRemoved"> & {
@@ -326,7 +366,7 @@ export type BroadcastServerRemoved = Message<"types.BroadcastServerRemoved"> & {
  * Use `create(BroadcastServerRemovedSchema)` to create a new message.
  */
 export const BroadcastServerRemovedSchema: GenMessage<BroadcastServerRemoved> = /*@__PURE__*/
-  messageDesc(file_types, 7);
+  messageDesc(file_types, 8);
 
 /**
  * @generated from message types.BroadcastChannelCreation
@@ -403,7 +443,56 @@ export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation">
  * Use `create(BroadcastChannelCreationSchema)` to create a new message.
  */
 export const BroadcastChannelCreationSchema: GenMessage<BroadcastChannelCreation> = /*@__PURE__*/
-  messageDesc(file_types, 8);
+  messageDesc(file_types, 9);
+
+/**
+ * @generated from message types.BroadcastConnect
+ */
+export type BroadcastConnect = Message<"types.BroadcastConnect"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: int32 user_id = 2;
+   */
+  userId: number;
+
+  /**
+   * @generated from field: repeated int32 users = 3;
+   */
+  users: number[];
+};
+
+/**
+ * Describes the message types.BroadcastConnect.
+ * Use `create(BroadcastConnectSchema)` to create a new message.
+ */
+export const BroadcastConnectSchema: GenMessage<BroadcastConnect> = /*@__PURE__*/
+  messageDesc(file_types, 10);
+
+/**
+ * @generated from message types.BroadcastDisconnect
+ */
+export type BroadcastDisconnect = Message<"types.BroadcastDisconnect"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: int32 user_id = 2;
+   */
+  userId: number;
+};
+
+/**
+ * Describes the message types.BroadcastDisconnect.
+ * Use `create(BroadcastDisconnectSchema)` to create a new message.
+ */
+export const BroadcastDisconnectSchema: GenMessage<BroadcastDisconnect> = /*@__PURE__*/
+  messageDesc(file_types, 11);
 
 /**
  * @generated from message types.BodyChannelCreation
@@ -460,7 +549,7 @@ export type BodyChannelCreation = Message<"types.BodyChannelCreation"> & {
  * Use `create(BodyChannelCreationSchema)` to create a new message.
  */
 export const BodyChannelCreationSchema: GenMessage<BodyChannelCreation> = /*@__PURE__*/
-  messageDesc(file_types, 9);
+  messageDesc(file_types, 12);
 
 /**
  * @generated from message types.BodyChannelRemoved
@@ -487,7 +576,7 @@ export type BodyChannelRemoved = Message<"types.BodyChannelRemoved"> & {
  * Use `create(BodyChannelRemovedSchema)` to create a new message.
  */
 export const BodyChannelRemovedSchema: GenMessage<BodyChannelRemoved> = /*@__PURE__*/
-  messageDesc(file_types, 10);
+  messageDesc(file_types, 13);
 
 /**
  * @generated from message types.BodyServerRemoved
@@ -509,7 +598,29 @@ export type BodyServerRemoved = Message<"types.BodyServerRemoved"> & {
  * Use `create(BodyServerRemovedSchema)` to create a new message.
  */
 export const BodyServerRemovedSchema: GenMessage<BodyServerRemoved> = /*@__PURE__*/
-  messageDesc(file_types, 11);
+  messageDesc(file_types, 14);
+
+/**
+ * @generated from message types.BodyNewUserInServer
+ */
+export type BodyNewUserInServer = Message<"types.BodyNewUserInServer"> & {
+  /**
+   * @generated from field: int32 server_id = 1;
+   */
+  serverId: number;
+
+  /**
+   * @generated from field: types.User user = 2;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message types.BodyNewUserInServer.
+ * Use `create(BodyNewUserInServerSchema)` to create a new message.
+ */
+export const BodyNewUserInServerSchema: GenMessage<BodyNewUserInServer> = /*@__PURE__*/
+  messageDesc(file_types, 15);
 
 /**
  * @generated from message types.NewServerCreated
@@ -531,7 +642,7 @@ export type NewServerCreated = Message<"types.NewServerCreated"> & {
  * Use `create(NewServerCreatedSchema)` to create a new message.
  */
 export const NewServerCreatedSchema: GenMessage<NewServerCreated> = /*@__PURE__*/
-  messageDesc(file_types, 12);
+  messageDesc(file_types, 16);
 
 /**
  * @generated from message types.Connect
@@ -544,7 +655,7 @@ export type Connect = Message<"types.Connect"> & {
  * Use `create(ConnectSchema)` to create a new message.
  */
 export const ConnectSchema: GenMessage<Connect> = /*@__PURE__*/
-  messageDesc(file_types, 13);
+  messageDesc(file_types, 17);
 
 /**
  * @generated from message types.Disconnect
@@ -557,5 +668,5 @@ export type Disconnect = Message<"types.Disconnect"> & {
  * Use `create(DisconnectSchema)` to create a new message.
  */
 export const DisconnectSchema: GenMessage<Disconnect> = /*@__PURE__*/
-  messageDesc(file_types, 14);
+  messageDesc(file_types, 18);
 

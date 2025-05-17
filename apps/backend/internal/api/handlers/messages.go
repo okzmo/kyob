@@ -58,17 +58,6 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 	actors.ServersEngine.Send(channelPID, mess)
 
-	// message, err := services.CreateMessage(r.Context(), serverId, channelId, &body)
-	// if err != nil {
-	// 	switch {
-	// 	case errors.Is(err, services.ErrUnauthorizedMessageCreation):
-	// 		utils.RespondWithError(w, http.StatusUnauthorized, "You cannot send a message in this channel.")
-	// 	default:
-	// 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-	// 	}
-	// 	return
-	// }
-
 	utils.RespondWithJSON(w, http.StatusCreated, &DefaultResponse{Message: "success"})
 }
 

@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/anthdm/hollywood/actor"
 	"github.com/okzmo/kyob/db"
 	services "github.com/okzmo/kyob/internal/service"
+	"github.com/okzmo/kyob/internal/utils"
 	protoTypes "github.com/okzmo/kyob/types"
 )
 
@@ -21,9 +23,10 @@ type (
 )
 
 type server struct {
-	channels ChannelMap
-	users    UserMap
-	logger   *slog.Logger
+	channels   ChannelMap
+	users      UserMap
+	usersSlice []int32
+	logger     *slog.Logger
 }
 
 type channel struct {
@@ -70,6 +73,26 @@ func (s *server) Receive(ctx *actor.Context) {
 		}
 		s.users[sender] = true
 		s.logger.Info("user connected to this server", "user", ctx.Sender().GetID(), "id", ctx.PID())
+
+		userId := utils.GetEntityIdFromPID(sender)
+		serverId := utils.GetEntityIdFromPID(ctx.PID())
+
+		for user := range s.users {
+			if user == sender {
+				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
+					ServerId: int32(serverId),
+					UserId:   int32(userId),
+					Users:    s.usersSlice,
+				})
+			} else {
+				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
+					ServerId: int32(serverId),
+					UserId:   int32(userId),
+				})
+			}
+		}
+
+		s.usersSlice = append(s.usersSlice, int32(userId))
 	case *protoTypes.Disconnect:
 		sender := ctx.Sender()
 		_, ok := s.users[sender]
@@ -77,8 +100,21 @@ func (s *server) Receive(ctx *actor.Context) {
 			s.logger.Warn("unknown user disconnected", "user", sender, "id", ctx.PID())
 			return
 		}
-		s.logger.Info("user disconnected", "sender", ctx.Sender())
+		s.logger.Info("user disconnected", "sender", ctx.Sender(), "id", ctx.PID())
+
+		userId := utils.GetEntityIdFromPID(sender)
+		serverId := utils.GetEntityIdFromPID(ctx.PID())
+
+		idx := slices.Index(s.usersSlice, int32(userId))
+		s.usersSlice = slices.Delete(s.usersSlice, idx, idx+1)
 		delete(s.users, sender)
+
+		for user := range s.users {
+			UsersEngine.Send(user, &protoTypes.BroadcastDisconnect{
+				ServerId: int32(serverId),
+				UserId:   int32(userId),
+			})
+		}
 	case *protoTypes.BodyChannelCreation:
 		channelToCreate := &services.CreateChannelBody{
 			Name:        msg.Name,
@@ -128,6 +164,10 @@ func (s *server) Receive(ctx *actor.Context) {
 		}
 
 		ctx.Engine().Poison(ctx.PID())
+	case *protoTypes.BodyNewUserInServer:
+		for user := range s.users {
+			UsersEngine.Send(user, msg)
+		}
 	}
 }
 
@@ -150,10 +190,10 @@ func (c *channel) Receive(ctx *actor.Context) {
 		sender := ctx.Sender()
 		_, ok := c.users[sender]
 		if !ok {
-			c.logger.Warn("unknown user disconnected", "user", sender)
+			c.logger.Warn("unknown user disconnected", "user", sender, "id", ctx.PID())
 			return
 		}
-		c.logger.Info("user disconnected", "sender", ctx.Sender())
+		c.logger.Info("user disconnected", "sender", ctx.Sender(), "id", ctx.PID())
 		delete(c.users, sender)
 	case *protoTypes.IncomingChatMessage:
 		messageToSend := &services.CreateMessageBody{

@@ -38,8 +38,9 @@ export interface Server {
 	description?: string;
 	x: number;
 	y: number;
-	is_member: boolean;
 	channels: Record<number, Channel>;
+	active_count: number[];
+	member_count: number;
 }
 
 export interface User {

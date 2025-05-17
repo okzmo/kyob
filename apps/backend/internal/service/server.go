@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"mime/multipart"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -20,6 +21,8 @@ import (
 var (
 	ErrUnauthorizedServerEdition  = errors.New("cannot edit server")
 	ErrUnauthorizedServerDeletion = errors.New("cannot delete this server")
+	ErrServerNotFound             = errors.New("server not found")
+	ErrNoIdInInvite               = errors.New("failed to find id in invite url")
 )
 
 type Crop struct {
@@ -45,6 +48,12 @@ type EditServerBody struct {
 	Description string `validate:"max=280" json:"description"`
 }
 
+type JoinServerBody struct {
+	InviteUrl string `validate:"required" json:"invite_url"`
+	X         int    `validate:"required" json:"x"`
+	Y         int    `validate:"required" json:"y"`
+}
+
 type ServerResponse struct {
 	ID          int64       `json:"id"`
 	OwnerID     int64       `json:"owner_id"`
@@ -57,6 +66,10 @@ type ServerResponse struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 	X           int         `json:"x"`
 	Y           int         `json:"y"`
+}
+
+type JoinServerResponse struct {
+	Server ServerWithChannels `json:"server"`
 }
 
 type ServerInviteResponse struct {
@@ -203,4 +216,67 @@ func CreateServerInvite(ctx context.Context, serverId int) (*string, error) {
 	}
 
 	return &res, nil
+}
+
+func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, error) {
+	user := ctx.Value("user").(db.User)
+
+	pattern := regexp.MustCompile(`^(?:https:\/\/kyob\.app\/invite\/|)([a-zA-Z0-9]{10})$`)
+	matches := pattern.FindStringSubmatch(body.InviteUrl)
+	if matches == nil {
+		return nil, ErrNoIdInInvite
+	}
+
+	serverId, err := db.Query.CheckInvite(ctx, matches[1])
+	if err != nil {
+		return nil, ErrServerNotFound
+	}
+
+	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+		UserID:   user.ID,
+		ServerID: serverId,
+		X:        int32(body.X),
+		Y:        int32(body.Y),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	channelMap := make(map[int64]db.Channel)
+	channels, err := db.Query.GetChannelsFromServer(ctx, serverId)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, channel := range channels {
+		channelMap[channel.ID] = channel
+	}
+
+	server, err := db.Query.GetServerWithChannels(ctx, db.GetServerWithChannelsParams{
+		ServerID: serverId,
+		UserID:   user.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	s := ServerWithChannels{
+		db.Server{
+			ID:          server.ID,
+			OwnerID:     server.OwnerID,
+			Name:        server.Name,
+			Avatar:      server.Avatar,
+			Banner:      server.Banner,
+			Description: server.Description,
+			Private:     server.Private,
+			CreatedAt:   server.CreatedAt,
+			UpdatedAt:   server.UpdatedAt,
+		},
+		int(server.X),
+		int(server.Y),
+		channelMap,
+		int(server.MemberCount),
+	}
+
+	return &s, nil
 }

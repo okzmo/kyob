@@ -10,6 +10,7 @@
 	import { serversStore } from '../../../../stores/servers.svelte';
 	import { animateCoordinates } from '../../../../utils/transition';
 	import type { Server } from '../../../../types/types';
+	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 
 	let avatar = $state<string | undefined>();
 	let crop = $state({ x: 0, y: 0 });
@@ -36,8 +37,9 @@
 				if (res.isOk()) {
 					const server: Server = {
 						...res.value,
-						is_member: true,
-						channels: {}
+						channels: {},
+						member_count: 0,
+						active_count: []
 					};
 					serversStore.addServer(server);
 					core.openCreateServerModal.status = false;
@@ -97,7 +99,7 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<Dialog.Content
+		<CustomDialogContent
 			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
 		>
 			<form method="post" use:enhance enctype="multipart/form-data">
@@ -205,6 +207,6 @@
 					</button>
 				</div>
 			</form>
-		</Dialog.Content>
+		</CustomDialogContent>
 	</Dialog.Portal>
 </Dialog.Root>

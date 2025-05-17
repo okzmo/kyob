@@ -46,7 +46,5 @@
 			{/if}
 		{/await}
 	</div>
-	{#if server?.is_member}
-		<ChatWindowInput {channel} {server} />
-	{/if}
+	<ChatWindowInput {channel} {server} />
 </ChatWindowSkeleton>

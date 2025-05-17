@@ -17,13 +17,13 @@ import (
 var UsersEngine *actor.Engine
 
 type (
-	serversMap map[string]*actor.PID
-	channels   []*actor.PID
+	serversMap  map[*actor.PID]bool
+	channelsMap map[*actor.PID]bool
 )
 
 type user struct {
 	servers  serversMap
-	channels channels
+	channels channelsMap
 	wsConn   *gws.Conn
 	logger   *slog.Logger
 }
@@ -32,7 +32,7 @@ func NewUser(wsConn *gws.Conn) actor.Producer {
 	return func() actor.Receiver {
 		return &user{
 			servers:  make(serversMap),
-			channels: []*actor.PID{},
+			channels: make(channelsMap),
 			wsConn:   wsConn,
 			logger:   slog.Default(),
 		}
@@ -70,7 +70,7 @@ func (u *user) Receive(ctx *actor.Context) {
 
 		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
 		ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{}, ctx.PID())
-		u.channels = append(u.channels, channelPid)
+		u.channels[channelPid] = true
 
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
@@ -85,7 +85,7 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	case *protoTypes.NewServerCreated:
 		serverPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
-		u.servers[msg.ActorAddress] = serverPid
+		u.servers[serverPid] = true
 		ServersEngine.SendWithSender(serverPid, &protoTypes.Connect{}, ctx.PID())
 	case *protoTypes.BroadcastChannelRemoved:
 		msgToSend := &protoTypes.WSMessage{
@@ -99,6 +99,34 @@ func (u *user) Receive(ctx *actor.Context) {
 
 		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
 		ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{}, ctx.PID())
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+		delete(u.channels, channelPid)
+	case *protoTypes.BodyNewUserInServer:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_NewUser{
+				NewUser: &protoTypes.BroadcastNewUserInServer{
+					ServerId: msg.ServerId,
+					User:     msg.User,
+				},
+			},
+		}
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	case *protoTypes.BroadcastConnect:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_UserConnect{
+				UserConnect: msg,
+			},
+		}
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	case *protoTypes.BroadcastDisconnect:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_UserDisconnect{
+				UserDisconnect: msg,
+			},
+		}
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	}
@@ -124,14 +152,14 @@ func (u *user) initializeUser(ctx *actor.Context) {
 
 	for _, server := range servers {
 		serverPID := ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
-		u.servers[serverPID.Address] = serverPID
+		u.servers[serverPID] = true
 
 		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{}, ctx.PID())
 		channels, _ := db.Query.GetChannelsFromServer(context.TODO(), server.ID)
 
 		for _, channel := range channels {
 			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", server.ID), strconv.Itoa(int(channel.ID)))
-			u.channels = append(u.channels, channelPID)
+			u.channels[channelPID] = true
 
 			ServersEngine.SendWithSender(channelPID, &protoTypes.Connect{}, ctx.PID())
 		}
@@ -139,11 +167,11 @@ func (u *user) initializeUser(ctx *actor.Context) {
 }
 
 func (u *user) killUser(ctx *actor.Context) {
-	for _, server := range u.servers {
+	for server := range u.servers {
 		ServersEngine.SendWithSender(server, &protoTypes.Disconnect{}, ctx.PID())
 	}
 
-	for _, channel := range u.channels {
+	for channel := range u.channels {
 		ServersEngine.SendWithSender(channel, &protoTypes.Disconnect{}, ctx.PID())
 	}
 }

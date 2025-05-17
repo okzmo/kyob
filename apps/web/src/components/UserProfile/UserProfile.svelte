@@ -3,6 +3,7 @@
 	import { type Snippet } from 'svelte';
 	import type { User } from '../../types/types';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
+	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 
 	interface Props {
 		children: Snippet;
@@ -26,9 +27,10 @@
 	<Popover.Trigger>
 		{@render children()}
 	</Popover.Trigger>
-	<Popover.Content
-		class="gradient-user-profile relative mb-3 w-[20rem]  rounded-lg p-1"
+	<CustomPopoverContent
+		class="gradient-user-profile relative mb-3 w-[20rem] rounded-lg p-1"
 		align="start"
+		y={10}
 	>
 		<div role="presentation" class="user-popover"></div>
 		<div class="relative z-[2] overflow-hidden rounded-[6px]">
@@ -93,7 +95,7 @@
 				{/if}
 			</div>
 		</div>
-	</Popover.Content>
+	</CustomPopoverContent>
 </Popover.Root>
 
 <style>

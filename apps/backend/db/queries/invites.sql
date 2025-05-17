@@ -6,5 +6,5 @@ INSERT INTO invites (
 )
 RETURNING invite_id;
 
--- name: CheckInvite :execresult
-SELECT id FROM invites WHERE invite_id = $1;
+-- name: CheckInvite :one
+SELECT server_id FROM invites WHERE invite_id = $1 AND expire_at >= NOW();

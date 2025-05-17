@@ -1,3 +1,6 @@
+import { cubicOut } from 'svelte/easing';
+import type { TransitionConfig } from 'svelte/transition';
+
 export function animateCoordinates(
 	targetObject: { x: number; y: number },
 	startCoordinates: { x: number; y: number },
@@ -33,4 +36,48 @@ export function animateCoordinates(
 
 		requestAnimationFrame(animate);
 	});
+}
+
+export function scaleBlur(
+	node: Element,
+	{ delay = 0, duration = 125, easing = cubicOut, startScale = 0.95, opacity = 0, blurAmount = 5 }
+): TransitionConfig {
+	return {
+		delay,
+		duration,
+		easing,
+		css: (t, u) => `
+        transform: scale(${startScale + t * (1 - startScale)});
+        opacity: ${opacity + t * (1 - opacity)};
+        filter: blur(${blurAmount * u}px);
+      `
+	};
+}
+
+export function flyBlur(
+	node: Element,
+	{ delay = 0, duration = 75, easing = cubicOut, y = 0, x = 0, opacity = 0, blurAmount = 8 }
+): TransitionConfig {
+	const style = getComputedStyle(node);
+	const target_opacity = +style.opacity;
+	const transform = style.transform === 'none' ? '' : style.transform;
+	const od = target_opacity * (1 - opacity);
+	const [x_value, x_unit] = split_css_unit(x);
+	const [y_value, y_unit] = split_css_unit(y);
+
+	return {
+		delay,
+		duration,
+		easing,
+		css: (t, u) => `
+        transform: ${transform} translate(${(1 - t) * x_value}${x_unit}, ${(1 - t) * y_value}${y_unit});
+        opacity: ${target_opacity - od * u};
+        filter: blur(${blurAmount * u}px);
+      `
+	};
+}
+
+function split_css_unit(value: number | string): [number, string] {
+	const split = typeof value === 'string' && value.match(/^\s*(-?[\d.]+)([^\s]*)\s*$/);
+	return split ? [parseFloat(split[1]), split[2] || 'px'] : [value as number, 'px'];
 }
