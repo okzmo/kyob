@@ -929,6 +929,7 @@ type BroadcastConnect struct {
 	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Users         []int32                `protobuf:"varint,3,rep,packed,name=users,proto3" json:"users,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -984,10 +985,18 @@ func (x *BroadcastConnect) GetUsers() []int32 {
 	return nil
 }
 
+func (x *BroadcastConnect) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 type BroadcastDisconnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1034,6 +1043,13 @@ func (x *BroadcastDisconnect) GetUserId() int32 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *BroadcastDisconnect) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
 }
 
 type BodyChannelCreation struct {
@@ -1362,6 +1378,7 @@ func (x *NewServerCreated) GetActorAddress() string {
 
 type Connect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1396,8 +1413,16 @@ func (*Connect) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{17}
 }
 
+func (x *Connect) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 type Disconnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1430,6 +1455,13 @@ func (x *Disconnect) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Disconnect.ProtoReflect.Descriptor instead.
 func (*Disconnect) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *Disconnect) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
 }
 
 var File_types_proto protoreflect.FileDescriptor
@@ -1522,14 +1554,16 @@ const file_types_proto_rawDesc = "" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x19\n" +
 	"\bactor_id\x18\f \x01(\tR\aactorId\x12#\n" +
 	"\ractor_address\x18\r \x01(\tR\factorAddressB\x0e\n" +
-	"\f_description\"^\n" +
+	"\f_description\"r\n" +
 	"\x10BroadcastConnect\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x14\n" +
-	"\x05users\x18\x03 \x03(\x05R\x05users\"K\n" +
+	"\x05users\x18\x03 \x03(\x05R\x05users\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\"_\n" +
 	"\x13BroadcastDisconnect\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\xe3\x01\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\"\xe3\x01\n" +
 	"\x13BodyChannelCreation\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1d\n" +
 	"\n" +
@@ -1554,10 +1588,12 @@ const file_types_proto_rawDesc = "" +
 	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"R\n" +
 	"\x10NewServerCreated\x12\x19\n" +
 	"\bactor_id\x18\x01 \x01(\tR\aactorId\x12#\n" +
-	"\ractor_address\x18\x02 \x01(\tR\factorAddress\"\t\n" +
-	"\aConnect\"\f\n" +
+	"\ractor_address\x18\x02 \x01(\tR\factorAddress\"\x1d\n" +
+	"\aConnect\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\" \n" +
 	"\n" +
-	"DisconnectB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
+	"Disconnect\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04typeB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
 
 var (
 	file_types_proto_rawDescOnce sync.Once

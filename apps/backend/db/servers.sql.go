@@ -272,6 +272,20 @@ func (q *Queries) JoinServer(ctx context.Context, arg JoinServerParams) error {
 	return err
 }
 
+const leaveServer = `-- name: LeaveServer :exec
+DELETE FROM server_membership WHERE user_id = $1 AND server_id = $2
+`
+
+type LeaveServerParams struct {
+	UserID   int64 `json:"user_id"`
+	ServerID int64 `json:"server_id"`
+}
+
+func (q *Queries) LeaveServer(ctx context.Context, arg LeaveServerParams) error {
+	_, err := q.db.Exec(ctx, leaveServer, arg.UserID, arg.ServerID)
+	return err
+}
+
 const ownServer = `-- name: OwnServer :execresult
 SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
 `

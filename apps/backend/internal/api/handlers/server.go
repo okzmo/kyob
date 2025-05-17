@@ -181,7 +181,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 
 	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
 	serverPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
-	actors.ServersEngine.SendWithSender(serverPID, &proto.Connect{}, userPID)
+	actors.ServersEngine.SendWithSender(serverPID, &proto.Connect{Type: "JOIN_SERVER"}, userPID)
 	actors.ServersEngine.Send(serverPID, &proto.BodyNewUserInServer{
 		ServerId: int32(server.ID),
 		User: &proto.User{
@@ -192,4 +192,24 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 	})
 
 	utils.RespondWithJSON(w, http.StatusContinue, services.JoinServerResponse{Server: *server})
+}
+
+func LeaveServer(w http.ResponseWriter, r *http.Request) {
+	idParam := chi.URLParam(r, "id")
+	serverId, _ := strconv.Atoi(idParam)
+	user := r.Context().Value("user").(db.User)
+
+	err := services.LeaveServer(r.Context(), serverId, user.ID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
+	serverPID := actors.ServersEngine.Registry.GetPID("server", idParam)
+	actors.ServersEngine.SendWithSender(serverPID, &proto.Disconnect{
+		Type: "LEAVE_SERVER",
+	}, userPID)
+
+	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }

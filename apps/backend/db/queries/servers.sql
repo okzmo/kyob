@@ -35,6 +35,9 @@ INSERT INTO server_membership (
   $1, $2, $3, $4
 );
 
+-- name: LeaveServer :exec
+DELETE FROM server_membership WHERE user_id = $1 AND server_id = $2;
+
 -- name: UpdateServerName :exec
 UPDATE servers SET name = $1 WHERE id = $2 AND owner_id = $3;
 

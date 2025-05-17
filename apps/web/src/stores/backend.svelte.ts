@@ -10,6 +10,7 @@ import type {
 	DeleteChannelErrors,
 	DeleteServerErrors,
 	JoinServerErrors,
+	LeaveServerErrors,
 	SetupErrors,
 	StandardError
 } from '../types/errors';
@@ -111,14 +112,13 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
-						serversStore.connectUser(value.serverId, value.userId, value.users);
+						serversStore.connectUser(value.serverId, value.userId, value.users, value.type);
 					}
 					break;
 				case 'userDisconnect': {
 					if (!wsMess.content.value) return;
 					const value = wsMess.content.value;
-					console.log(value);
-					serversStore.disconnectUser(value.serverId, value.userId);
+					serversStore.disconnectUser(value.serverId, value.userId, value.type);
 				}
 			}
 		};
@@ -224,6 +224,22 @@ class Backend {
 			if (errBody.status === 401) {
 				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async leaveServer(serverId: number): Promise<Result<void, LeaveServerErrors>> {
+		try {
+			const res = await client.post(`authenticated/server/${serverId}/leave`);
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}

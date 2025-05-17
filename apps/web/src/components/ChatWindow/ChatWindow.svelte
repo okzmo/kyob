@@ -27,7 +27,7 @@
 <ChatWindowSkeleton {id} {channel} {server}>
 	<div
 		bind:this={scrollContent}
-		class="flex h-full min-h-0 w-full flex-col gap-y-2 overflow-y-auto py-3"
+		class="flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col gap-y-2 overflow-y-auto py-3"
 	>
 		{#await messages then allMessages}
 			{#if allMessages}

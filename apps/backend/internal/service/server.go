@@ -280,3 +280,15 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 
 	return &s, nil
 }
+
+func LeaveServer(ctx context.Context, serverId int, userId int64) error {
+	err := db.Query.LeaveServer(ctx, db.LeaveServerParams{
+		UserID:   userId,
+		ServerID: int64(serverId),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

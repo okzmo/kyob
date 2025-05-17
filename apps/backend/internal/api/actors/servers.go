@@ -88,11 +88,18 @@ func (s *server) Receive(ctx *actor.Context) {
 				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
 					ServerId: int32(serverId),
 					UserId:   int32(userId),
+					Type:     msg.Type,
 				})
 			}
 		}
 
 		s.usersSlice = append(s.usersSlice, int32(userId))
+
+		if msg.Type == "JOIN_SERVER" {
+			for _, channel := range ctx.Children() {
+				ServersEngine.SendWithSender(channel, &protoTypes.Connect{}, sender)
+			}
+		}
 	case *protoTypes.Disconnect:
 		sender := ctx.Sender()
 		_, ok := s.users[sender]
@@ -113,7 +120,14 @@ func (s *server) Receive(ctx *actor.Context) {
 			UsersEngine.Send(user, &protoTypes.BroadcastDisconnect{
 				ServerId: int32(serverId),
 				UserId:   int32(userId),
+				Type:     msg.Type,
 			})
+		}
+
+		if msg.Type == "LEAVE_SERVER" {
+			for _, channel := range ctx.Children() {
+				ServersEngine.SendWithSender(channel, &protoTypes.Disconnect{}, sender)
+			}
 		}
 	case *protoTypes.BodyChannelCreation:
 		channelToCreate := &services.CreateChannelBody{

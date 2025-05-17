@@ -22,7 +22,18 @@
 		}
 
 		if (res.isOk()) {
-			serversStore.removeServer(targetId);
+			serversStore.removeServer(serverId);
+		}
+	}
+
+	async function leaveServer(serverId: number) {
+		const res = await backend.leaveServer(serverId);
+		if (res.isErr()) {
+			console.error(res.error);
+		}
+
+		if (res.isOk()) {
+			serversStore.removeServer(serverId);
 		}
 	}
 
@@ -42,8 +53,8 @@
 	class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
 >
 	<ContextMenu.Item
-		onclick={() => createServerInvite(targetId)}
 		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+		onclick={() => createServerInvite(targetId)}
 	>
 		<p class="flex items-center">Invite people</p>
 		<UserInvite height={20} width={20} />
@@ -59,6 +70,7 @@
 	{:else}
 		<ContextMenu.Item
 			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+			onclick={() => leaveServer(targetId)}
 		>
 			<p class="flex items-center">Leave server</p>
 			<LogoutIcon height={20} width={20} />

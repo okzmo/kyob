@@ -28,6 +28,12 @@ export interface DeleteServerErrors {
 	cause?: any;
 }
 
+export interface LeaveServerErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
 export interface CreateChannelErrors {
 	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNAUTHORIZED' | 'ERR_UNKNOWN';
 	error: string;

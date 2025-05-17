@@ -69,7 +69,7 @@ func (u *user) Receive(ctx *actor.Context) {
 		}
 
 		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
-		ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{}, ctx.PID())
+		ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
 		u.channels[channelPid] = true
 
 		m, _ := proto.Marshal(msgToSend)
@@ -86,7 +86,7 @@ func (u *user) Receive(ctx *actor.Context) {
 	case *protoTypes.NewServerCreated:
 		serverPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
 		u.servers[serverPid] = true
-		ServersEngine.SendWithSender(serverPid, &protoTypes.Connect{}, ctx.PID())
+		ServersEngine.SendWithSender(serverPid, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
 	case *protoTypes.BroadcastChannelRemoved:
 		msgToSend := &protoTypes.WSMessage{
 			Content: &protoTypes.WSMessage_ChannelRemoved{
@@ -98,7 +98,7 @@ func (u *user) Receive(ctx *actor.Context) {
 		}
 
 		channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
-		ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{}, ctx.PID())
+		ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{Type: "DISCONNECTING"}, ctx.PID())
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 		delete(u.channels, channelPid)
@@ -154,24 +154,28 @@ func (u *user) initializeUser(ctx *actor.Context) {
 		serverPID := ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
 		u.servers[serverPID] = true
 
-		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{}, ctx.PID())
+		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
 		channels, _ := db.Query.GetChannelsFromServer(context.TODO(), server.ID)
 
 		for _, channel := range channels {
 			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", server.ID), strconv.Itoa(int(channel.ID)))
 			u.channels[channelPID] = true
 
-			ServersEngine.SendWithSender(channelPID, &protoTypes.Connect{}, ctx.PID())
+			ServersEngine.SendWithSender(channelPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
 		}
 	}
 }
 
 func (u *user) killUser(ctx *actor.Context) {
 	for server := range u.servers {
-		ServersEngine.SendWithSender(server, &protoTypes.Disconnect{}, ctx.PID())
+		ServersEngine.SendWithSender(server, &protoTypes.Disconnect{
+			Type: "DISCONNECTING",
+		}, ctx.PID())
 	}
 
 	for channel := range u.channels {
-		ServersEngine.SendWithSender(channel, &protoTypes.Disconnect{}, ctx.PID())
+		ServersEngine.SendWithSender(channel, &protoTypes.Disconnect{
+			Type: "DISCONNECTING",
+		}, ctx.PID())
 	}
 }

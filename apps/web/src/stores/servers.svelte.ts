@@ -71,7 +71,7 @@ class Servers {
 			this.servers[serverId].channels[message.channel_id].messages = [message];
 		}
 	}
-	connectUser(serverId: number, userId: number, connectedUsers: number[]) {
+	connectUser(serverId: number, userId: number, connectedUsers: number[], type: string) {
 		const server = this.getServer(serverId);
 		if (!server.active_count || server.active_count.length <= 0) {
 			this.servers[server.id].active_count = [];
@@ -84,15 +84,23 @@ class Servers {
 		if (!this.servers[server.id].active_count.includes(userId)) {
 			this.servers[server.id].active_count.push(userId);
 		}
+
+		if (type === 'JOIN_SERVER') {
+			this.servers[server.id].member_count += 1;
+		}
 	}
 
-	disconnectUser(serverId: number, userId: number) {
+	disconnectUser(serverId: number, userId: number, type: string) {
 		const server = this.getServer(serverId);
 		if (!server.active_count) return;
 		for (let i = 0; i < server.active_count.length; ++i) {
 			if (this.servers[server.id].active_count[i] === userId) {
 				this.servers[server.id].active_count.splice(i, 1);
 			}
+		}
+
+		if (type === 'LEAVE_SERVER') {
+			this.servers[server.id].member_count -= 1;
 		}
 	}
 }
