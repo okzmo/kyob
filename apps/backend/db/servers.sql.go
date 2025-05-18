@@ -100,6 +100,42 @@ func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
 	return i, err
 }
 
+const getServerMembers = `-- name: GetServerMembers :many
+SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, users u WHERE sm.server_id = $1 AND sm.user_id = u.id
+`
+
+type GetServerMembersRow struct {
+	ID          int64       `json:"id"`
+	Username    string      `json:"username"`
+	DisplayName string      `json:"display_name"`
+	Avatar      pgtype.Text `json:"avatar"`
+}
+
+func (q *Queries) GetServerMembers(ctx context.Context, serverID int64) ([]GetServerMembersRow, error) {
+	rows, err := q.db.Query(ctx, getServerMembers, serverID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetServerMembersRow
+	for rows.Next() {
+		var i GetServerMembersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.DisplayName,
+			&i.Avatar,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getServerWithChannels = `-- name: GetServerWithChannels :one
 SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=$1) AS member_count
 FROM servers s, server_membership sm

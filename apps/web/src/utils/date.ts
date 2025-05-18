@@ -9,8 +9,8 @@ export function formatMessageTime(time: string) {
 	const minutes = timestamp.getMinutes();
 
 	if (now.toDateString() === timestamp.toDateString()) {
-		return `${hour}:${minutes}`;
+		return `${hour < 10 ? '0' + hour : hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 	}
 
-	return `${day}/${month}/${year}, ${hour}:${minutes}`;
+	return `${day}/${month}/${year}, ${hour < 10 ? '0' + hour : hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 }

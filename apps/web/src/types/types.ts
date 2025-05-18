@@ -41,6 +41,7 @@ export interface Server {
 	channels: Record<number, Channel>;
 	active_count: number[];
 	member_count: number;
+	members: Partial<User>[];
 }
 
 export interface User {

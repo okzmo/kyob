@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/okzmo/kyob/db"
@@ -19,8 +20,8 @@ var (
 
 type CreateMessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
-	MentionsUsers    []int64         `json:"mentions_users"`
-	MentionsChannels []int64         `json:"mentions_channels"`
+	MentionsUsers    []int32         `json:"mentions_users"`
+	MentionsChannels []int32         `json:"mentions_channels"`
 }
 
 type EditMessageBody struct {
@@ -47,25 +48,38 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channe
 		return nil, ErrUnauthorizedMessageCreation
 	}
 
+	convertedMentionsUsers := make([]int64, len(body.MentionsUsers))
+	fmt.Println(convertedMentionsUsers)
+	for i, v := range body.MentionsUsers {
+		convertedMentionsUsers[i] = int64(v)
+	}
+
+	convertedMentionsChannels := make([]int64, len(body.MentionsChannels))
+	for i, v := range body.MentionsChannels {
+		convertedMentionsChannels[i] = int64(v)
+	}
+
 	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
 		AuthorID:         int64(user.Id),
 		ServerID:         int64(serverId),
 		ChannelID:        int64(channelId),
 		Content:          body.Content,
-		MentionsUsers:    body.MentionsUsers,
-		MentionsChannels: body.MentionsChannels,
+		MentionsUsers:    convertedMentionsUsers,
+		MentionsChannels: convertedMentionsChannels,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	message := &proto.BroadcastChatMessage{
-		Id:        int32(m.ID),
-		Author:    user,
-		ServerId:  int32(m.ServerID),
-		ChannelId: int32(m.ChannelID),
-		Content:   m.Content,
-		CreatedAt: timestamppb.New(m.CreatedAt),
+		Id:               int32(m.ID),
+		Author:           user,
+		ServerId:         int32(m.ServerID),
+		ChannelId:        int32(m.ChannelID),
+		Content:          m.Content,
+		MentionsUsers:    body.MentionsUsers,
+		MentionsChannels: body.MentionsChannels,
+		CreatedAt:        timestamppb.New(m.CreatedAt),
 	}
 
 	return message, nil

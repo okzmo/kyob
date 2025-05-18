@@ -10,6 +10,9 @@ SELECT label, value FROM facts WHERE user_id = $1;
 -- name: GetUserLinks :many
 SELECT label, url FROM links WHERE user_id = $1;
 
+-- name: GetUserMinimal :one
+SELECT id, username, display_name, avatar FROM users WHERE id = $1;
+
 -- name: CreateUser :one
 INSERT INTO users (
   email, username, display_name, avatar, password

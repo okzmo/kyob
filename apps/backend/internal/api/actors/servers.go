@@ -211,7 +211,8 @@ func (c *channel) Receive(ctx *actor.Context) {
 		delete(c.users, sender)
 	case *protoTypes.IncomingChatMessage:
 		messageToSend := &services.CreateMessageBody{
-			Content: msg.Content,
+			Content:       msg.Content,
+			MentionsUsers: msg.MentionsUsers,
 		}
 
 		message, err := services.CreateMessage(context.TODO(), msg.Author, msg.ServerId, msg.ChannelId, messageToSend)

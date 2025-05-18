@@ -174,6 +174,29 @@ func (q *Queries) GetUserLinks(ctx context.Context, userID int64) ([]GetUserLink
 	return items, nil
 }
 
+const getUserMinimal = `-- name: GetUserMinimal :one
+SELECT id, username, display_name, avatar FROM users WHERE id = $1
+`
+
+type GetUserMinimalRow struct {
+	ID          int64       `json:"id"`
+	Username    string      `json:"username"`
+	DisplayName string      `json:"display_name"`
+	Avatar      pgtype.Text `json:"avatar"`
+}
+
+func (q *Queries) GetUserMinimal(ctx context.Context, id int64) (GetUserMinimalRow, error) {
+	row := q.db.QueryRow(ctx, getUserMinimal, id)
+	var i GetUserMinimalRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.DisplayName,
+		&i.Avatar,
+	)
+	return i, err
+}
+
 const updateUserAbout = `-- name: UpdateUserAbout :exec
 UPDATE users
   set about = $2

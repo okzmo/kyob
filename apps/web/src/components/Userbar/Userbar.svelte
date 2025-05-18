@@ -14,7 +14,11 @@
 		<button
 			class="group hocus:bg-accent-100/15 flex items-center gap-x-2.5 rounded-xl py-1 pr-4 pl-2 text-left transition-colors hover:cursor-pointer"
 		>
-			<img src={userStore.user?.avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full" />
+			<img
+				src={userStore.user?.avatar}
+				alt="avatar"
+				class="h-[2.75rem] w-[2.75rem] rounded-full object-cover"
+			/>
 			<div class="flex flex-col">
 				<p
 					class="group-hocus:text-accent-50 text-sm leading-[1.15rem] font-medium transition-colors"

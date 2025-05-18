@@ -20,6 +20,9 @@ SELECT DISTINCT s.*, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WH
 FROM servers s, server_membership sm
 WHERE sm.server_id = s.id AND sm.user_id = $1;
 
+-- name: GetServerMembers :many
+SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, users u WHERE sm.server_id = $1 AND sm.user_id = u.id;
+
 -- name: CreateServer :one
 INSERT INTO servers (
   owner_id, name, avatar, description, private

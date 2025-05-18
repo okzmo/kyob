@@ -27,6 +27,9 @@ importers:
       '@tiptap/core':
         specifier: 3.0.0-beta.5
         version: 3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5)
+      '@tiptap/extension-mention':
+        specifier: 3.0.0-beta.5
+        version: 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)(@tiptap/suggestion@3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/extensions':
         specifier: 3.0.0-beta.5
         version: 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)
@@ -36,6 +39,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: 3.0.0-beta.5
         version: 3.0.0-beta.5
+      '@tiptap/suggestion':
+        specifier: 3.0.0-beta.5
+        version: 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)
       bits-ui:
         specifier: ^1.4.6
         version: 1.4.6(svelte@5.28.2)
@@ -806,6 +812,13 @@ packages:
       '@tiptap/core': 3.0.0-beta.5
       '@tiptap/pm': 3.0.0-beta.5
 
+  '@tiptap/extension-mention@3.0.0-beta.5':
+    resolution: {integrity: sha512-GXgBU3OwgWU1R+Gge0p1hZ9wPswc2P+1lF3OyTTXILNfsBOTwGPoIhZ4AZ3/PjthQHXonDpWGfXkGM4lD+YbAg==}
+    peerDependencies:
+      '@tiptap/core': 3.0.0-beta.5
+      '@tiptap/pm': 3.0.0-beta.5
+      '@tiptap/suggestion': 3.0.0-beta.5
+
   '@tiptap/extension-ordered-list@3.0.0-beta.5':
     resolution: {integrity: sha512-+TrWMm+DBPvlXh7cnEm0sKSLGwG5pnG90bm0RYaht4mHmY1vluwYHOAC71CMjMnFVM+HxSrNQoxp0aiy4B8wVA==}
     peerDependencies:
@@ -842,6 +855,12 @@ packages:
 
   '@tiptap/starter-kit@3.0.0-beta.5':
     resolution: {integrity: sha512-2dLa/A4dKYeqCwS2+9agJrpjbpq9ZkLMetEf+wVWLGXahdvmlzIR68AqOVQbvwNsMzscji3tPOEJxuq7uTBVnQ==}
+
+  '@tiptap/suggestion@3.0.0-beta.5':
+    resolution: {integrity: sha512-aGhU5Sz48JvDA2R0uY7nM4/0bVj1gnBM7prVLazJq4u3YdE6rRiylzNnK2nKhryJCgNFQQQUW4kvgLvuvbdVuA==}
+    peerDependencies:
+      '@tiptap/core': 3.0.0-beta.5
+      '@tiptap/pm': 3.0.0-beta.5
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -2518,6 +2537,12 @@ snapshots:
       '@tiptap/core': 3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5)
       '@tiptap/pm': 3.0.0-beta.5
 
+  '@tiptap/extension-mention@3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)(@tiptap/suggestion@3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5))':
+    dependencies:
+      '@tiptap/core': 3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5)
+      '@tiptap/pm': 3.0.0-beta.5
+      '@tiptap/suggestion': 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)
+
   '@tiptap/extension-ordered-list@3.0.0-beta.5(@tiptap/extension-list@3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5))':
     dependencies:
       '@tiptap/extension-list': 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)
@@ -2589,6 +2614,11 @@ snapshots:
       '@tiptap/extension-text': 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/extension-underline': 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/extensions': 3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)
+      '@tiptap/pm': 3.0.0-beta.5
+
+  '@tiptap/suggestion@3.0.0-beta.5(@tiptap/core@3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5))(@tiptap/pm@3.0.0-beta.5)':
+    dependencies:
+      '@tiptap/core': 3.0.0-beta.5(@tiptap/pm@3.0.0-beta.5)
       '@tiptap/pm': 3.0.0-beta.5
 
   '@types/cookie@0.6.0': {}

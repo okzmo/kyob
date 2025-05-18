@@ -13,8 +13,9 @@ type ServerWithChannels struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
-	Channels    map[int64]db.Channel `json:"channels"`
-	MemberCount int                  `json:"member_count"`
+	Channels    map[int64]db.Channel     `json:"channels"`
+	MemberCount int                      `json:"member_count"`
+	Members     []db.GetServerMembersRow `json:"members"`
 }
 
 type UserResponse struct {
@@ -84,6 +85,11 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 			channelMap[channel.ID] = channel
 		}
 
+		users, err := db.Query.GetServerMembers(ctx, server.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		s := ServerWithChannels{
 			db.Server{
 				ID:          server.ID,
@@ -100,6 +106,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 			int(server.Y),
 			channelMap,
 			int(server.MemberCount),
+			users,
 		}
 
 		res.Servers[server.ID] = s

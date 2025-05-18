@@ -51,9 +51,10 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 			About:          &user.About.String,
 			CreatedAt:      timestamppb.New(user.CreatedAt),
 		},
-		Content:   body.Content,
-		ServerId:  int32(serverId),
-		ChannelId: int32(channelId),
+		Content:       body.Content,
+		ServerId:      int32(serverId),
+		ChannelId:     int32(channelId),
+		MentionsUsers: body.MentionsUsers,
 	}
 
 	actors.ServersEngine.Send(channelPID, mess)

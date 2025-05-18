@@ -260,6 +260,11 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		return nil, err
 	}
 
+	users, err := db.Query.GetServerMembers(ctx, server.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	s := ServerWithChannels{
 		db.Server{
 			ID:          server.ID,
@@ -276,6 +281,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		int(server.Y),
 		channelMap,
 		int(server.MemberCount),
+		users,
 	}
 
 	return &s, nil

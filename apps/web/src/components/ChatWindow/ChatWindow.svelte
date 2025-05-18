@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { serversStore } from '../../stores/servers.svelte';
-	import ChatWindowInput from './ChatWindowInput.svelte';
+	import { userStore } from '../../stores/user.svelte';
+	import ChatWindowInput from './chatWindowInput/ChatWindowInput.svelte';
 	import ChatWindowMessage from './ChatWindowMessage.svelte';
 	import ChatWindowSkeleton from './ChatWindowSkeleton.svelte';
 
@@ -39,6 +40,7 @@
 						displayName={message.author.display_name || 'Name'}
 						username={message.author.username || 'username'}
 						time={message.created_at}
+						isUserMentioned={message.mentions_users?.includes(userStore.user?.id || -1)}
 					/>
 				{/each}
 			{:else}

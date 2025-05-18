@@ -4,6 +4,10 @@ class Windows {
 	openWindows = $state<Window[]>([]);
 	activeWindow = $state<string | null>();
 
+	getActiveWindow() {
+		return this.openWindows.find((w) => w.id === this.activeWindow);
+	}
+
 	createWindow(id: string, serverId: number, channelId: number) {
 		const exist = Boolean(this.openWindows.find((w) => w.id === id));
 		if (exist) {
