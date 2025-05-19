@@ -24,6 +24,8 @@ import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { windows } from './windows.svelte';
+import { sounds } from './audio.svelte';
+import { userStore } from './user.svelte';
 
 const client = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
@@ -83,6 +85,14 @@ class Backend {
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
 						serversStore.addMessage(Number(wsMess.content.value?.serverId), message);
+
+						if (
+							message.mentions_users.includes(userStore.user!.id) &&
+							message.author.id !== userStore.user!.id
+						) {
+							sounds.playSound('notification');
+							userStore.mention = true;
+						}
 					}
 					break;
 				case 'channelCreation':

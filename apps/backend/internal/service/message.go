@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/okzmo/kyob/db"
@@ -49,7 +48,6 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channe
 	}
 
 	convertedMentionsUsers := make([]int64, len(body.MentionsUsers))
-	fmt.Println(convertedMentionsUsers)
 	for i, v := range body.MentionsUsers {
 		convertedMentionsUsers[i] = int64(v)
 	}

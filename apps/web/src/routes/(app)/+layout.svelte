@@ -16,6 +16,7 @@
 	import { userStore } from '../../stores/user.svelte';
 	import { serversStore } from '../../stores/servers.svelte';
 	import { core } from '../../stores/core.svelte';
+	import Audio from '../../components/Audio.svelte';
 
 	let contextMenuTarget: string | undefined = $state();
 	let { children } = $props();
@@ -95,3 +96,5 @@
 	</ContextMenu.Trigger>
 	<ContextMenuSkeleton bind:target={contextMenuTarget} />
 </ContextMenu.Root>
+
+<Audio />
