@@ -172,7 +172,6 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	fmt.Println(messages)
 
 	utils.RespondWithJSON(w, http.StatusContinue, messages)
 }
