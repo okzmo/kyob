@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { props, mentions_users = $bindable() } = $props();
+	let { props, class: classes, mentions_users = $bindable() } = $props();
 
 	let selectedIndex = $state(0);
 	let scrollableMenu = $state<HTMLDivElement>();
@@ -58,7 +58,7 @@
 		mentions_users.push(item.id);
 
 		if (item) {
-			props.command({ id: item.id, avatar: item.avatar, label: item.display_name });
+			props.command({ 'user-id': item.id, avatar: item.avatar, label: item.display_name });
 		}
 	}
 </script>
@@ -66,7 +66,10 @@
 {#if props.items.length > 0}
 	<div
 		bind:this={scrollableMenu}
-		class="bg-main-900 border-main-800 absolute bottom-[4rem] left-[0.5rem] flex max-h-[20rem] w-[calc(100%-1rem)] flex-col gap-y-1 overflow-y-auto rounded-lg border px-1 py-1"
+		class={[
+			'bg-main-900 border-main-800 absolute flex max-h-[20rem] flex-col gap-y-1 overflow-y-auto rounded-lg border px-1 py-1',
+			classes
+		]}
 	>
 		{#each props.items as item, idx (idx)}
 			<button

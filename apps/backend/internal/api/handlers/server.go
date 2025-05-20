@@ -195,11 +195,15 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func LeaveServer(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	serverId, _ := strconv.Atoi(idParam)
 	user := r.Context().Value("user").(db.User)
+	idParam := chi.URLParam(r, "id")
+	serverId, err := strconv.Atoi(idParam)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid ID format")
+		return
+	}
 
-	err := services.LeaveServer(r.Context(), serverId, user.ID)
+	err = services.LeaveServer(r.Context(), serverId, user.ID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

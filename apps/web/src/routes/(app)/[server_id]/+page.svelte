@@ -3,7 +3,7 @@
 	import { serversStore } from '../../../stores/servers.svelte';
 	import { page } from '$app/state';
 
-	let server = serversStore.getServer(Number(page.params.server_id));
+	let server = $derived(serversStore.getServer(Number(page.params.server_id)));
 	let channels = $derived(serversStore.getChannels(Number(page.params.server_id)));
 </script>
 

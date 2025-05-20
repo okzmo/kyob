@@ -105,7 +105,7 @@ func (q *Queries) GetMessage(ctx context.Context, id int64) (Message, error) {
 }
 
 const getMessagesFromChannel = `-- name: GetMessagesFromChannel :many
-SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE channel_id = $1
+SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
 `
 
 func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID int64) ([]Message, error) {
@@ -137,6 +137,30 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID int64) (
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateMessage = `-- name: UpdateMessage :execresult
+UPDATE messages 
+SET content = $1, mentions_users = $2, mentions_channels = $3, updated_at = now()
+WHERE id = $4 AND author_id = $5
+`
+
+type UpdateMessageParams struct {
+	Content          []byte  `json:"content"`
+	MentionsUsers    []int64 `json:"mentions_users"`
+	MentionsChannels []int64 `json:"mentions_channels"`
+	ID               int64   `json:"id"`
+	AuthorID         int64   `json:"author_id"`
+}
+
+func (q *Queries) UpdateMessage(ctx context.Context, arg UpdateMessageParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateMessage,
+		arg.Content,
+		arg.MentionsUsers,
+		arg.MentionsChannels,
+		arg.ID,
+		arg.AuthorID,
+	)
 }
 
 const updateMessageContent = `-- name: UpdateMessageContent :execresult

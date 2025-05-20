@@ -3,7 +3,7 @@ import Mention from '@tiptap/extension-mention';
 export const CustomMention = Mention.extend({
 	addAttributes() {
 		return {
-			id: {
+			'user-id': {
 				default: null
 			},
 			avatar: {

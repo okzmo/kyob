@@ -64,13 +64,44 @@ class Servers {
 	}
 
 	addMessage(serverId: number, message: Message) {
-		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
+		let messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
 		if (Array.isArray(messages)) {
-			this.servers[serverId].channels[message.channel_id].messages!.push(message);
+			messages.push(message);
 		} else {
-			this.servers[serverId].channels[message.channel_id].messages = [message];
+			messages = [message];
 		}
 	}
+
+	editMessage(
+		serverId: number,
+		channelId: number,
+		messageId: number,
+		content: any,
+		mentions_users: number[],
+		mentions_channels: number[],
+		updated_at: string
+	) {
+		const messages = this.servers[serverId]?.channels[channelId]?.messages;
+
+		if (Array.isArray(messages)) {
+			const idx = messages.findIndex((m) => m.id === messageId);
+			if (idx) {
+				messages[idx].content = content;
+				messages[idx].mentions_users = mentions_users;
+				messages[idx].mentions_channels = mentions_channels;
+				messages[idx].updated_at = updated_at;
+			}
+		}
+	}
+
+	deleteMessage(serverId: number, channelId: number, messageId: number) {
+		const messages = this.servers[serverId]?.channels[channelId]?.messages;
+		if (Array.isArray(messages)) {
+			const idx = messages.findIndex((m) => m.id === messageId);
+			if (idx) messages.splice(idx, 1);
+		}
+	}
+
 	connectUser(serverId: number, userId: number, connectedUsers: number[], type: string) {
 		const server = this.getServer(serverId);
 		if (!server.active_count || server.active_count.length <= 0) {

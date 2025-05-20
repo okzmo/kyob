@@ -49,31 +49,27 @@
 	}
 </script>
 
-<ContextMenu.Content
-	class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
+<ContextMenu.Item
+	class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+	onclick={() => createServerInvite(targetId)}
 >
+	<p class="flex items-center">Invite people</p>
+	<UserInvite height={20} width={20} />
+</ContextMenu.Item>
+{#if isOwner}
 	<ContextMenu.Item
-		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center justify-between rounded-lg py-3 pr-1.5  pl-3 font-medium select-none hover:cursor-pointer focus-visible:outline-none"
-		onclick={() => createServerInvite(targetId)}
+		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+		onclick={() => deleteServer(targetId)}
 	>
-		<p class="flex items-center">Invite people</p>
-		<UserInvite height={20} width={20} />
+		<p class="flex items-center">Delete server</p>
+		<Bin height={20} width={20} />
 	</ContextMenu.Item>
-	{#if isOwner}
-		<ContextMenu.Item
-			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-			onclick={() => deleteServer(targetId)}
-		>
-			<p class="flex items-center">Delete server</p>
-			<Bin height={20} width={20} />
-		</ContextMenu.Item>
-	{:else}
-		<ContextMenu.Item
-			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-			onclick={() => leaveServer(targetId)}
-		>
-			<p class="flex items-center">Leave server</p>
-			<LogoutIcon height={20} width={20} />
-		</ContextMenu.Item>
-	{/if}
-</ContextMenu.Content>
+{:else}
+	<ContextMenu.Item
+		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+		onclick={() => leaveServer(targetId)}
+	>
+		<p class="flex items-center">Leave server</p>
+		<LogoutIcon height={20} width={20} />
+	</ContextMenu.Item>
+{/if}

@@ -17,10 +17,11 @@ var (
 	ErrUnauthorizedMessageDeletion = errors.New("unauthorized message deletion")
 )
 
-type CreateMessageBody struct {
+type MessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
 	MentionsUsers    []int32         `json:"mentions_users"`
 	MentionsChannels []int32         `json:"mentions_channels"`
+	Type             string          `json:"type"`
 }
 
 type EditMessageBody struct {
@@ -36,9 +37,10 @@ type MessageResponse struct {
 	MentionsUsers    []int64         `json:"mentions_users"`
 	MentionsChannels []int64         `json:"mentions_channels"`
 	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
-func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channelId int32, body *CreateMessageBody) (*proto.BroadcastChatMessage, error) {
+func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channelId int32, body *MessageBody) (*proto.BroadcastChatMessage, error) {
 	res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
 		ID:     int64(channelId),
 		UserID: int64(user.Id),
@@ -79,33 +81,48 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channe
 		MentionsChannels: body.MentionsChannels,
 		CreatedAt:        timestamppb.New(m.CreatedAt),
 	}
+	return message, nil
+}
+
+func EditMessage(ctx context.Context, userId int64, serverId int32, channelId int32, messageId int32, body *MessageBody) (*proto.BroadcastEditMessage, error) {
+	convertedMentionsUsers := make([]int64, len(body.MentionsUsers))
+	for i, v := range body.MentionsUsers {
+		convertedMentionsUsers[i] = int64(v)
+	}
+
+	convertedMentionsChannels := make([]int64, len(body.MentionsChannels))
+	for i, v := range body.MentionsChannels {
+		convertedMentionsChannels[i] = int64(v)
+	}
+
+	res, err := db.Query.UpdateMessage(ctx, db.UpdateMessageParams{
+		ID:               int64(messageId),
+		MentionsUsers:    convertedMentionsUsers,
+		MentionsChannels: convertedMentionsChannels,
+		Content:          body.Content,
+		AuthorID:         userId,
+	})
+	if err != nil || res.RowsAffected() == 0 {
+		return nil, ErrUnauthorizedMessageEdition
+	}
+
+	message := &proto.BroadcastEditMessage{
+		MessageId:        messageId,
+		ServerId:         serverId,
+		ChannelId:        channelId,
+		Content:          body.Content,
+		MentionsUsers:    body.MentionsUsers,
+		MentionsChannels: body.MentionsChannels,
+		UpdatedAt:        timestamppb.New(time.Now()),
+	}
 
 	return message, nil
 }
 
-func EditMessage(ctx context.Context, messageId int, body *EditMessageBody) error {
-	user := ctx.Value("user").(db.User)
-
-	if len(body.Content) > 0 {
-		res, err := db.Query.UpdateMessageContent(ctx, db.UpdateMessageContentParams{
-			ID:       int64(messageId),
-			Content:  body.Content,
-			AuthorID: user.ID,
-		})
-		if err != nil || res.RowsAffected() == 0 {
-			return ErrUnauthorizedMessageEdition
-		}
-	}
-
-	return nil
-}
-
-func DeleteMessage(ctx context.Context, messageId int) error {
-	user := ctx.Value("user").(db.User)
-
+func DeleteMessage(ctx context.Context, messageId int32, userId int64) error {
 	res, err := db.Query.DeleteMessage(ctx, db.DeleteMessageParams{
 		ID:       int64(messageId),
-		AuthorID: user.ID,
+		AuthorID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedMessageDeletion
@@ -136,6 +153,7 @@ func GetMessages(ctx context.Context, channelId int) ([]MessageResponse, error) 
 			Content:          message.Content,
 			MentionsUsers:    message.MentionsUsers,
 			MentionsChannels: message.MentionsChannels,
+			UpdatedAt:        message.UpdatedAt,
 			CreatedAt:        message.CreatedAt,
 		})
 	}

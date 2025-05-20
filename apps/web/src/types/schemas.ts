@@ -64,13 +64,20 @@ export const CreateChannelSchema = v.object({
 export interface CreateChannelType extends v.InferInput<typeof CreateChannelSchema> {}
 
 export const CreateMessageSchema = v.object({
-	author_id: v.number(),
 	content: v.any(),
 	mentions_users: v.optional(v.array(v.number())),
 	mentions_channels: v.optional(v.array(v.number()))
 });
 
 export interface CreateMessageType extends v.InferInput<typeof CreateMessageSchema> {}
+
+export const EditMessageSchema = v.object({
+	content: v.any(),
+	mentions_users: v.optional(v.array(v.number())),
+	mentions_channels: v.optional(v.array(v.number()))
+});
+
+export interface EditMessageType extends v.InferInput<typeof EditMessageSchema> {}
 
 export const JoinServerSchema = v.object({
 	invite_url: v.string(),

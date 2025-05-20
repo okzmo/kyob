@@ -93,8 +93,12 @@ func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
 	channelIdParam := chi.URLParam(r, "channel_id")
 	serverIdParam := chi.URLParam(r, "server_id")
-	channelId, _ := strconv.Atoi(channelIdParam)
-	serverId, _ := strconv.Atoi(serverIdParam)
+	channelId, err1 := strconv.Atoi(channelIdParam)
+	serverId, err2 := strconv.Atoi(serverIdParam)
+	if err1 != nil || err2 != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid ID format")
+		return
+	}
 
 	protoMessage := &proto.BodyChannelRemoved{
 		ServerId:  int32(serverId),

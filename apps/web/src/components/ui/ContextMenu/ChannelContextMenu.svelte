@@ -25,27 +25,25 @@
 	}
 </script>
 
-<ContextMenu.Content class="bg-main-900 border-main-800 w-[225px] rounded-xl border p-2">
+<ContextMenu.Item
+	class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+>
+	<div class="flex w-full items-center justify-between">Mark as read</div>
+</ContextMenu.Item>
+{#if isOwner}
 	<ContextMenu.Item
 		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
 	>
-		<div class="flex w-full items-center justify-between">Mark as read</div>
+		<div class="flex w-full items-center justify-between">
+			Edit Channel
+			<UserInvite height={20} width={20} />
+		</div>
 	</ContextMenu.Item>
-	{#if isOwner}
-		<ContextMenu.Item
-			class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
-		>
-			<div class="flex w-full items-center justify-between">
-				Edit Channel
-				<UserInvite height={20} width={20} />
-			</div>
-		</ContextMenu.Item>
-		<ContextMenu.Item
-			class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-			onclick={() => deleteChannel(Number(page.params.server_id), targetId)}
-		>
-			<p class="flex items-center">Delete Channel</p>
-			<Bin height={20} width={20} />
-		</ContextMenu.Item>
-	{/if}
-</ContextMenu.Content>
+	<ContextMenu.Item
+		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+		onclick={() => deleteChannel(Number(page.params.server_id), targetId)}
+	>
+		<p class="flex items-center">Delete Channel</p>
+		<Bin height={20} width={20} />
+	</ContextMenu.Item>
+{/if}

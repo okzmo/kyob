@@ -1,6 +1,6 @@
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { Channel, ChannelTypes, Message, Server, Setup } from '../types/types';
+import type { Channel, ChannelTypes, Message, Server, Setup, User } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	CreateChannelErrors,
@@ -8,7 +8,9 @@ import type {
 	CreateMessageErrors,
 	CreateServerErrors,
 	DeleteChannelErrors,
+	DeleteMessageErrors,
 	DeleteServerErrors,
+	GetUserErrors,
 	JoinServerErrors,
 	LeaveServerErrors,
 	SetupErrors,
@@ -18,6 +20,7 @@ import type {
 	CreateChannelType,
 	CreateMessageType,
 	CreateServerType,
+	EditMessageType,
 	JoinServerType
 } from '../types/schemas';
 import { fromBinary } from '@bufbuild/protobuf';
@@ -26,6 +29,7 @@ import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { windows } from './windows.svelte';
 import { sounds } from './audio.svelte';
 import { userStore } from './user.svelte';
+import { core } from './core.svelte';
 
 const client = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
@@ -82,6 +86,7 @@ class Backend {
 							content: JSON.parse(contentStr),
 							mentions_users: wsMess.content.value.mentionsUsers,
 							mentions_channels: wsMess.content.value.mentionsChannels,
+							updated_at: timestampDate(wsMess.content.value.createdAt!).toISOString(),
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
 						serversStore.addMessage(Number(wsMess.content.value?.serverId), message);
@@ -125,11 +130,36 @@ class Backend {
 						serversStore.connectUser(value.serverId, value.userId, value.users, value.type);
 					}
 					break;
-				case 'userDisconnect': {
-					if (!wsMess.content.value) return;
-					const value = wsMess.content.value;
-					serversStore.disconnectUser(value.serverId, value.userId, value.type);
-				}
+				case 'userDisconnect':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.disconnectUser(value.serverId, value.userId, value.type);
+					}
+					break;
+				case 'deleteMessage':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.deleteMessage(value.serverId, value.channelId, value.messageId);
+					}
+					break;
+				case 'editMessage':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						const contentStr = new TextDecoder().decode(value.content);
+						serversStore.editMessage(
+							value.serverId,
+							value.channelId,
+							value.messageId,
+							JSON.parse(contentStr),
+							value.mentionsUsers,
+							value.mentionsChannels,
+							timestampDate(value.updatedAt!).toISOString()
+						);
+					}
+					break;
 			}
 		};
 
@@ -307,8 +337,43 @@ class Backend {
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
 			const res = await client.post(`authenticated/messages/${serverId}/${channelId}`, {
-				body: JSON.stringify(body)
+				body: JSON.stringify({
+					...body,
+					type: 'SEND'
+				})
 			});
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 400) {
+				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async editMessage(
+		serverId: number,
+		channelId: number,
+		messageId: number,
+		body: EditMessageType
+	): Promise<Result<void, CreateMessageErrors>> {
+		try {
+			const res = await client.patch(
+				`authenticated/messages/${serverId}/${channelId}/${messageId}`,
+				{
+					body: JSON.stringify({
+						...body,
+						type: 'EDIT'
+					})
+				}
+			);
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -353,6 +418,47 @@ class Backend {
 			return ok(data.invite_link);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async getUserProfile(userId: number): Promise<Result<User, GetUserErrors>> {
+		try {
+			const res = await client.get(`authenticated/user/${userId}`);
+
+			const data = (await res.json()) as User;
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async deleteMessage(
+		serverId: number,
+		channelId: number,
+		messageId: number
+	): Promise<Result<void, DeleteMessageErrors>> {
+		try {
+			const res = await client.delete(
+				`authenticated/messages/${serverId}/${channelId}/${messageId}`
+			);
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 400) {
+				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}

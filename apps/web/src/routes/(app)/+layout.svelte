@@ -17,8 +17,10 @@
 	import { serversStore } from '../../stores/servers.svelte';
 	import { core } from '../../stores/core.svelte';
 	import Audio from '../../components/Audio.svelte';
+	import UserProfileNoTrigger from '../../components/UserProfile/UserProfileNoTrigger.svelte';
 
 	let contextMenuTarget: string | undefined = $state();
+	let contextMenuTargetAuthor: string | undefined = $state();
 	let { children } = $props();
 
 	onMount(async () => {
@@ -50,6 +52,7 @@
 
 	function onContextMenu(e: MouseEvent) {
 		const targetId = (e.target as HTMLElement).id;
+		const targetAuthor = (e.target as HTMLElement).dataset?.authorId;
 		const identifier = targetId.split('-')[0] as ContextMenuTarget;
 		if (!contextMenuTargets.includes(identifier)) {
 			e.preventDefault();
@@ -67,6 +70,7 @@
 					break;
 			}
 			contextMenuTarget = targetId;
+			contextMenuTargetAuthor = targetAuthor;
 		}
 	}
 </script>
@@ -94,7 +98,11 @@
 			/>
 		{/each}
 	</ContextMenu.Trigger>
-	<ContextMenuSkeleton bind:target={contextMenuTarget} />
+	<ContextMenuSkeleton
+		bind:target={contextMenuTarget}
+		bind:targetAuthor={contextMenuTargetAuthor}
+	/>
 </ContextMenu.Root>
 
 <Audio />
+<UserProfileNoTrigger />

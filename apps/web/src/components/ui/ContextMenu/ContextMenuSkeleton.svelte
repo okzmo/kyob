@@ -8,22 +8,32 @@
 
 	interface Props {
 		target?: string | undefined;
+		targetAuthor?: string | undefined;
 	}
 
-	let { target = $bindable() }: Props = $props();
+	let { target = $bindable(), targetAuthor = $bindable() }: Props = $props();
 	let targetId = $derived(Number(target?.split('-')[1]));
+
+	function contextMenuMouseDown(e: MouseEvent) {
+		e.stopImmediatePropagation();
+	}
 </script>
 
 <ContextMenu.Portal>
-	{#if target?.includes('serverButton')}
-		<ServerContextMenu {targetId} />
-	{:else if target?.includes('channelButton')}
-		<ChannelContextMenu {targetId} />
-	{:else if target?.includes('message')}
-		<MessageContextMenu />
-	{:else if target?.includes('inServer')}
-		<ChannelMapContextMenu />
-	{:else if target?.includes('mainMap')}
-		<ServerMapContextMenu />
-	{/if}
+	<ContextMenu.Content
+		class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
+		onmousedown={contextMenuMouseDown}
+	>
+		{#if target?.includes('serverButton')}
+			<ServerContextMenu {targetId} />
+		{:else if target?.includes('channelButton')}
+			<ChannelContextMenu {targetId} />
+		{:else if target?.includes('message')}
+			<MessageContextMenu authorId={targetAuthor} {targetId} />
+		{:else if target?.includes('inServer')}
+			<ChannelMapContextMenu />
+		{:else if target?.includes('mainMap')}
+			<ServerMapContextMenu />
+		{/if}
+	</ContextMenu.Content>
 </ContextMenu.Portal>

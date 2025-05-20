@@ -7,7 +7,6 @@
 	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from '../../../stores/backend.svelte';
 	import type { Channel, Server } from '../../../types/types';
-	import { userStore } from '../../../stores/user.svelte';
 	import { PluginKey } from '@tiptap/pm/state';
 	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from './MentionsList.svelte';
@@ -31,7 +30,6 @@
 	async function prepareMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
 		const payload = {
-			author_id: userStore.user!.id,
 			content: message,
 			mentions_users
 		};
@@ -144,7 +142,12 @@
 </script>
 
 {#if mentionProps}
-	<MentionsList props={mentionProps} bind:this={mentionsListEl} bind:mentions_users />
+	<MentionsList
+		props={mentionProps}
+		bind:this={mentionsListEl}
+		bind:mentions_users
+		class="bottom-[4rem] left-[0.4rem] w-[calc(100%-0.8rem)]"
+	/>
 {/if}
 <div class="bg-main-900 border-t-main-800 absolute bottom-0 left-0 flex w-full border-t px-4">
 	<button

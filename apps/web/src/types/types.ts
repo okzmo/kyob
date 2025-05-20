@@ -81,6 +81,7 @@ export interface Message {
 	content: any;
 	mentions_users: number[];
 	mentions_channels: number[];
+	updated_at: string;
 	created_at: string;
 }
 

@@ -52,6 +52,12 @@ export interface CreateMessageErrors {
 	cause?: any;
 }
 
+export interface DeleteMessageErrors {
+	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
 export interface CreateInviteErrors {
 	code: 'ERR_UNKNOWN';
 	error: string;
@@ -64,6 +70,12 @@ export interface JoinServerErrors {
 		| 'ERR_INVITE_SERVER_NOT_FOUND'
 		| 'ERR_VALIDATION_FAILED'
 		| 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
+export interface GetUserErrors {
+	code: 'ERR_UNKNOWN';
 	error: string;
 	cause?: any;
 }

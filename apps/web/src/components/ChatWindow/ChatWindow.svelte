@@ -35,12 +35,16 @@
 				{#each allMessages as message (message.id)}
 					<ChatWindowMessage
 						id={message.id}
+						userId={message.author.id || -1}
 						avatar={message.author.avatar || ''}
 						content={message.content}
 						displayName={message.author.display_name || 'Name'}
 						username={message.author.username || 'username'}
 						time={message.created_at}
 						isUserMentioned={message.mentions_users?.includes(userStore.user?.id || -1)}
+						isEdited={message.created_at !== message.updated_at}
+						{server}
+						{channel}
 					/>
 				{/each}
 			{:else}

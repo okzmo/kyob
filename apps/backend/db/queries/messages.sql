@@ -2,7 +2,7 @@
 SELECT * FROM messages WHERE id = $1;
 
 -- name: GetMessagesFromChannel :many
-SELECT * FROM messages WHERE channel_id = $1;
+SELECT * FROM messages WHERE channel_id = $1 ORDER BY created_at DESC;
 
 -- name: CheckChannelMembership :execresult
 SELECT c.id FROM channels c, server_membership sm WHERE c.id = $1 and c.server_id = sm.server_id and sm.user_id = $2;
@@ -14,6 +14,11 @@ INSERT INTO messages (
   $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
+
+-- name: UpdateMessage :execresult
+UPDATE messages 
+SET content = $1, mentions_users = $2, mentions_channels = $3, updated_at = now()
+WHERE id = $4 AND author_id = $5;
 
 -- name: UpdateMessageContent :execresult
 UPDATE messages SET content = $1 WHERE id = $2 AND author_id = $3;

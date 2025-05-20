@@ -119,6 +119,7 @@ body {
 	border-radius: 50%;
 	object-fit: cover;
 	left: 7px;
+	pointer-events: none;
 }
 
 .message-mention {

@@ -11,6 +11,8 @@ message WSMessage {
     BroadcastNewUserInServer new_user = 4;
     BroadcastConnect user_connect = 5;
     BroadcastDisconnect user_disconnect = 6;
+    BroadcastDeleteChatMessage delete_message = 7;
+    BroadcastEditMessage edit_message = 8;
   }
 }
 
@@ -37,8 +39,7 @@ message User {
   optional string gradient_bottom = 8;
   optional string about = 9;
   google.protobuf.Timestamp created_at = 10;
-  repeated UserLinksRow links = 11;
-  repeated UserFactsRow facts = 12;
+  repeated UserLinksRow links = 11; repeated UserFactsRow facts = 12;
 }
 
 message IncomingChatMessage {
@@ -50,6 +51,23 @@ message IncomingChatMessage {
   repeated int32 mentions_channels = 6;
 }
 
+message EditChatMessage {
+  int64 user_id = 1;
+  int32 server_id = 2;
+  int32 channel_id = 3;
+  int32 message_id = 4;
+  bytes content = 5;
+  repeated int32 mentions_users = 6;
+  repeated int32 mentions_channels = 7;
+}
+
+message DeleteChatMessage {
+  int64 user_id = 1;
+  int32 server_id = 2;
+  int32 channel_id = 3;
+  int32 message_id = 4;
+}
+
 message BroadcastChatMessage {
   int32 id = 1;
   User author = 2;
@@ -59,6 +77,22 @@ message BroadcastChatMessage {
   repeated int32 mentions_users = 6;
   repeated int32 mentions_channels = 7;
   google.protobuf.Timestamp created_at = 8;
+}
+
+message BroadcastEditMessage {
+  int32 message_id = 1;
+  int32 server_id = 2;
+  int32 channel_id = 3;
+  bytes content = 4;
+  repeated int32 mentions_users = 5;
+  repeated int32 mentions_channels = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message BroadcastDeleteChatMessage {
+  int32 message_id = 1;
+  int32 server_id = 2;
+  int32 channel_id = 3;
 }
 
 message BroadcastChannelRemoved {

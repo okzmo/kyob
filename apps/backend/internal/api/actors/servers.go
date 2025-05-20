@@ -210,7 +210,7 @@ func (c *channel) Receive(ctx *actor.Context) {
 		c.logger.Info("user disconnected", "sender", ctx.Sender(), "id", ctx.PID())
 		delete(c.users, sender)
 	case *protoTypes.IncomingChatMessage:
-		messageToSend := &services.CreateMessageBody{
+		messageToSend := &services.MessageBody{
 			Content:       msg.Content,
 			MentionsUsers: msg.MentionsUsers,
 		}
@@ -223,6 +223,31 @@ func (c *channel) Receive(ctx *actor.Context) {
 
 		for user := range c.users {
 			UsersEngine.Send(user, message)
+		}
+	case *protoTypes.EditChatMessage:
+		messageToEdit := &services.MessageBody{
+			Content:       msg.Content,
+			MentionsUsers: msg.MentionsUsers,
+		}
+
+		message, err := services.EditMessage(context.TODO(), msg.UserId, msg.ServerId, msg.ChannelId, msg.MessageId, messageToEdit)
+		if err != nil {
+			slog.Error("failed to create message", "err", err)
+			return
+		}
+
+		for user := range c.users {
+			UsersEngine.Send(user, message)
+		}
+	case *protoTypes.DeleteChatMessage:
+		err := services.DeleteMessage(context.TODO(), msg.MessageId, msg.UserId)
+		if err != nil {
+			slog.Error("failed to delete message", "err", err)
+			return
+		}
+
+		for user := range c.users {
+			UsersEngine.Send(user, msg)
 		}
 	}
 }

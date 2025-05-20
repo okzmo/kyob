@@ -83,6 +83,28 @@ func (u *user) Receive(ctx *actor.Context) {
 
 		m, _ := proto.Marshal(msgToSend)
 		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	case *protoTypes.BroadcastEditMessage:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_EditMessage{
+				EditMessage: msg,
+			},
+		}
+
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	case *protoTypes.DeleteChatMessage:
+		msgToSend := &protoTypes.WSMessage{
+			Content: &protoTypes.WSMessage_DeleteMessage{
+				DeleteMessage: &protoTypes.BroadcastDeleteChatMessage{
+					MessageId: msg.MessageId,
+					ServerId:  msg.ServerId,
+					ChannelId: msg.ChannelId,
+				},
+			},
+		}
+
+		m, _ := proto.Marshal(msgToSend)
+		u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 	case *protoTypes.NewServerCreated:
 		serverPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
 		u.servers[serverPid] = true
@@ -144,7 +166,12 @@ func SetupUsersEngine() {
 func (u *user) initializeUser(ctx *actor.Context) {
 	strSplit := strings.Split(ctx.PID().GetID(), "/")
 	idStr := strSplit[len(strSplit)-1]
-	userId, _ := strconv.Atoi(idStr)
+	userId, err := strconv.Atoi(idStr)
+	if err != nil {
+		slog.Error("failed converting userId", "err", err)
+		return
+	}
+
 	servers, err := db.Query.GetServersFromUser(context.TODO(), int64(userId))
 	if err != nil {
 		u.logger.Error("no servers found for the user with id", "id", userId, "err", err)
