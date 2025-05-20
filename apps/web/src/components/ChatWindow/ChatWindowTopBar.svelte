@@ -18,13 +18,13 @@
 	id={`window-top-bar-${id}`}
 	class={[
 		'flex h-[2.375rem] w-full items-center justify-between rounded-t-[14px] border px-2.5 transition-colors duration-100',
-		userStore.mention ? 'border-red-500 bg-red-800' : 'bg-main-800 border-main-600'
+		userStore.mention ? 'bg-accent-200 border-accent-100' : 'bg-main-800 border-main-600'
 	]}
 >
 	<div
 		class={[
 			'flex items-center gap-x-2 text-sm transition-colors duration-100 select-none',
-			userStore.mention ? 'text-red-300 ' : 'text-main-400 '
+			userStore.mention ? 'text-accent-50 ' : 'text-main-400 '
 		]}
 	>
 		{#if server}
