@@ -82,11 +82,14 @@
 	<div class="pointer-events-none pt-1">
 		<div class="flex items-baseline gap-x-2.5 select-none">
 			<p class="text-sm font-semibold">{displayName}</p>
-			<time class="text-main-600 text-xs">{formatMessageTime(time)}</time>
+			<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
+				{formatMessageTime(time)}
+			</time>
 			{#if core.editingMessage.id === id || isEdited}
 				<p
 					class={[
 						'absolute  right-3 uppercase',
+						core.editingMessage.id !== id && isUserMentioned && '!text-main-300',
 						core.editingMessage.id !== id ? 'text-main-600 top-3 text-xs' : 'text-accent-50 top-2'
 					]}
 				>

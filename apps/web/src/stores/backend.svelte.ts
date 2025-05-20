@@ -149,7 +149,7 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 						const contentStr = new TextDecoder().decode(value.content);
-						serversStore.editMessage(
+						const message = serversStore.editMessage(
 							value.serverId,
 							value.channelId,
 							value.messageId,
@@ -158,6 +158,14 @@ class Backend {
 							value.mentionsChannels,
 							timestampDate(value.updatedAt!).toISOString()
 						);
+
+						if (
+							message?.mentions_users.includes(userStore.user!.id) &&
+							message.author.id !== userStore.user!.id
+						) {
+							sounds.playSound('notification');
+							userStore.mention = true;
+						}
 					}
 					break;
 			}

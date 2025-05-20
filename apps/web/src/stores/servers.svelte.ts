@@ -91,6 +91,7 @@ class Servers {
 				messages[idx].mentions_channels = mentions_channels;
 				messages[idx].updated_at = updated_at;
 			}
+			return messages[idx];
 		}
 	}
 
