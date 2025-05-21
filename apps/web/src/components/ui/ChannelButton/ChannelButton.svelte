@@ -4,7 +4,7 @@
 	import HashChat from '../icons/HashChat.svelte';
 
 	interface Props {
-		id: number;
+		id: string;
 		name: string;
 		type: 'textual' | 'voice';
 		x: number;
@@ -25,7 +25,7 @@
 	]}
 	style="transform: translate({x}px, {y}px);"
 	onclick={() => {
-		windows.createWindow(`window-${id}`, Number(page.params.server_id), id);
+		windows.createWindow(`window-${id}`, page.params.server_id, id);
 	}}
 >
 	{#if type == 'textual'}

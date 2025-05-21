@@ -25,17 +25,17 @@ SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, use
 
 -- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, avatar, description, private
+  id, owner_id, name, avatar, description, private
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 )
 RETURNING *;
 
 -- name: JoinServer :exec
 INSERT INTO server_membership (
-  user_id, server_id, x, y
+  id, user_id, server_id, x, y
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 );
 
 -- name: LeaveServer :exec

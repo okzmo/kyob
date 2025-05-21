@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/okzmo/kyob/db"
@@ -15,16 +14,11 @@ import (
 )
 
 func CreateChannel(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "server_id")
-	serverId, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	serverId := chi.URLParam(r, "server_id")
 
 	var body services.CreateChannelBody
 
-	err = json.NewDecoder(r.Body).Decode(&body)
+	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -39,7 +33,7 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
 	channelMessage := &proto.BodyChannelCreation{
 		CreatorId:   user.ID,
-		ServerId:    int32(serverId),
+		ServerId:    serverId,
 		Name:        body.Name,
 		Type:        string(body.Type),
 		Description: body.Description,
@@ -47,23 +41,18 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 		Y:           body.Y,
 	}
 
-	channelPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(serverId))
+	channelPID := actors.ServersEngine.Registry.GetPID("server", serverId)
 	actors.ServersEngine.Send(channelPID, channelMessage)
 
 	utils.RespondWithJSON(w, http.StatusCreated, DefaultResponse{Message: "success"})
 }
 
 func EditChannel(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	var body services.EditChannelBody
 
-	err = json.NewDecoder(r.Body).Decode(&body)
+	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -91,21 +80,15 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 
 func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
-	channelIdParam := chi.URLParam(r, "channel_id")
-	serverIdParam := chi.URLParam(r, "server_id")
-	channelId, err1 := strconv.Atoi(channelIdParam)
-	serverId, err2 := strconv.Atoi(serverIdParam)
-	if err1 != nil || err2 != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid ID format")
-		return
-	}
+	channelId := chi.URLParam(r, "channel_id")
+	serverId := chi.URLParam(r, "server_id")
 
 	protoMessage := &proto.BodyChannelRemoved{
-		ServerId:  int32(serverId),
-		ChannelId: int32(channelId),
+		ServerId:  serverId,
+		ChannelId: channelId,
 		UserId:    user.ID,
 	}
-	serverPID := actors.ServersEngine.Registry.GetPID("server", serverIdParam)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
 	actors.ServersEngine.Send(serverPID, protoMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})

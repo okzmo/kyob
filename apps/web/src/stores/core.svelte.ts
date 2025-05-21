@@ -7,15 +7,15 @@ class Core {
 	openCreateChannelModal = $state({ status: false, x: 0, y: 0 });
 	openCreateServerModal = $state({ status: false, x: 0, y: 0 });
 	openJoinServerModal = $state({ status: false, x: 0, y: 0 });
-	editingMessage = $state({ id: -1 });
+	editingMessage = $state({ id: '' });
 	profiles = $state<User[]>([]);
 	profileOpen = $state<{
 		status: boolean;
-		userId: number;
+		userId: string;
 		element: HTMLElement | null;
 	}>({
 		status: false,
-		userId: -1,
+		userId: '',
 		element: null
 	});
 
@@ -27,22 +27,22 @@ class Core {
 		this.canDragMap = true;
 	}
 
-	openProfile(userId: number, element: HTMLElement) {
+	openProfile(userId: string, element: HTMLElement) {
 		if (!this.profileOpen.status && this.profileOpen.userId !== userId) {
 			this.profileOpen = { status: true, userId, element };
 		}
 	}
 
 	closeProfile() {
-		this.profileOpen = { status: false, userId: -1, element: null };
+		this.profileOpen = { status: false, userId: '', element: null };
 	}
 
-	startEditingMessage(messageId: number) {
+	startEditingMessage(messageId: string) {
 		this.editingMessage.id = messageId;
 	}
 
 	stopEditingMessage() {
-		this.editingMessage.id = -1;
+		this.editingMessage.id = '';
 	}
 }
 

@@ -12,15 +12,16 @@ import (
 
 const createToken = `-- name: CreateToken :one
 INSERT INTO tokens (
-  user_id, token, expire_at, type
+  id, user_id, token, expire_at, type
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
 RETURNING id, user_id, token, type, expire_at
 `
 
 type CreateTokenParams struct {
-	UserID   int64     `json:"user_id"`
+	ID       string    `json:"id"`
+	UserID   string    `json:"user_id"`
 	Token    string    `json:"token"`
 	ExpireAt time.Time `json:"expire_at"`
 	Type     string    `json:"type"`
@@ -28,6 +29,7 @@ type CreateTokenParams struct {
 
 func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error) {
 	row := q.db.QueryRow(ctx, createToken,
+		arg.ID,
 		arg.UserID,
 		arg.Token,
 		arg.ExpireAt,
@@ -48,7 +50,7 @@ const deleteRememberMeToken = `-- name: DeleteRememberMeToken :exec
 DELETE FROM tokens WHERE user_id = $1 AND type = 'REMEMBER_ME_TOKEN'
 `
 
-func (q *Queries) DeleteRememberMeToken(ctx context.Context, userID int64) error {
+func (q *Queries) DeleteRememberMeToken(ctx context.Context, userID string) error {
 	_, err := q.db.Exec(ctx, deleteRememberMeToken, userID)
 	return err
 }

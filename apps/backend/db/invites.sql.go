@@ -14,30 +14,36 @@ const checkInvite = `-- name: CheckInvite :one
 SELECT server_id FROM invites WHERE invite_id = $1 AND expire_at >= NOW()
 `
 
-func (q *Queries) CheckInvite(ctx context.Context, inviteID string) (int64, error) {
+func (q *Queries) CheckInvite(ctx context.Context, inviteID string) (string, error) {
 	row := q.db.QueryRow(ctx, checkInvite, inviteID)
-	var server_id int64
+	var server_id string
 	err := row.Scan(&server_id)
 	return server_id, err
 }
 
 const createInvite = `-- name: CreateInvite :one
 INSERT INTO invites (
-  server_id, invite_id, expire_at
+  id, server_id, invite_id, expire_at
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4
 )
 RETURNING invite_id
 `
 
 type CreateInviteParams struct {
-	ServerID int64     `json:"server_id"`
+	ID       string    `json:"id"`
+	ServerID string    `json:"server_id"`
 	InviteID string    `json:"invite_id"`
 	ExpireAt time.Time `json:"expire_at"`
 }
 
 func (q *Queries) CreateInvite(ctx context.Context, arg CreateInviteParams) (string, error) {
-	row := q.db.QueryRow(ctx, createInvite, arg.ServerID, arg.InviteID, arg.ExpireAt)
+	row := q.db.QueryRow(ctx, createInvite,
+		arg.ID,
+		arg.ServerID,
+		arg.InviteID,
+		arg.ExpireAt,
+	)
 	var invite_id string
 	err := row.Scan(&invite_id)
 	return invite_id, err

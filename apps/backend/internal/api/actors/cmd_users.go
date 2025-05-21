@@ -3,8 +3,6 @@ package actors
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"strconv"
 	"strings"
 
 	"github.com/anthdm/hollywood/actor"
@@ -16,27 +14,22 @@ import (
 
 func (u *user) InitializeUser(ctx *actor.Context) {
 	strSplit := strings.Split(ctx.PID().GetID(), "/")
-	idStr := strSplit[len(strSplit)-1]
-	userId, err := strconv.Atoi(idStr)
-	if err != nil {
-		slog.Error("failed converting userId", "err", err)
-		return
-	}
+	userId := strSplit[len(strSplit)-1]
 
-	servers, err := db.Query.GetServersFromUser(context.TODO(), int64(userId))
+	servers, err := db.Query.GetServersFromUser(context.TODO(), userId)
 	if err != nil {
 		u.logger.Error("no servers found for the user with id", "id", userId, "err", err)
 	}
 
 	for _, server := range servers {
-		serverPID := ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
+		serverPID := ServersEngine.Registry.GetPID("server", server.ID)
 		u.servers[serverPID] = true
 
 		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
 		channels, _ := db.Query.GetChannelsFromServer(context.TODO(), server.ID)
 
 		for _, channel := range channels {
-			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%d/channel", server.ID), strconv.Itoa(int(channel.ID)))
+			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", server.ID), channel.ID)
 			u.channels[channelPID] = true
 
 			ServersEngine.SendWithSender(channelPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())

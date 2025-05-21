@@ -8,14 +8,14 @@
 	import { backend } from '../../../stores/backend.svelte';
 
 	interface Props {
-		targetId: number;
+		targetId: string;
 	}
 
 	let { targetId }: Props = $props();
 
-	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || -1, targetId));
+	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || '', targetId));
 
-	async function deleteServer(serverId: number) {
+	async function deleteServer(serverId: string) {
 		const res = await backend.deleteServer(serverId);
 		if (res.isErr()) {
 			console.error(res.error);
@@ -26,7 +26,7 @@
 		}
 	}
 
-	async function leaveServer(serverId: number) {
+	async function leaveServer(serverId: string) {
 		const res = await backend.leaveServer(serverId);
 		if (res.isErr()) {
 			console.error(res.error);
@@ -37,7 +37,7 @@
 		}
 	}
 
-	async function createServerInvite(serverId: number) {
+	async function createServerInvite(serverId: string) {
 		const res = await backend.createInvite(serverId);
 		if (res.isErr()) {
 			console.error(res.error);

@@ -15,7 +15,7 @@
 		validators: valibot(CreateChannelSchema),
 		async onUpdate({ form }) {
 			if (form.valid) {
-				const serverId = Number(page.params.server_id);
+				const serverId = page.params.server_id;
 				form.data.x = core.openCreateChannelModal.x;
 				form.data.y = core.openCreateChannelModal.y;
 

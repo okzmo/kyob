@@ -107,13 +107,13 @@ func (ns NullChannelType) Value() (driver.Value, error) {
 }
 
 type Channel struct {
-	ID          int64       `json:"id"`
-	ServerID    int64       `json:"server_id"`
+	ID          string      `json:"id"`
+	ServerID    string      `json:"server_id"`
 	Name        string      `json:"name"`
 	Type        ChannelType `json:"type"`
 	Description pgtype.Text `json:"description"`
-	Users       []int64     `json:"users"`
-	Roles       []int64     `json:"roles"`
+	Users       []string    `json:"users"`
+	Roles       []string    `json:"roles"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
 	CreatedAt   time.Time   `json:"created_at"`
@@ -121,8 +121,8 @@ type Channel struct {
 }
 
 type Fact struct {
-	ID        int64       `json:"id"`
-	UserID    int64       `json:"user_id"`
+	ID        string      `json:"id"`
+	UserID    string      `json:"user_id"`
 	Icon      pgtype.Text `json:"icon"`
 	Label     pgtype.Text `json:"label"`
 	Value     pgtype.Text `json:"value"`
@@ -131,15 +131,15 @@ type Fact struct {
 }
 
 type Invite struct {
-	ID       int64     `json:"id"`
-	ServerID int64     `json:"server_id"`
+	ID       string    `json:"id"`
+	ServerID string    `json:"server_id"`
 	InviteID string    `json:"invite_id"`
 	ExpireAt time.Time `json:"expire_at"`
 }
 
 type Link struct {
-	ID        int64       `json:"id"`
-	UserID    int64       `json:"user_id"`
+	ID        string      `json:"id"`
+	UserID    string      `json:"user_id"`
 	Label     pgtype.Text `json:"label"`
 	Url       pgtype.Text `json:"url"`
 	CreatedAt time.Time   `json:"created_at"`
@@ -147,21 +147,21 @@ type Link struct {
 }
 
 type Message struct {
-	ID               int64     `json:"id"`
-	AuthorID         int64     `json:"author_id"`
-	ServerID         int64     `json:"server_id"`
-	ChannelID        int64     `json:"channel_id"`
+	ID               string    `json:"id"`
+	AuthorID         string    `json:"author_id"`
+	ServerID         string    `json:"server_id"`
+	ChannelID        string    `json:"channel_id"`
 	Content          []byte    `json:"content"`
-	MentionsUsers    []int64   `json:"mentions_users"`
-	MentionsChannels []int64   `json:"mentions_channels"`
+	MentionsUsers    []string  `json:"mentions_users"`
+	MentionsChannels []string  `json:"mentions_channels"`
 	Attached         []string  `json:"attached"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 type Role struct {
-	ID          int64       `json:"id"`
-	ServerID    int64       `json:"server_id"`
+	ID          string      `json:"id"`
+	ServerID    string      `json:"server_id"`
 	Name        string      `json:"name"`
 	Color       string      `json:"color"`
 	Description pgtype.Text `json:"description"`
@@ -171,8 +171,8 @@ type Role struct {
 }
 
 type Server struct {
-	ID          int64       `json:"id"`
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
@@ -183,25 +183,25 @@ type Server struct {
 }
 
 type ServerMembership struct {
-	ID       int64     `json:"id"`
-	UserID   int64     `json:"user_id"`
-	ServerID int64     `json:"server_id"`
-	Roles    []int64   `json:"roles"`
+	ID       string    `json:"id"`
+	UserID   string    `json:"user_id"`
+	ServerID string    `json:"server_id"`
+	Roles    []string  `json:"roles"`
 	X        int32     `json:"x"`
 	Y        int32     `json:"y"`
 	JoinedAt time.Time `json:"joined_at"`
 }
 
 type Token struct {
-	ID       int64     `json:"id"`
-	UserID   int64     `json:"user_id"`
+	ID       string    `json:"id"`
+	UserID   string    `json:"user_id"`
 	Token    string    `json:"token"`
 	Type     string    `json:"type"`
 	ExpireAt time.Time `json:"expire_at"`
 }
 
 type User struct {
-	ID             int64       `json:"id"`
+	ID             string      `json:"id"`
 	Email          string      `json:"email"`
 	Username       string      `json:"username"`
 	Password       string      `json:"password"`

@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file types.proto.
  */
 export const file_types: GenFile = /*@__PURE__*/
-  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMi0gMKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAEjMKCG5ld191c2VyGAQgASgLMh8udHlwZXMuQnJvYWRjYXN0TmV3VXNlckluU2VydmVySAASLwoMdXNlcl9jb25uZWN0GAUgASgLMhcudHlwZXMuQnJvYWRjYXN0Q29ubmVjdEgAEjUKD3VzZXJfZGlzY29ubmVjdBgGIAEoCzIaLnR5cGVzLkJyb2FkY2FzdERpc2Nvbm5lY3RIABI7Cg5kZWxldGVfbWVzc2FnZRgHIAEoCzIhLnR5cGVzLkJyb2FkY2FzdERlbGV0ZUNoYXRNZXNzYWdlSAASMwoMZWRpdF9tZXNzYWdlGAggASgLMhsudHlwZXMuQnJvYWRjYXN0RWRpdE1lc3NhZ2VIAEIJCgdjb250ZW50IjYKDFVzZXJMaW5rc1JvdxIKCgJpZBgBIAEoBRINCgVsYWJlbBgCIAEoCRILCgN1cmwYAyABKAkiOAoMVXNlckZhY3RzUm93EgoKAmlkGAEgASgFEg0KBWxhYmVsGAIgASgJEg0KBXZhbHVlGAMgASgJIv0CCgRVc2VyEgoKAmlkGAEgASgFEg0KBWVtYWlsGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEhQKDGRpc3BsYXlfbmFtZRgEIAEoCRITCgZhdmF0YXIYBSABKAlIAIgBARITCgZiYW5uZXIYBiABKAlIAYgBARIZCgxncmFkaWVudF90b3AYByABKAlIAogBARIcCg9ncmFkaWVudF9ib3R0b20YCCABKAlIA4gBARISCgVhYm91dBgJIAEoCUgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBWxpbmtzGAsgAygLMhMudHlwZXMuVXNlckxpbmtzUm93EiIKBWZhY3RzGAwgAygLMhMudHlwZXMuVXNlckZhY3RzUm93QgkKB19hdmF0YXJCCQoHX2Jhbm5lckIPCg1fZ3JhZGllbnRfdG9wQhIKEF9ncmFkaWVudF9ib3R0b21CCAoGX2Fib3V0Ip0BChNJbmNvbWluZ0NoYXRNZXNzYWdlEhsKBmF1dGhvchgBIAEoCzILLnR5cGVzLlVzZXISEQoJc2VydmVyX2lkGAIgASgFEhIKCmNoYW5uZWxfaWQYAyABKAUSDwoHY29udGVudBgEIAEoDBIWCg5tZW50aW9uc191c2VycxgFIAMoBRIZChFtZW50aW9uc19jaGFubmVscxgGIAMoBSKhAQoPRWRpdENoYXRNZXNzYWdlEg8KB3VzZXJfaWQYASABKAMSEQoJc2VydmVyX2lkGAIgASgFEhIKCmNoYW5uZWxfaWQYAyABKAUSEgoKbWVzc2FnZV9pZBgEIAEoBRIPCgdjb250ZW50GAUgASgMEhYKDm1lbnRpb25zX3VzZXJzGAYgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAcgAygFIl8KEURlbGV0ZUNoYXRNZXNzYWdlEg8KB3VzZXJfaWQYASABKAMSEQoJc2VydmVyX2lkGAIgASgFEhIKCmNoYW5uZWxfaWQYAyABKAUSEgoKbWVzc2FnZV9pZBgEIAEoBSLaAQoUQnJvYWRjYXN0Q2hhdE1lc3NhZ2USCgoCaWQYASABKAUSGwoGYXV0aG9yGAIgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAyABKAUSEgoKY2hhbm5lbF9pZBgEIAEoBRIPCgdjb250ZW50GAUgASgMEhYKDm1lbnRpb25zX3VzZXJzGAYgAygFEhkKEW1lbnRpb25zX2NoYW5uZWxzGAcgAygFEi4KCmNyZWF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIsUBChRCcm9hZGNhc3RFZGl0TWVzc2FnZRISCgptZXNzYWdlX2lkGAEgASgFEhEKCXNlcnZlcl9pZBgCIAEoBRISCgpjaGFubmVsX2lkGAMgASgFEg8KB2NvbnRlbnQYBCABKAwSFgoObWVudGlvbnNfdXNlcnMYBSADKAUSGQoRbWVudGlvbnNfY2hhbm5lbHMYBiADKAUSLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVwoaQnJvYWRjYXN0RGVsZXRlQ2hhdE1lc3NhZ2USEgoKbWVzc2FnZV9pZBgBIAEoBRIRCglzZXJ2ZXJfaWQYAiABKAUSEgoKY2hhbm5lbF9pZBgDIAEoBSJpChdCcm9hZGNhc3RDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY2hhbm5lbF9pZBgCIAEoBRIQCghhY3Rvcl9pZBgDIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGAQgASgJIkgKGEJyb2FkY2FzdE5ld1VzZXJJblNlcnZlchIRCglzZXJ2ZXJfaWQYASABKAUSGQoEdXNlchgCIAEoCzILLnR5cGVzLlVzZXIiVAoWQnJvYWRjYXN0U2VydmVyUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSEAoIYWN0b3JfaWQYAiABKAkSFQoNYWN0b3JfYWRkcmVzcxgDIAEoCSK8AgoYQnJvYWRjYXN0Q2hhbm5lbENyZWF0aW9uEgoKAmlkGAEgASgFEhEKCXNlcnZlcl9pZBgCIAEoBRIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSGAoLZGVzY3JpcHRpb24YBSABKAlIAIgBARINCgV1c2VycxgGIAMoBRINCgVyb2xlcxgHIAMoBRIJCgF4GAggASgFEgkKAXkYCSABKAUSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIYWN0b3JfaWQYDCABKAkSFQoNYWN0b3JfYWRkcmVzcxgNIAEoCUIOCgxfZGVzY3JpcHRpb24iUwoQQnJvYWRjYXN0Q29ubmVjdBIRCglzZXJ2ZXJfaWQYASABKAUSDwoHdXNlcl9pZBgCIAEoBRINCgV1c2VycxgDIAMoBRIMCgR0eXBlGAQgASgJIkcKE0Jyb2FkY2FzdERpc2Nvbm5lY3QSEQoJc2VydmVyX2lkGAEgASgFEg8KB3VzZXJfaWQYAiABKAUSDAoEdHlwZRgDIAEoCSKhAQoTQm9keUNoYW5uZWxDcmVhdGlvbhIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY3JlYXRvcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSEwoLZGVzY3JpcHRpb24YBSABKAkSDQoFdXNlcnMYBiADKAUSDQoFcm9sZXMYByADKAUSCQoBeBgIIAEoBRIJCgF5GAkgASgFIkwKEkJvZHlDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAUSEgoKY2hhbm5lbF9pZBgCIAEoBRIPCgd1c2VyX2lkGAMgASgDIjcKEUJvZHlTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoBRIPCgd1c2VyX2lkGAIgASgDIkMKE0JvZHlOZXdVc2VySW5TZXJ2ZXISEQoJc2VydmVyX2lkGAEgASgFEhkKBHVzZXIYAiABKAsyCy50eXBlcy5Vc2VyIjsKEE5ld1NlcnZlckNyZWF0ZWQSEAoIYWN0b3JfaWQYASABKAkSFQoNYWN0b3JfYWRkcmVzcxgCIAEoCSIXCgdDb25uZWN0EgwKBHR5cGUYASABKAkiGgoKRGlzY29ubmVjdBIMCgR0eXBlGAEgASgJQhxaGmdpdGh1Yi5jb20vb2t6bW8vbnlvL3Byb3RvYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("Cgt0eXBlcy5wcm90bxIFdHlwZXMi0gMKCVdTTWVzc2FnZRIzCgxjaGF0X21lc3NhZ2UYASABKAsyGy50eXBlcy5Ccm9hZGNhc3RDaGF0TWVzc2FnZUgAEjsKEGNoYW5uZWxfY3JlYXRpb24YAiABKAsyHy50eXBlcy5Ccm9hZGNhc3RDaGFubmVsQ3JlYXRpb25IABI5Cg9jaGFubmVsX3JlbW92ZWQYAyABKAsyHi50eXBlcy5Ccm9hZGNhc3RDaGFubmVsUmVtb3ZlZEgAEjMKCG5ld191c2VyGAQgASgLMh8udHlwZXMuQnJvYWRjYXN0TmV3VXNlckluU2VydmVySAASLwoMdXNlcl9jb25uZWN0GAUgASgLMhcudHlwZXMuQnJvYWRjYXN0Q29ubmVjdEgAEjUKD3VzZXJfZGlzY29ubmVjdBgGIAEoCzIaLnR5cGVzLkJyb2FkY2FzdERpc2Nvbm5lY3RIABI7Cg5kZWxldGVfbWVzc2FnZRgHIAEoCzIhLnR5cGVzLkJyb2FkY2FzdERlbGV0ZUNoYXRNZXNzYWdlSAASMwoMZWRpdF9tZXNzYWdlGAggASgLMhsudHlwZXMuQnJvYWRjYXN0RWRpdE1lc3NhZ2VIAEIJCgdjb250ZW50IjYKDFVzZXJMaW5rc1JvdxIKCgJpZBgBIAEoCRINCgVsYWJlbBgCIAEoCRILCgN1cmwYAyABKAkiOAoMVXNlckZhY3RzUm93EgoKAmlkGAEgASgJEg0KBWxhYmVsGAIgASgJEg0KBXZhbHVlGAMgASgJIv0CCgRVc2VyEgoKAmlkGAEgASgJEg0KBWVtYWlsGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEhQKDGRpc3BsYXlfbmFtZRgEIAEoCRITCgZhdmF0YXIYBSABKAlIAIgBARITCgZiYW5uZXIYBiABKAlIAYgBARIZCgxncmFkaWVudF90b3AYByABKAlIAogBARIcCg9ncmFkaWVudF9ib3R0b20YCCABKAlIA4gBARISCgVhYm91dBgJIAEoCUgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBWxpbmtzGAsgAygLMhMudHlwZXMuVXNlckxpbmtzUm93EiIKBWZhY3RzGAwgAygLMhMudHlwZXMuVXNlckZhY3RzUm93QgkKB19hdmF0YXJCCQoHX2Jhbm5lckIPCg1fZ3JhZGllbnRfdG9wQhIKEF9ncmFkaWVudF9ib3R0b21CCAoGX2Fib3V0Ip0BChNJbmNvbWluZ0NoYXRNZXNzYWdlEhsKBmF1dGhvchgBIAEoCzILLnR5cGVzLlVzZXISEQoJc2VydmVyX2lkGAIgASgJEhIKCmNoYW5uZWxfaWQYAyABKAkSDwoHY29udGVudBgEIAEoDBIWCg5tZW50aW9uc191c2VycxgFIAMoCRIZChFtZW50aW9uc19jaGFubmVscxgGIAMoCSKhAQoPRWRpdENoYXRNZXNzYWdlEg8KB3VzZXJfaWQYASABKAkSEQoJc2VydmVyX2lkGAIgASgJEhIKCmNoYW5uZWxfaWQYAyABKAkSEgoKbWVzc2FnZV9pZBgEIAEoCRIPCgdjb250ZW50GAUgASgMEhYKDm1lbnRpb25zX3VzZXJzGAYgAygJEhkKEW1lbnRpb25zX2NoYW5uZWxzGAcgAygJIl8KEURlbGV0ZUNoYXRNZXNzYWdlEg8KB3VzZXJfaWQYASABKAkSEQoJc2VydmVyX2lkGAIgASgJEhIKCmNoYW5uZWxfaWQYAyABKAkSEgoKbWVzc2FnZV9pZBgEIAEoCSLaAQoUQnJvYWRjYXN0Q2hhdE1lc3NhZ2USCgoCaWQYASABKAkSGwoGYXV0aG9yGAIgASgLMgsudHlwZXMuVXNlchIRCglzZXJ2ZXJfaWQYAyABKAkSEgoKY2hhbm5lbF9pZBgEIAEoCRIPCgdjb250ZW50GAUgASgMEhYKDm1lbnRpb25zX3VzZXJzGAYgAygJEhkKEW1lbnRpb25zX2NoYW5uZWxzGAcgAygJEi4KCmNyZWF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIsUBChRCcm9hZGNhc3RFZGl0TWVzc2FnZRISCgptZXNzYWdlX2lkGAEgASgJEhEKCXNlcnZlcl9pZBgCIAEoCRISCgpjaGFubmVsX2lkGAMgASgJEg8KB2NvbnRlbnQYBCABKAwSFgoObWVudGlvbnNfdXNlcnMYBSADKAkSGQoRbWVudGlvbnNfY2hhbm5lbHMYBiADKAkSLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVwoaQnJvYWRjYXN0RGVsZXRlQ2hhdE1lc3NhZ2USEgoKbWVzc2FnZV9pZBgBIAEoCRIRCglzZXJ2ZXJfaWQYAiABKAkSEgoKY2hhbm5lbF9pZBgDIAEoCSJpChdCcm9hZGNhc3RDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAkSEgoKY2hhbm5lbF9pZBgCIAEoCRIQCghhY3Rvcl9pZBgDIAEoCRIVCg1hY3Rvcl9hZGRyZXNzGAQgASgJIkgKGEJyb2FkY2FzdE5ld1VzZXJJblNlcnZlchIRCglzZXJ2ZXJfaWQYASABKAkSGQoEdXNlchgCIAEoCzILLnR5cGVzLlVzZXIiVAoWQnJvYWRjYXN0U2VydmVyUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAkSEAoIYWN0b3JfaWQYAiABKAkSFQoNYWN0b3JfYWRkcmVzcxgDIAEoCSK8AgoYQnJvYWRjYXN0Q2hhbm5lbENyZWF0aW9uEgoKAmlkGAEgASgJEhEKCXNlcnZlcl9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSGAoLZGVzY3JpcHRpb24YBSABKAlIAIgBARINCgV1c2VycxgGIAMoCRINCgVyb2xlcxgHIAMoCRIJCgF4GAggASgFEgkKAXkYCSABKAUSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIYWN0b3JfaWQYDCABKAkSFQoNYWN0b3JfYWRkcmVzcxgNIAEoCUIOCgxfZGVzY3JpcHRpb24iUwoQQnJvYWRjYXN0Q29ubmVjdBIRCglzZXJ2ZXJfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRINCgV1c2VycxgDIAMoCRIMCgR0eXBlGAQgASgJIkcKE0Jyb2FkY2FzdERpc2Nvbm5lY3QSEQoJc2VydmVyX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSDAoEdHlwZRgDIAEoCSKhAQoTQm9keUNoYW5uZWxDcmVhdGlvbhIRCglzZXJ2ZXJfaWQYASABKAkSEgoKY3JlYXRvcl9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgwKBHR5cGUYBCABKAkSEwoLZGVzY3JpcHRpb24YBSABKAkSDQoFdXNlcnMYBiADKAkSDQoFcm9sZXMYByADKAkSCQoBeBgIIAEoBRIJCgF5GAkgASgFIkwKEkJvZHlDaGFubmVsUmVtb3ZlZBIRCglzZXJ2ZXJfaWQYASABKAkSEgoKY2hhbm5lbF9pZBgCIAEoCRIPCgd1c2VyX2lkGAMgASgJIjcKEUJvZHlTZXJ2ZXJSZW1vdmVkEhEKCXNlcnZlcl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJIkMKE0JvZHlOZXdVc2VySW5TZXJ2ZXISEQoJc2VydmVyX2lkGAEgASgJEhkKBHVzZXIYAiABKAsyCy50eXBlcy5Vc2VyIjsKEE5ld1NlcnZlckNyZWF0ZWQSEAoIYWN0b3JfaWQYASABKAkSFQoNYWN0b3JfYWRkcmVzcxgCIAEoCSIXCgdDb25uZWN0EgwKBHR5cGUYASABKAkiGgoKRGlzY29ubmVjdBIMCgR0eXBlGAEgASgJQhxaGmdpdGh1Yi5jb20vb2t6bW8vbnlvL3Byb3RvYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message types.WSMessage
@@ -84,9 +84,9 @@ export const WSMessageSchema: GenMessage<WSMessage> = /*@__PURE__*/
  */
 export type UserLinksRow = Message<"types.UserLinksRow"> & {
   /**
-   * @generated from field: int32 id = 1;
+   * @generated from field: string id = 1;
    */
-  id: number;
+  id: string;
 
   /**
    * @generated from field: string label = 2;
@@ -111,9 +111,9 @@ export const UserLinksRowSchema: GenMessage<UserLinksRow> = /*@__PURE__*/
  */
 export type UserFactsRow = Message<"types.UserFactsRow"> & {
   /**
-   * @generated from field: int32 id = 1;
+   * @generated from field: string id = 1;
    */
-  id: number;
+  id: string;
 
   /**
    * @generated from field: string label = 2;
@@ -138,9 +138,9 @@ export const UserFactsRowSchema: GenMessage<UserFactsRow> = /*@__PURE__*/
  */
 export type User = Message<"types.User"> & {
   /**
-   * @generated from field: int32 id = 1;
+   * @generated from field: string id = 1;
    */
-  id: number;
+  id: string;
 
   /**
    * @generated from field: string email = 2;
@@ -215,14 +215,14 @@ export type IncomingChatMessage = Message<"types.IncomingChatMessage"> & {
   author?: User;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 3;
+   * @generated from field: string channel_id = 3;
    */
-  channelId: number;
+  channelId: string;
 
   /**
    * @generated from field: bytes content = 4;
@@ -230,14 +230,14 @@ export type IncomingChatMessage = Message<"types.IncomingChatMessage"> & {
   content: Uint8Array;
 
   /**
-   * @generated from field: repeated int32 mentions_users = 5;
+   * @generated from field: repeated string mentions_users = 5;
    */
-  mentionsUsers: number[];
+  mentionsUsers: string[];
 
   /**
-   * @generated from field: repeated int32 mentions_channels = 6;
+   * @generated from field: repeated string mentions_channels = 6;
    */
-  mentionsChannels: number[];
+  mentionsChannels: string[];
 };
 
 /**
@@ -252,24 +252,24 @@ export const IncomingChatMessageSchema: GenMessage<IncomingChatMessage> = /*@__P
  */
 export type EditChatMessage = Message<"types.EditChatMessage"> & {
   /**
-   * @generated from field: int64 user_id = 1;
+   * @generated from field: string user_id = 1;
    */
-  userId: bigint;
+  userId: string;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 3;
+   * @generated from field: string channel_id = 3;
    */
-  channelId: number;
+  channelId: string;
 
   /**
-   * @generated from field: int32 message_id = 4;
+   * @generated from field: string message_id = 4;
    */
-  messageId: number;
+  messageId: string;
 
   /**
    * @generated from field: bytes content = 5;
@@ -277,14 +277,14 @@ export type EditChatMessage = Message<"types.EditChatMessage"> & {
   content: Uint8Array;
 
   /**
-   * @generated from field: repeated int32 mentions_users = 6;
+   * @generated from field: repeated string mentions_users = 6;
    */
-  mentionsUsers: number[];
+  mentionsUsers: string[];
 
   /**
-   * @generated from field: repeated int32 mentions_channels = 7;
+   * @generated from field: repeated string mentions_channels = 7;
    */
-  mentionsChannels: number[];
+  mentionsChannels: string[];
 };
 
 /**
@@ -299,24 +299,24 @@ export const EditChatMessageSchema: GenMessage<EditChatMessage> = /*@__PURE__*/
  */
 export type DeleteChatMessage = Message<"types.DeleteChatMessage"> & {
   /**
-   * @generated from field: int64 user_id = 1;
+   * @generated from field: string user_id = 1;
    */
-  userId: bigint;
+  userId: string;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 3;
+   * @generated from field: string channel_id = 3;
    */
-  channelId: number;
+  channelId: string;
 
   /**
-   * @generated from field: int32 message_id = 4;
+   * @generated from field: string message_id = 4;
    */
-  messageId: number;
+  messageId: string;
 };
 
 /**
@@ -331,9 +331,9 @@ export const DeleteChatMessageSchema: GenMessage<DeleteChatMessage> = /*@__PURE_
  */
 export type BroadcastChatMessage = Message<"types.BroadcastChatMessage"> & {
   /**
-   * @generated from field: int32 id = 1;
+   * @generated from field: string id = 1;
    */
-  id: number;
+  id: string;
 
   /**
    * @generated from field: types.User author = 2;
@@ -341,14 +341,14 @@ export type BroadcastChatMessage = Message<"types.BroadcastChatMessage"> & {
   author?: User;
 
   /**
-   * @generated from field: int32 server_id = 3;
+   * @generated from field: string server_id = 3;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 4;
+   * @generated from field: string channel_id = 4;
    */
-  channelId: number;
+  channelId: string;
 
   /**
    * @generated from field: bytes content = 5;
@@ -356,14 +356,14 @@ export type BroadcastChatMessage = Message<"types.BroadcastChatMessage"> & {
   content: Uint8Array;
 
   /**
-   * @generated from field: repeated int32 mentions_users = 6;
+   * @generated from field: repeated string mentions_users = 6;
    */
-  mentionsUsers: number[];
+  mentionsUsers: string[];
 
   /**
-   * @generated from field: repeated int32 mentions_channels = 7;
+   * @generated from field: repeated string mentions_channels = 7;
    */
-  mentionsChannels: number[];
+  mentionsChannels: string[];
 
   /**
    * @generated from field: google.protobuf.Timestamp created_at = 8;
@@ -383,19 +383,19 @@ export const BroadcastChatMessageSchema: GenMessage<BroadcastChatMessage> = /*@_
  */
 export type BroadcastEditMessage = Message<"types.BroadcastEditMessage"> & {
   /**
-   * @generated from field: int32 message_id = 1;
+   * @generated from field: string message_id = 1;
    */
-  messageId: number;
+  messageId: string;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 3;
+   * @generated from field: string channel_id = 3;
    */
-  channelId: number;
+  channelId: string;
 
   /**
    * @generated from field: bytes content = 4;
@@ -403,14 +403,14 @@ export type BroadcastEditMessage = Message<"types.BroadcastEditMessage"> & {
   content: Uint8Array;
 
   /**
-   * @generated from field: repeated int32 mentions_users = 5;
+   * @generated from field: repeated string mentions_users = 5;
    */
-  mentionsUsers: number[];
+  mentionsUsers: string[];
 
   /**
-   * @generated from field: repeated int32 mentions_channels = 6;
+   * @generated from field: repeated string mentions_channels = 6;
    */
-  mentionsChannels: number[];
+  mentionsChannels: string[];
 
   /**
    * @generated from field: google.protobuf.Timestamp updated_at = 7;
@@ -430,19 +430,19 @@ export const BroadcastEditMessageSchema: GenMessage<BroadcastEditMessage> = /*@_
  */
 export type BroadcastDeleteChatMessage = Message<"types.BroadcastDeleteChatMessage"> & {
   /**
-   * @generated from field: int32 message_id = 1;
+   * @generated from field: string message_id = 1;
    */
-  messageId: number;
+  messageId: string;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 3;
+   * @generated from field: string channel_id = 3;
    */
-  channelId: number;
+  channelId: string;
 };
 
 /**
@@ -457,14 +457,14 @@ export const BroadcastDeleteChatMessageSchema: GenMessage<BroadcastDeleteChatMes
  */
 export type BroadcastChannelRemoved = Message<"types.BroadcastChannelRemoved"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 2;
+   * @generated from field: string channel_id = 2;
    */
-  channelId: number;
+  channelId: string;
 
   /**
    * @generated from field: string actor_id = 3;
@@ -489,9 +489,9 @@ export const BroadcastChannelRemovedSchema: GenMessage<BroadcastChannelRemoved> 
  */
 export type BroadcastNewUserInServer = Message<"types.BroadcastNewUserInServer"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
    * @generated from field: types.User user = 2;
@@ -511,9 +511,9 @@ export const BroadcastNewUserInServerSchema: GenMessage<BroadcastNewUserInServer
  */
 export type BroadcastServerRemoved = Message<"types.BroadcastServerRemoved"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
    * @generated from field: string actor_id = 2;
@@ -538,14 +538,14 @@ export const BroadcastServerRemovedSchema: GenMessage<BroadcastServerRemoved> = 
  */
 export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation"> & {
   /**
-   * @generated from field: int32 id = 1;
+   * @generated from field: string id = 1;
    */
-  id: number;
+  id: string;
 
   /**
-   * @generated from field: int32 server_id = 2;
+   * @generated from field: string server_id = 2;
    */
-  serverId: number;
+  serverId: string;
 
   /**
    * @generated from field: string name = 3;
@@ -563,14 +563,14 @@ export type BroadcastChannelCreation = Message<"types.BroadcastChannelCreation">
   description?: string;
 
   /**
-   * @generated from field: repeated int32 users = 6;
+   * @generated from field: repeated string users = 6;
    */
-  users: number[];
+  users: string[];
 
   /**
-   * @generated from field: repeated int32 roles = 7;
+   * @generated from field: repeated string roles = 7;
    */
-  roles: number[];
+  roles: string[];
 
   /**
    * @generated from field: int32 x = 8;
@@ -615,19 +615,19 @@ export const BroadcastChannelCreationSchema: GenMessage<BroadcastChannelCreation
  */
 export type BroadcastConnect = Message<"types.BroadcastConnect"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 user_id = 2;
+   * @generated from field: string user_id = 2;
    */
-  userId: number;
+  userId: string;
 
   /**
-   * @generated from field: repeated int32 users = 3;
+   * @generated from field: repeated string users = 3;
    */
-  users: number[];
+  users: string[];
 
   /**
    * @generated from field: string type = 4;
@@ -647,14 +647,14 @@ export const BroadcastConnectSchema: GenMessage<BroadcastConnect> = /*@__PURE__*
  */
 export type BroadcastDisconnect = Message<"types.BroadcastDisconnect"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 user_id = 2;
+   * @generated from field: string user_id = 2;
    */
-  userId: number;
+  userId: string;
 
   /**
    * @generated from field: string type = 3;
@@ -674,14 +674,14 @@ export const BroadcastDisconnectSchema: GenMessage<BroadcastDisconnect> = /*@__P
  */
 export type BodyChannelCreation = Message<"types.BodyChannelCreation"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int64 creator_id = 2;
+   * @generated from field: string creator_id = 2;
    */
-  creatorId: bigint;
+  creatorId: string;
 
   /**
    * @generated from field: string name = 3;
@@ -699,14 +699,14 @@ export type BodyChannelCreation = Message<"types.BodyChannelCreation"> & {
   description: string;
 
   /**
-   * @generated from field: repeated int32 users = 6;
+   * @generated from field: repeated string users = 6;
    */
-  users: number[];
+  users: string[];
 
   /**
-   * @generated from field: repeated int32 roles = 7;
+   * @generated from field: repeated string roles = 7;
    */
-  roles: number[];
+  roles: string[];
 
   /**
    * @generated from field: int32 x = 8;
@@ -731,19 +731,19 @@ export const BodyChannelCreationSchema: GenMessage<BodyChannelCreation> = /*@__P
  */
 export type BodyChannelRemoved = Message<"types.BodyChannelRemoved"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int32 channel_id = 2;
+   * @generated from field: string channel_id = 2;
    */
-  channelId: number;
+  channelId: string;
 
   /**
-   * @generated from field: int64 user_id = 3;
+   * @generated from field: string user_id = 3;
    */
-  userId: bigint;
+  userId: string;
 };
 
 /**
@@ -758,14 +758,14 @@ export const BodyChannelRemovedSchema: GenMessage<BodyChannelRemoved> = /*@__PUR
  */
 export type BodyServerRemoved = Message<"types.BodyServerRemoved"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
-   * @generated from field: int64 user_id = 2;
+   * @generated from field: string user_id = 2;
    */
-  userId: bigint;
+  userId: string;
 };
 
 /**
@@ -780,9 +780,9 @@ export const BodyServerRemovedSchema: GenMessage<BodyServerRemoved> = /*@__PURE_
  */
 export type BodyNewUserInServer = Message<"types.BodyNewUserInServer"> & {
   /**
-   * @generated from field: int32 server_id = 1;
+   * @generated from field: string server_id = 1;
    */
-  serverId: number;
+  serverId: string;
 
   /**
    * @generated from field: types.User user = 2;

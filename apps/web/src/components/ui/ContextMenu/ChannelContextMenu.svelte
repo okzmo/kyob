@@ -8,16 +8,14 @@
 	import { backend } from '../../../stores/backend.svelte';
 
 	interface Props {
-		targetId: number;
+		targetId: string;
 	}
 
 	let { targetId }: Props = $props();
 
-	let isOwner = $derived(
-		serversStore.isOwner(userStore.user?.id || -1, Number(page.params.server_id))
-	);
+	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || '', page.params.server_id));
 
-	async function deleteChannel(serverId: number, channelId: number) {
+	async function deleteChannel(serverId: string, channelId: string) {
 		const res = await backend.deleteChannel(serverId, channelId);
 		if (res.isErr()) {
 			console.error(res.error);
@@ -41,7 +39,7 @@
 	</ContextMenu.Item>
 	<ContextMenu.Item
 		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-		onclick={() => deleteChannel(Number(page.params.server_id), targetId)}
+		onclick={() => deleteChannel(page.params.server_id, targetId)}
 	>
 		<p class="flex items-center">Delete Channel</p>
 		<Bin height={20} width={20} />

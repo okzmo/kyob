@@ -55,8 +55,8 @@ type JoinServerBody struct {
 }
 
 type ServerResponse struct {
-	ID          int64       `json:"id"`
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
@@ -99,6 +99,7 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 
 	user := ctx.Value("user").(db.User)
 	newServer, err := db.Query.CreateServer(ctx, db.CreateServerParams{
+		ID:          utils.Node.Generate().String(),
 		OwnerID:     user.ID,
 		Name:        server.Name,
 		Avatar:      pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), imgFileName), Valid: true},
@@ -110,6 +111,7 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 	}
 
 	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+		ID:       utils.Node.Generate().String(),
 		ServerID: newServer.ID,
 		UserID:   user.ID,
 		X:        int32(server.X),
@@ -134,10 +136,10 @@ func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipar
 	}, nil
 }
 
-func EditServer(ctx context.Context, id int, body *EditServerBody) error {
+func EditServer(ctx context.Context, id string, body *EditServerBody) error {
 	user := ctx.Value("user").(db.User)
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      int64(id),
+		ID:      id,
 		OwnerID: user.ID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
@@ -146,7 +148,7 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 
 	if body.Name != "" {
 		err := db.Query.UpdateServerName(ctx, db.UpdateServerNameParams{
-			ID:      int64(id),
+			ID:      id,
 			Name:    body.Name,
 			OwnerID: user.ID,
 		})
@@ -157,7 +159,7 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 
 	if body.Description != "" {
 		err := db.Query.UpdateServerDescription(ctx, db.UpdateServerDescriptionParams{
-			ID:          int64(id),
+			ID:          id,
 			Description: pgtype.Text{String: body.Description, Valid: true},
 			OwnerID:     user.ID,
 		})
@@ -168,7 +170,7 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 
 	if body.Avatar != "" {
 		err := db.Query.UpdateServerAvatar(ctx, db.UpdateServerAvatarParams{
-			ID:      int64(id),
+			ID:      id,
 			Avatar:  pgtype.Text{String: body.Avatar, Valid: true},
 			OwnerID: user.ID,
 		})
@@ -179,7 +181,7 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 
 	if body.Banner != "" {
 		err := db.Query.UpdateServerBanner(ctx, db.UpdateServerBannerParams{
-			ID:      int64(id),
+			ID:      id,
 			Banner:  pgtype.Text{String: body.Banner, Valid: true},
 			OwnerID: user.ID,
 		})
@@ -191,9 +193,9 @@ func EditServer(ctx context.Context, id int, body *EditServerBody) error {
 	return nil
 }
 
-func DeleteServer(ctx context.Context, id int, userId int64) error {
+func DeleteServer(ctx context.Context, id string, userId string) error {
 	res, err := db.Query.DeleteServer(ctx, db.DeleteServerParams{
-		ID:      int64(id),
+		ID:      id,
 		OwnerID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
@@ -203,11 +205,12 @@ func DeleteServer(ctx context.Context, id int, userId int64) error {
 	return nil
 }
 
-func CreateServerInvite(ctx context.Context, serverId int) (*string, error) {
+func CreateServerInvite(ctx context.Context, serverId string) (*string, error) {
 	inviteId := utils.GenerateRandomId(10)
 
 	res, err := db.Query.CreateInvite(ctx, db.CreateInviteParams{
-		ServerID: int64(serverId),
+		ID:       utils.Node.Generate().String(),
+		ServerID: serverId,
 		InviteID: inviteId,
 		ExpireAt: time.Now().Add(time.Minute * 15),
 	})
@@ -233,6 +236,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	}
 
 	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
 		ServerID: serverId,
 		X:        int32(body.X),
@@ -242,7 +246,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		return nil, err
 	}
 
-	channelMap := make(map[int64]db.Channel)
+	channelMap := make(map[string]db.Channel)
 	channels, err := db.Query.GetChannelsFromServer(ctx, serverId)
 	if err != nil {
 		return nil, err
@@ -287,10 +291,10 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	return &s, nil
 }
 
-func LeaveServer(ctx context.Context, serverId int, userId int64) error {
+func LeaveServer(ctx context.Context, serverId string, userId string) error {
 	err := db.Query.LeaveServer(ctx, db.LeaveServerParams{
 		UserID:   userId,
-		ServerID: int64(serverId),
+		ServerID: serverId,
 	})
 	if err != nil {
 		return err

@@ -6,7 +6,7 @@ import (
 	"github.com/okzmo/kyob/db"
 )
 
-func GetUser(ctx context.Context, userId int64) (*UserResponse, error) {
+func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 	user, err := db.Query.GetUserById(ctx, userId)
 	if err != nil {
 		return nil, err

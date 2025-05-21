@@ -13,14 +13,15 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  email, username, display_name, avatar, password
+  id, email, username, display_name, avatar, password
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 )
 RETURNING id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at
 `
 
 type CreateUserParams struct {
+	ID          string      `json:"id"`
 	Email       string      `json:"email"`
 	Username    string      `json:"username"`
 	DisplayName string      `json:"display_name"`
@@ -30,6 +31,7 @@ type CreateUserParams struct {
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, createUser,
+		arg.ID,
 		arg.Email,
 		arg.Username,
 		arg.DisplayName,
@@ -58,7 +60,7 @@ const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
+func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
@@ -96,7 +98,7 @@ const getUserById = `-- name: GetUserById :one
 SELECT id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at FROM users WHERE id = $1
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
+func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
@@ -125,7 +127,7 @@ type GetUserFactsRow struct {
 	Value pgtype.Text `json:"value"`
 }
 
-func (q *Queries) GetUserFacts(ctx context.Context, userID int64) ([]GetUserFactsRow, error) {
+func (q *Queries) GetUserFacts(ctx context.Context, userID string) ([]GetUserFactsRow, error) {
 	rows, err := q.db.Query(ctx, getUserFacts, userID)
 	if err != nil {
 		return nil, err
@@ -154,7 +156,7 @@ type GetUserLinksRow struct {
 	Url   pgtype.Text `json:"url"`
 }
 
-func (q *Queries) GetUserLinks(ctx context.Context, userID int64) ([]GetUserLinksRow, error) {
+func (q *Queries) GetUserLinks(ctx context.Context, userID string) ([]GetUserLinksRow, error) {
 	rows, err := q.db.Query(ctx, getUserLinks, userID)
 	if err != nil {
 		return nil, err
@@ -179,13 +181,13 @@ SELECT id, username, display_name, avatar FROM users WHERE id = $1
 `
 
 type GetUserMinimalRow struct {
-	ID          int64       `json:"id"`
+	ID          string      `json:"id"`
 	Username    string      `json:"username"`
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
 }
 
-func (q *Queries) GetUserMinimal(ctx context.Context, id int64) (GetUserMinimalRow, error) {
+func (q *Queries) GetUserMinimal(ctx context.Context, id string) (GetUserMinimalRow, error) {
 	row := q.db.QueryRow(ctx, getUserMinimal, id)
 	var i GetUserMinimalRow
 	err := row.Scan(
@@ -204,7 +206,7 @@ WHERE id = $1
 `
 
 type UpdateUserAboutParams struct {
-	ID    int64       `json:"id"`
+	ID    string      `json:"id"`
 	About pgtype.Text `json:"about"`
 }
 
@@ -220,7 +222,7 @@ WHERE id = $1
 `
 
 type UpdateUserAvatarParams struct {
-	ID     int64       `json:"id"`
+	ID     string      `json:"id"`
 	Avatar pgtype.Text `json:"avatar"`
 }
 
@@ -236,7 +238,7 @@ WHERE id = $1
 `
 
 type UpdateUserDisplayNameParams struct {
-	ID          int64  `json:"id"`
+	ID          string `json:"id"`
 	DisplayName string `json:"display_name"`
 }
 
@@ -252,7 +254,7 @@ WHERE id = $1
 `
 
 type UpdateUserEmailParams struct {
-	ID    int64  `json:"id"`
+	ID    string `json:"id"`
 	Email string `json:"email"`
 }
 
@@ -268,7 +270,7 @@ WHERE id = $1
 `
 
 type UpdateUserPasswordParams struct {
-	ID       int64  `json:"id"`
+	ID       string `json:"id"`
 	Password string `json:"password"`
 }
 
@@ -284,7 +286,7 @@ WHERE id = $1
 `
 
 type UpdateUserUsernameParams struct {
-	ID       int64  `json:"id"`
+	ID       string `json:"id"`
 	Username string `json:"username"`
 }
 

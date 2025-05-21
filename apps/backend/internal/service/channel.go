@@ -6,6 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -20,14 +21,14 @@ type CreateChannelBody struct {
 	Name        string         `validate:"required,max=50" json:"name"`
 	Type        db.ChannelType `validate:"required,oneof=textual voice" json:"type"`
 	Description string         `validate:"max=280" json:"description"`
-	Users       []int64        `json:"users"`
-	Roles       []int64        `json:"roles"`
+	Users       []string       `json:"users"`
+	Roles       []string       `json:"roles"`
 	X           int32          `json:"x"`
 	Y           int32          `json:"y"`
 }
 
 type EditChannelBody struct {
-	ServerID    int    `validate:"required" json:"server_id"`
+	ServerID    string `validate:"required" json:"server_id"`
 	Name        string `validate:"max=50" json:"name"`
 	Description string `validate:"max=280" json:"description"`
 }
@@ -36,9 +37,9 @@ type DeleteChannelBody struct {
 	ServerID int `validate:"required" json:"server_id"`
 }
 
-func CreateChannel(ctx context.Context, creatorId int64, serverId int32, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
+func CreateChannel(ctx context.Context, creatorId string, serverId string, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      int64(serverId),
+		ID:      serverId,
 		OwnerID: creatorId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
@@ -46,7 +47,8 @@ func CreateChannel(ctx context.Context, creatorId int64, serverId int32, channel
 	}
 
 	c, err := db.Query.CreateChannel(ctx, db.CreateChannelParams{
-		ServerID:    int64(serverId),
+		ID:          utils.Node.Generate().String(),
+		ServerID:    serverId,
 		Name:        channel.Name,
 		Type:        channel.Type,
 		Description: pgtype.Text{String: channel.Description, Valid: true},
@@ -60,7 +62,7 @@ func CreateChannel(ctx context.Context, creatorId int64, serverId int32, channel
 	}
 
 	newChannel := &proto.BroadcastChannelCreation{
-		Id:          int32(c.ID),
+		Id:          c.ID,
 		ServerId:    serverId,
 		Name:        c.Name,
 		Description: &c.Description.String,
@@ -74,10 +76,10 @@ func CreateChannel(ctx context.Context, creatorId int64, serverId int32, channel
 	return newChannel, nil
 }
 
-func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {
+func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
 	user := ctx.Value("user").(db.User)
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      int64(body.ServerID),
+		ID:      body.ServerID,
 		OwnerID: user.ID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
@@ -86,7 +88,7 @@ func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {
 
 	if body.Name != "" {
 		err := db.Query.UpdateChannelName(ctx, db.UpdateChannelNameParams{
-			ID:   int64(id),
+			ID:   id,
 			Name: body.Name,
 		})
 		if err != nil {
@@ -96,7 +98,7 @@ func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {
 
 	if body.Description != "" {
 		err := db.Query.UpdateChannelDescription(ctx, db.UpdateChannelDescriptionParams{
-			ID:          int64(id),
+			ID:          id,
 			Description: pgtype.Text{String: body.Description, Valid: true},
 		})
 		if err != nil {
@@ -107,16 +109,16 @@ func EditChannel(ctx context.Context, id int, body *EditChannelBody) error {
 	return nil
 }
 
-func DeleteChannel(ctx context.Context, serverId int, channelId int, userId int64) error {
+func DeleteChannel(ctx context.Context, serverId string, channelId string, userId string) error {
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      int64(serverId),
+		ID:      serverId,
 		OwnerID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedChannelDeletion
 	}
 
-	err = db.Query.DeleteChannel(ctx, int64(channelId))
+	err = db.Query.DeleteChannel(ctx, channelId)
 	if err != nil {
 		return err
 	}

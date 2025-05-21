@@ -202,7 +202,7 @@ func (*WSMessage_EditMessage) isWSMessage_Content() {}
 
 type UserLinksRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Url           string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -239,11 +239,11 @@ func (*UserLinksRow) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UserLinksRow) GetId() int32 {
+func (x *UserLinksRow) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *UserLinksRow) GetLabel() string {
@@ -262,7 +262,7 @@ func (x *UserLinksRow) GetUrl() string {
 
 type UserFactsRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -299,11 +299,11 @@ func (*UserFactsRow) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UserFactsRow) GetId() int32 {
+func (x *UserFactsRow) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *UserFactsRow) GetLabel() string {
@@ -322,7 +322,7 @@ func (x *UserFactsRow) GetValue() string {
 
 type User struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Email          string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	Username       string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	DisplayName    string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
@@ -368,11 +368,11 @@ func (*User) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *User) GetId() int32 {
+func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *User) GetEmail() string {
@@ -455,11 +455,11 @@ func (x *User) GetFacts() []*UserFactsRow {
 type IncomingChatMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Author           *User                  `protobuf:"bytes,1,opt,name=author,proto3" json:"author,omitempty"`
-	ServerId         int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId        int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []int32                `protobuf:"varint,5,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []int32                `protobuf:"varint,6,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -501,18 +501,18 @@ func (x *IncomingChatMessage) GetAuthor() *User {
 	return nil
 }
 
-func (x *IncomingChatMessage) GetServerId() int32 {
+func (x *IncomingChatMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *IncomingChatMessage) GetChannelId() int32 {
+func (x *IncomingChatMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
 func (x *IncomingChatMessage) GetContent() []byte {
@@ -522,14 +522,14 @@ func (x *IncomingChatMessage) GetContent() []byte {
 	return nil
 }
 
-func (x *IncomingChatMessage) GetMentionsUsers() []int32 {
+func (x *IncomingChatMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
 	}
 	return nil
 }
 
-func (x *IncomingChatMessage) GetMentionsChannels() []int32 {
+func (x *IncomingChatMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
 	}
@@ -538,13 +538,13 @@ func (x *IncomingChatMessage) GetMentionsChannels() []int32 {
 
 type EditChatMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	UserId           int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ServerId         int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId        int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	MessageId        int32                  `protobuf:"varint,4,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	UserId           string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	MessageId        string                 `protobuf:"bytes,4,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []int32                `protobuf:"varint,6,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []int32                `protobuf:"varint,7,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -579,32 +579,32 @@ func (*EditChatMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *EditChatMessage) GetUserId() int64 {
+func (x *EditChatMessage) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
-func (x *EditChatMessage) GetServerId() int32 {
+func (x *EditChatMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *EditChatMessage) GetChannelId() int32 {
+func (x *EditChatMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
-func (x *EditChatMessage) GetMessageId() int32 {
+func (x *EditChatMessage) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
 	}
-	return 0
+	return ""
 }
 
 func (x *EditChatMessage) GetContent() []byte {
@@ -614,14 +614,14 @@ func (x *EditChatMessage) GetContent() []byte {
 	return nil
 }
 
-func (x *EditChatMessage) GetMentionsUsers() []int32 {
+func (x *EditChatMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
 	}
 	return nil
 }
 
-func (x *EditChatMessage) GetMentionsChannels() []int32 {
+func (x *EditChatMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
 	}
@@ -630,10 +630,10 @@ func (x *EditChatMessage) GetMentionsChannels() []int32 {
 
 type DeleteChatMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ServerId      int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId     int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	MessageId     int32                  `protobuf:"varint,4,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	MessageId     string                 `protobuf:"bytes,4,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -668,43 +668,43 @@ func (*DeleteChatMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteChatMessage) GetUserId() int64 {
+func (x *DeleteChatMessage) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
-func (x *DeleteChatMessage) GetServerId() int32 {
+func (x *DeleteChatMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *DeleteChatMessage) GetChannelId() int32 {
+func (x *DeleteChatMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
-func (x *DeleteChatMessage) GetMessageId() int32 {
+func (x *DeleteChatMessage) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
 	}
-	return 0
+	return ""
 }
 
 type BroadcastChatMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Author           *User                  `protobuf:"bytes,2,opt,name=author,proto3" json:"author,omitempty"`
-	ServerId         int32                  `protobuf:"varint,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId        int32                  `protobuf:"varint,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	ServerId         string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        string                 `protobuf:"bytes,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []int32                `protobuf:"varint,6,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []int32                `protobuf:"varint,7,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
 	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -740,11 +740,11 @@ func (*BroadcastChatMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *BroadcastChatMessage) GetId() int32 {
+func (x *BroadcastChatMessage) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastChatMessage) GetAuthor() *User {
@@ -754,18 +754,18 @@ func (x *BroadcastChatMessage) GetAuthor() *User {
 	return nil
 }
 
-func (x *BroadcastChatMessage) GetServerId() int32 {
+func (x *BroadcastChatMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastChatMessage) GetChannelId() int32 {
+func (x *BroadcastChatMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastChatMessage) GetContent() []byte {
@@ -775,14 +775,14 @@ func (x *BroadcastChatMessage) GetContent() []byte {
 	return nil
 }
 
-func (x *BroadcastChatMessage) GetMentionsUsers() []int32 {
+func (x *BroadcastChatMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
 	}
 	return nil
 }
 
-func (x *BroadcastChatMessage) GetMentionsChannels() []int32 {
+func (x *BroadcastChatMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
 	}
@@ -798,12 +798,12 @@ func (x *BroadcastChatMessage) GetCreatedAt() *timestamppb.Timestamp {
 
 type BroadcastEditMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	MessageId        int32                  `protobuf:"varint,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	ServerId         int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId        int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	MessageId        string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []int32                `protobuf:"varint,5,rep,packed,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []int32                `protobuf:"varint,6,rep,packed,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -839,25 +839,25 @@ func (*BroadcastEditMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *BroadcastEditMessage) GetMessageId() int32 {
+func (x *BroadcastEditMessage) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastEditMessage) GetServerId() int32 {
+func (x *BroadcastEditMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastEditMessage) GetChannelId() int32 {
+func (x *BroadcastEditMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastEditMessage) GetContent() []byte {
@@ -867,14 +867,14 @@ func (x *BroadcastEditMessage) GetContent() []byte {
 	return nil
 }
 
-func (x *BroadcastEditMessage) GetMentionsUsers() []int32 {
+func (x *BroadcastEditMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
 	}
 	return nil
 }
 
-func (x *BroadcastEditMessage) GetMentionsChannels() []int32 {
+func (x *BroadcastEditMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
 	}
@@ -890,9 +890,9 @@ func (x *BroadcastEditMessage) GetUpdatedAt() *timestamppb.Timestamp {
 
 type BroadcastDeleteChatMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MessageId     int32                  `protobuf:"varint,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	ServerId      int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId     int32                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	MessageId     string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -927,31 +927,31 @@ func (*BroadcastDeleteChatMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *BroadcastDeleteChatMessage) GetMessageId() int32 {
+func (x *BroadcastDeleteChatMessage) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastDeleteChatMessage) GetServerId() int32 {
+func (x *BroadcastDeleteChatMessage) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastDeleteChatMessage) GetChannelId() int32 {
+func (x *BroadcastDeleteChatMessage) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
 type BroadcastChannelRemoved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId     int32                  `protobuf:"varint,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	ActorId       string                 `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	ActorAddress  string                 `protobuf:"bytes,4,opt,name=actor_address,json=actorAddress,proto3" json:"actor_address,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -988,18 +988,18 @@ func (*BroadcastChannelRemoved) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *BroadcastChannelRemoved) GetServerId() int32 {
+func (x *BroadcastChannelRemoved) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastChannelRemoved) GetChannelId() int32 {
+func (x *BroadcastChannelRemoved) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastChannelRemoved) GetActorId() string {
@@ -1018,7 +1018,7 @@ func (x *BroadcastChannelRemoved) GetActorAddress() string {
 
 type BroadcastNewUserInServer struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1054,11 +1054,11 @@ func (*BroadcastNewUserInServer) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *BroadcastNewUserInServer) GetServerId() int32 {
+func (x *BroadcastNewUserInServer) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastNewUserInServer) GetUser() *User {
@@ -1070,7 +1070,7 @@ func (x *BroadcastNewUserInServer) GetUser() *User {
 
 type BroadcastServerRemoved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ActorId       string                 `protobuf:"bytes,2,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	ActorAddress  string                 `protobuf:"bytes,3,opt,name=actor_address,json=actorAddress,proto3" json:"actor_address,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1107,11 +1107,11 @@ func (*BroadcastServerRemoved) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *BroadcastServerRemoved) GetServerId() int32 {
+func (x *BroadcastServerRemoved) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastServerRemoved) GetActorId() string {
@@ -1130,13 +1130,13 @@ func (x *BroadcastServerRemoved) GetActorAddress() string {
 
 type BroadcastChannelCreation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ServerId      int32                  `protobuf:"varint,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Users         []int32                `protobuf:"varint,6,rep,packed,name=users,proto3" json:"users,omitempty"`
-	Roles         []int32                `protobuf:"varint,7,rep,packed,name=roles,proto3" json:"roles,omitempty"`
+	Users         []string               `protobuf:"bytes,6,rep,name=users,proto3" json:"users,omitempty"`
+	Roles         []string               `protobuf:"bytes,7,rep,name=roles,proto3" json:"roles,omitempty"`
 	X             int32                  `protobuf:"varint,8,opt,name=x,proto3" json:"x,omitempty"`
 	Y             int32                  `protobuf:"varint,9,opt,name=y,proto3" json:"y,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -1177,18 +1177,18 @@ func (*BroadcastChannelCreation) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *BroadcastChannelCreation) GetId() int32 {
+func (x *BroadcastChannelCreation) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastChannelCreation) GetServerId() int32 {
+func (x *BroadcastChannelCreation) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastChannelCreation) GetName() string {
@@ -1212,14 +1212,14 @@ func (x *BroadcastChannelCreation) GetDescription() string {
 	return ""
 }
 
-func (x *BroadcastChannelCreation) GetUsers() []int32 {
+func (x *BroadcastChannelCreation) GetUsers() []string {
 	if x != nil {
 		return x.Users
 	}
 	return nil
 }
 
-func (x *BroadcastChannelCreation) GetRoles() []int32 {
+func (x *BroadcastChannelCreation) GetRoles() []string {
 	if x != nil {
 		return x.Roles
 	}
@@ -1270,9 +1270,9 @@ func (x *BroadcastChannelCreation) GetActorAddress() string {
 
 type BroadcastConnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Users         []int32                `protobuf:"varint,3,rep,packed,name=users,proto3" json:"users,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Users         []string               `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
 	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1308,21 +1308,21 @@ func (*BroadcastConnect) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *BroadcastConnect) GetServerId() int32 {
+func (x *BroadcastConnect) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastConnect) GetUserId() int32 {
+func (x *BroadcastConnect) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastConnect) GetUsers() []int32 {
+func (x *BroadcastConnect) GetUsers() []string {
 	if x != nil {
 		return x.Users
 	}
@@ -1338,8 +1338,8 @@ func (x *BroadcastConnect) GetType() string {
 
 type BroadcastDisconnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1375,18 +1375,18 @@ func (*BroadcastDisconnect) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *BroadcastDisconnect) GetServerId() int32 {
+func (x *BroadcastDisconnect) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BroadcastDisconnect) GetUserId() int32 {
+func (x *BroadcastDisconnect) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *BroadcastDisconnect) GetType() string {
@@ -1398,13 +1398,13 @@ func (x *BroadcastDisconnect) GetType() string {
 
 type BodyChannelCreation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	CreatorId     int64                  `protobuf:"varint,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	CreatorId     string                 `protobuf:"bytes,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Users         []int32                `protobuf:"varint,6,rep,packed,name=users,proto3" json:"users,omitempty"`
-	Roles         []int32                `protobuf:"varint,7,rep,packed,name=roles,proto3" json:"roles,omitempty"`
+	Users         []string               `protobuf:"bytes,6,rep,name=users,proto3" json:"users,omitempty"`
+	Roles         []string               `protobuf:"bytes,7,rep,name=roles,proto3" json:"roles,omitempty"`
 	X             int32                  `protobuf:"varint,8,opt,name=x,proto3" json:"x,omitempty"`
 	Y             int32                  `protobuf:"varint,9,opt,name=y,proto3" json:"y,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1441,18 +1441,18 @@ func (*BodyChannelCreation) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *BodyChannelCreation) GetServerId() int32 {
+func (x *BodyChannelCreation) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BodyChannelCreation) GetCreatorId() int64 {
+func (x *BodyChannelCreation) GetCreatorId() string {
 	if x != nil {
 		return x.CreatorId
 	}
-	return 0
+	return ""
 }
 
 func (x *BodyChannelCreation) GetName() string {
@@ -1476,14 +1476,14 @@ func (x *BodyChannelCreation) GetDescription() string {
 	return ""
 }
 
-func (x *BodyChannelCreation) GetUsers() []int32 {
+func (x *BodyChannelCreation) GetUsers() []string {
 	if x != nil {
 		return x.Users
 	}
 	return nil
 }
 
-func (x *BodyChannelCreation) GetRoles() []int32 {
+func (x *BodyChannelCreation) GetRoles() []string {
 	if x != nil {
 		return x.Roles
 	}
@@ -1506,9 +1506,9 @@ func (x *BodyChannelCreation) GetY() int32 {
 
 type BodyChannelRemoved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	ChannelId     int32                  `protobuf:"varint,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1543,31 +1543,31 @@ func (*BodyChannelRemoved) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *BodyChannelRemoved) GetServerId() int32 {
+func (x *BodyChannelRemoved) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BodyChannelRemoved) GetChannelId() int32 {
+func (x *BodyChannelRemoved) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
 	}
-	return 0
+	return ""
 }
 
-func (x *BodyChannelRemoved) GetUserId() int64 {
+func (x *BodyChannelRemoved) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type BodyServerRemoved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1602,23 +1602,23 @@ func (*BodyServerRemoved) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *BodyServerRemoved) GetServerId() int32 {
+func (x *BodyServerRemoved) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
-func (x *BodyServerRemoved) GetUserId() int64 {
+func (x *BodyServerRemoved) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type BodyNewUserInServer struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      int32                  `protobuf:"varint,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1654,11 +1654,11 @@ func (*BodyNewUserInServer) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *BodyNewUserInServer) GetServerId() int32 {
+func (x *BodyNewUserInServer) GetServerId() string {
 	if x != nil {
 		return x.ServerId
 	}
-	return 0
+	return ""
 }
 
 func (x *BodyNewUserInServer) GetUser() *User {
@@ -1824,15 +1824,15 @@ const file_types_proto_rawDesc = "" +
 	"\fedit_message\x18\b \x01(\v2\x1b.types.BroadcastEditMessageH\x00R\veditMessageB\t\n" +
 	"\acontent\"F\n" +
 	"\fUserLinksRow\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\"J\n" +
 	"\fUserFactsRow\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x14\n" +
 	"\x05value\x18\x03 \x01(\tR\x05value\"\xec\x03\n" +
 	"\x04User\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12!\n" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x1b\n" +
@@ -1853,78 +1853,78 @@ const file_types_proto_rawDesc = "" +
 	"\x06_about\"\xe4\x01\n" +
 	"\x13IncomingChatMessage\x12#\n" +
 	"\x06author\x18\x01 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x05R\tchannelId\x12\x18\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
 	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x05 \x03(\x05R\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\x06 \x03(\x05R\x10mentionsChannels\"\xf3\x01\n" +
+	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\"\xf3\x01\n" +
 	"\x0fEditChatMessage\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x05R\tchannelId\x12\x1d\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x04 \x01(\x05R\tmessageId\x12\x18\n" +
+	"message_id\x18\x04 \x01(\tR\tmessageId\x12\x18\n" +
 	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x06 \x03(\x05R\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\a \x03(\x05R\x10mentionsChannels\"\x87\x01\n" +
+	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\"\x87\x01\n" +
 	"\x11DeleteChatMessage\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x05R\tchannelId\x12\x1d\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x04 \x01(\x05R\tmessageId\"\xb0\x02\n" +
+	"message_id\x18\x04 \x01(\tR\tmessageId\"\xb0\x02\n" +
 	"\x14BroadcastChatMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12#\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\x06author\x18\x02 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
-	"\tserver_id\x18\x03 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x04 \x01(\x05R\tchannelId\x12\x18\n" +
+	"channel_id\x18\x04 \x01(\tR\tchannelId\x12\x18\n" +
 	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x06 \x03(\x05R\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\a \x03(\x05R\x10mentionsChannels\x129\n" +
+	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x129\n" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x02\n" +
 	"\x14BroadcastEditMessage\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x01 \x01(\x05R\tmessageId\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x05R\tchannelId\x12\x18\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
 	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x05 \x03(\x05R\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\x06 \x03(\x05R\x10mentionsChannels\x129\n" +
+	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\x129\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"w\n" +
 	"\x1aBroadcastDeleteChatMessage\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x01 \x01(\x05R\tmessageId\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x1d\n" +
+	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x05R\tchannelId\"\x95\x01\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\"\x95\x01\n" +
 	"\x17BroadcastChannelRemoved\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x02 \x01(\x05R\tchannelId\x12\x19\n" +
+	"channel_id\x18\x02 \x01(\tR\tchannelId\x12\x19\n" +
 	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12#\n" +
 	"\ractor_address\x18\x04 \x01(\tR\factorAddress\"X\n" +
 	"\x18BroadcastNewUserInServer\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1f\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1f\n" +
 	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"u\n" +
 	"\x16BroadcastServerRemoved\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x19\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x19\n" +
 	"\bactor_id\x18\x02 \x01(\tR\aactorId\x12#\n" +
 	"\ractor_address\x18\x03 \x01(\tR\factorAddress\"\xa4\x03\n" +
 	"\x18BroadcastChannelCreation\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1b\n" +
-	"\tserver_id\x18\x02 \x01(\x05R\bserverId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\x12%\n" +
 	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x14\n" +
-	"\x05users\x18\x06 \x03(\x05R\x05users\x12\x14\n" +
-	"\x05roles\x18\a \x03(\x05R\x05roles\x12\f\n" +
+	"\x05users\x18\x06 \x03(\tR\x05users\x12\x14\n" +
+	"\x05roles\x18\a \x03(\tR\x05roles\x12\f\n" +
 	"\x01x\x18\b \x01(\x05R\x01x\x12\f\n" +
 	"\x01y\x18\t \x01(\x05R\x01y\x129\n" +
 	"\n" +
@@ -1936,35 +1936,35 @@ const file_types_proto_rawDesc = "" +
 	"\ractor_address\x18\r \x01(\tR\factorAddressB\x0e\n" +
 	"\f_description\"r\n" +
 	"\x10BroadcastConnect\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x14\n" +
-	"\x05users\x18\x03 \x03(\x05R\x05users\x12\x12\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05users\x18\x03 \x03(\tR\x05users\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\"_\n" +
 	"\x13BroadcastDisconnect\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x12\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\"\xe3\x01\n" +
 	"\x13BodyChannelCreation\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12\x12\n" +
+	"creator_id\x18\x02 \x01(\tR\tcreatorId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\x12 \n" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05users\x18\x06 \x03(\x05R\x05users\x12\x14\n" +
-	"\x05roles\x18\a \x03(\x05R\x05roles\x12\f\n" +
+	"\x05users\x18\x06 \x03(\tR\x05users\x12\x14\n" +
+	"\x05roles\x18\a \x03(\tR\x05roles\x12\f\n" +
 	"\x01x\x18\b \x01(\x05R\x01x\x12\f\n" +
 	"\x01y\x18\t \x01(\x05R\x01y\"i\n" +
 	"\x12BodyChannelRemoved\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1d\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x02 \x01(\x05R\tchannelId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\"I\n" +
+	"channel_id\x18\x02 \x01(\tR\tchannelId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\"I\n" +
 	"\x11BodyServerRemoved\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"S\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"S\n" +
 	"\x13BodyNewUserInServer\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\x05R\bserverId\x12\x1f\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1f\n" +
 	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"R\n" +
 	"\x10NewServerCreated\x12\x19\n" +
 	"\bactor_id\x18\x01 \x01(\tR\aactorId\x12#\n" +

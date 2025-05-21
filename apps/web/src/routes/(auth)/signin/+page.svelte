@@ -29,7 +29,9 @@
 						const data = await res.json();
 						console.error('signin failed', res.status, data);
 						globalError = data.error;
+						return;
 					}
+
 					return goto('/');
 				} catch (err) {
 					console.error(err);

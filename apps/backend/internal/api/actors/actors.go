@@ -3,7 +3,6 @@ package actors
 import (
 	"context"
 	"log/slog"
-	"strconv"
 
 	"github.com/anthdm/hollywood/actor"
 	"github.com/lxzan/gws"
@@ -29,7 +28,7 @@ func SetupServersEngine() {
 	}
 
 	for _, server := range servers {
-		e.Spawn(NewServer, "server", actor.WithID(strconv.Itoa(int(server.ID))))
+		e.Spawn(NewServer, "server", actor.WithID(server.ID))
 	}
 }
 
@@ -42,7 +41,7 @@ type (
 type server struct {
 	channels   ChannelMap
 	users      UserMap
-	usersSlice []int32
+	usersSlice []string
 	logger     *slog.Logger
 }
 

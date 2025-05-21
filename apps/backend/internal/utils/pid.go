@@ -1,16 +1,14 @@
 package utils
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/anthdm/hollywood/actor"
 )
 
-func GetEntityIdFromPID(entityId *actor.PID) int {
+func GetEntityIdFromPID(entityId *actor.PID) string {
 	strSplit := strings.Split(entityId.String(), "/")
-	idStr := strSplit[len(strSplit)-1]
-	id, _ := strconv.Atoi(idStr)
+	id := strSplit[len(strSplit)-1]
 
 	return id
 }

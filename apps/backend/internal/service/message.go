@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -19,8 +20,8 @@ var (
 
 type MessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
-	MentionsUsers    []int32         `json:"mentions_users"`
-	MentionsChannels []int32         `json:"mentions_channels"`
+	MentionsUsers    []string        `json:"mentions_users"`
+	MentionsChannels []string        `json:"mentions_channels"`
 	Type             string          `json:"type"`
 }
 
@@ -29,53 +30,44 @@ type EditMessageBody struct {
 }
 
 type MessageResponse struct {
-	ID               int64           `json:"id"`
+	ID               string          `json:"id"`
 	Author           db.User         `json:"author"`
-	ServerId         int64           `json:"server_id"`
-	ChannelId        int64           `json:"channel_id"`
+	ServerId         string          `json:"server_id"`
+	ChannelId        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
-	MentionsUsers    []int64         `json:"mentions_users"`
-	MentionsChannels []int64         `json:"mentions_channels"`
+	MentionsUsers    []string        `json:"mentions_users"`
+	MentionsChannels []string        `json:"mentions_channels"`
 	CreatedAt        time.Time       `json:"created_at"`
 	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
-func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channelId int32, body *MessageBody) (*proto.BroadcastChatMessage, error) {
+func CreateMessage(ctx context.Context, user *proto.User, serverId string, channelId string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
 	res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
-		ID:     int64(channelId),
-		UserID: int64(user.Id),
+		ID:     channelId,
+		UserID: user.Id,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, ErrUnauthorizedMessageCreation
 	}
 
-	convertedMentionsUsers := make([]int64, len(body.MentionsUsers))
-	for i, v := range body.MentionsUsers {
-		convertedMentionsUsers[i] = int64(v)
-	}
-
-	convertedMentionsChannels := make([]int64, len(body.MentionsChannels))
-	for i, v := range body.MentionsChannels {
-		convertedMentionsChannels[i] = int64(v)
-	}
-
 	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
-		AuthorID:         int64(user.Id),
-		ServerID:         int64(serverId),
-		ChannelID:        int64(channelId),
+		ID:               utils.Node.Generate().String(),
+		AuthorID:         user.Id,
+		ServerID:         serverId,
+		ChannelID:        channelId,
 		Content:          body.Content,
-		MentionsUsers:    convertedMentionsUsers,
-		MentionsChannels: convertedMentionsChannels,
+		MentionsUsers:    body.MentionsUsers,
+		MentionsChannels: body.MentionsChannels,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	message := &proto.BroadcastChatMessage{
-		Id:               int32(m.ID),
+		Id:               m.ID,
 		Author:           user,
-		ServerId:         int32(m.ServerID),
-		ChannelId:        int32(m.ChannelID),
+		ServerId:         m.ServerID,
+		ChannelId:        m.ChannelID,
 		Content:          m.Content,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
@@ -84,21 +76,11 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId int32, channe
 	return message, nil
 }
 
-func EditMessage(ctx context.Context, userId int64, serverId int32, channelId int32, messageId int32, body *MessageBody) (*proto.BroadcastEditMessage, error) {
-	convertedMentionsUsers := make([]int64, len(body.MentionsUsers))
-	for i, v := range body.MentionsUsers {
-		convertedMentionsUsers[i] = int64(v)
-	}
-
-	convertedMentionsChannels := make([]int64, len(body.MentionsChannels))
-	for i, v := range body.MentionsChannels {
-		convertedMentionsChannels[i] = int64(v)
-	}
-
+func EditMessage(ctx context.Context, userId string, serverId string, channelId string, messageId string, body *MessageBody) (*proto.BroadcastEditMessage, error) {
 	res, err := db.Query.UpdateMessage(ctx, db.UpdateMessageParams{
-		ID:               int64(messageId),
-		MentionsUsers:    convertedMentionsUsers,
-		MentionsChannels: convertedMentionsChannels,
+		ID:               messageId,
+		MentionsUsers:    body.MentionsUsers,
+		MentionsChannels: body.MentionsChannels,
 		Content:          body.Content,
 		AuthorID:         userId,
 	})
@@ -119,9 +101,9 @@ func EditMessage(ctx context.Context, userId int64, serverId int32, channelId in
 	return message, nil
 }
 
-func DeleteMessage(ctx context.Context, messageId int32, userId int64) error {
+func DeleteMessage(ctx context.Context, messageId string, userId string) error {
 	res, err := db.Query.DeleteMessage(ctx, db.DeleteMessageParams{
-		ID:       int64(messageId),
+		ID:       messageId,
 		AuthorID: userId,
 	})
 	if err != nil || res.RowsAffected() == 0 {
@@ -131,10 +113,10 @@ func DeleteMessage(ctx context.Context, messageId int32, userId int64) error {
 	return nil
 }
 
-func GetMessages(ctx context.Context, channelId int) ([]MessageResponse, error) {
+func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, error) {
 	var messages []MessageResponse
 
-	m, err := db.Query.GetMessagesFromChannel(ctx, int64(channelId))
+	m, err := db.Query.GetMessagesFromChannel(ctx, channelId)
 	if err != nil {
 		return nil, err
 	}

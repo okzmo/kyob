@@ -15,9 +15,9 @@ SELECT id, username, display_name, avatar FROM users WHERE id = $1;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  email, username, display_name, avatar, password
+  id, email, username, display_name, avatar, password
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 )
 RETURNING *;
 

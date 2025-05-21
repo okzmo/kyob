@@ -13,14 +13,15 @@ import (
 
 const createRole = `-- name: CreateRole :exec
 INSERT INTO roles (
-  server_id, name, color, description, abilities
+  id, server_id, name, color, description, abilities
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 )
 `
 
 type CreateRoleParams struct {
-	ServerID    int64       `json:"server_id"`
+	ID          string      `json:"id"`
+	ServerID    string      `json:"server_id"`
 	Name        string      `json:"name"`
 	Color       string      `json:"color"`
 	Description pgtype.Text `json:"description"`
@@ -29,6 +30,7 @@ type CreateRoleParams struct {
 
 func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) error {
 	_, err := q.db.Exec(ctx, createRole,
+		arg.ID,
 		arg.ServerID,
 		arg.Name,
 		arg.Color,

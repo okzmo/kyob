@@ -6,9 +6,9 @@ DELETE FROM tokens WHERE user_id = $1 AND type = 'REMEMBER_ME_TOKEN';
 
 -- name: CreateToken :one
 INSERT INTO tokens (
-  user_id, token, expire_at, type
+  id, user_id, token, expire_at, type
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
 RETURNING *;
 

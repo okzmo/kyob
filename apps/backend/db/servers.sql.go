@@ -28,15 +28,16 @@ func (q *Queries) CheckServerPosition(ctx context.Context, arg CheckServerPositi
 
 const createServer = `-- name: CreateServer :one
 INSERT INTO servers (
-  owner_id, name, avatar, description, private
+  id, owner_id, name, avatar, description, private
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 )
 RETURNING id, owner_id, name, avatar, banner, description, private, created_at, updated_at
 `
 
 type CreateServerParams struct {
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Description pgtype.Text `json:"description"`
@@ -45,6 +46,7 @@ type CreateServerParams struct {
 
 func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Server, error) {
 	row := q.db.QueryRow(ctx, createServer,
+		arg.ID,
 		arg.OwnerID,
 		arg.Name,
 		arg.Avatar,
@@ -71,8 +73,8 @@ DELETE FROM servers WHERE id = $1 AND owner_id = $2
 `
 
 type DeleteServerParams struct {
-	ID      int64 `json:"id"`
-	OwnerID int64 `json:"owner_id"`
+	ID      string `json:"id"`
+	OwnerID string `json:"owner_id"`
 }
 
 func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgconn.CommandTag, error) {
@@ -83,7 +85,7 @@ const getServer = `-- name: GetServer :one
 SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers WHERE id = $1
 `
 
-func (q *Queries) GetServer(ctx context.Context, id int64) (Server, error) {
+func (q *Queries) GetServer(ctx context.Context, id string) (Server, error) {
 	row := q.db.QueryRow(ctx, getServer, id)
 	var i Server
 	err := row.Scan(
@@ -105,13 +107,13 @@ SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, use
 `
 
 type GetServerMembersRow struct {
-	ID          int64       `json:"id"`
+	ID          string      `json:"id"`
 	Username    string      `json:"username"`
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
 }
 
-func (q *Queries) GetServerMembers(ctx context.Context, serverID int64) ([]GetServerMembersRow, error) {
+func (q *Queries) GetServerMembers(ctx context.Context, serverID string) ([]GetServerMembersRow, error) {
 	rows, err := q.db.Query(ctx, getServerMembers, serverID)
 	if err != nil {
 		return nil, err
@@ -143,13 +145,13 @@ WHERE s.id = $1 AND sm.server_id = s.id AND sm.user_id = $2
 `
 
 type GetServerWithChannelsParams struct {
-	ServerID int64 `json:"server_id"`
-	UserID   int64 `json:"user_id"`
+	ServerID string `json:"server_id"`
+	UserID   string `json:"user_id"`
 }
 
 type GetServerWithChannelsRow struct {
-	ID          int64       `json:"id"`
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
@@ -223,8 +225,8 @@ WHERE sm.server_id = s.id AND sm.user_id = $1
 `
 
 type GetServersFromUserRow struct {
-	ID          int64       `json:"id"`
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
@@ -237,7 +239,7 @@ type GetServersFromUserRow struct {
 	MemberCount int64       `json:"member_count"`
 }
 
-func (q *Queries) GetServersFromUser(ctx context.Context, userID int64) ([]GetServersFromUserRow, error) {
+func (q *Queries) GetServersFromUser(ctx context.Context, userID string) ([]GetServersFromUserRow, error) {
 	rows, err := q.db.Query(ctx, getServersFromUser, userID)
 	if err != nil {
 		return nil, err
@@ -275,8 +277,8 @@ SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2
 `
 
 type IsMemberParams struct {
-	ServerID int64 `json:"server_id"`
-	UserID   int64 `json:"user_id"`
+	ServerID string `json:"server_id"`
+	UserID   string `json:"user_id"`
 }
 
 func (q *Queries) IsMember(ctx context.Context, arg IsMemberParams) (pgconn.CommandTag, error) {
@@ -285,21 +287,23 @@ func (q *Queries) IsMember(ctx context.Context, arg IsMemberParams) (pgconn.Comm
 
 const joinServer = `-- name: JoinServer :exec
 INSERT INTO server_membership (
-  user_id, server_id, x, y
+  id, user_id, server_id, x, y
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
 `
 
 type JoinServerParams struct {
-	UserID   int64 `json:"user_id"`
-	ServerID int64 `json:"server_id"`
-	X        int32 `json:"x"`
-	Y        int32 `json:"y"`
+	ID       string `json:"id"`
+	UserID   string `json:"user_id"`
+	ServerID string `json:"server_id"`
+	X        int32  `json:"x"`
+	Y        int32  `json:"y"`
 }
 
 func (q *Queries) JoinServer(ctx context.Context, arg JoinServerParams) error {
 	_, err := q.db.Exec(ctx, joinServer,
+		arg.ID,
 		arg.UserID,
 		arg.ServerID,
 		arg.X,
@@ -313,8 +317,8 @@ DELETE FROM server_membership WHERE user_id = $1 AND server_id = $2
 `
 
 type LeaveServerParams struct {
-	UserID   int64 `json:"user_id"`
-	ServerID int64 `json:"server_id"`
+	UserID   string `json:"user_id"`
+	ServerID string `json:"server_id"`
 }
 
 func (q *Queries) LeaveServer(ctx context.Context, arg LeaveServerParams) error {
@@ -327,8 +331,8 @@ SELECT id, owner_id, name, avatar, banner, description, private, created_at, upd
 `
 
 type OwnServerParams struct {
-	ID      int64 `json:"id"`
-	OwnerID int64 `json:"owner_id"`
+	ID      string `json:"id"`
+	OwnerID string `json:"owner_id"`
 }
 
 func (q *Queries) OwnServer(ctx context.Context, arg OwnServerParams) (pgconn.CommandTag, error) {
@@ -341,8 +345,8 @@ UPDATE servers SET avatar = $1 WHERE id = $2 AND owner_id = $3
 
 type UpdateServerAvatarParams struct {
 	Avatar  pgtype.Text `json:"avatar"`
-	ID      int64       `json:"id"`
-	OwnerID int64       `json:"owner_id"`
+	ID      string      `json:"id"`
+	OwnerID string      `json:"owner_id"`
 }
 
 func (q *Queries) UpdateServerAvatar(ctx context.Context, arg UpdateServerAvatarParams) error {
@@ -356,8 +360,8 @@ UPDATE servers SET banner = $1 WHERE id = $2 AND owner_id = $3
 
 type UpdateServerBannerParams struct {
 	Banner  pgtype.Text `json:"banner"`
-	ID      int64       `json:"id"`
-	OwnerID int64       `json:"owner_id"`
+	ID      string      `json:"id"`
+	OwnerID string      `json:"owner_id"`
 }
 
 func (q *Queries) UpdateServerBanner(ctx context.Context, arg UpdateServerBannerParams) error {
@@ -371,8 +375,8 @@ UPDATE servers SET description = $1 WHERE id = $2 AND owner_id = $3
 
 type UpdateServerDescriptionParams struct {
 	Description pgtype.Text `json:"description"`
-	ID          int64       `json:"id"`
-	OwnerID     int64       `json:"owner_id"`
+	ID          string      `json:"id"`
+	OwnerID     string      `json:"owner_id"`
 }
 
 func (q *Queries) UpdateServerDescription(ctx context.Context, arg UpdateServerDescriptionParams) error {
@@ -386,8 +390,8 @@ UPDATE servers SET name = $1 WHERE id = $2 AND owner_id = $3
 
 type UpdateServerNameParams struct {
 	Name    string `json:"name"`
-	ID      int64  `json:"id"`
-	OwnerID int64  `json:"owner_id"`
+	ID      string `json:"id"`
+	OwnerID string `json:"owner_id"`
 }
 
 func (q *Queries) UpdateServerName(ctx context.Context, arg UpdateServerNameParams) error {

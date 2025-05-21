@@ -12,7 +12,7 @@
 	}
 
 	let { target = $bindable(), targetAuthor = $bindable() }: Props = $props();
-	let targetId = $derived(Number(target?.split('-')[1]));
+	let targetId = $derived(target?.split('-')[1] || '');
 
 	function contextMenuMouseDown(e: MouseEvent) {
 		e.stopImmediatePropagation();

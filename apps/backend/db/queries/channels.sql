@@ -8,9 +8,9 @@ WHERE server_id = $1;
 
 -- name: CreateChannel :one
 INSERT INTO channels (
-  server_id, name, type, description, users, roles, x, y
+  id, server_id, name, type, description, users, roles, x, y
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING *;
 

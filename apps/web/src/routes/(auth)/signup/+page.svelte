@@ -30,6 +30,7 @@
 					if (!res.ok) {
 						const data = await res.json();
 						console.error('signup failed', res.status, data);
+						return;
 					}
 
 					return goto('/');

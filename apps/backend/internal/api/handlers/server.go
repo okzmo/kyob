@@ -69,8 +69,8 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := r.Context().Value("user").(db.User)
-	serverPID := actors.ServersEngine.Spawn(actors.NewServer, "server", actor.WithID(strconv.Itoa(int(server.ID))))
-	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
+	serverPID := actors.ServersEngine.Spawn(actors.NewServer, "server", actor.WithID(server.ID))
+	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 	actors.UsersEngine.Send(userPID, &proto.NewServerCreated{
 		ActorId:      serverPID.ID,
 		ActorAddress: serverPID.Address,
@@ -80,15 +80,10 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditServer(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	var body services.EditServerBody
-	err = json.NewDecoder(r.Body).Decode(&body)
+	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -116,30 +111,20 @@ func EditServer(w http.ResponseWriter, r *http.Request) {
 
 func DeleteServer(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	protoMessage := &proto.BodyServerRemoved{
-		ServerId: int32(id),
+		ServerId: id,
 		UserId:   user.ID,
 	}
-	serverPID := actors.ServersEngine.Registry.GetPID("server", idParam)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", id)
 	actors.ServersEngine.Send(serverPID, protoMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
 }
 
 func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	id := chi.URLParam(r, "id")
 
 	inviteId, err := services.CreateServerInvite(r.Context(), id)
 	if err != nil {
@@ -179,13 +164,13 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Context().Value("user").(db.User)
 
-	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
-	serverPID := actors.ServersEngine.Registry.GetPID("server", strconv.Itoa(int(server.ID)))
+	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", server.ID)
 	actors.ServersEngine.SendWithSender(serverPID, &proto.Connect{Type: "JOIN_SERVER"}, userPID)
 	actors.ServersEngine.Send(serverPID, &proto.BodyNewUserInServer{
-		ServerId: int32(server.ID),
+		ServerId: server.ID,
 		User: &proto.User{
-			Id:          int32(user.ID),
+			Id:          user.ID,
 			DisplayName: user.DisplayName,
 			Avatar:      &user.Avatar.String,
 		},
@@ -196,21 +181,16 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 
 func LeaveServer(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
-	idParam := chi.URLParam(r, "id")
-	serverId, err := strconv.Atoi(idParam)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid ID format")
-		return
-	}
+	serverId := chi.URLParam(r, "id")
 
-	err = services.LeaveServer(r.Context(), serverId, user.ID)
+	err := services.LeaveServer(r.Context(), serverId, user.ID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	userPID := actors.UsersEngine.Registry.GetPID("user", strconv.Itoa(int(user.ID)))
-	serverPID := actors.ServersEngine.Registry.GetPID("server", idParam)
+	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
 	actors.ServersEngine.SendWithSender(serverPID, &proto.Disconnect{
 		Type: "LEAVE_SERVER",
 	}, userPID)

@@ -15,12 +15,12 @@ export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
 export interface Window {
 	id: string;
-	channelId: number;
-	serverId: number;
+	channelId: string;
+	serverId: string;
 }
 
 export interface Channel {
-	id: number;
+	id: string;
 	name: string;
 	type: ChannelTypes;
 	x: number;
@@ -30,22 +30,22 @@ export interface Channel {
 }
 
 export interface Server {
-	id: number;
-	owner_id: number;
+	id: string;
+	owner_id: string;
 	name: string;
 	avatar: string;
 	banner: string;
 	description?: string;
 	x: number;
 	y: number;
-	channels: Record<number, Channel>;
-	active_count: number[];
+	channels: Record<string, Channel>;
+	active_count: string[];
 	member_count: number;
 	members: Partial<User>[];
 }
 
 export interface User {
-	id: number;
+	id: string;
 	email: string;
 	username: string;
 	display_name: string;
@@ -66,7 +66,7 @@ export interface User {
 
 export interface Setup {
 	user: User;
-	servers: Record<number, Server>;
+	servers: Record<string, Server>;
 }
 
 export interface DefaultResponse {
@@ -74,13 +74,13 @@ export interface DefaultResponse {
 }
 
 export interface Message {
-	id: number;
+	id: string;
 	author: Partial<User>;
-	server_id: number;
-	channel_id: number;
+	server_id: string;
+	channel_id: string;
 	content: any;
-	mentions_users: number[];
-	mentions_channels: number[];
+	mentions_users: string[];
+	mentions_channels: string[];
 	updated_at: string;
 	created_at: string;
 }

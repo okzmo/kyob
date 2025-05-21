@@ -40,6 +40,24 @@ CREATE TYPE public.channel_type AS ENUM (
 );
 
 
+--
+-- Name: before_update_updated_at(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.before_update_updated_at() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Only update the timestamp if the row has actually changed
+    IF row(NEW.*::text) IS DISTINCT FROM row(OLD.*::text) THEN
+        NEW.updated_at = now();
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -49,13 +67,13 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.channels (
-    id bigint NOT NULL,
-    server_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     type public.channel_type NOT NULL,
     description text,
-    users bigint[],
-    roles bigint[],
+    users character varying(20)[],
+    roles character varying(20)[],
     x integer NOT NULL,
     y integer NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -64,31 +82,12 @@ CREATE TABLE public.channels (
 
 
 --
--- Name: channels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.channels_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: channels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.channels_id_seq OWNED BY public.channels.id;
-
-
---
 -- Name: facts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.facts (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
     icon character varying(255),
     label character varying(255),
     value character varying(255),
@@ -98,53 +97,15 @@ CREATE TABLE public.facts (
 
 
 --
--- Name: facts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.facts_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: facts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.facts_id_seq OWNED BY public.facts.id;
-
-
---
 -- Name: invites; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.invites (
-    id bigint NOT NULL,
-    server_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
     invite_id character varying(255) NOT NULL,
     expire_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.invites_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: invites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.invites_id_seq OWNED BY public.invites.id;
 
 
 --
@@ -152,8 +113,8 @@ ALTER SEQUENCE public.invites_id_seq OWNED BY public.invites.id;
 --
 
 CREATE TABLE public.links (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
     label character varying(255),
     url character varying(255),
     created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -162,36 +123,17 @@ CREATE TABLE public.links (
 
 
 --
--- Name: links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.links_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
-
-
---
 -- Name: messages; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.messages (
-    id bigint NOT NULL,
-    author_id bigint NOT NULL,
-    server_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    author_id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
+    channel_id character varying(20) NOT NULL,
     content jsonb NOT NULL,
-    mentions_users bigint[],
-    mentions_channels bigint[],
+    mentions_users character varying(20)[],
+    mentions_channels character varying(20)[],
     attached text[],
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
@@ -199,31 +141,12 @@ CREATE TABLE public.messages (
 
 
 --
--- Name: messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.messages_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
-
-
---
 -- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.roles (
-    id bigint NOT NULL,
-    server_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     color character varying(255) NOT NULL,
     description text,
@@ -231,25 +154,6 @@ CREATE TABLE public.roles (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
@@ -266,10 +170,10 @@ CREATE TABLE public.schema_migrations (
 --
 
 CREATE TABLE public.server_membership (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    server_id bigint NOT NULL,
-    roles bigint[],
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
+    roles character varying(20)[],
     x integer NOT NULL,
     y integer NOT NULL,
     joined_at timestamp with time zone DEFAULT now() NOT NULL
@@ -277,31 +181,12 @@ CREATE TABLE public.server_membership (
 
 
 --
--- Name: server_membership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.server_membership_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: server_membership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.server_membership_id_seq OWNED BY public.server_membership.id;
-
-
---
 -- Name: servers; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.servers (
-    id bigint NOT NULL,
-    owner_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    owner_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     avatar character varying(255),
     banner character varying(255),
@@ -313,31 +198,12 @@ CREATE TABLE public.servers (
 
 
 --
--- Name: servers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.servers_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: servers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.servers_id_seq OWNED BY public.servers.id;
-
-
---
 -- Name: tokens; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tokens (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
     token text NOT NULL,
     type character varying(255) NOT NULL,
     expire_at timestamp with time zone DEFAULT now() NOT NULL
@@ -345,30 +211,11 @@ CREATE TABLE public.tokens (
 
 
 --
--- Name: tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.tokens_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.tokens_id_seq OWNED BY public.tokens.id;
-
-
---
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
-    id bigint NOT NULL,
+    id character varying(20) NOT NULL,
     email character varying(255) NOT NULL,
     username character varying(255) NOT NULL,
     password character varying(255) NOT NULL,
@@ -381,95 +228,6 @@ CREATE TABLE public.users (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: channels id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channels ALTER COLUMN id SET DEFAULT nextval('public.channels_id_seq'::regclass);
-
-
---
--- Name: facts id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.facts ALTER COLUMN id SET DEFAULT nextval('public.facts_id_seq'::regclass);
-
-
---
--- Name: invites id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.invites ALTER COLUMN id SET DEFAULT nextval('public.invites_id_seq'::regclass);
-
-
---
--- Name: links id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.links ALTER COLUMN id SET DEFAULT nextval('public.links_id_seq'::regclass);
-
-
---
--- Name: messages id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
-
-
---
--- Name: roles id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
-
-
---
--- Name: server_membership id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.server_membership ALTER COLUMN id SET DEFAULT nextval('public.server_membership_id_seq'::regclass);
-
-
---
--- Name: servers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.servers ALTER COLUMN id SET DEFAULT nextval('public.servers_id_seq'::regclass);
-
-
---
--- Name: tokens id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.tokens_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --

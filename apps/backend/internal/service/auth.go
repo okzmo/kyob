@@ -42,6 +42,7 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*stri
 
 	b64Token := base64.RawStdEncoding.EncodeToString(token)
 	_, err = db.Query.CreateToken(ctx, db.CreateTokenParams{
+		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
 		Token:    b64Token,
 		ExpireAt: time.Now().Add(30 * (24 * time.Hour)),
@@ -62,6 +63,7 @@ func SignUp(ctx context.Context, email string, username string, displayName stri
 	}
 
 	dbUser, err := db.Query.CreateUser(ctx, db.CreateUserParams{
+		ID:          utils.Node.Generate().String(),
 		Email:       email,
 		DisplayName: displayName,
 		Username:    username,
@@ -80,6 +82,7 @@ func SignUp(ctx context.Context, email string, username string, displayName stri
 
 	b64Token := base64.RawStdEncoding.EncodeToString(token)
 	_, err = db.Query.CreateToken(ctx, db.CreateTokenParams{
+		ID:       utils.Node.Generate().String(),
 		UserID:   dbUser.ID,
 		Token:    b64Token,
 		ExpireAt: time.Now().Add(30 * (24 * time.Hour)),

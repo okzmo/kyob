@@ -4,7 +4,7 @@
 	import { scale } from 'svelte/transition';
 
 	interface Props {
-		id: number;
+		id: string;
 		name: string;
 		avatar: string;
 		href: string;

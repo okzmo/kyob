@@ -7,8 +7,8 @@
 
 	interface Props {
 		id: string;
-		channelId: number;
-		serverId: number;
+		channelId: string;
+		serverId: string;
 	}
 
 	let scrollContent = $state<HTMLElement | null>();
@@ -35,13 +35,13 @@
 				{#each allMessages as message (message.id)}
 					<ChatWindowMessage
 						id={message.id}
-						userId={message.author.id || -1}
+						userId={message.author.id || ''}
 						avatar={message.author.avatar || ''}
 						content={message.content}
 						displayName={message.author.display_name || 'Name'}
 						username={message.author.username || 'username'}
 						time={message.created_at}
-						isUserMentioned={message.mentions_users?.includes(userStore.user?.id || -1)}
+						isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '')}
 						isEdited={message.created_at !== message.updated_at}
 						{server}
 						{channel}

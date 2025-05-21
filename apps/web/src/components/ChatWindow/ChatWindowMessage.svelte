@@ -9,7 +9,7 @@
 	import type { Channel, Server } from '../../types/types';
 
 	interface Props {
-		id: number;
+		id: string;
 		avatar: string;
 		username: string;
 		displayName: string;
@@ -17,7 +17,7 @@
 		content: any;
 		isUserMentioned: boolean;
 		isEdited: boolean;
-		userId: number;
+		userId: string;
 		server: Server;
 		channel: Channel;
 	}
@@ -39,8 +39,8 @@
 
 	function handleMention(e: MouseEvent) {
 		const target = e.target as HTMLButtonElement;
-		const userId = Number(target.attributes['user-id'].value);
-		if (core.profileOpen.userId !== userId) {
+		const userId = target.attributes.getNamedItem('user-id')?.value;
+		if (userId && core.profileOpen.userId !== userId) {
 			core.openProfile(userId, target);
 		}
 	}

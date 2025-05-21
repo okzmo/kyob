@@ -2,13 +2,13 @@ import type { Channel, Message, Server } from '../types/types';
 import { backend } from './backend.svelte';
 
 class Servers {
-	servers = $state<Record<number, Server>>({});
+	servers = $state<Record<string, Server>>({});
 
-	setupServers(servers: Record<number, Server>) {
+	setupServers(servers: Record<string, Server>) {
 		this.servers = servers;
 	}
 
-	isOwner(userId: number, serverId: number) {
+	isOwner(userId: string, serverId: string) {
 		return this.servers[serverId].owner_id === userId;
 	}
 
@@ -16,23 +16,23 @@ class Servers {
 		return Object.values(this.servers);
 	}
 
-	getServer(id: number) {
+	getServer(id: string) {
 		return this.servers[id];
 	}
 
-	getChannels(id: number) {
+	getChannels(id: string) {
 		return Object.values(this.servers[id]?.channels || {});
 	}
 
-	getChannel(serverId: number, channelId: number) {
+	getChannel(serverId: string, channelId: string) {
 		return this.servers[serverId].channels[channelId];
 	}
 
-	getActiveMembers(serverId: number) {
+	getActiveMembers(serverId: string) {
 		return this.servers[serverId]?.active_count?.length || 0;
 	}
 
-	async getMessages(serverId: number, channelId: number) {
+	async getMessages(serverId: string, channelId: string) {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
 
 		if (!messages || messages.length <= 0) {
@@ -50,35 +50,35 @@ class Servers {
 		this.servers[server.id] = server;
 	}
 
-	addChannel(serverId: number, channel: Channel) {
+	addChannel(serverId: string, channel: Channel) {
 		if (!this.servers[serverId]) return;
 		this.servers[serverId].channels[channel.id] = channel;
 	}
 
-	removeServer(serverId: number) {
+	removeServer(serverId: string) {
 		delete this.servers[serverId];
 	}
 
-	removeChannel(serverId: number, channelId: number) {
+	removeChannel(serverId: string, channelId: string) {
 		delete this.servers[serverId].channels[channelId];
 	}
 
-	addMessage(serverId: number, message: Message) {
-		let messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
+	addMessage(serverId: string, message: Message) {
+		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
 		if (Array.isArray(messages)) {
 			messages.push(message);
 		} else {
-			messages = [message];
+			this.servers[serverId].channels[message.channel_id].messages = [message];
 		}
 	}
 
 	editMessage(
-		serverId: number,
-		channelId: number,
-		messageId: number,
+		serverId: string,
+		channelId: string,
+		messageId: string,
 		content: any,
-		mentions_users: number[],
-		mentions_channels: number[],
+		mentions_users: string[],
+		mentions_channels: string[],
 		updated_at: string
 	) {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
@@ -95,7 +95,16 @@ class Servers {
 		}
 	}
 
-	deleteMessage(serverId: number, channelId: number, messageId: number) {
+	getMessage(serverId: string, channelId: string, messageId: string) {
+		const messages = this.servers[serverId]?.channels[channelId]?.messages;
+
+		if (Array.isArray(messages)) {
+			const idx = messages.findIndex((m) => m.id === messageId);
+			return messages[idx];
+		}
+	}
+
+	deleteMessage(serverId: string, channelId: string, messageId: string) {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
 		if (Array.isArray(messages)) {
 			const idx = messages.findIndex((m) => m.id === messageId);
@@ -103,7 +112,7 @@ class Servers {
 		}
 	}
 
-	connectUser(serverId: number, userId: number, connectedUsers: number[], type: string) {
+	connectUser(serverId: string, userId: string, connectedUsers: string[], type: string) {
 		const server = this.getServer(serverId);
 		if (!server.active_count || server.active_count.length <= 0) {
 			this.servers[server.id].active_count = [];
@@ -122,7 +131,7 @@ class Servers {
 		}
 	}
 
-	disconnectUser(serverId: number, userId: number, type: string) {
+	disconnectUser(serverId: string, userId: string, type: string) {
 		const server = this.getServer(serverId);
 		if (!server.active_count) return;
 		for (let i = 0; i < server.active_count.length; ++i) {

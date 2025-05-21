@@ -29,7 +29,6 @@ import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { windows } from './windows.svelte';
 import { sounds } from './audio.svelte';
 import { userStore } from './user.svelte';
-import { core } from './core.svelte';
 
 const client = ky.create({
 	prefixUrl: import.meta.env.VITE_API_URL,
@@ -41,7 +40,7 @@ const client = ky.create({
 class Backend {
 	wsConn = $state<WebSocket>();
 
-	setupWebsocket(userId: number) {
+	setupWebsocket(userId: string) {
 		const ws = new WebSocket(`ws://localhost:3000/v1/authenticated/connect/${userId}`);
 		if (!ws) return;
 
@@ -89,7 +88,7 @@ class Backend {
 							updated_at: timestampDate(wsMess.content.value.createdAt!).toISOString(),
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
-						serversStore.addMessage(Number(wsMess.content.value?.serverId), message);
+						serversStore.addMessage(wsMess.content.value?.serverId, message);
 
 						if (
 							message.mentions_users.includes(userStore.user!.id) &&
@@ -257,7 +256,7 @@ class Backend {
 		}
 	}
 
-	async deleteServer(serverId: number): Promise<Result<void, DeleteServerErrors>> {
+	async deleteServer(serverId: string): Promise<Result<void, DeleteServerErrors>> {
 		try {
 			const res = await client.delete(`authenticated/servers/${serverId}`);
 
@@ -276,7 +275,7 @@ class Backend {
 		}
 	}
 
-	async leaveServer(serverId: number): Promise<Result<void, LeaveServerErrors>> {
+	async leaveServer(serverId: string): Promise<Result<void, LeaveServerErrors>> {
 		try {
 			const res = await client.post(`authenticated/server/${serverId}/leave`);
 
@@ -293,7 +292,7 @@ class Backend {
 	}
 
 	async createChannel(
-		serverId: number,
+		serverId: string,
 		body: CreateChannelType
 	): Promise<Result<void, CreateChannelErrors>> {
 		try {
@@ -317,8 +316,8 @@ class Backend {
 	}
 
 	async deleteChannel(
-		serverId: number,
-		channelId: number
+		serverId: string,
+		channelId: string
 	): Promise<Result<void, DeleteChannelErrors>> {
 		try {
 			const res = await client.delete(`authenticated/channels/${serverId}/${channelId}`);
@@ -339,8 +338,8 @@ class Backend {
 	}
 
 	async sendMessage(
-		serverId: number,
-		channelId: number,
+		serverId: string,
+		channelId: string,
 		body: CreateMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
@@ -367,9 +366,9 @@ class Backend {
 	}
 
 	async editMessage(
-		serverId: number,
-		channelId: number,
-		messageId: number,
+		serverId: string,
+		channelId: string,
+		messageId: string,
 		body: EditMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
@@ -398,7 +397,7 @@ class Backend {
 		}
 	}
 
-	async getMessages(channelId: number): Promise<Result<Message[], SetupErrors>> {
+	async getMessages(channelId: string): Promise<Result<Message[], SetupErrors>> {
 		try {
 			const res = await client.get(`authenticated/messages/${channelId}`);
 
@@ -414,7 +413,7 @@ class Backend {
 		}
 	}
 
-	async createInvite(serverId: number): Promise<Result<string, CreateInviteErrors>> {
+	async createInvite(serverId: string): Promise<Result<string, CreateInviteErrors>> {
 		try {
 			const res = await client.get(`authenticated/server/create_invite/${serverId}`);
 
@@ -430,7 +429,7 @@ class Backend {
 		}
 	}
 
-	async getUserProfile(userId: number): Promise<Result<User, GetUserErrors>> {
+	async getUserProfile(userId: string): Promise<Result<User, GetUserErrors>> {
 		try {
 			const res = await client.get(`authenticated/user/${userId}`);
 
@@ -447,9 +446,9 @@ class Backend {
 	}
 
 	async deleteMessage(
-		serverId: number,
-		channelId: number,
-		messageId: number
+		serverId: string,
+		channelId: string,
+		messageId: string
 	): Promise<Result<void, DeleteMessageErrors>> {
 		try {
 			const res = await client.delete(

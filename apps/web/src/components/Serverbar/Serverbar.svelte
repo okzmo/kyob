@@ -4,8 +4,8 @@
 	import type { Server } from '../../types/types';
 	import ServerbarMembers from './ServerbarMembers.svelte';
 
-	let server = $derived<Server>(serversStore.getServer(Number(page.params.server_id)));
-	let activeMembers = $derived(serversStore.getActiveMembers(Number(page.params.server_id)));
+	let server = $derived<Server>(serversStore.getServer(page.params.server_id));
+	let activeMembers = $derived(serversStore.getActiveMembers(page.params.server_id));
 </script>
 
 <div

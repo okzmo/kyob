@@ -13,7 +13,7 @@
 		const res = await backend.getSetup();
 
 		if (res.isErr() && !inAuthPage) {
-			if (res.error.code === 'ERR_SETUP_UNAUTHORIZED') goto('/signin');
+			if (res.error.code === 'ERR_UNAUTHORIZED') goto('/signin');
 		}
 
 		if (res.isOk() && inAuthPage) {

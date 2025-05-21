@@ -9,9 +9,9 @@ SELECT c.id FROM channels c, server_membership sm WHERE c.id = $1 and c.server_i
 
 -- name: CreateMessage :one
 INSERT INTO messages (
-  author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached
+  id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING *;
 

@@ -13,13 +13,13 @@ type ServerWithChannels struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
-	Channels    map[int64]db.Channel     `json:"channels"`
+	Channels    map[string]db.Channel    `json:"channels"`
 	MemberCount int                      `json:"member_count"`
 	Members     []db.GetServerMembersRow `json:"members"`
 }
 
 type UserResponse struct {
-	ID             int64                `json:"id"`
+	ID             string               `json:"id"`
 	Email          string               `json:"email"`
 	Username       string               `json:"username"`
 	DisplayName    string               `json:"display_name"`
@@ -34,8 +34,8 @@ type UserResponse struct {
 }
 
 type SetupResponse struct {
-	User    UserResponse                 `json:"user"`
-	Servers map[int64]ServerWithChannels `json:"servers"`
+	User    UserResponse                  `json:"user"`
+	Servers map[string]ServerWithChannels `json:"servers"`
 }
 
 func GetSetup(ctx context.Context) (*SetupResponse, error) {
@@ -67,7 +67,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		Facts:          facts,
 		Links:          links,
 	}
-	res.Servers = make(map[int64]ServerWithChannels)
+	res.Servers = make(map[string]ServerWithChannels)
 
 	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
 	if err != nil {
@@ -75,7 +75,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	for _, server := range servers {
-		channelMap := make(map[int64]db.Channel)
+		channelMap := make(map[string]db.Channel)
 		channels, err := db.Query.GetChannelsFromServer(ctx, server.ID)
 		if err != nil {
 			return nil, err

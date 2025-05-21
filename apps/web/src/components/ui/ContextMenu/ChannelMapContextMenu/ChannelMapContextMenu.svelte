@@ -6,9 +6,7 @@
 	import { core } from '../../../../stores/core.svelte';
 	import UserInvite from '../../icons/UserInvite.svelte';
 
-	let isOwner = $derived(
-		serversStore.isOwner(userStore.user?.id || -1, Number(page.params.server_id))
-	);
+	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || '', page.params.server_id));
 </script>
 
 {#if isOwner}

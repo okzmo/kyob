@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/anthdm/hollywood/actor"
@@ -18,7 +17,7 @@ import (
 // SERVER
 
 func (s *server) RemoveServer(ctx *actor.Context, msg *protoTypes.BodyServerRemoved) {
-	err := services.DeleteServer(context.TODO(), int(msg.ServerId), msg.UserId)
+	err := services.DeleteServer(context.TODO(), msg.ServerId, msg.UserId)
 	if err != nil {
 		slog.Error("failed to delete server", "err", err)
 		return
@@ -50,20 +49,20 @@ func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 	for user := range s.users {
 		if user == sender {
 			UsersEngine.Send(user, &protoTypes.BroadcastConnect{
-				ServerId: int32(serverId),
-				UserId:   int32(userId),
+				ServerId: serverId,
+				UserId:   userId,
 				Users:    s.usersSlice,
 			})
 		} else {
 			UsersEngine.Send(user, &protoTypes.BroadcastConnect{
-				ServerId: int32(serverId),
-				UserId:   int32(userId),
+				ServerId: serverId,
+				UserId:   userId,
 				Type:     msg.Type,
 			})
 		}
 	}
 
-	s.usersSlice = append(s.usersSlice, int32(userId))
+	s.usersSlice = append(s.usersSlice, userId)
 
 	if msg.Type == "JOIN_SERVER" {
 		for _, channel := range ctx.Children() {
@@ -84,14 +83,14 @@ func (s *server) Disconnect(ctx *actor.Context, msg *protoTypes.Disconnect) {
 	userId := utils.GetEntityIdFromPID(sender)
 	serverId := utils.GetEntityIdFromPID(ctx.PID())
 
-	idx := slices.Index(s.usersSlice, int32(userId))
+	idx := slices.Index(s.usersSlice, userId)
 	s.usersSlice = slices.Delete(s.usersSlice, idx, idx+1)
 	delete(s.users, sender)
 
 	for user := range s.users {
 		UsersEngine.Send(user, &protoTypes.BroadcastDisconnect{
-			ServerId: int32(serverId),
-			UserId:   int32(userId),
+			ServerId: serverId,
+			UserId:   userId,
 			Type:     msg.Type,
 		})
 	}
@@ -107,17 +106,15 @@ func (s *server) Disconnect(ctx *actor.Context, msg *protoTypes.Disconnect) {
 
 func (s *server) InitializeChannels(serverId string, ctx *actor.Context) {
 	strSplit := strings.Split(serverId, "/")
-	idStr := strSplit[len(strSplit)-1]
+	id := strSplit[len(strSplit)-1]
 
-	id, _ := strconv.Atoi(idStr)
-
-	channels, err := db.Query.GetChannelsFromServer(context.TODO(), int64(id))
+	channels, err := db.Query.GetChannelsFromServer(context.TODO(), id)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, channel := range channels {
-		actorPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(strconv.Itoa(int(channel.ID))))
+		actorPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(channel.ID))
 		s.channels[actorPid] = true
 	}
 }
@@ -136,7 +133,7 @@ func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCr
 		slog.Error("failed to create channel", "err", err)
 		return
 	}
-	channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(strconv.Itoa(int(channel.Id))))
+	channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(channel.Id))
 	channel.ActorId = channelPid.ID
 	channel.ActorAddress = channelPid.Address
 
@@ -146,13 +143,13 @@ func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCr
 }
 
 func (s *server) RemoveChannel(ctx *actor.Context, msg *protoTypes.BodyChannelRemoved) {
-	err := services.DeleteChannel(context.TODO(), int(msg.ServerId), int(msg.ChannelId), msg.UserId)
+	err := services.DeleteChannel(context.TODO(), msg.ServerId, msg.ChannelId, msg.UserId)
 	if err != nil {
 		slog.Error("failed to delete channel", "err", err)
 		return
 	}
 
-	channelId := fmt.Sprintf("channel/%s", strconv.Itoa(int(msg.ChannelId)))
+	channelId := fmt.Sprintf("channel/%s", msg.ChannelId)
 	channelPID := ctx.PID().Child(channelId)
 	ctx.Engine().Poison(channelPID)
 	delete(s.channels, channelPID)

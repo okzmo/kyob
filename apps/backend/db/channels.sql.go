@@ -13,26 +13,28 @@ import (
 
 const createChannel = `-- name: CreateChannel :one
 INSERT INTO channels (
-  server_id, name, type, description, users, roles, x, y
+  id, server_id, name, type, description, users, roles, x, y
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
 `
 
 type CreateChannelParams struct {
-	ServerID    int64       `json:"server_id"`
+	ID          string      `json:"id"`
+	ServerID    string      `json:"server_id"`
 	Name        string      `json:"name"`
 	Type        ChannelType `json:"type"`
 	Description pgtype.Text `json:"description"`
-	Users       []int64     `json:"users"`
-	Roles       []int64     `json:"roles"`
+	Users       []string    `json:"users"`
+	Roles       []string    `json:"roles"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
 }
 
 func (q *Queries) CreateChannel(ctx context.Context, arg CreateChannelParams) (Channel, error) {
 	row := q.db.QueryRow(ctx, createChannel,
+		arg.ID,
 		arg.ServerID,
 		arg.Name,
 		arg.Type,
@@ -63,7 +65,7 @@ const deleteChannel = `-- name: DeleteChannel :exec
 DELETE FROM channels WHERE id = $1
 `
 
-func (q *Queries) DeleteChannel(ctx context.Context, id int64) error {
+func (q *Queries) DeleteChannel(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteChannel, id)
 	return err
 }
@@ -72,7 +74,7 @@ const getChannel = `-- name: GetChannel :one
 SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at FROM channels WHERE id = $1
 `
 
-func (q *Queries) GetChannel(ctx context.Context, id int64) (Channel, error) {
+func (q *Queries) GetChannel(ctx context.Context, id string) (Channel, error) {
 	row := q.db.QueryRow(ctx, getChannel, id)
 	var i Channel
 	err := row.Scan(
@@ -97,7 +99,7 @@ FROM channels
 WHERE server_id = $1
 `
 
-func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID int64) ([]Channel, error) {
+func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID string) ([]Channel, error) {
 	rows, err := q.db.Query(ctx, getChannelsFromServer, serverID)
 	if err != nil {
 		return nil, err
@@ -135,7 +137,7 @@ UPDATE channels SET description = $1 WHERE id = $2
 
 type UpdateChannelDescriptionParams struct {
 	Description pgtype.Text `json:"description"`
-	ID          int64       `json:"id"`
+	ID          string      `json:"id"`
 }
 
 func (q *Queries) UpdateChannelDescription(ctx context.Context, arg UpdateChannelDescriptionParams) error {
@@ -149,7 +151,7 @@ UPDATE channels SET name = $1 WHERE id = $2
 
 type UpdateChannelNameParams struct {
 	Name string `json:"name"`
-	ID   int64  `json:"id"`
+	ID   string `json:"id"`
 }
 
 func (q *Queries) UpdateChannelName(ctx context.Context, arg UpdateChannelNameParams) error {

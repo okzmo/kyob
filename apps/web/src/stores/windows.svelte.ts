@@ -8,7 +8,7 @@ class Windows {
 		return this.openWindows.find((w) => w.id === this.activeWindow);
 	}
 
-	createWindow(id: string, serverId: number, channelId: number) {
+	createWindow(id: string, serverId: string, channelId: string) {
 		const exist = Boolean(this.openWindows.find((w) => w.id === id));
 		if (exist) {
 			this.activeWindow = id;
@@ -23,7 +23,7 @@ class Windows {
 		this.openWindows = this.openWindows.filter((w) => w.id !== id);
 	}
 
-	closeDeadWindow(channelId: number) {
+	closeDeadWindow(channelId: string) {
 		const exist = this.openWindows.find((w) => w.channelId === channelId);
 		if (exist) {
 			this.openWindows = this.openWindows.filter((w) => w.id !== exist.id);
