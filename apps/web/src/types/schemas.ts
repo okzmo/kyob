@@ -65,16 +65,16 @@ export interface CreateChannelType extends v.InferInput<typeof CreateChannelSche
 
 export const CreateMessageSchema = v.object({
 	content: v.any(),
-	mentions_users: v.optional(v.array(v.number())),
-	mentions_channels: v.optional(v.array(v.number()))
+	mentions_users: v.optional(v.array(v.string())),
+	mentions_channels: v.optional(v.array(v.string()))
 });
 
 export interface CreateMessageType extends v.InferInput<typeof CreateMessageSchema> {}
 
 export const EditMessageSchema = v.object({
 	content: v.any(),
-	mentions_users: v.optional(v.array(v.number())),
-	mentions_channels: v.optional(v.array(v.number()))
+	mentions_users: v.optional(v.array(v.string())),
+	mentions_channels: v.optional(v.array(v.string()))
 });
 
 export interface EditMessageType extends v.InferInput<typeof EditMessageSchema> {}

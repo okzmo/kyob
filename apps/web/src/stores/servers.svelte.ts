@@ -108,7 +108,7 @@ class Servers {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
 		if (Array.isArray(messages)) {
 			const idx = messages.findIndex((m) => m.id === messageId);
-			if (idx) messages.splice(idx, 1);
+			messages.splice(idx, 1);
 		}
 	}
 

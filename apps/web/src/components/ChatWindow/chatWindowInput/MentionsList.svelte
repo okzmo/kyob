@@ -1,5 +1,12 @@
 <script lang="ts">
-	let { props, class: classes, mentions_users = $bindable() } = $props();
+	import type { SuggestionProps } from '@tiptap/suggestion';
+
+	interface Props {
+		props: SuggestionProps<any, any>;
+		class: string;
+	}
+
+	let { props, class: classes }: Props = $props();
 
 	let selectedIndex = $state(0);
 	let scrollableMenu = $state<HTMLDivElement>();
@@ -55,7 +62,6 @@
 
 	function selectItem(index: number) {
 		const item = props.items[index];
-		mentions_users.push(item.id);
 
 		if (item) {
 			props.command({ 'user-id': item.id, avatar: item.avatar, label: item.display_name });

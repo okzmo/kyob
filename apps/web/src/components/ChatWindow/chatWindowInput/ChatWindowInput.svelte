@@ -25,13 +25,18 @@
 	let editor: Editor;
 	let mentionProps = $state<SuggestionProps | null>();
 	let mentionsListEl = $state<any>();
-	let mentions_users = $state([]);
 
 	async function prepareMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
+		const ids =
+			editor
+				.getText()
+				.match(/<@(\d+)>/g)
+				?.map((match) => match.slice(2, -1)) || [];
+
 		const payload = {
 			content: message,
-			mentions_users
+			mentions_users: [...new Set(ids)]
 		};
 
 		const res = await backend.sendMessage(server.id, channel.id, payload);
@@ -65,6 +70,9 @@
 							options.HTMLAttributes,
 							`${node.attrs.mentionSuggestionChar}${node.attrs.label}`
 						];
+					},
+					renderText({ node }) {
+						return `<@${node.attrs['user-id']}>`;
 					},
 					suggestions: [
 						{
@@ -145,7 +153,6 @@
 	<MentionsList
 		props={mentionProps}
 		bind:this={mentionsListEl}
-		bind:mentions_users
 		class="bottom-[4rem] left-[0.4rem] w-[calc(100%-0.8rem)]"
 	/>
 {/if}
