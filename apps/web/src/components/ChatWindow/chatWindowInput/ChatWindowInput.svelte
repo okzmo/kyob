@@ -162,12 +162,7 @@
 	>
 		<Plus height={20} width={20} />
 	</button>
-	<!-- <input -->
-	<!-- 	type="text" -->
-	<!-- 	class="bg-main-900 placeholder:text-main-600 h-full w-full border-none placeholder:truncate focus:ring-0" -->
-	<!-- 	placeholder="Message #{channel?.name} in {server?.name}" -->
-	<!-- /> -->
-	<div class="w-full px-7 py-4" bind:this={element}></div>
+	<div class="max-h-[10rem] w-full px-7 py-4" bind:this={element}></div>
 	<button
 		class="text-main-600 hocus:text-main-200 absolute top-4.5 right-4 transition-colors duration-100 hover:cursor-pointer"
 	>

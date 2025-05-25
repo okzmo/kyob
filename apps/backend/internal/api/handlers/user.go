@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -13,7 +14,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := services.GetUser(r.Context(), userId)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch {
+		case errors.Is(err, services.ErrUserNotFound):
+			utils.RespondWithError(w, http.StatusNotFound, "No user found.")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
 	}
 
 	utils.RespondWithJSON(w, http.StatusContinue, user)

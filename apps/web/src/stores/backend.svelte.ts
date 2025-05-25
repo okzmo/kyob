@@ -441,6 +441,9 @@ class Backend {
 			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 404) {
+				return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
+			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}

@@ -16,6 +16,7 @@
 
 			if (res.isErr()) {
 				console.error(res.error);
+				core.closeProfile();
 				return;
 			}
 

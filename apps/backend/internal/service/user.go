@@ -9,7 +9,7 @@ import (
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 	user, err := db.Query.GetUserById(ctx, userId)
 	if err != nil {
-		return nil, err
+		return nil, ErrUserNotFound
 	}
 
 	links, err := db.Query.GetUserLinks(ctx, user.ID)

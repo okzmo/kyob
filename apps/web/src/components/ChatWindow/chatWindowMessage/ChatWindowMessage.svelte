@@ -1,39 +1,25 @@
 <script lang="ts">
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import { formatMessageTime } from '../../utils/date';
-	import { CustomMention } from './chatWindowInput/mentions';
+	import { formatMessageTime } from '../../../utils/date';
+	import { CustomMention } from '../chatWindowInput/mentions';
 	import { onMount } from 'svelte';
-	import { core } from '../../stores/core.svelte';
-	import EditMessageInput from './editMessageInput/editMessageInput.svelte';
-	import type { Channel, Server } from '../../types/types';
+	import { core } from '../../../stores/core.svelte';
+	import EditMessageInput from '../editMessageInput/editMessageInput.svelte';
+	import type { Channel, Server, User } from '../../../types/types';
+	import UserProfile from '../../UserProfile/UserProfile.svelte';
 
 	interface Props {
 		id: string;
-		avatar: string;
-		username: string;
-		displayName: string;
+		author: Partial<User>;
 		time: string;
 		content: any;
 		isUserMentioned: boolean;
 		isEdited: boolean;
-		userId: string;
 		server: Server;
 		channel: Channel;
 	}
-	let {
-		id,
-		userId,
-		avatar,
-		displayName,
-		content,
-		username,
-		time,
-		isUserMentioned,
-		isEdited,
-		server,
-		channel
-	}: Props = $props();
+	let { id, author, content, time, isUserMentioned, isEdited, server, channel }: Props = $props();
 
 	let message = $state<HTMLElement>();
 
@@ -63,7 +49,7 @@
 
 <div
 	id="message-{id}"
-	data-author-id={userId}
+	data-author-id={author.id}
 	bind:this={message}
 	class={[
 		' relative flex gap-x-3 px-4 py-2 transition-colors duration-100',
@@ -74,14 +60,22 @@
 				: 'hocus:bg-main-800/50'
 	]}
 >
-	<img
-		src={avatar}
-		alt="{username}'s avatar"
-		class="h-[3rem] w-[3rem] rounded-full object-cover select-none"
-	/>
+	<UserProfile user={author as User}>
+		<img
+			src={author.avatar}
+			alt="{author.username}'s avatar"
+			class="h-[3rem] w-[3rem] rounded-full object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
+		/>
+	</UserProfile>
 	<div class="pointer-events-none pt-1">
 		<div class="flex items-baseline gap-x-2.5 select-none">
-			<p class="text-sm font-semibold">{displayName}</p>
+			<UserProfile user={author as User}>
+				<p
+					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
+				>
+					{author.display_name}
+				</p>
+			</UserProfile>
 			<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
 				{formatMessageTime(time)}
 			</time>
@@ -97,7 +91,7 @@
 				</p>
 			{/if}
 		</div>
-		<div class="mt-1 flex flex-col gap-y-1">
+		<div class="pointer-events-auto flex flex-col gap-y-1">
 			{#if core.editingMessage.id === id}
 				<EditMessageInput {server} {channel} {content} messageId={id} />
 			{:else}
@@ -121,7 +115,9 @@
 								[
 									'img',
 									{
-										src: node.attrs.avatar || '',
+										src:
+											node.attrs.avatar ||
+											'https://i.pinimg.com/736x/f0/8c/7f/f08c7f9ce8f3529ecc5a07968636cf84.jpg',
 										alt: `${node.attrs.label || ''} avatar`
 									}
 								],

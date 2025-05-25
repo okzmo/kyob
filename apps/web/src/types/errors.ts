@@ -75,7 +75,7 @@ export interface JoinServerErrors {
 }
 
 export interface GetUserErrors {
-	code: 'ERR_UNKNOWN';
+	code: 'ERR_USER_NOT_FOUND' | 'ERR_UNKNOWN';
 	error: string;
 	cause?: any;
 }

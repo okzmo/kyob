@@ -32,6 +32,10 @@ class Servers {
 		return this.servers[serverId]?.active_count?.length || 0;
 	}
 
+	getMemberById(serverId: string, userId: string) {
+		return this.servers[serverId].members.find((m) => m.id === userId);
+	}
+
 	async getMessages(serverId: string, channelId: string) {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
 

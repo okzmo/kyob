@@ -28,8 +28,10 @@
 		{@render children()}
 	</Popover.Trigger>
 	<CustomPopoverContent
-		class="gradient-user-profile relative mb-3 w-[20rem] rounded-lg p-1"
+		class="gradient-user-profile relative z-30 w-[20rem] rounded-lg p-1"
 		align="start"
+		side="top"
+		sideOffset={10}
 		y={10}
 	>
 		<div role="presentation" class="user-popover"></div>
