@@ -86,3 +86,9 @@ export const JoinServerSchema = v.object({
 });
 
 export interface JoinServerType extends v.InferInput<typeof JoinServerSchema> {}
+
+export const AddFriendSchema = v.object({
+	username: v.string()
+});
+
+export interface AddFriendType extends v.InferInput<typeof AddFriendSchema> {}

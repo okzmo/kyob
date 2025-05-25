@@ -4,6 +4,7 @@
 	import ArrowLeft from '../ui/icons/ArrowLeft.svelte';
 	import Bell from '../ui/icons/Bell.svelte';
 	import People from '../ui/icons/People.svelte';
+	import FriendsButton from './friends/FriendsButton.svelte';
 
 	interface Props {
 		canGoBack: boolean;
@@ -33,6 +34,6 @@
 	{/if}
 	<div class="flex items-center gap-x-4">
 		<IconButton Icon={Bell} label="Notifications" />
-		<IconButton Icon={People} label="Friends" />
+		<FriendsButton />
 	</div>
 </div>

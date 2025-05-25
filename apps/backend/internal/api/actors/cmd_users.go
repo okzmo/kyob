@@ -170,3 +170,14 @@ func (u *user) BroadcastDeleteMessage(ctx *actor.Context, msg *protoTypes.Delete
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
+
+func (u *user) FriendInvite(ctx *actor.Context, msg *protoTypes.SendFriendInvite) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_FriendInvite{
+			FriendInvite: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}

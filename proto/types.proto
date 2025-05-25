@@ -13,6 +13,7 @@ message WSMessage {
     BroadcastDisconnect user_disconnect = 6;
     BroadcastDeleteChatMessage delete_message = 7;
     BroadcastEditMessage edit_message = 8;
+    SendFriendInvite friend_invite = 9;
   }
 }
 
@@ -173,6 +174,26 @@ message BodyNewUserInServer {
 message NewServerCreated {
   string actor_id = 1;
   string actor_address = 2;
+}
+
+message BroadcastAcceptFriend {
+  string user_id = 1;
+  string friend_id = 2;
+}
+
+message SendFriendInvite {
+  string invite_id = 1;
+  User user = 2;
+}
+
+message AcceptFriendInvite {
+  string invite_id = 1;
+  string user_id = 2;
+}
+
+message DeleteFriend {
+  string invite_id = 1;
+  string user_id = 2;
 }
 
 message Connect {

@@ -3,6 +3,7 @@ import { err, ok, type Result } from 'neverthrow';
 import type { Channel, ChannelTypes, Message, Server, Setup, User } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
+	AddFriendErrors,
 	CreateChannelErrors,
 	CreateInviteErrors,
 	CreateMessageErrors,
@@ -17,6 +18,7 @@ import type {
 	StandardError
 } from '../types/errors';
 import type {
+	AddFriendType,
 	CreateChannelType,
 	CreateMessageType,
 	CreateServerType,
@@ -468,6 +470,27 @@ class Backend {
 			const errBody = await (error as StandardError).response.json();
 			if (errBody.status === 400) {
 				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			}
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async addFriend(body: AddFriendType): Promise<Result<void, AddFriendErrors>> {
+		try {
+			const res = await client.post('authenticated/friends/add', {
+				body: JSON.stringify(body)
+			});
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			if (errBody.status === 404) {
+				return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
 			}
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}

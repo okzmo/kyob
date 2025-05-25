@@ -130,6 +130,15 @@ type Fact struct {
 	UpdatedAt time.Time   `json:"updated_at"`
 }
 
+type Friend struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	FriendID  string    `json:"friend_id"`
+	Accepted  bool      `json:"accepted"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type Invite struct {
 	ID       string    `json:"id"`
 	ServerID string    `json:"server_id"`

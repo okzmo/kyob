@@ -40,24 +40,6 @@ CREATE TYPE public.channel_type AS ENUM (
 );
 
 
---
--- Name: before_update_updated_at(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.before_update_updated_at() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-    -- Only update the timestamp if the row has actually changed
-    IF row(NEW.*::text) IS DISTINCT FROM row(OLD.*::text) THEN
-        NEW.updated_at = now();
-    END IF;
-
-    RETURN NEW;
-END;
-$$;
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -91,6 +73,20 @@ CREATE TABLE public.facts (
     icon character varying(255),
     label character varying(255),
     value character varying(255),
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: friends; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.friends (
+    id character varying(20) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    friend_id character varying(255) NOT NULL,
+    accepted boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -247,6 +243,14 @@ ALTER TABLE ONLY public.facts
 
 
 --
+-- Name: friends friends_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: invites invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -384,6 +388,22 @@ ALTER TABLE ONLY public.channels
 
 ALTER TABLE ONLY public.facts
     ADD CONSTRAINT facts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: friends friends_friend_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_friend_id_fkey FOREIGN KEY (friend_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: friends friends_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

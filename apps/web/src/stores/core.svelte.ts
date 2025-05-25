@@ -6,6 +6,7 @@ class Core {
 	totalOffsetServerMap = $state({ x: 0, y: 0 });
 	openCreateChannelModal = $state({ status: false, x: 0, y: 0 });
 	openCreateServerModal = $state({ status: false, x: 0, y: 0 });
+	openAddFriendModal = $state({ status: false });
 	openJoinServerModal = $state({ status: false, x: 0, y: 0 });
 	editingMessage = $state({ id: '' });
 	profiles = $state<User[]>([]);

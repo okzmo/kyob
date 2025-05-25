@@ -79,3 +79,9 @@ export interface GetUserErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface AddFriendErrors {
+	code: 'ERR_USER_NOT_FOUND' | 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
