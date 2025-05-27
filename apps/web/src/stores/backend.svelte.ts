@@ -3,12 +3,14 @@ import { err, ok, type Result } from 'neverthrow';
 import type { Channel, ChannelTypes, Message, Server, Setup, User } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
+	AcceptFriendErrors,
 	AddFriendErrors,
 	CreateChannelErrors,
 	CreateInviteErrors,
 	CreateMessageErrors,
 	CreateServerErrors,
 	DeleteChannelErrors,
+	DeleteFriendErrors,
 	DeleteMessageErrors,
 	DeleteServerErrors,
 	GetUserErrors,
@@ -18,10 +20,12 @@ import type {
 	StandardError
 } from '../types/errors';
 import type {
+	AcceptFriendType,
 	AddFriendType,
 	CreateChannelType,
 	CreateMessageType,
 	CreateServerType,
+	DeleteFriendType,
 	EditMessageType,
 	JoinServerType
 } from '../types/schemas';
@@ -33,7 +37,7 @@ import { sounds } from './audio.svelte';
 import { userStore } from './user.svelte';
 
 const client = ky.create({
-	prefixUrl: import.meta.env.VITE_API_URL,
+	prefixUrl: `${import.meta.env.VITE_API_URL}/authenticated`,
 	credentials: 'include',
 	retry: 2,
 	timeout: 10000
@@ -183,7 +187,7 @@ class Backend {
 
 	async getSetup(): Promise<Result<Setup, SetupErrors>> {
 		try {
-			const res = await client.get('authenticated/setup', {
+			const res = await client.get('setup', {
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -215,7 +219,7 @@ class Backend {
 			formData.append('x', String(body.x));
 			formData.append('y', String(body.y));
 
-			const res = await client.post('authenticated/server', {
+			const res = await client.post('server', {
 				body: formData
 			});
 
@@ -236,7 +240,7 @@ class Backend {
 
 	async joinServer(body: JoinServerType): Promise<Result<Server, JoinServerErrors>> {
 		try {
-			const res = await client.post('authenticated/server/join', {
+			const res = await client.post('server/join', {
 				body: JSON.stringify(body)
 			});
 
@@ -260,7 +264,7 @@ class Backend {
 
 	async deleteServer(serverId: string): Promise<Result<void, DeleteServerErrors>> {
 		try {
-			const res = await client.delete(`authenticated/servers/${serverId}`);
+			const res = await client.delete(`servers/${serverId}`);
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -279,7 +283,7 @@ class Backend {
 
 	async leaveServer(serverId: string): Promise<Result<void, LeaveServerErrors>> {
 		try {
-			const res = await client.post(`authenticated/server/${serverId}/leave`);
+			const res = await client.post(`server/${serverId}/leave`);
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -298,7 +302,7 @@ class Backend {
 		body: CreateChannelType
 	): Promise<Result<void, CreateChannelErrors>> {
 		try {
-			const res = await client.post(`authenticated/channels/${serverId}`, {
+			const res = await client.post(`channels/${serverId}`, {
 				body: JSON.stringify(body)
 			});
 
@@ -322,7 +326,7 @@ class Backend {
 		channelId: string
 	): Promise<Result<void, DeleteChannelErrors>> {
 		try {
-			const res = await client.delete(`authenticated/channels/${serverId}/${channelId}`);
+			const res = await client.delete(`channels/${serverId}/${channelId}`);
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -345,7 +349,7 @@ class Backend {
 		body: CreateMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
-			const res = await client.post(`authenticated/messages/${serverId}/${channelId}`, {
+			const res = await client.post(`messages/${serverId}/${channelId}`, {
 				body: JSON.stringify({
 					...body,
 					type: 'SEND'
@@ -374,15 +378,12 @@ class Backend {
 		body: EditMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
-			const res = await client.patch(
-				`authenticated/messages/${serverId}/${channelId}/${messageId}`,
-				{
-					body: JSON.stringify({
-						...body,
-						type: 'EDIT'
-					})
-				}
-			);
+			const res = await client.patch(`messages/${serverId}/${channelId}/${messageId}`, {
+				body: JSON.stringify({
+					...body,
+					type: 'EDIT'
+				})
+			});
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -401,7 +402,7 @@ class Backend {
 
 	async getMessages(channelId: string): Promise<Result<Message[], SetupErrors>> {
 		try {
-			const res = await client.get(`authenticated/messages/${channelId}`);
+			const res = await client.get(`messages/${channelId}`);
 
 			const data = (await res.json()) as Message[];
 			if (!res.ok) {
@@ -417,7 +418,7 @@ class Backend {
 
 	async createInvite(serverId: string): Promise<Result<string, CreateInviteErrors>> {
 		try {
-			const res = await client.get(`authenticated/server/create_invite/${serverId}`);
+			const res = await client.get(`server/create_invite/${serverId}`);
 
 			const data = (await res.json()) as { invite_link: string };
 			if (!res.ok) {
@@ -433,7 +434,7 @@ class Backend {
 
 	async getUserProfile(userId: string): Promise<Result<User, GetUserErrors>> {
 		try {
-			const res = await client.get(`authenticated/user/${userId}`);
+			const res = await client.get(`user/${userId}`);
 
 			const data = (await res.json()) as User;
 			if (!res.ok) {
@@ -456,9 +457,7 @@ class Backend {
 		messageId: string
 	): Promise<Result<void, DeleteMessageErrors>> {
 		try {
-			const res = await client.delete(
-				`authenticated/messages/${serverId}/${channelId}/${messageId}`
-			);
+			const res = await client.delete(`messages/${serverId}/${channelId}/${messageId}`);
 
 			const data = await res.json();
 			if (!res.ok) {
@@ -477,7 +476,7 @@ class Backend {
 
 	async addFriend(body: AddFriendType): Promise<Result<void, AddFriendErrors>> {
 		try {
-			const res = await client.post('authenticated/friends/add', {
+			const res = await client.post('friends/add', {
 				body: JSON.stringify(body)
 			});
 
@@ -492,6 +491,49 @@ class Backend {
 			if (errBody.status === 404) {
 				return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
 			}
+
+			if (errBody.status === 403) {
+				return err({ code: 'ERR_ADDING_ITSELF', error: errBody.error });
+			}
+
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async acceptFriend(body: AcceptFriendType): Promise<Result<void, AcceptFriendErrors>> {
+		try {
+			const res = await client.post('friends/accept', {
+				body: JSON.stringify(body)
+			});
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async deleteFriend(body: DeleteFriendType): Promise<Result<void, DeleteFriendErrors>> {
+		try {
+			const res = await client.post('friends/delete', {
+				body: JSON.stringify(body)
+			});
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}

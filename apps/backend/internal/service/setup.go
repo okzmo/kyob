@@ -33,8 +33,19 @@ type UserResponse struct {
 	Facts          []db.GetUserFactsRow `json:"facts"`
 }
 
+type FriendResponse struct {
+	ID           string      `json:"id"`
+	FriendshipID string      `json:"friendship_id"`
+	DisplayName  string      `json:"display_name"`
+	Avatar       pgtype.Text `json:"avatar"`
+	About        pgtype.Text `json:"about"`
+	Accepted     bool        `json:"accepted"`
+	Sender       bool        `json:"sender"`
+}
+
 type SetupResponse struct {
 	User    UserResponse                  `json:"user"`
+	Friends []FriendResponse              `json:"friends"`
 	Servers map[string]ServerWithChannels `json:"servers"`
 }
 
@@ -67,8 +78,25 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		Facts:          facts,
 		Links:          links,
 	}
-	res.Servers = make(map[string]ServerWithChannels)
 
+	friends, err := db.Query.GetFriends(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range friends {
+		res.Friends = append(res.Friends, FriendResponse{
+			ID:           f.ID,
+			FriendshipID: f.FriendshipID,
+			DisplayName:  f.DisplayName,
+			Avatar:       f.Avatar,
+			About:        f.About,
+			Accepted:     f.Accepted,
+			Sender:       f.FriendshipSenderID == ctxUser.ID,
+		})
+	}
+
+	res.Servers = make(map[string]ServerWithChannels)
 	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
 	if err != nil {
 		return nil, err

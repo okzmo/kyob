@@ -19,6 +19,11 @@
 					if (res.error.code === 'ERR_USER_NOT_FOUND') {
 						setError(form, 'username', 'User not found.');
 					}
+
+					if (res.error.code === 'ERR_ADDING_ITSELF') {
+						setError(form, 'username', 'You cannot add yourself.');
+					}
+
 					if (res.error.code === 'ERR_UNKNOWN') {
 						console.log(res.error.error);
 					}
@@ -41,7 +46,7 @@
 	open={core.openAddFriendModal.status}
 >
 	<Dialog.Portal>
-		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
+		<Dialog.Overlay class="fixed inset-0 bg-black/20 transition-opacity" />
 		<CustomDialogContent
 			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
 		>

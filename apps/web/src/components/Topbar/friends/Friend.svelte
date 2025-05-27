@@ -1,9 +1,35 @@
 <script lang="ts">
+	import { backend } from '../../../stores/backend.svelte';
+	import { userStore } from '../../../stores/user.svelte';
 	import Check from '../../ui/icons/Check.svelte';
 	import Close from '../../ui/icons/Close.svelte';
 	import MoreIcon from '../../ui/icons/MoreIcon.svelte';
 
-	let { id, displayName, avatar, accepted = false } = $props();
+	let { id, friendshipId, displayName, avatar, accepted = false } = $props();
+
+	async function acceptFriend() {
+		const res = await backend.acceptFriend({ friendship_id: friendshipId });
+		if (res.isErr()) {
+			console.error(res.error);
+			return;
+		}
+
+		if (res.isOk()) {
+			userStore.acceptFriend(id);
+		}
+	}
+
+	async function deleteFriend() {
+		const res = await backend.deleteFriend({ friendship_id: friendshipId });
+		if (res.isErr()) {
+			console.error(res.error);
+			return;
+		}
+
+		if (res.isOk()) {
+			userStore.deleteFriend(id);
+		}
+	}
 </script>
 
 <button
@@ -31,11 +57,13 @@
 {:else}
 	<div class="absolute top-1/2 right-2 flex items-center gap-x-2">
 		<button
+			onclick={acceptFriend}
 			class="hocus:bg-green-400/50 flex h-[2rem] w-[2rem] -translate-y-1/2 items-center justify-center rounded-lg border border-green-400 bg-green-400/20 text-green-400 transition-colors duration-100 hover:cursor-pointer"
 		>
 			<Check height={16} width={16} />
 		</button>
 		<button
+			onclick={deleteFriend}
 			class="hocus:bg-red-400/50 flex h-[2rem] w-[2rem] -translate-y-1/2 items-center justify-center rounded-lg border border-red-400 bg-red-400/20 text-red-400 transition-colors duration-100 hover:cursor-pointer"
 		>
 			<Close height={16} width={16} />

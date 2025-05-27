@@ -64,8 +64,15 @@ export interface User {
 	}[];
 }
 
+export interface Friend extends Partial<User> {
+	friendship_id: number;
+	accepted: boolean;
+	sender: boolean;
+}
+
 export interface Setup {
 	user: User;
+	friends: Friend[];
 	servers: Record<string, Server>;
 }
 

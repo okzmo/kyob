@@ -2,13 +2,24 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/okzmo/kyob/db"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
+var ErrAddingItself = errors.New("user adding itself")
+
 type AddFriendBody struct {
 	Username string `validate:"required" json:"username"`
+}
+
+type AcceptFriendBody struct {
+	FriendshipID string `validate:"required" json:"friendship_id"`
+}
+
+type RemoveFriendBody struct {
+	FriendshipID string `validate:"required" json:"friendship_id"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -55,6 +66,10 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 		return "", "", ErrUserNotFound
 	}
 
+	if user.ID == friend.ID {
+		return "", "", ErrAddingItself
+	}
+
 	invite, err := db.Query.AddFriend(ctx, db.AddFriendParams{
 		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
@@ -65,4 +80,22 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 	}
 
 	return invite.ID, friend.ID, nil
+}
+
+func AcceptFriend(ctx context.Context, body *AcceptFriendBody) error {
+	err := db.Query.AcceptFriend(ctx, body.FriendshipID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteFriend(ctx context.Context, body *RemoveFriendBody) error {
+	err := db.Query.DeleteFriend(ctx, body.FriendshipID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

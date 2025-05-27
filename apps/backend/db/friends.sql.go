@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const acceptFriend = `-- name: AcceptFriend :exec
@@ -54,4 +56,52 @@ DELETE FROM friends WHERE id=$1
 func (q *Queries) DeleteFriend(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteFriend, id)
 	return err
+}
+
+const getFriends = `-- name: GetFriends :many
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
+FROM users u, friends f
+WHERE f.user_id = $1 AND u.id = f.friend_id
+UNION
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
+FROM users u, friends f
+WHERE f.friend_id = $1 AND u.id = f.user_id
+`
+
+type GetFriendsRow struct {
+	ID                 string      `json:"id"`
+	DisplayName        string      `json:"display_name"`
+	Avatar             pgtype.Text `json:"avatar"`
+	About              pgtype.Text `json:"about"`
+	Accepted           bool        `json:"accepted"`
+	FriendshipID       string      `json:"friendship_id"`
+	FriendshipSenderID string      `json:"friendship_sender_id"`
+}
+
+func (q *Queries) GetFriends(ctx context.Context, userID string) ([]GetFriendsRow, error) {
+	rows, err := q.db.Query(ctx, getFriends, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetFriendsRow
+	for rows.Next() {
+		var i GetFriendsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DisplayName,
+			&i.Avatar,
+			&i.About,
+			&i.Accepted,
+			&i.FriendshipID,
+			&i.FriendshipSenderID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

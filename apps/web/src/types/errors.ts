@@ -81,7 +81,19 @@ export interface GetUserErrors {
 }
 
 export interface AddFriendErrors {
-	code: 'ERR_USER_NOT_FOUND' | 'ERR_UNKNOWN';
+	code: 'ERR_ADDING_ITSELF' | 'ERR_USER_NOT_FOUND' | 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
+export interface AcceptFriendErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
+export interface DeleteFriendErrors {
+	code: 'ERR_UNKNOWN';
 	error: string;
 	cause?: any;
 }

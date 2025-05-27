@@ -4,9 +4,13 @@
 	import CustomPopoverContent from '../../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 	import FriendsList from './FriendsList.svelte';
 	import AddFriend from './AddFriend.svelte';
+	import { userStore } from '../../../stores/user.svelte';
+
+	let isOpen = $state(false);
+	let friends = $derived(userStore?.friends?.filter((f) => !f.sender) || []);
 </script>
 
-<Popover.Root>
+<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
 	<Popover.Trigger
 		aria-label="Friends"
 		class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 flex h-[2.25rem] w-[2.25rem] items-center justify-center rounded-lg transition-colors hover:cursor-pointer"
@@ -20,7 +24,7 @@
 		sideOffset={10}
 		y={-10}
 	>
-		<FriendsList />
-		<AddFriend />
+		<FriendsList {friends} />
+		<AddFriend bind:isOpen />
 	</CustomPopoverContent>
 </Popover.Root>

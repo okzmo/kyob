@@ -51,6 +51,8 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
 			utils.RespondWithError(w, http.StatusNotFound, "User not found.")
+		case errors.Is(err, services.ErrAddingItself):
+			utils.RespondWithError(w, http.StatusForbidden, "You can't add yourself.")
 		default:
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -68,6 +70,78 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
 	actors.UsersEngine.Send(friendPid, inviteMessage)
+
+	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+}
+
+func AcceptFriend(w http.ResponseWriter, r *http.Request) {
+	var body services.AcceptFriendBody
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = services.AcceptFriend(r.Context(), &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// inviteMessage := &proto.SendFriendInvite{
+	// 	InviteId: inviteId,
+	// 	User: &proto.User{
+	// 		Id:          user.ID,
+	// 		DisplayName: user.DisplayName,
+	// 		Avatar:      &user.Avatar.String,
+	// 	},
+	// }
+	//
+	// friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
+	// actors.UsersEngine.Send(friendPid, inviteMessage)
+
+	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+}
+
+func DeleteFriend(w http.ResponseWriter, r *http.Request) {
+	var body services.RemoveFriendBody
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = services.DeleteFriend(r.Context(), &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// inviteMessage := &proto.SendFriendInvite{
+	// 	InviteId: inviteId,
+	// 	User: &proto.User{
+	// 		Id:          user.ID,
+	// 		DisplayName: user.DisplayName,
+	// 		Avatar:      &user.Avatar.String,
+	// 	},
+	// }
+	//
+	// friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
+	// actors.UsersEngine.Send(friendPid, inviteMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
