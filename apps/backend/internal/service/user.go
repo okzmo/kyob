@@ -16,10 +16,13 @@ type AddFriendBody struct {
 
 type AcceptFriendBody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
+	UserID       string `validate:"required" json:"user_id"`
+	FriendID     string `validate:"required" json:"friend_id"`
 }
 
 type RemoveFriendBody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
+	FriendID     string `validate:"required" json:"friend_id"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -82,13 +85,18 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 	return invite.ID, friend.ID, nil
 }
 
-func AcceptFriend(ctx context.Context, body *AcceptFriendBody) error {
+func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, error) {
 	err := db.Query.AcceptFriend(ctx, body.FriendshipID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	friend, err := db.Query.GetUserById(ctx, body.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &friend, nil
 }
 
 func DeleteFriend(ctx context.Context, body *RemoveFriendBody) error {

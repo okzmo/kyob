@@ -65,7 +65,7 @@ export interface User {
 }
 
 export interface Friend extends Partial<User> {
-	friendship_id: number;
+	friendship_id: string;
 	accepted: boolean;
 	sender: boolean;
 }

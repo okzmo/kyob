@@ -7,7 +7,7 @@
 	import { userStore } from '../../../stores/user.svelte';
 
 	let isOpen = $state(false);
-	let friends = $derived(userStore?.friends?.filter((f) => !f.sender) || []);
+	let friends = $derived(userStore?.friends?.filter((f) => !f.sender || f.accepted) || []);
 </script>
 
 <Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>

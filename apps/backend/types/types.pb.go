@@ -35,6 +35,8 @@ type WSMessage struct {
 	//	*WSMessage_DeleteMessage
 	//	*WSMessage_EditMessage
 	//	*WSMessage_FriendInvite
+	//	*WSMessage_AcceptFriend
+	//	*WSMessage_DeleteFriend
 	Content       isWSMessage_Content `protobuf_oneof:"content"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -158,6 +160,24 @@ func (x *WSMessage) GetFriendInvite() *SendFriendInvite {
 	return nil
 }
 
+func (x *WSMessage) GetAcceptFriend() *AcceptFriendInvite {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_AcceptFriend); ok {
+			return x.AcceptFriend
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetDeleteFriend() *DeleteFriend {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_DeleteFriend); ok {
+			return x.DeleteFriend
+		}
+	}
+	return nil
+}
+
 type isWSMessage_Content interface {
 	isWSMessage_Content()
 }
@@ -198,6 +218,14 @@ type WSMessage_FriendInvite struct {
 	FriendInvite *SendFriendInvite `protobuf:"bytes,9,opt,name=friend_invite,json=friendInvite,proto3,oneof"`
 }
 
+type WSMessage_AcceptFriend struct {
+	AcceptFriend *AcceptFriendInvite `protobuf:"bytes,10,opt,name=accept_friend,json=acceptFriend,proto3,oneof"`
+}
+
+type WSMessage_DeleteFriend struct {
+	DeleteFriend *DeleteFriend `protobuf:"bytes,11,opt,name=delete_friend,json=deleteFriend,proto3,oneof"`
+}
+
 func (*WSMessage_ChatMessage) isWSMessage_Content() {}
 
 func (*WSMessage_ChannelCreation) isWSMessage_Content() {}
@@ -215,6 +243,10 @@ func (*WSMessage_DeleteMessage) isWSMessage_Content() {}
 func (*WSMessage_EditMessage) isWSMessage_Content() {}
 
 func (*WSMessage_FriendInvite) isWSMessage_Content() {}
+
+func (*WSMessage_AcceptFriend) isWSMessage_Content() {}
+
+func (*WSMessage_DeleteFriend) isWSMessage_Content() {}
 
 type UserLinksRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1843,7 +1875,7 @@ func (x *SendFriendInvite) GetUser() *User {
 type AcceptFriendInvite struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	InviteId      string                 `protobuf:"bytes,1,opt,name=invite_id,json=inviteId,proto3" json:"invite_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1885,11 +1917,11 @@ func (x *AcceptFriendInvite) GetInviteId() string {
 	return ""
 }
 
-func (x *AcceptFriendInvite) GetUserId() string {
+func (x *AcceptFriendInvite) GetUser() *User {
 	if x != nil {
-		return x.UserId
+		return x.User
 	}
-	return ""
+	return nil
 }
 
 type DeleteFriend struct {
@@ -2036,7 +2068,7 @@ var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\x82\x05\n" +
+	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\x80\x06\n" +
 	"\tWSMessage\x12@\n" +
 	"\fchat_message\x18\x01 \x01(\v2\x1b.types.BroadcastChatMessageH\x00R\vchatMessage\x12L\n" +
 	"\x10channel_creation\x18\x02 \x01(\v2\x1f.types.BroadcastChannelCreationH\x00R\x0fchannelCreation\x12I\n" +
@@ -2046,7 +2078,10 @@ const file_types_proto_rawDesc = "" +
 	"\x0fuser_disconnect\x18\x06 \x01(\v2\x1a.types.BroadcastDisconnectH\x00R\x0euserDisconnect\x12J\n" +
 	"\x0edelete_message\x18\a \x01(\v2!.types.BroadcastDeleteChatMessageH\x00R\rdeleteMessage\x12@\n" +
 	"\fedit_message\x18\b \x01(\v2\x1b.types.BroadcastEditMessageH\x00R\veditMessage\x12>\n" +
-	"\rfriend_invite\x18\t \x01(\v2\x17.types.SendFriendInviteH\x00R\ffriendInviteB\t\n" +
+	"\rfriend_invite\x18\t \x01(\v2\x17.types.SendFriendInviteH\x00R\ffriendInvite\x12@\n" +
+	"\raccept_friend\x18\n" +
+	" \x01(\v2\x19.types.AcceptFriendInviteH\x00R\facceptFriend\x12:\n" +
+	"\rdelete_friend\x18\v \x01(\v2\x13.types.DeleteFriendH\x00R\fdeleteFriendB\t\n" +
 	"\acontent\"F\n" +
 	"\fUserLinksRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
@@ -2199,10 +2234,10 @@ const file_types_proto_rawDesc = "" +
 	"\tfriend_id\x18\x02 \x01(\tR\bfriendId\"P\n" +
 	"\x10SendFriendInvite\x12\x1b\n" +
 	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x1f\n" +
-	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"J\n" +
+	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"R\n" +
 	"\x12AcceptFriendInvite\x12\x1b\n" +
-	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\"D\n" +
+	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x1f\n" +
+	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"D\n" +
 	"\fDeleteFriend\x12\x1b\n" +
 	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"\x1d\n" +
@@ -2265,23 +2300,26 @@ var file_types_proto_depIdxs = []int32{
 	9,  // 6: types.WSMessage.delete_message:type_name -> types.BroadcastDeleteChatMessage
 	8,  // 7: types.WSMessage.edit_message:type_name -> types.BroadcastEditMessage
 	22, // 8: types.WSMessage.friend_invite:type_name -> types.SendFriendInvite
-	27, // 9: types.User.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 10: types.User.links:type_name -> types.UserLinksRow
-	2,  // 11: types.User.facts:type_name -> types.UserFactsRow
-	3,  // 12: types.IncomingChatMessage.author:type_name -> types.User
-	3,  // 13: types.BroadcastChatMessage.author:type_name -> types.User
-	27, // 14: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	27, // 15: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 16: types.BroadcastNewUserInServer.user:type_name -> types.User
-	27, // 17: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	27, // 18: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 19: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 20: types.SendFriendInvite.user:type_name -> types.User
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	23, // 9: types.WSMessage.accept_friend:type_name -> types.AcceptFriendInvite
+	24, // 10: types.WSMessage.delete_friend:type_name -> types.DeleteFriend
+	27, // 11: types.User.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 12: types.User.links:type_name -> types.UserLinksRow
+	2,  // 13: types.User.facts:type_name -> types.UserFactsRow
+	3,  // 14: types.IncomingChatMessage.author:type_name -> types.User
+	3,  // 15: types.BroadcastChatMessage.author:type_name -> types.User
+	27, // 16: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	27, // 17: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 18: types.BroadcastNewUserInServer.user:type_name -> types.User
+	27, // 19: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	27, // 20: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 21: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 22: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 23: types.AcceptFriendInvite.user:type_name -> types.User
+	24, // [24:24] is the sub-list for method output_type
+	24, // [24:24] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -2299,6 +2337,8 @@ func file_types_proto_init() {
 		(*WSMessage_DeleteMessage)(nil),
 		(*WSMessage_EditMessage)(nil),
 		(*WSMessage_FriendInvite)(nil),
+		(*WSMessage_AcceptFriend)(nil),
+		(*WSMessage_DeleteFriend)(nil),
 	}
 	file_types_proto_msgTypes[3].OneofWrappers = []any{}
 	file_types_proto_msgTypes[13].OneofWrappers = []any{}

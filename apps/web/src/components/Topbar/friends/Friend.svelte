@@ -8,26 +8,30 @@
 	let { id, friendshipId, displayName, avatar, accepted = false } = $props();
 
 	async function acceptFriend() {
-		const res = await backend.acceptFriend({ friendship_id: friendshipId });
+		const res = await backend.acceptFriend({
+			friendship_id: friendshipId,
+			user_id: userStore.user!.id,
+			friend_id: id
+		});
 		if (res.isErr()) {
 			console.error(res.error);
 			return;
 		}
 
 		if (res.isOk()) {
-			userStore.acceptFriend(id);
+			userStore.acceptFriend({ friendshipId });
 		}
 	}
 
 	async function deleteFriend() {
-		const res = await backend.deleteFriend({ friendship_id: friendshipId });
+		const res = await backend.deleteFriend({ friendship_id: friendshipId, friend_id: id });
 		if (res.isErr()) {
 			console.error(res.error);
 			return;
 		}
 
 		if (res.isOk()) {
-			userStore.deleteFriend(id);
+			userStore.deleteFriend(friendshipId);
 		}
 	}
 </script>

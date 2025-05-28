@@ -94,13 +94,16 @@ export const AddFriendSchema = v.object({
 export interface AddFriendType extends v.InferInput<typeof AddFriendSchema> {}
 
 export const AcceptFriendSchema = v.object({
-	friendship_id: v.string()
+	friendship_id: v.string(),
+	user_id: v.string(),
+	friend_id: v.string()
 });
 
 export interface AcceptFriendType extends v.InferInput<typeof AcceptFriendSchema> {}
 
 export const DeleteFriendSchema = v.object({
-	friendship_id: v.string()
+	friendship_id: v.string(),
+	friend_id: v.string()
 });
 
 export interface DeleteFriendType extends v.InferInput<typeof DeleteFriendSchema> {}

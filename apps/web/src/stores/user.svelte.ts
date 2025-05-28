@@ -5,17 +5,38 @@ class UserStore {
 	friends = $state<Friend[]>([]);
 	mention = $state(false);
 
-	acceptFriend(id: string) {
-		for (const friend of this.friends) {
-			if (friend.id === id) {
-				friend.accepted = true;
+	addFriend(friend: Friend) {
+		if (Array.isArray(this.friends)) {
+			this.friends.push(friend);
+		} else {
+			this.friends = [friend];
+		}
+	}
+
+	acceptFriend({
+		friendshipId,
+		friend,
+		sender = false
+	}: {
+		friendshipId: string;
+		friend?: Friend;
+		sender?: boolean;
+	}) {
+		if (!sender) {
+			const friendIdx = this.friends.findIndex((f) => f.friendship_id === friendshipId);
+			this.friends[friendIdx].accepted = true;
+		} else if (friend) {
+			if (Array.isArray(this.friends)) {
+				this.friends.push(friend);
+			} else {
+				this.friends = [friend];
 			}
 		}
 	}
 
-	deleteFriend(id: string) {
-		const friendIdx = this.friends.findIndex((f) => f.id === id);
-		this.friends.splice(friendIdx, 1);
+	deleteFriend(friendshipId: string) {
+		const friendIdx = this.friends.findIndex((f) => f.friendship_id === friendshipId);
+		if (friendIdx > -1) this.friends.splice(friendIdx, 1);
 	}
 }
 

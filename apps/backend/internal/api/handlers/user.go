@@ -65,6 +65,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 			Id:          user.ID,
 			DisplayName: user.DisplayName,
 			Avatar:      &user.Avatar.String,
+			About:       &user.About.String,
 		},
 	}
 
@@ -89,23 +90,24 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.AcceptFriend(r.Context(), &body)
+	friend, err := services.AcceptFriend(r.Context(), &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// inviteMessage := &proto.SendFriendInvite{
-	// 	InviteId: inviteId,
-	// 	User: &proto.User{
-	// 		Id:          user.ID,
-	// 		DisplayName: user.DisplayName,
-	// 		Avatar:      &user.Avatar.String,
-	// 	},
-	// }
-	//
-	// friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
-	// actors.UsersEngine.Send(friendPid, inviteMessage)
+	acceptFriendMessage := &proto.AcceptFriendInvite{
+		InviteId: body.FriendshipID,
+		User: &proto.User{
+			Id:          friend.ID,
+			DisplayName: friend.DisplayName,
+			Avatar:      &friend.Avatar.String,
+			About:       &friend.About.String,
+		},
+	}
+
+	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
+	actors.UsersEngine.Send(friendPid, acceptFriendMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
@@ -131,17 +133,13 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// inviteMessage := &proto.SendFriendInvite{
-	// 	InviteId: inviteId,
-	// 	User: &proto.User{
-	// 		Id:          user.ID,
-	// 		DisplayName: user.DisplayName,
-	// 		Avatar:      &user.Avatar.String,
-	// 	},
-	// }
-	//
-	// friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
-	// actors.UsersEngine.Send(friendPid, inviteMessage)
+	deleteFriendMessage := &proto.DeleteFriend{
+		InviteId: body.FriendshipID,
+		UserId:   body.FriendID,
+	}
+
+	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
+	actors.UsersEngine.Send(friendPid, deleteFriendMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }

@@ -181,3 +181,25 @@ func (u *user) FriendInvite(ctx *actor.Context, msg *protoTypes.SendFriendInvite
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
+
+func (u *user) AcceptFriend(ctx *actor.Context, msg *protoTypes.AcceptFriendInvite) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_AcceptFriend{
+			AcceptFriend: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) DeleteFriend(ctx *actor.Context, msg *protoTypes.DeleteFriend) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_DeleteFriend{
+			DeleteFriend: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}

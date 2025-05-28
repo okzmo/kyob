@@ -164,6 +164,10 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.BroadcastNewUserInServer(ctx, msg)
 	case *protoTypes.SendFriendInvite:
 		u.FriendInvite(ctx, msg)
+	case *protoTypes.AcceptFriendInvite:
+		u.AcceptFriend(ctx, msg)
+	case *protoTypes.DeleteFriend:
+		u.DeleteFriend(ctx, msg)
 	}
 }
 

@@ -1,6 +1,6 @@
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { Channel, ChannelTypes, Message, Server, Setup, User } from '../types/types';
+import type { Channel, ChannelTypes, Friend, Message, Server, Setup, User } from '../types/types';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	AcceptFriendErrors,
@@ -171,6 +171,53 @@ class Backend {
 							sounds.playSound('notification');
 							userStore.mention = true;
 						}
+					}
+					break;
+				case 'friendInvite':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+
+						const newFriend: Friend = {
+							id: value.user?.id,
+							display_name: value.user?.displayName,
+							avatar: value.user?.avatar,
+							about: value.user?.about,
+							friendship_id: value.inviteId,
+							accepted: false,
+							sender: false
+						};
+
+						userStore.addFriend(newFriend);
+					}
+					break;
+				case 'acceptFriend':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+
+						const newFriend: Friend = {
+							id: value.user?.id,
+							display_name: value.user?.displayName,
+							avatar: value.user?.avatar,
+							about: value.user?.about,
+							friendship_id: value.inviteId,
+							accepted: true,
+							sender: true
+						};
+
+						userStore.acceptFriend({
+							friendshipId: value.inviteId,
+							friend: newFriend,
+							sender: true
+						});
+					}
+					break;
+				case 'deleteFriend':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						userStore.deleteFriend(value.inviteId);
 					}
 					break;
 			}

@@ -14,6 +14,8 @@ message WSMessage {
     BroadcastDeleteChatMessage delete_message = 7;
     BroadcastEditMessage edit_message = 8;
     SendFriendInvite friend_invite = 9;
+    AcceptFriendInvite accept_friend = 10;
+    DeleteFriend delete_friend = 11;
   }
 }
 
@@ -188,7 +190,7 @@ message SendFriendInvite {
 
 message AcceptFriendInvite {
   string invite_id = 1;
-  string user_id = 2;
+  User user = 2;
 }
 
 message DeleteFriend {
