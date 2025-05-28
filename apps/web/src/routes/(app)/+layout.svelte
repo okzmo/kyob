@@ -93,11 +93,15 @@
 		{@render children()}
 
 		{#each windows.openWindows as chatWindow (chatWindow.id)}
-			<ChatWindow
-				id={chatWindow.id}
-				serverId={chatWindow.serverId}
-				channelId={chatWindow.channelId}
-			/>
+			{#if chatWindow.serverId && chatWindow.channelId}
+				<ChatWindow
+					id={chatWindow.id}
+					serverId={chatWindow.serverId}
+					channelId={chatWindow.channelId}
+				/>
+			{:else if chatWindow.friendId}
+				<ChatWindow id={chatWindow.id} friendId={chatWindow.friendId} />
+			{/if}
 		{/each}
 	</ContextMenu.Trigger>
 	<ContextMenuSkeleton

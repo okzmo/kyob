@@ -12,7 +12,7 @@ export const CustomMention = Mention.extend({
 					const userId = match[1];
 					const activeWindow = windows.getActiveWindow();
 
-					if (activeWindow) {
+					if (activeWindow?.serverId) {
 						const user = serversStore.getMemberById(activeWindow.serverId, userId);
 
 						const attributes = {

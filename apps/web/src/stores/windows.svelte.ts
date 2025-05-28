@@ -8,7 +8,16 @@ class Windows {
 		return this.openWindows.find((w) => w.id === this.activeWindow);
 	}
 
-	createWindow(id: string, serverId: string, channelId: string) {
+	createWindow({
+		id,
+		serverId,
+		channelId
+	}: {
+		id: string;
+		serverId?: string;
+		channelId?: string;
+		friendId?: string;
+	}) {
 		const exist = Boolean(this.openWindows.find((w) => w.id === id));
 		if (exist) {
 			this.activeWindow = id;

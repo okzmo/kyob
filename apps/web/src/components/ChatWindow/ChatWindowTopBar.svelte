@@ -3,7 +3,7 @@
 	import { windows } from '../../stores/windows.svelte';
 	import Close from '../ui/icons/Close.svelte';
 
-	let { id, server, channel } = $props();
+	let { id, server, channel, friend } = $props();
 
 	$effect(() => {
 		if (userStore.mention) {
@@ -35,6 +35,15 @@
 					class="h-[1.25rem] w-[1.25rem] rounded-full"
 				/>
 				<p class="select-none">{server.name}</p>
+			</div>
+		{:else if friend}
+			<div class="flex items-center gap-x-1.5">
+				<img
+					src={friend.avatar}
+					alt="{friend.display_name} avatar"
+					class="h-[1.25rem] w-[1.25rem] rounded-full"
+				/>
+				<p class="select-none">{friend.display_name}</p>
 			</div>
 		{/if}
 		{#if channel}

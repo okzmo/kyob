@@ -15,8 +15,9 @@ export type ContextMenuTarget = (typeof contextMenuTargets)[number];
 
 export interface Window {
 	id: string;
-	channelId: string;
-	serverId: string;
+	channelId?: string;
+	serverId?: string;
+	friendId?: string;
 }
 
 export interface Channel {

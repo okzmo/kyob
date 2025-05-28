@@ -13,6 +13,10 @@ class UserStore {
 		}
 	}
 
+	getFriend(id: string) {
+		return this.friends.find((f) => f.id === id);
+	}
+
 	acceptFriend({
 		friendshipId,
 		friend,

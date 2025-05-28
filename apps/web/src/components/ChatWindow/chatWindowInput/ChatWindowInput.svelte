@@ -82,7 +82,7 @@
 								const res = [];
 
 								const activeWindow = windows.getActiveWindow();
-								if (!activeWindow) return [];
+								if (!activeWindow?.serverId) return [];
 								const users = serversStore.getServer(activeWindow?.serverId).members;
 
 								for (const user of users) {

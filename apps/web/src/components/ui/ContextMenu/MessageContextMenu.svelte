@@ -15,9 +15,9 @@
 	let { authorId, targetId } = $props();
 
 	function handleDelete(messageId: string) {
-		const w = windows.getActiveWindow();
-		if (!w) return;
-		backend.deleteMessage(w?.serverId, w?.channelId, messageId);
+		const window = windows.getActiveWindow();
+		if (!window?.serverId || !window.channelId) return;
+		backend.deleteMessage(window.serverId, window.channelId, messageId);
 	}
 
 	function handleEdit(messageId: string) {
@@ -25,9 +25,9 @@
 	}
 
 	function handleCopyMessage(messageId: string) {
-		const w = windows.getActiveWindow();
-		if (!w) return;
-		const message = serversStore.getMessage(w?.serverId, w?.channelId, messageId);
+		const window = windows.getActiveWindow();
+		if (!window?.serverId || !window.channelId) return;
+		const message = serversStore.getMessage(window.serverId, window.channelId, messageId);
 
 		const text = generateText(message?.content, [
 			StarterKit.configure({

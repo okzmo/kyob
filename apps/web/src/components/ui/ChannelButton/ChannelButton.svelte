@@ -25,7 +25,11 @@
 	]}
 	style="transform: translate({x}px, {y}px);"
 	onclick={() => {
-		windows.createWindow(`window-${id}`, page.params.server_id, id);
+		windows.createWindow({
+			id: `window-${id}`,
+			serverId: page.params.server_id,
+			channelId: id
+		});
 	}}
 >
 	{#if type == 'textual'}

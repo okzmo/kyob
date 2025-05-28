@@ -7,25 +7,29 @@
 
 	interface Props {
 		id: string;
-		channelId: string;
-		serverId: string;
+		channelId?: string;
+		serverId?: string;
+		friendId?: string;
 	}
 
 	let scrollContent = $state<HTMLElement | null>();
-	let { id, channelId, serverId }: Props = $props();
+	let { id, channelId = '', serverId = '', friendId = '' }: Props = $props();
 
 	const server = $derived(serversStore.getServer(serverId));
 	const channel = $derived(serversStore.getChannel(serverId, channelId));
-	const messages = $derived(serversStore.getMessages(serverId, channelId));
+	const friend = $derived(userStore.getFriend(friendId));
+	const messages = $derived(serversStore.getMessages(serverId, channelId) ?? []);
 
 	$effect(() => {
-		messages.then(() => {
-			if (scrollContent) scrollContent.scrollTo(0, scrollContent.scrollHeight);
-		});
+		if (messages) {
+			messages.then(() => {
+				if (scrollContent) scrollContent.scrollTo(0, scrollContent.scrollHeight);
+			});
+		}
 	});
 </script>
 
-<ChatWindowSkeleton {id} {channel} {server}>
+<ChatWindowSkeleton {id} {channel} {server} {friend}>
 	<div
 		bind:this={scrollContent}
 		class="flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col gap-y-2 overflow-y-auto py-3"
