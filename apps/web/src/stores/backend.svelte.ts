@@ -134,7 +134,7 @@ class Backend {
 						const value = wsMess.content.value;
 						setTimeout(() => {
 							serversStore.connectUser(value.serverId, value.userId, value.users, value.type);
-						}, 100);
+						}, 500);
 					}
 					break;
 				case 'userDisconnect':

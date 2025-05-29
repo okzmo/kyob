@@ -8,6 +8,12 @@
 	import { backend } from '../../../../stores/backend.svelte';
 	import { page } from '$app/state';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
+	import { delay } from '../../../../utils/delay';
+	import LoadingIcon from '../../icons/LoadingIcon.svelte';
+	import Check from '../../icons/Check.svelte';
+
+	let isLoading = $state(false);
+	let isSuccess = $state(false);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateChannelSchema)), {
 		dataType: 'json',
@@ -19,6 +25,7 @@
 				form.data.x = core.openCreateChannelModal.x;
 				form.data.y = core.openCreateChannelModal.y;
 
+				isLoading = true;
 				const res = await backend.createChannel(serverId, form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
@@ -27,11 +34,19 @@
 					if (res.error.code === 'ERR_UNAUTHORIZED') {
 						console.log(res.error.error);
 					}
+					isLoading = false;
 				}
 
 				if (res.isOk()) {
+					isLoading = false;
+					isSuccess = true;
+
+					await delay(600);
+
 					core.openCreateChannelModal.status = false;
 					core.activateMapDragging();
+
+					isSuccess = false;
 				}
 			}
 		}
@@ -94,9 +109,28 @@
 				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
 					<button
 						type="submit"
-						class="hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 -translate-y-1/2 rounded-lg px-3.5 py-2 transition-colors hover:cursor-pointer"
+						class={[
+							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
+							!isLoading && !isSuccess ? 'w-34 ' : 'w-10'
+						]}
 					>
-						Create channel
+						{#if isLoading}
+							<LoadingIcon
+								height={20}
+								width={20}
+								transition={{ duration: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else if isSuccess}
+							<Check
+								height={20}
+								width={20}
+								transition={{ duration: 100, delay: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else}
+							Create channel
+						{/if}
 					</button>
 				</div>
 			</form>

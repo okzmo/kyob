@@ -53,7 +53,7 @@
 					isLoading = false;
 					isSuccess = true;
 
-					await delay(800);
+					await delay(600);
 
 					core.openCreateServerModal.status = false;
 					const targetX = -(server.x - window.innerWidth / 2 + 32);

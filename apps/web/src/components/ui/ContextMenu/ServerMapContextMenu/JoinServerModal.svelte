@@ -9,6 +9,12 @@
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { serversStore } from '../../../../stores/servers.svelte';
 	import type { Server } from '../../../../types/types';
+	import Check from '../../icons/Check.svelte';
+	import LoadingIcon from '../../icons/LoadingIcon.svelte';
+	import { delay } from '../../../../utils/delay';
+
+	let isLoading = $state(false);
+	let isSuccess = $state(false);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(JoinServerSchema)), {
 		dataType: 'json',
@@ -19,19 +25,25 @@
 				form.data.x = core.openJoinServerModal.x;
 				form.data.y = core.openJoinServerModal.y;
 
+				isLoading = true;
 				const res = await backend.joinServer(form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
 						console.log(res.error.error);
 					}
+					isLoading = false;
 				}
 
 				if (res.isOk()) {
 					const server: Server = {
 						...res.value
 					};
-
 					serversStore.addServer(server);
+					isLoading = false;
+					isSuccess = true;
+
+					await delay(600);
+
 					core.openJoinServerModal.status = false;
 					core.activateMapDragging();
 				}
@@ -96,9 +108,28 @@
 				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
 					<button
 						type="submit"
-						class="hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 -translate-y-1/2 rounded-lg px-3.5 py-2 transition-colors hover:cursor-pointer"
+						class={[
+							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
+							!isLoading && !isSuccess ? 'w-26 ' : 'w-10'
+						]}
 					>
-						Join realm
+						{#if isLoading}
+							<LoadingIcon
+								height={20}
+								width={20}
+								transition={{ duration: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else if isSuccess}
+							<Check
+								height={20}
+								width={20}
+								transition={{ duration: 100, delay: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else}
+							Join realm
+						{/if}
 					</button>
 				</div>
 			</form>
