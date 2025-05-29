@@ -43,6 +43,7 @@ export interface Server {
 	active_count: string[];
 	member_count: number;
 	members: Partial<User>[];
+	hidden: boolean;
 }
 
 export interface User {

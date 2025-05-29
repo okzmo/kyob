@@ -16,9 +16,12 @@
 	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || '', targetId));
 
 	async function deleteServer(serverId: string) {
+		serversStore.hideServer(serverId);
+
 		const res = await backend.deleteServer(serverId);
 		if (res.isErr()) {
 			console.error(res.error);
+			serversStore.showServer(serverId);
 		}
 
 		if (res.isOk()) {

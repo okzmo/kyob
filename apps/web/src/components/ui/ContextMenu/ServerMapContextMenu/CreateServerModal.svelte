@@ -11,12 +11,17 @@
 	import { animateCoordinates } from '../../../../utils/transition';
 	import type { Server } from '../../../../types/types';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
+	import LoadingIcon from '../../icons/LoadingIcon.svelte';
+	import { delay } from '../../../../utils/delay';
+	import Check from '../../icons/Check.svelte';
 
 	let avatar = $state<string | undefined>();
 	let crop = $state({ x: 0, y: 0 });
 	let zoom = $state(1);
 	let minZoom = $state(3);
 	let maxZoom = $state(5);
+	let isLoading = $state(false);
+	let isSuccess = $state(false);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateServerSchema)), {
 		dataType: 'json',
@@ -27,11 +32,13 @@
 				form.data.x = Math.round(core.openCreateServerModal.x - core.totalOffsetServerMap.x - 32);
 				form.data.y = Math.round(core.openCreateServerModal.y - core.totalOffsetServerMap.y - 32);
 
+				isLoading = true;
 				const res = await backend.createServer(form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
 						console.log(res.error.error);
 					}
+					isLoading = false;
 				}
 
 				if (res.isOk()) {
@@ -39,28 +46,35 @@
 						...res.value,
 						channels: {},
 						member_count: 1,
-						active_count: []
+						active_count: [],
+						hidden: false
 					};
 					serversStore.addServer(server);
-					core.openCreateServerModal.status = false;
+					isLoading = false;
+					isSuccess = true;
 
+					await delay(800);
+
+					core.openCreateServerModal.status = false;
 					const targetX = -(server.x - window.innerWidth / 2 + 32);
 					const targetY = -(server.y - window.innerHeight / 2 + 32);
 
+					await animateCoordinates(
+						core.offsetServerMap,
+						{ x: core.totalOffsetServerMap.x, y: core.totalOffsetServerMap.y },
+						{ x: targetX, y: targetY }
+					);
+
+					core.totalOffsetServerMap = {
+						x: targetX,
+						y: targetY
+					};
+
 					setTimeout(async () => {
-						await animateCoordinates(
-							core.offsetServerMap,
-							{ x: core.totalOffsetServerMap.x, y: core.totalOffsetServerMap.y },
-							{ x: targetX, y: targetY }
-						);
-
-						core.totalOffsetServerMap = {
-							x: targetX,
-							y: targetY
-						};
-
 						core.activateMapDragging();
-					}, 800);
+					}, 500);
+
+					isSuccess = false;
 				}
 			}
 		}
@@ -114,7 +128,7 @@
 				<div class="flex items-center justify-between px-8">
 					<div>
 						<Dialog.Title class="text-lg font-semibold">Create a new realm</Dialog.Title>
-						<Dialog.Description class="text-main-400 max-w-[24rem]  text-sm">
+						<Dialog.Description class="text-main-400 max-w-[24rem] text-sm">
 							Realms are what you see on the canvas, communities to share what you love or simply
 							interact with people!
 						</Dialog.Description>
@@ -201,9 +215,28 @@
 				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
 					<button
 						type="submit"
-						class="hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 -translate-y-1/2 rounded-lg px-3.5 py-2 transition-colors hover:cursor-pointer"
+						class={[
+							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
+							!isLoading && !isSuccess ? 'w-40 ' : 'w-10'
+						]}
 					>
-						Create your realm
+						{#if isLoading}
+							<LoadingIcon
+								height={20}
+								width={20}
+								transition={{ duration: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else if isSuccess}
+							<Check
+								height={20}
+								width={20}
+								transition={{ duration: 100, delay: 100, y: 5 }}
+								class="absolute"
+							/>
+						{:else}
+							Create your realm
+						{/if}
 					</button>
 				</div>
 			</form>

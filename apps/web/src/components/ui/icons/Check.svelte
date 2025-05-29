@@ -1,14 +1,18 @@
 <script lang="ts">
+	import { fly, type FlyParams } from 'svelte/transition';
+
 	interface Props {
 		height: number;
 		width: number;
 		class?: string;
+		transition?: FlyParams;
 	}
 
-	let { class: classes, height = 24, width = 24 }: Props = $props();
+	let { class: classes, height = 24, width = 24, transition }: Props = $props();
 </script>
 
 <svg
+	transition:fly={transition}
 	{width}
 	{height}
 	class={classes}

@@ -136,14 +136,16 @@
 </script>
 
 {#each servers as server (server.id)}
-	<ServerButton
-		id={server.id}
-		name={server.name}
-		avatar={server.avatar}
-		href={String(server.id)}
-		x={server.x + core.offsetServerMap.x}
-		y={server.y + core.offsetServerMap.y}
-	/>
+	{#if !server.hidden}
+		<ServerButton
+			id={server.id}
+			name={server.name}
+			avatar={server.avatar}
+			href={String(server.id)}
+			x={server.x + core.offsetServerMap.x}
+			y={server.y + core.offsetServerMap.y}
+		/>
+	{/if}
 {/each}
 
 <CreateServerModal />
