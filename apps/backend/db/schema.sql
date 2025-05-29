@@ -36,7 +36,9 @@ CREATE TYPE public.abilities AS ENUM (
 
 CREATE TYPE public.channel_type AS ENUM (
     'voice',
-    'textual'
+    'textual',
+    'dm',
+    'groups'
 );
 
 
@@ -58,6 +60,7 @@ CREATE TABLE public.channels (
     roles character varying(20)[],
     x integer NOT NULL,
     y integer NOT NULL,
+    active boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

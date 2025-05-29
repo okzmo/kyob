@@ -69,6 +69,8 @@ type ChannelType string
 const (
 	ChannelTypeVoice   ChannelType = "voice"
 	ChannelTypeTextual ChannelType = "textual"
+	ChannelTypeDm      ChannelType = "dm"
+	ChannelTypeGroups  ChannelType = "groups"
 )
 
 func (e *ChannelType) Scan(src interface{}) error {
@@ -116,6 +118,7 @@ type Channel struct {
 	Roles       []string    `json:"roles"`
 	X           int32       `json:"x"`
 	Y           int32       `json:"y"`
+	Active      bool        `json:"active"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }

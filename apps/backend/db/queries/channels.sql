@@ -4,12 +4,12 @@ SELECT * FROM channels WHERE id = $1;
 -- name: GetFriendChannels :many
 SELECT *
 FROM channels
-WHERE server_id = 'global' AND $1::text = ANY(users);
+WHERE server_id = 'global' AND $1::text = ANY(users) AND active = true;
 
 -- name: GetChannelsFromServer :many
 SELECT *
 FROM channels
-WHERE server_id = $1;
+WHERE server_id = $1 AND active = true;
 
 -- name: CreateChannel :one
 INSERT INTO channels (
@@ -27,3 +27,11 @@ UPDATE channels SET description = $1 WHERE id = $2;
 
 -- name: DeleteChannel :exec
 DELETE FROM channels WHERE id = $1;
+
+-- name: DeactivateChannel :one
+UPDATE channels SET active = false
+WHERE type = 'dm'
+  AND array_length(users, 1) = 2
+  AND $1::varchar = ANY(users) 
+  AND $2::varchar = ANY(users)
+RETURNING *;

@@ -58,6 +58,40 @@ func (q *Queries) DeleteFriend(ctx context.Context, id string) error {
 	return err
 }
 
+const getExistingChannel = `-- name: GetExistingChannel :one
+UPDATE channels SET active = true
+WHERE type = 'dm'
+  AND array_length(users, 1) = 2
+  AND $1::varchar = ANY(users) 
+  AND $2::varchar = ANY(users)
+RETURNING id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at
+`
+
+type GetExistingChannelParams struct {
+	Column1 string `json:"column_1"`
+	Column2 string `json:"column_2"`
+}
+
+func (q *Queries) GetExistingChannel(ctx context.Context, arg GetExistingChannelParams) (Channel, error) {
+	row := q.db.QueryRow(ctx, getExistingChannel, arg.Column1, arg.Column2)
+	var i Channel
+	err := row.Scan(
+		&i.ID,
+		&i.ServerID,
+		&i.Name,
+		&i.Type,
+		&i.Description,
+		&i.Users,
+		&i.Roles,
+		&i.X,
+		&i.Y,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getFriends = `-- name: GetFriends :many
 SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id, c.id AS channel_id
 FROM users u, friends f, channels c

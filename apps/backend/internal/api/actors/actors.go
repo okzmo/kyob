@@ -73,8 +73,12 @@ func (s *server) Receive(ctx *actor.Context) {
 		s.Connect(ctx, msg)
 	case *protoTypes.Disconnect:
 		s.Disconnect(ctx, msg)
+	case *protoTypes.StartChannel:
+		s.StartChannel(ctx, msg)
 	case *protoTypes.BodyChannelCreation:
 		s.CreateChannel(ctx, msg)
+	case *protoTypes.KillChannel:
+		s.KillChannel(ctx, msg)
 	case *protoTypes.BodyChannelRemoved:
 		s.RemoveChannel(ctx, msg)
 	case *protoTypes.BodyServerRemoved:
@@ -98,6 +102,14 @@ func NewChannel() actor.Receiver {
 
 func (c *channel) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
+	case actor.Stopped:
+		slog.Info("channel stopped",
+			"id", ctx.PID().GetID(),
+		)
+	case actor.Started:
+		slog.Info("channel started",
+			"id", ctx.PID().GetID(),
+		)
 	case actor.InternalError:
 		slog.Info("channel erroring",
 			"id", ctx.PID().GetID(),
@@ -150,6 +162,8 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.BroadcastConnect(ctx, msg)
 	case *protoTypes.BroadcastDisconnect:
 		u.BroadcastDisconnect(ctx, msg)
+	case *protoTypes.ChannelStarting:
+		u.ChannelStarting(ctx, msg)
 	case *protoTypes.BroadcastChannelCreation:
 		u.BroadcastChannelCreation(ctx, msg)
 	case *protoTypes.BroadcastChannelRemoved:
@@ -168,6 +182,8 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.AcceptFriend(ctx, msg)
 	case *protoTypes.DeleteFriend:
 		u.DeleteFriend(ctx, msg)
+	case *protoTypes.KillChannel:
+		u.ChannelKilled(ctx, msg)
 	}
 }
 

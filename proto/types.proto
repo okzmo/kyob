@@ -132,6 +132,11 @@ message BroadcastChannelCreation {
   string actor_address = 13;
 }
 
+message ChannelStarting {
+  string actor_id = 1;
+  string actor_address = 2;
+}
+
 message BroadcastConnect {
   string server_id = 1;
   string user_id = 2;
@@ -156,6 +161,20 @@ message BodyChannelCreation {
   int32 x = 8;
   int32 y = 9;
   string id = 10;
+}
+
+message StartChannel {
+  string server_id = 1;
+  string channel_id = 2;
+  repeated string users = 3;
+}
+
+message KillChannel {
+  string server_id = 1;
+  string channel_id = 2;
+  repeated string users = 3;
+  string actor_id = 4;
+  string actor_address = 5;
 }
 
 message BodyChannelRemoved {

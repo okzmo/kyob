@@ -59,14 +59,6 @@ class Servers {
 		this.servers[serverId].channels[channel.id] = channel;
 	}
 
-	hideServer(serverId: string) {
-		this.servers[serverId].hidden = true;
-	}
-
-	showServer(serverId: string) {
-		this.servers[serverId].hidden = false;
-	}
-
 	removeServer(serverId: string) {
 		delete this.servers[serverId];
 	}

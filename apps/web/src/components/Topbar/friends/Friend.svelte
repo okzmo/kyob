@@ -36,7 +36,11 @@
 	}
 
 	async function deleteFriend() {
-		const res = await backend.deleteFriend({ friendship_id: friendshipId, friend_id: id });
+		const res = await backend.deleteFriend({
+			friendship_id: friendshipId,
+			friend_id: id,
+			user_id: userStore.user!.id
+		});
 		if (res.isErr()) {
 			console.error(res.error);
 			return;

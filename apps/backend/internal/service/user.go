@@ -23,6 +23,7 @@ type AcceptFriendBody struct {
 type RemoveFriendBody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
 	FriendID     string `validate:"required" json:"friend_id"`
+	UserID       string `validate:"required" json:"user_id"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -85,25 +86,41 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 	return invite.ID, friend.ID, nil
 }
 
-func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, error) {
+func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, *db.Channel, error) {
 	err := db.Query.AcceptFriend(ctx, body.FriendshipID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	friend, err := db.Query.GetUserById(ctx, body.UserID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &friend, nil
+	existingChannel, err := db.Query.GetExistingChannel(ctx, db.GetExistingChannelParams{
+		Column1: body.FriendID,
+		Column2: body.UserID,
+	})
+	if err != nil {
+		return &friend, nil, nil
+	}
+
+	return &friend, &existingChannel, nil
 }
 
-func DeleteFriend(ctx context.Context, body *RemoveFriendBody) error {
+func DeleteFriend(ctx context.Context, body *RemoveFriendBody) (string, error) {
 	err := db.Query.DeleteFriend(ctx, body.FriendshipID)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	channel, err := db.Query.DeactivateChannel(ctx, db.DeactivateChannelParams{
+		Column1: body.FriendID,
+		Column2: body.FriendID,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return channel.ID, nil
 }

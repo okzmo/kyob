@@ -119,6 +119,18 @@ func (s *server) InitializeChannels(serverId string, ctx *actor.Context) {
 	}
 }
 
+func (s *server) StartChannel(ctx *actor.Context, msg *protoTypes.StartChannel) {
+	channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(msg.ChannelId))
+
+	for _, user := range msg.Users {
+		userPID := UsersEngine.Registry.GetPID("user", user)
+		UsersEngine.Send(userPID, &protoTypes.ChannelStarting{
+			ActorId:      channelPid.ID,
+			ActorAddress: channelPid.Address,
+		})
+	}
+}
+
 func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCreation) {
 	channelToCreate := &services.CreateChannelBody{
 		Name:        msg.Name,
@@ -176,5 +188,20 @@ func (s *server) RemoveChannel(ctx *actor.Context, msg *protoTypes.BodyChannelRe
 			ActorId:      channelPID.ID,
 			ActorAddress: channelPID.Address,
 		})
+	}
+}
+
+func (s *server) KillChannel(ctx *actor.Context, msg *protoTypes.KillChannel) {
+	channelId := fmt.Sprintf("channel/%s", msg.ChannelId)
+	channelPID := ctx.PID().Child(channelId)
+	ctx.Engine().Poison(channelPID)
+	delete(s.channels, channelPID)
+
+	msg.ActorAddress = channelPID.Address
+	msg.ActorId = channelPID.ID
+
+	for _, user := range msg.Users {
+		userPID := UsersEngine.Registry.GetPID("user", user)
+		UsersEngine.Send(userPID, msg)
 	}
 }

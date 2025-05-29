@@ -1316,6 +1316,58 @@ func (x *BroadcastChannelCreation) GetActorAddress() string {
 	return ""
 }
 
+type ChannelStarting struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ActorId       string                 `protobuf:"bytes,1,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
+	ActorAddress  string                 `protobuf:"bytes,2,opt,name=actor_address,json=actorAddress,proto3" json:"actor_address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChannelStarting) Reset() {
+	*x = ChannelStarting{}
+	mi := &file_types_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChannelStarting) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChannelStarting) ProtoMessage() {}
+
+func (x *ChannelStarting) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChannelStarting.ProtoReflect.Descriptor instead.
+func (*ChannelStarting) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ChannelStarting) GetActorId() string {
+	if x != nil {
+		return x.ActorId
+	}
+	return ""
+}
+
+func (x *ChannelStarting) GetActorAddress() string {
+	if x != nil {
+		return x.ActorAddress
+	}
+	return ""
+}
+
 type BroadcastConnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
@@ -1328,7 +1380,7 @@ type BroadcastConnect struct {
 
 func (x *BroadcastConnect) Reset() {
 	*x = BroadcastConnect{}
-	mi := &file_types_proto_msgTypes[14]
+	mi := &file_types_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1340,7 +1392,7 @@ func (x *BroadcastConnect) String() string {
 func (*BroadcastConnect) ProtoMessage() {}
 
 func (x *BroadcastConnect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[14]
+	mi := &file_types_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1353,7 +1405,7 @@ func (x *BroadcastConnect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastConnect.ProtoReflect.Descriptor instead.
 func (*BroadcastConnect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{14}
+	return file_types_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *BroadcastConnect) GetServerId() string {
@@ -1395,7 +1447,7 @@ type BroadcastDisconnect struct {
 
 func (x *BroadcastDisconnect) Reset() {
 	*x = BroadcastDisconnect{}
-	mi := &file_types_proto_msgTypes[15]
+	mi := &file_types_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1407,7 +1459,7 @@ func (x *BroadcastDisconnect) String() string {
 func (*BroadcastDisconnect) ProtoMessage() {}
 
 func (x *BroadcastDisconnect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[15]
+	mi := &file_types_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1420,7 +1472,7 @@ func (x *BroadcastDisconnect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastDisconnect.ProtoReflect.Descriptor instead.
 func (*BroadcastDisconnect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{15}
+	return file_types_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BroadcastDisconnect) GetServerId() string {
@@ -1462,7 +1514,7 @@ type BodyChannelCreation struct {
 
 func (x *BodyChannelCreation) Reset() {
 	*x = BodyChannelCreation{}
-	mi := &file_types_proto_msgTypes[16]
+	mi := &file_types_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1474,7 +1526,7 @@ func (x *BodyChannelCreation) String() string {
 func (*BodyChannelCreation) ProtoMessage() {}
 
 func (x *BodyChannelCreation) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[16]
+	mi := &file_types_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1487,7 +1539,7 @@ func (x *BodyChannelCreation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyChannelCreation.ProtoReflect.Descriptor instead.
 func (*BodyChannelCreation) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{16}
+	return file_types_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *BodyChannelCreation) GetServerId() string {
@@ -1560,6 +1612,142 @@ func (x *BodyChannelCreation) GetId() string {
 	return ""
 }
 
+type StartChannel struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	Users         []string               `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StartChannel) Reset() {
+	*x = StartChannel{}
+	mi := &file_types_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartChannel) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartChannel) ProtoMessage() {}
+
+func (x *StartChannel) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartChannel.ProtoReflect.Descriptor instead.
+func (*StartChannel) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *StartChannel) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *StartChannel) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+func (x *StartChannel) GetUsers() []string {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+type KillChannel struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	Users         []string               `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
+	ActorId       string                 `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
+	ActorAddress  string                 `protobuf:"bytes,5,opt,name=actor_address,json=actorAddress,proto3" json:"actor_address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KillChannel) Reset() {
+	*x = KillChannel{}
+	mi := &file_types_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KillChannel) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KillChannel) ProtoMessage() {}
+
+func (x *KillChannel) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KillChannel.ProtoReflect.Descriptor instead.
+func (*KillChannel) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *KillChannel) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *KillChannel) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+func (x *KillChannel) GetUsers() []string {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *KillChannel) GetActorId() string {
+	if x != nil {
+		return x.ActorId
+	}
+	return ""
+}
+
+func (x *KillChannel) GetActorAddress() string {
+	if x != nil {
+		return x.ActorAddress
+	}
+	return ""
+}
+
 type BodyChannelRemoved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
@@ -1571,7 +1759,7 @@ type BodyChannelRemoved struct {
 
 func (x *BodyChannelRemoved) Reset() {
 	*x = BodyChannelRemoved{}
-	mi := &file_types_proto_msgTypes[17]
+	mi := &file_types_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1583,7 +1771,7 @@ func (x *BodyChannelRemoved) String() string {
 func (*BodyChannelRemoved) ProtoMessage() {}
 
 func (x *BodyChannelRemoved) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[17]
+	mi := &file_types_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1596,7 +1784,7 @@ func (x *BodyChannelRemoved) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyChannelRemoved.ProtoReflect.Descriptor instead.
 func (*BodyChannelRemoved) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{17}
+	return file_types_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *BodyChannelRemoved) GetServerId() string {
@@ -1630,7 +1818,7 @@ type BodyServerRemoved struct {
 
 func (x *BodyServerRemoved) Reset() {
 	*x = BodyServerRemoved{}
-	mi := &file_types_proto_msgTypes[18]
+	mi := &file_types_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1642,7 +1830,7 @@ func (x *BodyServerRemoved) String() string {
 func (*BodyServerRemoved) ProtoMessage() {}
 
 func (x *BodyServerRemoved) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[18]
+	mi := &file_types_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1655,7 +1843,7 @@ func (x *BodyServerRemoved) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyServerRemoved.ProtoReflect.Descriptor instead.
 func (*BodyServerRemoved) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{18}
+	return file_types_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BodyServerRemoved) GetServerId() string {
@@ -1682,7 +1870,7 @@ type BodyNewUserInServer struct {
 
 func (x *BodyNewUserInServer) Reset() {
 	*x = BodyNewUserInServer{}
-	mi := &file_types_proto_msgTypes[19]
+	mi := &file_types_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1694,7 +1882,7 @@ func (x *BodyNewUserInServer) String() string {
 func (*BodyNewUserInServer) ProtoMessage() {}
 
 func (x *BodyNewUserInServer) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[19]
+	mi := &file_types_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1707,7 +1895,7 @@ func (x *BodyNewUserInServer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyNewUserInServer.ProtoReflect.Descriptor instead.
 func (*BodyNewUserInServer) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{19}
+	return file_types_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *BodyNewUserInServer) GetServerId() string {
@@ -1734,7 +1922,7 @@ type NewServerCreated struct {
 
 func (x *NewServerCreated) Reset() {
 	*x = NewServerCreated{}
-	mi := &file_types_proto_msgTypes[20]
+	mi := &file_types_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1746,7 +1934,7 @@ func (x *NewServerCreated) String() string {
 func (*NewServerCreated) ProtoMessage() {}
 
 func (x *NewServerCreated) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[20]
+	mi := &file_types_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1759,7 +1947,7 @@ func (x *NewServerCreated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NewServerCreated.ProtoReflect.Descriptor instead.
 func (*NewServerCreated) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{20}
+	return file_types_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *NewServerCreated) GetActorId() string {
@@ -1786,7 +1974,7 @@ type BroadcastAcceptFriend struct {
 
 func (x *BroadcastAcceptFriend) Reset() {
 	*x = BroadcastAcceptFriend{}
-	mi := &file_types_proto_msgTypes[21]
+	mi := &file_types_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1798,7 +1986,7 @@ func (x *BroadcastAcceptFriend) String() string {
 func (*BroadcastAcceptFriend) ProtoMessage() {}
 
 func (x *BroadcastAcceptFriend) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[21]
+	mi := &file_types_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1811,7 +1999,7 @@ func (x *BroadcastAcceptFriend) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastAcceptFriend.ProtoReflect.Descriptor instead.
 func (*BroadcastAcceptFriend) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{21}
+	return file_types_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BroadcastAcceptFriend) GetUserId() string {
@@ -1838,7 +2026,7 @@ type SendFriendInvite struct {
 
 func (x *SendFriendInvite) Reset() {
 	*x = SendFriendInvite{}
-	mi := &file_types_proto_msgTypes[22]
+	mi := &file_types_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1850,7 +2038,7 @@ func (x *SendFriendInvite) String() string {
 func (*SendFriendInvite) ProtoMessage() {}
 
 func (x *SendFriendInvite) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[22]
+	mi := &file_types_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1863,7 +2051,7 @@ func (x *SendFriendInvite) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendFriendInvite.ProtoReflect.Descriptor instead.
 func (*SendFriendInvite) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{22}
+	return file_types_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SendFriendInvite) GetInviteId() string {
@@ -1892,7 +2080,7 @@ type AcceptFriendInvite struct {
 
 func (x *AcceptFriendInvite) Reset() {
 	*x = AcceptFriendInvite{}
-	mi := &file_types_proto_msgTypes[23]
+	mi := &file_types_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1904,7 +2092,7 @@ func (x *AcceptFriendInvite) String() string {
 func (*AcceptFriendInvite) ProtoMessage() {}
 
 func (x *AcceptFriendInvite) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[23]
+	mi := &file_types_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1917,7 +2105,7 @@ func (x *AcceptFriendInvite) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptFriendInvite.ProtoReflect.Descriptor instead.
 func (*AcceptFriendInvite) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{23}
+	return file_types_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *AcceptFriendInvite) GetInviteId() string {
@@ -1958,7 +2146,7 @@ type DeleteFriend struct {
 
 func (x *DeleteFriend) Reset() {
 	*x = DeleteFriend{}
-	mi := &file_types_proto_msgTypes[24]
+	mi := &file_types_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1970,7 +2158,7 @@ func (x *DeleteFriend) String() string {
 func (*DeleteFriend) ProtoMessage() {}
 
 func (x *DeleteFriend) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[24]
+	mi := &file_types_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1983,7 +2171,7 @@ func (x *DeleteFriend) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFriend.ProtoReflect.Descriptor instead.
 func (*DeleteFriend) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{24}
+	return file_types_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DeleteFriend) GetInviteId() string {
@@ -2009,7 +2197,7 @@ type Connect struct {
 
 func (x *Connect) Reset() {
 	*x = Connect{}
-	mi := &file_types_proto_msgTypes[25]
+	mi := &file_types_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2021,7 +2209,7 @@ func (x *Connect) String() string {
 func (*Connect) ProtoMessage() {}
 
 func (x *Connect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[25]
+	mi := &file_types_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2034,7 +2222,7 @@ func (x *Connect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Connect.ProtoReflect.Descriptor instead.
 func (*Connect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{25}
+	return file_types_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *Connect) GetType() string {
@@ -2053,7 +2241,7 @@ type Disconnect struct {
 
 func (x *Disconnect) Reset() {
 	*x = Disconnect{}
-	mi := &file_types_proto_msgTypes[26]
+	mi := &file_types_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2065,7 +2253,7 @@ func (x *Disconnect) String() string {
 func (*Disconnect) ProtoMessage() {}
 
 func (x *Disconnect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[26]
+	mi := &file_types_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2078,7 +2266,7 @@ func (x *Disconnect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Disconnect.ProtoReflect.Descriptor instead.
 func (*Disconnect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{26}
+	return file_types_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *Disconnect) GetType() string {
@@ -2218,7 +2406,10 @@ const file_types_proto_rawDesc = "" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x19\n" +
 	"\bactor_id\x18\f \x01(\tR\aactorId\x12#\n" +
 	"\ractor_address\x18\r \x01(\tR\factorAddressB\x0e\n" +
-	"\f_description\"r\n" +
+	"\f_description\"Q\n" +
+	"\x0fChannelStarting\x12\x19\n" +
+	"\bactor_id\x18\x01 \x01(\tR\aactorId\x12#\n" +
+	"\ractor_address\x18\x02 \x01(\tR\factorAddress\"r\n" +
 	"\x10BroadcastConnect\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
@@ -2240,7 +2431,19 @@ const file_types_proto_rawDesc = "" +
 	"\x01x\x18\b \x01(\x05R\x01x\x12\f\n" +
 	"\x01y\x18\t \x01(\x05R\x01y\x12\x0e\n" +
 	"\x02id\x18\n" +
-	" \x01(\tR\x02id\"i\n" +
+	" \x01(\tR\x02id\"`\n" +
+	"\fStartChannel\x12\x1b\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x02 \x01(\tR\tchannelId\x12\x14\n" +
+	"\x05users\x18\x03 \x03(\tR\x05users\"\x9f\x01\n" +
+	"\vKillChannel\x12\x1b\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x02 \x01(\tR\tchannelId\x12\x14\n" +
+	"\x05users\x18\x03 \x03(\tR\x05users\x12\x19\n" +
+	"\bactor_id\x18\x04 \x01(\tR\aactorId\x12#\n" +
+	"\ractor_address\x18\x05 \x01(\tR\factorAddress\"i\n" +
 	"\x12BodyChannelRemoved\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
@@ -2288,7 +2491,7 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_types_proto_goTypes = []any{
 	(*WSMessage)(nil),                  // 0: types.WSMessage
 	(*UserLinksRow)(nil),               // 1: types.UserLinksRow
@@ -2304,43 +2507,46 @@ var file_types_proto_goTypes = []any{
 	(*BroadcastNewUserInServer)(nil),   // 11: types.BroadcastNewUserInServer
 	(*BroadcastServerRemoved)(nil),     // 12: types.BroadcastServerRemoved
 	(*BroadcastChannelCreation)(nil),   // 13: types.BroadcastChannelCreation
-	(*BroadcastConnect)(nil),           // 14: types.BroadcastConnect
-	(*BroadcastDisconnect)(nil),        // 15: types.BroadcastDisconnect
-	(*BodyChannelCreation)(nil),        // 16: types.BodyChannelCreation
-	(*BodyChannelRemoved)(nil),         // 17: types.BodyChannelRemoved
-	(*BodyServerRemoved)(nil),          // 18: types.BodyServerRemoved
-	(*BodyNewUserInServer)(nil),        // 19: types.BodyNewUserInServer
-	(*NewServerCreated)(nil),           // 20: types.NewServerCreated
-	(*BroadcastAcceptFriend)(nil),      // 21: types.BroadcastAcceptFriend
-	(*SendFriendInvite)(nil),           // 22: types.SendFriendInvite
-	(*AcceptFriendInvite)(nil),         // 23: types.AcceptFriendInvite
-	(*DeleteFriend)(nil),               // 24: types.DeleteFriend
-	(*Connect)(nil),                    // 25: types.Connect
-	(*Disconnect)(nil),                 // 26: types.Disconnect
-	(*timestamppb.Timestamp)(nil),      // 27: google.protobuf.Timestamp
+	(*ChannelStarting)(nil),            // 14: types.ChannelStarting
+	(*BroadcastConnect)(nil),           // 15: types.BroadcastConnect
+	(*BroadcastDisconnect)(nil),        // 16: types.BroadcastDisconnect
+	(*BodyChannelCreation)(nil),        // 17: types.BodyChannelCreation
+	(*StartChannel)(nil),               // 18: types.StartChannel
+	(*KillChannel)(nil),                // 19: types.KillChannel
+	(*BodyChannelRemoved)(nil),         // 20: types.BodyChannelRemoved
+	(*BodyServerRemoved)(nil),          // 21: types.BodyServerRemoved
+	(*BodyNewUserInServer)(nil),        // 22: types.BodyNewUserInServer
+	(*NewServerCreated)(nil),           // 23: types.NewServerCreated
+	(*BroadcastAcceptFriend)(nil),      // 24: types.BroadcastAcceptFriend
+	(*SendFriendInvite)(nil),           // 25: types.SendFriendInvite
+	(*AcceptFriendInvite)(nil),         // 26: types.AcceptFriendInvite
+	(*DeleteFriend)(nil),               // 27: types.DeleteFriend
+	(*Connect)(nil),                    // 28: types.Connect
+	(*Disconnect)(nil),                 // 29: types.Disconnect
+	(*timestamppb.Timestamp)(nil),      // 30: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
 	7,  // 0: types.WSMessage.chat_message:type_name -> types.BroadcastChatMessage
 	13, // 1: types.WSMessage.channel_creation:type_name -> types.BroadcastChannelCreation
 	10, // 2: types.WSMessage.channel_removed:type_name -> types.BroadcastChannelRemoved
 	11, // 3: types.WSMessage.new_user:type_name -> types.BroadcastNewUserInServer
-	14, // 4: types.WSMessage.user_connect:type_name -> types.BroadcastConnect
-	15, // 5: types.WSMessage.user_disconnect:type_name -> types.BroadcastDisconnect
+	15, // 4: types.WSMessage.user_connect:type_name -> types.BroadcastConnect
+	16, // 5: types.WSMessage.user_disconnect:type_name -> types.BroadcastDisconnect
 	9,  // 6: types.WSMessage.delete_message:type_name -> types.BroadcastDeleteChatMessage
 	8,  // 7: types.WSMessage.edit_message:type_name -> types.BroadcastEditMessage
-	22, // 8: types.WSMessage.friend_invite:type_name -> types.SendFriendInvite
-	23, // 9: types.WSMessage.accept_friend:type_name -> types.AcceptFriendInvite
-	24, // 10: types.WSMessage.delete_friend:type_name -> types.DeleteFriend
-	27, // 11: types.User.created_at:type_name -> google.protobuf.Timestamp
+	25, // 8: types.WSMessage.friend_invite:type_name -> types.SendFriendInvite
+	26, // 9: types.WSMessage.accept_friend:type_name -> types.AcceptFriendInvite
+	27, // 10: types.WSMessage.delete_friend:type_name -> types.DeleteFriend
+	30, // 11: types.User.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 12: types.User.links:type_name -> types.UserLinksRow
 	2,  // 13: types.User.facts:type_name -> types.UserFactsRow
 	3,  // 14: types.IncomingChatMessage.author:type_name -> types.User
 	3,  // 15: types.BroadcastChatMessage.author:type_name -> types.User
-	27, // 16: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	27, // 17: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	30, // 16: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	30, // 17: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 18: types.BroadcastNewUserInServer.user:type_name -> types.User
-	27, // 19: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	27, // 20: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	30, // 19: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	30, // 20: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 21: types.BodyNewUserInServer.user:type_name -> types.User
 	3,  // 22: types.SendFriendInvite.user:type_name -> types.User
 	3,  // 23: types.AcceptFriendInvite.user:type_name -> types.User
@@ -2377,7 +2583,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   27,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

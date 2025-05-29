@@ -96,6 +96,12 @@ func (u *user) BroadcastDisconnect(ctx *actor.Context, msg *protoTypes.Broadcast
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
 
+func (u *user) ChannelStarting(ctx *actor.Context, msg *protoTypes.ChannelStarting) {
+	channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
+	ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
+	u.channels[channelPid] = true
+}
+
 func (u *user) BroadcastChannelCreation(ctx *actor.Context, msg *protoTypes.BroadcastChannelCreation) {
 	msgToSend := &protoTypes.WSMessage{
 		Content: &protoTypes.WSMessage_ChannelCreation{
@@ -137,6 +143,12 @@ func (u *user) BroadcastChannelRemoved(ctx *actor.Context, msg *protoTypes.Broad
 	ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{Type: "DISCONNECTING"}, ctx.PID())
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+	delete(u.channels, channelPid)
+}
+
+func (u *user) ChannelKilled(ctx *actor.Context, msg *protoTypes.KillChannel) {
+	channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
+	ServersEngine.SendWithSender(channelPid, &protoTypes.Disconnect{Type: "DISCONNECTING"}, ctx.PID())
 	delete(u.channels, channelPid)
 }
 

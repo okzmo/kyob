@@ -197,6 +197,7 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
+						console.log(value);
 
 						if (value.sender) {
 							const newFriend: Friend = {

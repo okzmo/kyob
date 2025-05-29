@@ -90,26 +90,39 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	friend, err := services.AcceptFriend(r.Context(), &body)
+	friend, existingChannel, err := services.AcceptFriend(r.Context(), &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	channelId := utils.Node.Generate().String()
-	newChannelMessage := &proto.BodyChannelCreation{
-		ServerId:  "global",
-		CreatorId: "global",
-		Name:      "friends",
-		Type:      "textual",
-		Users:     []string{body.FriendID, body.UserID},
-		X:         0,
-		Y:         0,
-		Id:        channelId,
-	}
+	var channelId string
 
+	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
+	userPid := actors.UsersEngine.Registry.GetPID("user", body.UserID)
 	globalServerPid := actors.ServersEngine.Registry.GetPID("server", "global")
-	actors.ServersEngine.Send(globalServerPid, newChannelMessage)
+
+	if existingChannel != nil {
+		channelId = existingChannel.ID
+		actors.ServersEngine.Send(globalServerPid, &proto.StartChannel{
+			ChannelId: channelId,
+			Users:     []string{body.FriendID, body.UserID},
+		})
+	} else {
+		channelId = utils.Node.Generate().String()
+		newChannelMessage := &proto.BodyChannelCreation{
+			ServerId:  "global",
+			CreatorId: "global",
+			Name:      "friends",
+			Type:      "dm",
+			Users:     []string{body.FriendID, body.UserID},
+			X:         0,
+			Y:         0,
+			Id:        channelId,
+		}
+
+		actors.ServersEngine.Send(globalServerPid, newChannelMessage)
+	}
 
 	friendMessage := &proto.AcceptFriendInvite{
 		InviteId:  body.FriendshipID,
@@ -120,20 +133,16 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 			Avatar:      &friend.Avatar.String,
 			About:       &friend.About.String,
 		},
-		Sender: false,
+		Sender: true,
 	}
-
-	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
 	actors.UsersEngine.Send(friendPid, friendMessage)
 
-	senderMessage := &proto.AcceptFriendInvite{
+	receiverMessage := &proto.AcceptFriendInvite{
 		InviteId:  body.FriendshipID,
 		ChannelId: channelId,
-		Sender:    true,
+		Sender:    false,
 	}
-
-	userPid := actors.UsersEngine.Registry.GetPID("user", body.UserID)
-	actors.UsersEngine.Send(userPid, senderMessage)
+	actors.UsersEngine.Send(userPid, receiverMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
@@ -153,7 +162,7 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.DeleteFriend(r.Context(), &body)
+	channelId, err := services.DeleteFriend(r.Context(), &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -165,7 +174,13 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
+	globalServerPid := actors.ServersEngine.Registry.GetPID("server", "global")
+
 	actors.UsersEngine.Send(friendPid, deleteFriendMessage)
+	actors.ServersEngine.Send(globalServerPid, &proto.KillChannel{
+		ChannelId: channelId,
+		Users:     []string{body.FriendID, body.UserID},
+	})
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }

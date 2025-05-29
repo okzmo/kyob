@@ -17,7 +17,7 @@ INSERT INTO channels (
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
+RETURNING id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at
 `
 
 type CreateChannelParams struct {
@@ -55,6 +55,41 @@ func (q *Queries) CreateChannel(ctx context.Context, arg CreateChannelParams) (C
 		&i.Roles,
 		&i.X,
 		&i.Y,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const deactivateChannel = `-- name: DeactivateChannel :one
+UPDATE channels SET active = false
+WHERE type = 'dm'
+  AND array_length(users, 1) = 2
+  AND $1::varchar = ANY(users) 
+  AND $2::varchar = ANY(users)
+RETURNING id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at
+`
+
+type DeactivateChannelParams struct {
+	Column1 string `json:"column_1"`
+	Column2 string `json:"column_2"`
+}
+
+func (q *Queries) DeactivateChannel(ctx context.Context, arg DeactivateChannelParams) (Channel, error) {
+	row := q.db.QueryRow(ctx, deactivateChannel, arg.Column1, arg.Column2)
+	var i Channel
+	err := row.Scan(
+		&i.ID,
+		&i.ServerID,
+		&i.Name,
+		&i.Type,
+		&i.Description,
+		&i.Users,
+		&i.Roles,
+		&i.X,
+		&i.Y,
+		&i.Active,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -71,7 +106,7 @@ func (q *Queries) DeleteChannel(ctx context.Context, id string) error {
 }
 
 const getChannel = `-- name: GetChannel :one
-SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at FROM channels WHERE id = $1
+SELECT id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at FROM channels WHERE id = $1
 `
 
 func (q *Queries) GetChannel(ctx context.Context, id string) (Channel, error) {
@@ -87,6 +122,7 @@ func (q *Queries) GetChannel(ctx context.Context, id string) (Channel, error) {
 		&i.Roles,
 		&i.X,
 		&i.Y,
+		&i.Active,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -94,9 +130,9 @@ func (q *Queries) GetChannel(ctx context.Context, id string) (Channel, error) {
 }
 
 const getChannelsFromServer = `-- name: GetChannelsFromServer :many
-SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
+SELECT id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at
 FROM channels
-WHERE server_id = $1
+WHERE server_id = $1 AND active = true
 `
 
 func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID string) ([]Channel, error) {
@@ -118,6 +154,7 @@ func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID string) ([
 			&i.Roles,
 			&i.X,
 			&i.Y,
+			&i.Active,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -132,9 +169,9 @@ func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID string) ([
 }
 
 const getFriendChannels = `-- name: GetFriendChannels :many
-SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
+SELECT id, server_id, name, type, description, users, roles, x, y, active, created_at, updated_at
 FROM channels
-WHERE server_id = 'global' AND $1::text = ANY(users)
+WHERE server_id = 'global' AND $1::text = ANY(users) AND active = true
 `
 
 func (q *Queries) GetFriendChannels(ctx context.Context, dollar_1 string) ([]Channel, error) {
@@ -156,6 +193,7 @@ func (q *Queries) GetFriendChannels(ctx context.Context, dollar_1 string) ([]Cha
 			&i.Roles,
 			&i.X,
 			&i.Y,
+			&i.Active,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
