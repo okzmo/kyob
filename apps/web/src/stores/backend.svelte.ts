@@ -115,7 +115,13 @@ class Backend {
 							type: value.type as ChannelTypes,
 							unread: false,
 							x: value.x,
-							y: value.y
+							y: value.y,
+							users: value.users.map((u) => ({
+								id: u.id,
+								avatar: u.avatar,
+								username: u.username,
+								display_name: u.displayName
+							}))
 						};
 						serversStore.addChannel(value.serverId, channel);
 					}
@@ -197,7 +203,6 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
-						console.log(value);
 
 						if (value.sender) {
 							const newFriend: Friend = {

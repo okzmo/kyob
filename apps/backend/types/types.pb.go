@@ -1183,7 +1183,7 @@ type BroadcastChannelCreation struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Users         []string               `protobuf:"bytes,6,rep,name=users,proto3" json:"users,omitempty"`
+	Users         []*User                `protobuf:"bytes,6,rep,name=users,proto3" json:"users,omitempty"`
 	Roles         []string               `protobuf:"bytes,7,rep,name=roles,proto3" json:"roles,omitempty"`
 	X             int32                  `protobuf:"varint,8,opt,name=x,proto3" json:"x,omitempty"`
 	Y             int32                  `protobuf:"varint,9,opt,name=y,proto3" json:"y,omitempty"`
@@ -1260,7 +1260,7 @@ func (x *BroadcastChannelCreation) GetDescription() string {
 	return ""
 }
 
-func (x *BroadcastChannelCreation) GetUsers() []string {
+func (x *BroadcastChannelCreation) GetUsers() []*User {
 	if x != nil {
 		return x.Users
 	}
@@ -2388,14 +2388,14 @@ const file_types_proto_rawDesc = "" +
 	"\x16BroadcastServerRemoved\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x19\n" +
 	"\bactor_id\x18\x02 \x01(\tR\aactorId\x12#\n" +
-	"\ractor_address\x18\x03 \x01(\tR\factorAddress\"\xa4\x03\n" +
+	"\ractor_address\x18\x03 \x01(\tR\factorAddress\"\xb1\x03\n" +
 	"\x18BroadcastChannelCreation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x14\n" +
-	"\x05users\x18\x06 \x03(\tR\x05users\x12\x14\n" +
+	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12!\n" +
+	"\x05users\x18\x06 \x03(\v2\v.types.UserR\x05users\x12\x14\n" +
 	"\x05roles\x18\a \x03(\tR\x05roles\x12\f\n" +
 	"\x01x\x18\b \x01(\x05R\x01x\x12\f\n" +
 	"\x01y\x18\t \x01(\x05R\x01y\x129\n" +
@@ -2545,16 +2545,17 @@ var file_types_proto_depIdxs = []int32{
 	30, // 16: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
 	30, // 17: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 18: types.BroadcastNewUserInServer.user:type_name -> types.User
-	30, // 19: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	30, // 20: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 21: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 22: types.SendFriendInvite.user:type_name -> types.User
-	3,  // 23: types.AcceptFriendInvite.user:type_name -> types.User
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	3,  // 19: types.BroadcastChannelCreation.users:type_name -> types.User
+	30, // 20: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	30, // 21: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 22: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 23: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 24: types.AcceptFriendInvite.user:type_name -> types.User
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }

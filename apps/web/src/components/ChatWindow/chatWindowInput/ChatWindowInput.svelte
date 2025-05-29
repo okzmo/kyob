@@ -6,7 +6,7 @@
 	import StarterKit from '@tiptap/starter-kit';
 	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from '../../../stores/backend.svelte';
-	import type { Channel, Friend, Server } from '../../../types/types';
+	import type { Channel, Friend, Server, User } from '../../../types/types';
 	import { PluginKey } from '@tiptap/pm/state';
 	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from './MentionsList.svelte';
@@ -88,7 +88,16 @@
 
 								const activeWindow = windows.getActiveWindow();
 								if (!activeWindow?.serverId) return [];
-								const users = serversStore.getServer(activeWindow?.serverId).members;
+
+								let users: Partial<User>[] = [];
+
+								if (activeWindow.serverId === 'global' && activeWindow.channelId) {
+									users =
+										serversStore.getChannel(activeWindow.serverId, activeWindow.channelId).users ||
+										[];
+								} else {
+									users = serversStore.getServer(activeWindow?.serverId).members;
+								}
 
 								for (const user of users) {
 									if (

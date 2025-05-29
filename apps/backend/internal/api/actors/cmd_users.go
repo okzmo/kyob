@@ -96,12 +96,6 @@ func (u *user) BroadcastDisconnect(ctx *actor.Context, msg *protoTypes.Broadcast
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
 
-func (u *user) ChannelStarting(ctx *actor.Context, msg *protoTypes.ChannelStarting) {
-	channelPid := actor.NewPID(msg.ActorAddress, msg.ActorId)
-	ServersEngine.SendWithSender(channelPid, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
-	u.channels[channelPid] = true
-}
-
 func (u *user) BroadcastChannelCreation(ctx *actor.Context, msg *protoTypes.BroadcastChannelCreation) {
 	msgToSend := &protoTypes.WSMessage{
 		Content: &protoTypes.WSMessage_ChannelCreation{

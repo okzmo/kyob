@@ -28,6 +28,7 @@ export interface Channel {
 	y: number;
 	unread: boolean;
 	messages?: Message[];
+	users?: Partial<User>[];
 }
 
 export interface Server {

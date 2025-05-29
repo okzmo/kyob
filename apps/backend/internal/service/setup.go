@@ -13,9 +13,14 @@ type ServerWithChannels struct {
 	X int32 `json:"x"`
 	Y int32 `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
-	Channels    map[string]db.Channel    `json:"channels"`
-	MemberCount int                      `json:"member_count"`
-	Members     []db.GetServerMembersRow `json:"members"`
+	Channels    map[string]ChannelsWithMembers `json:"channels"`
+	MemberCount int                            `json:"member_count"`
+	Members     []db.GetServerMembersRow       `json:"members"`
+}
+
+type ChannelsWithMembers struct {
+	db.Channel
+	Users []db.GetServerMembersRow `json:"users"`
 }
 
 type UserResponse struct {
@@ -105,13 +110,33 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	for _, server := range servers {
-		channelMap := make(map[string]db.Channel)
+		channelMap := make(map[string]ChannelsWithMembers)
 		channels, err := db.Query.GetChannelsFromServer(ctx, server.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, channel := range channels {
+		for _, channelRaw := range channels {
+			channel := ChannelsWithMembers{
+				channelRaw,
+				[]db.GetServerMembersRow{},
+			}
+
+			if len(channelRaw.Users) > 0 {
+				for _, userId := range channelRaw.Users {
+					user, err := db.Query.GetUserById(ctx, userId)
+					channel.Users = append(channel.Users, db.GetServerMembersRow{
+						ID:          user.ID,
+						Username:    user.Username,
+						DisplayName: user.DisplayName,
+						Avatar:      user.Avatar,
+					})
+					if err != nil {
+						return nil, err
+					}
+				}
+			}
+
 			channelMap[channel.ID] = channel
 		}
 

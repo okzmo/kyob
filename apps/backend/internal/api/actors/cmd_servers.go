@@ -119,15 +119,39 @@ func (s *server) InitializeChannels(serverId string, ctx *actor.Context) {
 	}
 }
 
-func (s *server) StartChannel(ctx *actor.Context, msg *protoTypes.StartChannel) {
+func (s *server) StartDMChannel(ctx *actor.Context, msg *protoTypes.StartChannel) {
 	channelPid := ctx.SpawnChild(NewChannel, "channel", actor.WithID(msg.ChannelId))
+
+	var users []*protoTypes.User
+	for _, user := range msg.Users {
+		u, err := db.Query.GetUserById(context.TODO(), user)
+		if err != nil {
+			return
+		}
+
+		users = append(users, &protoTypes.User{
+			Id:          u.ID,
+			DisplayName: u.DisplayName,
+			Username:    u.Username,
+			Avatar:      &u.Avatar.String,
+		})
+	}
+
+	channel := &protoTypes.BroadcastChannelCreation{
+		Id:           msg.ChannelId,
+		ServerId:     "global",
+		Name:         "friends",
+		Type:         "dm",
+		X:            0,
+		Y:            0,
+		Users:        users,
+		ActorId:      channelPid.ID,
+		ActorAddress: channelPid.Address,
+	}
 
 	for _, user := range msg.Users {
 		userPID := UsersEngine.Registry.GetPID("user", user)
-		UsersEngine.Send(userPID, &protoTypes.ChannelStarting{
-			ActorId:      channelPid.ID,
-			ActorAddress: channelPid.Address,
-		})
+		UsersEngine.Send(userPID, channel)
 	}
 }
 

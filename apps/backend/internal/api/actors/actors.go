@@ -74,7 +74,7 @@ func (s *server) Receive(ctx *actor.Context) {
 	case *protoTypes.Disconnect:
 		s.Disconnect(ctx, msg)
 	case *protoTypes.StartChannel:
-		s.StartChannel(ctx, msg)
+		s.StartDMChannel(ctx, msg)
 	case *protoTypes.BodyChannelCreation:
 		s.CreateChannel(ctx, msg)
 	case *protoTypes.KillChannel:
@@ -162,8 +162,6 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.BroadcastConnect(ctx, msg)
 	case *protoTypes.BroadcastDisconnect:
 		u.BroadcastDisconnect(ctx, msg)
-	case *protoTypes.ChannelStarting:
-		u.ChannelStarting(ctx, msg)
 	case *protoTypes.BroadcastChannelCreation:
 		u.BroadcastChannelCreation(ctx, msg)
 	case *protoTypes.BroadcastChannelRemoved:
