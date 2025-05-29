@@ -13,10 +13,10 @@ UPDATE friends SET accepted=true WHERE id=$1;
 DELETE FROM friends WHERE id=$1;
 
 -- name: GetFriends :many
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
-FROM users u, friends f
-WHERE f.user_id = $1 AND u.id = f.friend_id
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id, c.id AS channel_id
+FROM users u, friends f, channels c
+WHERE f.user_id = $1 AND u.id = f.friend_id AND $1 = ANY(c.users)
 UNION
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
-FROM users u, friends f
-WHERE f.friend_id = $1 AND u.id = f.user_id;
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id, c.id AS channel_id
+FROM users u, friends f, channels c
+WHERE f.friend_id = $1 AND u.id = f.user_id AND $1 = ANY(c.users);

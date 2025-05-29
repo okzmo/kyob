@@ -66,6 +66,7 @@ export interface User {
 }
 
 export interface Friend extends Partial<User> {
+	channel_id?: string;
 	friendship_id: string;
 	accepted: boolean;
 	sender: boolean;

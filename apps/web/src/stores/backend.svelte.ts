@@ -132,7 +132,9 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
-						serversStore.connectUser(value.serverId, value.userId, value.users, value.type);
+						setTimeout(() => {
+							serversStore.connectUser(value.serverId, value.userId, value.users, value.type);
+						}, 100);
 					}
 					break;
 				case 'userDisconnect':
@@ -196,21 +198,26 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 
-						const newFriend: Friend = {
-							id: value.user?.id,
-							display_name: value.user?.displayName,
-							avatar: value.user?.avatar,
-							about: value.user?.about,
-							friendship_id: value.inviteId,
-							accepted: true,
-							sender: true
-						};
+						if (value.sender) {
+							const newFriend: Friend = {
+								id: value.user?.id,
+								display_name: value.user?.displayName,
+								avatar: value.user?.avatar,
+								about: value.user?.about,
+								friendship_id: value.inviteId,
+								channel_id: value.channelId,
+								accepted: true,
+								sender: true
+							};
 
-						userStore.acceptFriend({
-							friendshipId: value.inviteId,
-							friend: newFriend,
-							sender: true
-						});
+							userStore.acceptFriend({
+								friendshipId: value.inviteId,
+								friend: newFriend,
+								sender: true
+							});
+						} else {
+							userStore.setFriendChannelId(value.inviteId, value.channelId);
+						}
 					}
 					break;
 				case 'deleteFriend':

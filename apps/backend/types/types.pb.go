@@ -1455,6 +1455,7 @@ type BodyChannelCreation struct {
 	Roles         []string               `protobuf:"bytes,7,rep,name=roles,proto3" json:"roles,omitempty"`
 	X             int32                  `protobuf:"varint,8,opt,name=x,proto3" json:"x,omitempty"`
 	Y             int32                  `protobuf:"varint,9,opt,name=y,proto3" json:"y,omitempty"`
+	Id            string                 `protobuf:"bytes,10,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1550,6 +1551,13 @@ func (x *BodyChannelCreation) GetY() int32 {
 		return x.Y
 	}
 	return 0
+}
+
+func (x *BodyChannelCreation) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
 }
 
 type BodyChannelRemoved struct {
@@ -1875,7 +1883,9 @@ func (x *SendFriendInvite) GetUser() *User {
 type AcceptFriendInvite struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	InviteId      string                 `protobuf:"bytes,1,opt,name=invite_id,json=inviteId,proto3" json:"invite_id,omitempty"`
-	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	User          *User                  `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	Sender        bool                   `protobuf:"varint,4,opt,name=sender,proto3" json:"sender,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1917,11 +1927,25 @@ func (x *AcceptFriendInvite) GetInviteId() string {
 	return ""
 }
 
+func (x *AcceptFriendInvite) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
 func (x *AcceptFriendInvite) GetUser() *User {
 	if x != nil {
 		return x.User
 	}
 	return nil
+}
+
+func (x *AcceptFriendInvite) GetSender() bool {
+	if x != nil {
+		return x.Sender
+	}
+	return false
 }
 
 type DeleteFriend struct {
@@ -2203,7 +2227,7 @@ const file_types_proto_rawDesc = "" +
 	"\x13BroadcastDisconnect\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\"\xe3\x01\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\"\xf3\x01\n" +
 	"\x13BodyChannelCreation\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
@@ -2214,7 +2238,9 @@ const file_types_proto_rawDesc = "" +
 	"\x05users\x18\x06 \x03(\tR\x05users\x12\x14\n" +
 	"\x05roles\x18\a \x03(\tR\x05roles\x12\f\n" +
 	"\x01x\x18\b \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\t \x01(\x05R\x01y\"i\n" +
+	"\x01y\x18\t \x01(\x05R\x01y\x12\x0e\n" +
+	"\x02id\x18\n" +
+	" \x01(\tR\x02id\"i\n" +
 	"\x12BodyChannelRemoved\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
@@ -2234,10 +2260,13 @@ const file_types_proto_rawDesc = "" +
 	"\tfriend_id\x18\x02 \x01(\tR\bfriendId\"P\n" +
 	"\x10SendFriendInvite\x12\x1b\n" +
 	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x1f\n" +
-	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"R\n" +
+	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"\x89\x01\n" +
 	"\x12AcceptFriendInvite\x12\x1b\n" +
-	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x1f\n" +
-	"\x04user\x18\x02 \x01(\v2\v.types.UserR\x04user\"D\n" +
+	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x02 \x01(\tR\tchannelId\x12\x1f\n" +
+	"\x04user\x18\x03 \x01(\v2\v.types.UserR\x04user\x12\x16\n" +
+	"\x06sender\x18\x04 \x01(\bR\x06sender\"D\n" +
 	"\fDeleteFriend\x12\x1b\n" +
 	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"\x1d\n" +

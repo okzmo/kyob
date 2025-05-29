@@ -39,6 +39,7 @@
 		if (res.isOk()) {
 			userStore.user = res.value.user;
 			userStore.friends = res.value.friends;
+			console.log(res.value);
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
 		}
@@ -93,15 +94,12 @@
 		{@render children()}
 
 		{#each windows.openWindows as chatWindow (chatWindow.id)}
-			{#if chatWindow.serverId && chatWindow.channelId}
-				<ChatWindow
-					id={chatWindow.id}
-					serverId={chatWindow.serverId}
-					channelId={chatWindow.channelId}
-				/>
-			{:else if chatWindow.friendId}
-				<ChatWindow id={chatWindow.id} friendId={chatWindow.friendId} />
-			{/if}
+			<ChatWindow
+				id={chatWindow.id}
+				serverId={chatWindow.serverId}
+				channelId={chatWindow.channelId}
+				friendId={chatWindow.friendId}
+			/>
 		{/each}
 	</ContextMenu.Trigger>
 	<ContextMenuSkeleton

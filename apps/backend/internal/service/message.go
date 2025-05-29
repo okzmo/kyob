@@ -42,12 +42,14 @@ type MessageResponse struct {
 }
 
 func CreateMessage(ctx context.Context, user *proto.User, serverId string, channelId string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
-	res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
-		ID:     channelId,
-		UserID: user.Id,
-	})
-	if err != nil || res.RowsAffected() == 0 {
-		return nil, ErrUnauthorizedMessageCreation
+	if serverId != "global" {
+		res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
+			ID:     channelId,
+			UserID: user.Id,
+		})
+		if err != nil || res.RowsAffected() == 0 {
+			return nil, ErrUnauthorizedMessageCreation
+		}
 	}
 
 	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{

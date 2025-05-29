@@ -2,7 +2,7 @@
 	import ServerMap from '../../components/ServerMap/ServerMap.svelte';
 	import { serversStore } from '../../stores/servers.svelte';
 
-	let servers = $derived(serversStore.getServers());
+	let servers = $derived(serversStore.getServers().filter((s) => s.id !== 'global'));
 </script>
 
 <svelte:head>

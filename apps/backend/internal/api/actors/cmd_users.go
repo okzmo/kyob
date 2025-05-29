@@ -26,7 +26,13 @@ func (u *user) InitializeUser(ctx *actor.Context) {
 		u.servers[serverPID] = true
 
 		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
-		channels, _ := db.Query.GetChannelsFromServer(context.TODO(), server.ID)
+		var channels []db.Channel
+
+		if server.ID == "global" {
+			channels, _ = db.Query.GetFriendChannels(context.TODO(), userId)
+		} else {
+			channels, _ = db.Query.GetChannelsFromServer(context.TODO(), server.ID)
+		}
 
 		for _, channel := range channels {
 			channelPID := ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", server.ID), channel.ID)

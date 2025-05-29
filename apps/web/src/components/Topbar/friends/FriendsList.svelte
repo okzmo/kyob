@@ -4,9 +4,10 @@
 
 	interface Props {
 		friends: FriendType[];
+		isOpen: boolean;
 	}
 
-	let { friends }: Props = $props();
+	let { friends, isOpen = $bindable() }: Props = $props();
 </script>
 
 <ul class="flex flex-col gap-y-2">
@@ -18,9 +19,11 @@
 				<Friend
 					id={friend.id}
 					friendshipId={friend.friendship_id}
+					channelId={friend.channel_id}
 					displayName={friend.display_name}
 					avatar={friend.avatar}
 					accepted={friend.accepted}
+					bind:isOpen
 				/>
 			</li>
 		{/each}

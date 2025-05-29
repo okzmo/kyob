@@ -10,8 +10,8 @@ import (
 
 type ServerWithChannels struct {
 	db.Server
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int32 `json:"x"`
+	Y int32 `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
 	Channels    map[string]db.Channel    `json:"channels"`
 	MemberCount int                      `json:"member_count"`
@@ -36,6 +36,7 @@ type UserResponse struct {
 type FriendResponse struct {
 	ID           string      `json:"id"`
 	FriendshipID string      `json:"friendship_id"`
+	ChannelID    string      `json:"channel_id"`
 	DisplayName  string      `json:"display_name"`
 	Avatar       pgtype.Text `json:"avatar"`
 	About        pgtype.Text `json:"about"`
@@ -88,6 +89,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		res.Friends = append(res.Friends, FriendResponse{
 			ID:           f.ID,
 			FriendshipID: f.FriendshipID,
+			ChannelID:    f.ChannelID,
 			DisplayName:  f.DisplayName,
 			Avatar:       f.Avatar,
 			About:        f.About,
@@ -130,8 +132,8 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 				CreatedAt:   server.CreatedAt,
 				UpdatedAt:   server.UpdatedAt,
 			},
-			int(server.X),
-			int(server.Y),
+			server.X.Int32,
+			server.Y.Int32,
 			channelMap,
 			int(server.MemberCount),
 			users,

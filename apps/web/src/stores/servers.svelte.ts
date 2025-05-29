@@ -17,7 +17,7 @@ class Servers {
 	}
 
 	getServer(id: string) {
-		return this.servers[id];
+		return this.servers?.[id];
 	}
 
 	getChannels(id: string) {
@@ -117,6 +117,8 @@ class Servers {
 	}
 
 	connectUser(serverId: string, userId: string, connectedUsers: string[], type: string) {
+		if (serverId === 'global') return;
+
 		const server = this.getServer(serverId);
 		if (!server.active_count || server.active_count.length <= 0) {
 			this.servers[server.id].active_count = [];
@@ -136,6 +138,8 @@ class Servers {
 	}
 
 	disconnectUser(serverId: string, userId: string, type: string) {
+		if (serverId === 'global') return;
+
 		const server = this.getServer(serverId);
 		if (!server.active_count) return;
 		for (let i = 0; i < server.active_count.length; ++i) {

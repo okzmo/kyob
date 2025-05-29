@@ -59,13 +59,13 @@ func (q *Queries) DeleteFriend(ctx context.Context, id string) error {
 }
 
 const getFriends = `-- name: GetFriends :many
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
-FROM users u, friends f
-WHERE f.user_id = $1 AND u.id = f.friend_id
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id, c.id AS channel_id
+FROM users u, friends f, channels c
+WHERE f.user_id = $1 AND u.id = f.friend_id AND $1 = ANY(c.users)
 UNION
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id
-FROM users u, friends f
-WHERE f.friend_id = $1 AND u.id = f.user_id
+SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, f.user_id AS friendship_sender_id, c.id AS channel_id
+FROM users u, friends f, channels c
+WHERE f.friend_id = $1 AND u.id = f.user_id AND $1 = ANY(c.users)
 `
 
 type GetFriendsRow struct {
@@ -76,6 +76,7 @@ type GetFriendsRow struct {
 	Accepted           bool        `json:"accepted"`
 	FriendshipID       string      `json:"friendship_id"`
 	FriendshipSenderID string      `json:"friendship_sender_id"`
+	ChannelID          string      `json:"channel_id"`
 }
 
 func (q *Queries) GetFriends(ctx context.Context, userID string) ([]GetFriendsRow, error) {
@@ -95,6 +96,7 @@ func (q *Queries) GetFriends(ctx context.Context, userID string) ([]GetFriendsRo
 			&i.Accepted,
 			&i.FriendshipID,
 			&i.FriendshipSenderID,
+			&i.ChannelID,
 		); err != nil {
 			return nil, err
 		}

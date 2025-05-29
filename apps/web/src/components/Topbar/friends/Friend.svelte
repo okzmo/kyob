@@ -9,7 +9,15 @@
 	import Bin from '../../ui/icons/Bin.svelte';
 	import { windows } from '../../../stores/windows.svelte';
 
-	let { id, friendshipId, displayName, avatar, accepted = false } = $props();
+	let {
+		id,
+		friendshipId,
+		channelId,
+		displayName,
+		avatar,
+		accepted = false,
+		isOpen = $bindable()
+	} = $props();
 
 	async function acceptFriend() {
 		const res = await backend.acceptFriend({
@@ -43,7 +51,13 @@
 <button
 	class="group hocus:bg-accent-100/15 flex w-full items-center gap-x-2.5 rounded-xl py-1.5 pr-4 pl-2 text-left transition-colors hover:cursor-pointer"
 	onclick={() => {
-		windows.createWindow({ id: `window-${id}`, friendId: id });
+		windows.createWindow({
+			id: `window-${id}`,
+			serverId: 'global',
+			channelId: channelId,
+			friendId: id
+		});
+		isOpen = false;
 	}}
 >
 	<img src={avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full object-cover" />

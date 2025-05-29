@@ -126,6 +126,13 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_tokens_token ON tokens(token);
 CREATE INDEX idx_invites_invite_id ON invites(invite_id);
 
+
+INSERT INTO users
+VALUES ('global', 'admin', 'admin', '', '');
+
+INSERT INTO servers
+VALUES ('global', 'global', 'global');
+
 -- migrate:down
 DROP TABLE invites;
 DROP TABLE tokens;

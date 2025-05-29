@@ -27,16 +27,7 @@
 			userStore.mention ? 'text-accent-50 ' : 'text-main-400 '
 		]}
 	>
-		{#if server}
-			<div class="flex items-center gap-x-1.5">
-				<img
-					src={server.avatar}
-					alt="{server.name} server background"
-					class="h-[1.25rem] w-[1.25rem] rounded-full"
-				/>
-				<p class="select-none">{server.name}</p>
-			</div>
-		{:else if friend}
+		{#if friend}
 			<div class="flex items-center gap-x-1.5">
 				<img
 					src={friend.avatar}
@@ -45,8 +36,17 @@
 				/>
 				<p class="select-none">{friend.display_name}</p>
 			</div>
+		{:else if server}
+			<div class="flex items-center gap-x-1.5">
+				<img
+					src={server.avatar}
+					alt="{server.name} server background"
+					class="h-[1.25rem] w-[1.25rem] rounded-full"
+				/>
+				<p class="select-none">{server.name}</p>
+			</div>
 		{/if}
-		{#if channel}
+		{#if channel && !friend}
 			|
 			<p class="select-none">#{channel.name}</p>
 		{/if}

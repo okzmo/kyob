@@ -6,7 +6,7 @@
 	import StarterKit from '@tiptap/starter-kit';
 	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from '../../../stores/backend.svelte';
-	import type { Channel, Server } from '../../../types/types';
+	import type { Channel, Friend, Server } from '../../../types/types';
 	import { PluginKey } from '@tiptap/pm/state';
 	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from './MentionsList.svelte';
@@ -15,11 +15,12 @@
 	import { windows } from '../../../stores/windows.svelte';
 
 	interface Props {
+		friend?: Friend;
 		channel: Channel;
 		server: Server;
 	}
 
-	let { channel, server }: Props = $props();
+	let { channel, server, friend }: Props = $props();
 
 	let element: Element;
 	let editor: Editor;
@@ -59,7 +60,11 @@
 					bulletList: false,
 					blockquote: false
 				}),
-				Placeholder.configure({ placeholder: `Message #${channel?.name} in ${server?.name}` }),
+				Placeholder.configure({
+					placeholder: friend
+						? `Message ${friend.display_name}`
+						: `Message #${channel?.name} in ${server?.name}`
+				}),
 				CustomMention.configure({
 					HTMLAttributes: {
 						class: 'editor-mention'

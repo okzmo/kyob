@@ -11,7 +11,8 @@ class Windows {
 	createWindow({
 		id,
 		serverId,
-		channelId
+		channelId,
+		friendId
 	}: {
 		id: string;
 		serverId?: string;
@@ -24,7 +25,7 @@ class Windows {
 			return;
 		}
 
-		this.openWindows.push({ id, serverId, channelId });
+		this.openWindows.push({ id, serverId, channelId, friendId });
 		this.activeWindow = id;
 	}
 

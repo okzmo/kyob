@@ -24,7 +24,7 @@
 		sideOffset={10}
 		y={-10}
 	>
-		<FriendsList {friends} />
+		<FriendsList {friends} bind:isOpen />
 		<AddFriend bind:isOpen />
 	</CustomPopoverContent>
 </Popover.Root>

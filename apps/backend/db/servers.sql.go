@@ -220,8 +220,9 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 
 const getServersFromUser = `-- name: GetServersFromUser :many
 SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
-FROM servers s, server_membership sm
-WHERE sm.server_id = s.id AND sm.user_id = $1
+FROM servers s
+LEFT JOIN server_membership sm ON sm.server_id = s.id AND sm.user_id = $1
+WHERE s.id = 'global' OR sm.user_id IS NOT NULL
 `
 
 type GetServersFromUserRow struct {
@@ -234,8 +235,8 @@ type GetServersFromUserRow struct {
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
-	X           int32       `json:"x"`
-	Y           int32       `json:"y"`
+	X           pgtype.Int4 `json:"x"`
+	Y           pgtype.Int4 `json:"y"`
 	MemberCount int64       `json:"member_count"`
 }
 

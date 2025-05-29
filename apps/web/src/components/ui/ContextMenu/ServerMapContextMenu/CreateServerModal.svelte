@@ -38,7 +38,7 @@
 					const server: Server = {
 						...res.value,
 						channels: {},
-						member_count: 0,
+						member_count: 1,
 						active_count: []
 					};
 					serversStore.addServer(server);

@@ -18,6 +18,10 @@ var (
 )
 
 func SignIn(ctx context.Context, emailOrUsername string, password string) (*string, error) {
+	if emailOrUsername == "admin" {
+		return nil, ErrInvalidHash
+	}
+
 	user, err := db.Query.GetUser(ctx, db.GetUserParams{
 		Email:    emailOrUsername,
 		Username: emailOrUsername,

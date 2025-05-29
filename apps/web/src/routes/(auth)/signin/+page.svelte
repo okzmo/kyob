@@ -42,4 +42,4 @@
 	});
 </script>
 
-<AuthForm type="signin" {form} {errors} {enhance} {globalError} />
+<AuthForm type="signin" {form} {errors} {enhance} bind:globalError />

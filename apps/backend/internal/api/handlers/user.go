@@ -96,18 +96,44 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	acceptFriendMessage := &proto.AcceptFriendInvite{
-		InviteId: body.FriendshipID,
+	channelId := utils.Node.Generate().String()
+	newChannelMessage := &proto.BodyChannelCreation{
+		ServerId:  "global",
+		CreatorId: "global",
+		Name:      "friends",
+		Type:      "textual",
+		Users:     []string{body.FriendID, body.UserID},
+		X:         0,
+		Y:         0,
+		Id:        channelId,
+	}
+
+	globalServerPid := actors.ServersEngine.Registry.GetPID("server", "global")
+	actors.ServersEngine.Send(globalServerPid, newChannelMessage)
+
+	friendMessage := &proto.AcceptFriendInvite{
+		InviteId:  body.FriendshipID,
+		ChannelId: channelId,
 		User: &proto.User{
 			Id:          friend.ID,
 			DisplayName: friend.DisplayName,
 			Avatar:      &friend.Avatar.String,
 			About:       &friend.About.String,
 		},
+		Sender: false,
 	}
 
 	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
-	actors.UsersEngine.Send(friendPid, acceptFriendMessage)
+	actors.UsersEngine.Send(friendPid, friendMessage)
+
+	senderMessage := &proto.AcceptFriendInvite{
+		InviteId:  body.FriendshipID,
+		ChannelId: channelId,
+		Sender:    true,
+	}
+
+	userPid := actors.UsersEngine.Registry.GetPID("user", body.UserID)
+	actors.UsersEngine.Send(userPid, senderMessage)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }

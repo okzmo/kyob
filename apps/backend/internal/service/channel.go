@@ -25,6 +25,7 @@ type CreateChannelBody struct {
 	Roles       []string       `json:"roles"`
 	X           int32          `json:"x"`
 	Y           int32          `json:"y"`
+	Id          *string        `json:"id"`
 }
 
 type EditChannelBody struct {
@@ -38,16 +39,17 @@ type DeleteChannelBody struct {
 }
 
 func CreateChannel(ctx context.Context, creatorId string, serverId string, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
-	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      serverId,
-		OwnerID: creatorId,
-	})
-	if err != nil || res.RowsAffected() == 0 {
-		return nil, ErrUnauthorizedChannelCreation
+	if creatorId != "global" {
+		res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+			ID:      serverId,
+			OwnerID: creatorId,
+		})
+		if err != nil || res.RowsAffected() == 0 {
+			return nil, ErrUnauthorizedChannelCreation
+		}
 	}
 
-	c, err := db.Query.CreateChannel(ctx, db.CreateChannelParams{
-		ID:          utils.Node.Generate().String(),
+	channelParams := db.CreateChannelParams{
 		ServerID:    serverId,
 		Name:        channel.Name,
 		Type:        channel.Type,
@@ -56,7 +58,15 @@ func CreateChannel(ctx context.Context, creatorId string, serverId string, chann
 		Roles:       channel.Roles,
 		X:           channel.X,
 		Y:           channel.Y,
-	})
+	}
+
+	if channel.Id != nil {
+		channelParams.ID = *channel.Id
+	} else {
+		channelParams.ID = utils.Node.Generate().String()
+	}
+
+	c, err := db.Query.CreateChannel(ctx, channelParams)
 	if err != nil {
 		return nil, err
 	}

@@ -124,8 +124,14 @@ func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCr
 		Name:        msg.Name,
 		Type:        db.ChannelType(msg.Type),
 		Description: msg.Description,
+		Users:       msg.Users,
+		Roles:       msg.Roles,
 		X:           msg.X,
 		Y:           msg.Y,
+	}
+
+	if msg.Id != "" {
+		channelToCreate.Id = &msg.Id
 	}
 
 	channel, err := services.CreateChannel(context.TODO(), msg.CreatorId, msg.ServerId, channelToCreate)
@@ -137,8 +143,17 @@ func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCr
 	channel.ActorId = channelPid.ID
 	channel.ActorAddress = channelPid.Address
 
-	for user := range s.users {
-		UsersEngine.Send(user, channel)
+	if len(msg.Users) > 0 {
+		for _, user := range msg.Users {
+			userPID := UsersEngine.Registry.GetPID("user", user)
+			UsersEngine.Send(userPID, channel)
+		}
+	}
+
+	if len(msg.Users) <= 0 && len(msg.Roles) <= 0 {
+		for user := range s.users {
+			UsersEngine.Send(user, channel)
+		}
 	}
 }
 

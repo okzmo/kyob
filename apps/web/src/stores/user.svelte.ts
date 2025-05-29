@@ -38,6 +38,11 @@ class UserStore {
 		}
 	}
 
+	setFriendChannelId(friendshipId: string, channelId: string) {
+		const friendIdx = this.friends.findIndex((f) => f.friendship_id === friendshipId);
+		this.friends[friendIdx].channel_id = channelId;
+	}
+
 	deleteFriend(friendshipId: string) {
 		const friendIdx = this.friends.findIndex((f) => f.friendship_id === friendshipId);
 		if (friendIdx > -1) this.friends.splice(friendIdx, 1);

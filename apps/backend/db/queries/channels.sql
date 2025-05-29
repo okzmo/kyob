@@ -1,6 +1,11 @@
 -- name: GetChannel :one
 SELECT * FROM channels WHERE id = $1;
 
+-- name: GetFriendChannels :many
+SELECT *
+FROM channels
+WHERE server_id = 'global' AND $1::text = ANY(users);
+
 -- name: GetChannelsFromServer :many
 SELECT *
 FROM channels

@@ -131,6 +131,44 @@ func (q *Queries) GetChannelsFromServer(ctx context.Context, serverID string) ([
 	return items, nil
 }
 
+const getFriendChannels = `-- name: GetFriendChannels :many
+SELECT id, server_id, name, type, description, users, roles, x, y, created_at, updated_at
+FROM channels
+WHERE server_id = 'global' AND $1::text = ANY(users)
+`
+
+func (q *Queries) GetFriendChannels(ctx context.Context, dollar_1 string) ([]Channel, error) {
+	rows, err := q.db.Query(ctx, getFriendChannels, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Channel
+	for rows.Next() {
+		var i Channel
+		if err := rows.Scan(
+			&i.ID,
+			&i.ServerID,
+			&i.Name,
+			&i.Type,
+			&i.Description,
+			&i.Users,
+			&i.Roles,
+			&i.X,
+			&i.Y,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateChannelDescription = `-- name: UpdateChannelDescription :exec
 UPDATE channels SET description = $1 WHERE id = $2
 `

@@ -14,7 +14,7 @@
 		globalError?: string;
 	}
 
-	let { type, form, errors, enhance, globalError }: Props = $props();
+	let { type, form, errors, enhance, globalError = $bindable() }: Props = $props();
 </script>
 
 {#if globalError}

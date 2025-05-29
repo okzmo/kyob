@@ -53,5 +53,5 @@
 			{/if}
 		{/await}
 	</div>
-	<ChatWindowInput {channel} {server} />
+	<ChatWindowInput {channel} {server} {friend} />
 </ChatWindowSkeleton>

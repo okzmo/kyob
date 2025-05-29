@@ -30,7 +30,7 @@
 					if (!res.ok) {
 						const data = await res.json();
 						console.error('signup failed', res.status, data);
-						return;
+						throw new Error(`signup failed`);
 					}
 
 					return goto('/');
@@ -43,4 +43,4 @@
 	});
 </script>
 
-<AuthForm type="signup" {form} {errors} {enhance} {globalError} />
+<AuthForm type="signup" {form} {errors} {enhance} bind:globalError />
