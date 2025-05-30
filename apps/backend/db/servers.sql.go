@@ -81,6 +81,44 @@ func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgc
 	return q.db.Exec(ctx, deleteServer, arg.ID, arg.OwnerID)
 }
 
+const getMembersFromServers = `-- name: GetMembersFromServers :many
+SELECT u.id, u.username, u.display_name, u.avatar, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id
+`
+
+type GetMembersFromServersRow struct {
+	ID          string      `json:"id"`
+	Username    string      `json:"username"`
+	DisplayName string      `json:"display_name"`
+	Avatar      pgtype.Text `json:"avatar"`
+	ServerID    string      `json:"server_id"`
+}
+
+func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) ([]GetMembersFromServersRow, error) {
+	rows, err := q.db.Query(ctx, getMembersFromServers, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetMembersFromServersRow
+	for rows.Next() {
+		var i GetMembersFromServersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.DisplayName,
+			&i.Avatar,
+			&i.ServerID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getServer = `-- name: GetServer :one
 SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers WHERE id = $1
 `

@@ -4,6 +4,9 @@ SELECT * FROM users WHERE email = $1 OR username = $2;
 -- name: GetUserById :one
 SELECT * FROM users WHERE id = $1;
 
+-- name: GetUsersByIds :many
+SELECT id, username, display_name, avatar FROM users WHERE id = ANY($1::text[]);
+
 -- name: GetUserFacts :many
 SELECT label, value FROM facts WHERE user_id = $1;
 

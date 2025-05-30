@@ -199,6 +199,42 @@ func (q *Queries) GetUserMinimal(ctx context.Context, id string) (GetUserMinimal
 	return i, err
 }
 
+const getUsersByIds = `-- name: GetUsersByIds :many
+SELECT id, username, display_name, avatar FROM users WHERE id = ANY($1::text[])
+`
+
+type GetUsersByIdsRow struct {
+	ID          string      `json:"id"`
+	Username    string      `json:"username"`
+	DisplayName string      `json:"display_name"`
+	Avatar      pgtype.Text `json:"avatar"`
+}
+
+func (q *Queries) GetUsersByIds(ctx context.Context, dollar_1 []string) ([]GetUsersByIdsRow, error) {
+	rows, err := q.db.Query(ctx, getUsersByIds, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUsersByIdsRow
+	for rows.Next() {
+		var i GetUsersByIdsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.DisplayName,
+			&i.Avatar,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateUserAbout = `-- name: UpdateUserAbout :exec
 UPDATE users
   set about = $2

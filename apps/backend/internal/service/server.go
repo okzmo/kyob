@@ -252,25 +252,29 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		return nil, err
 	}
 
+	membersMap := make(map[string]db.GetMembersFromServersRow)
+	allMembers, err := db.Query.GetMembersFromServers(ctx, []string{serverId})
+	if err != nil {
+		return nil, err
+	}
+	for _, member := range allMembers {
+		membersMap[member.ID] = member
+	}
+
 	for _, channelRaw := range channels {
 		channel := ChannelsWithMembers{
 			channelRaw,
-			[]db.GetServerMembersRow{},
+			[]db.GetUsersByIdsRow{},
 		}
 
-		if len(channelRaw.Users) > 0 {
-			for _, userId := range channelRaw.Users {
-				user, err := db.Query.GetUserById(ctx, userId)
-				channel.Users = append(channel.Users, db.GetServerMembersRow{
-					ID:          user.ID,
-					Username:    user.Username,
-					DisplayName: user.DisplayName,
-					Avatar:      user.Avatar,
-				})
-				if err != nil {
-					return nil, err
-				}
-			}
+		for _, userId := range channelRaw.Users {
+			user := membersMap[userId]
+			channel.Users = append(channel.Users, db.GetUsersByIdsRow{
+				ID:          user.ID,
+				Username:    user.Username,
+				DisplayName: user.DisplayName,
+				Avatar:      user.Avatar,
+			})
 		}
 
 		channelMap[channel.ID] = channel
@@ -280,11 +284,6 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		ServerID: serverId,
 		UserID:   user.ID,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	users, err := db.Query.GetServerMembers(ctx, server.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +304,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		server.Y,
 		channelMap,
 		int(server.MemberCount),
-		users,
+		allMembers,
 	}
 
 	return &s, nil

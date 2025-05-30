@@ -17,7 +17,7 @@ SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_i
        f.user_id AS friendship_sender_id, c.id AS channel_id
 FROM users u
 INNER JOIN friends f ON u.id = f.friend_id
-LEFT JOIN channels c ON $1 = ANY(c.users) AND u.id::text = ANY(c.users)
+LEFT JOIN channels c ON $1::text = ANY(c.users) AND u.id::text = ANY(c.users)
 WHERE f.user_id = $1
 
 UNION

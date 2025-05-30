@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type DbManager struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
 var Query *Queries
@@ -17,7 +17,7 @@ var Query *Queries
 func Setup() *DbManager {
 	dsn := os.Getenv("DATABASE_URL")
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, dsn)
+	conn, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,6 +26,6 @@ func Setup() *DbManager {
 	return &DbManager{conn: conn}
 }
 
-func (db *DbManager) Close() error {
-	return db.conn.Close(context.Background())
+func (db *DbManager) Close() {
+	db.conn.Close()
 }

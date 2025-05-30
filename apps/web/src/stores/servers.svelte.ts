@@ -1,4 +1,4 @@
-import type { Channel, Message, Server } from '../types/types';
+import type { Channel, Message, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 
 class Servers {
@@ -137,19 +137,29 @@ class Servers {
 		}
 	}
 
+	addMember(serverId: string, user: Partial<User>) {
+		if (serverId === 'global') return;
+
+		const server = this.getServer(serverId);
+		server.members.push(user);
+	}
+
 	disconnectUser(serverId: string, userId: string, type: string) {
 		if (serverId === 'global') return;
 
 		const server = this.getServer(serverId);
 		if (!server.active_count) return;
 		for (let i = 0; i < server.active_count.length; ++i) {
-			if (this.servers[server.id].active_count[i] === userId) {
-				this.servers[server.id].active_count.splice(i, 1);
+			if (server.active_count[i] === userId) {
+				server.active_count.splice(i, 1);
 			}
 		}
 
 		if (type === 'LEAVE_SERVER') {
-			this.servers[server.id].member_count -= 1;
+			const memberIdx = server.members.findIndex((m) => m.id === userId);
+
+			server.members.splice(memberIdx, 1);
+			server.member_count -= 1;
 		}
 	}
 }

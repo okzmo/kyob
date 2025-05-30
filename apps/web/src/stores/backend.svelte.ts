@@ -134,6 +134,21 @@ class Backend {
 						windows.closeDeadWindow(value.channelId);
 					}
 					break;
+				case 'newUser':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+
+						const newUser: Partial<User> = {
+							id: value.user?.id,
+							about: value.user?.about,
+							username: value.user?.username,
+							display_name: value.user?.displayName,
+							avatar: value.user?.avatar
+						};
+						serversStore.addMember(value.serverId, newUser);
+					}
+					break;
 				case 'userConnect':
 					{
 						if (!wsMess.content.value) return;

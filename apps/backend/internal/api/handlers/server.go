@@ -171,6 +171,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 		ServerId: server.ID,
 		User: &proto.User{
 			Id:          user.ID,
+			Username:    user.Username,
 			DisplayName: user.DisplayName,
 			Avatar:      &user.Avatar.String,
 		},

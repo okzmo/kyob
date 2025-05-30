@@ -15,12 +15,12 @@ type ServerWithChannels struct {
 	// Roles    []db.Role         `json:"roles"`
 	Channels    map[string]ChannelsWithMembers `json:"channels"`
 	MemberCount int                            `json:"member_count"`
-	Members     []db.GetServerMembersRow       `json:"members"`
+	Members     []db.GetMembersFromServersRow  `json:"members"`
 }
 
 type ChannelsWithMembers struct {
 	db.Channel
-	Users []db.GetServerMembersRow `json:"users"`
+	Users []db.GetUsersByIdsRow `json:"users"`
 }
 
 type UserResponse struct {
@@ -70,6 +70,16 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		return nil, err
 	}
 
+	friends, err := db.Query.GetFriends(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	res.User = UserResponse{
 		ID:             ctxUser.ID,
 		Email:          ctxUser.Email,
@@ -85,16 +95,11 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		Links:          links,
 	}
 
-	friends, err := db.Query.GetFriends(ctx, ctxUser.ID)
-	if err != nil {
-		return nil, err
-	}
-
 	for _, f := range friends {
 		res.Friends = append(res.Friends, FriendResponse{
 			ID:           f.ID,
 			FriendshipID: f.FriendshipID,
-			ChannelID:    f.ChannelID,
+			ChannelID:    f.ChannelID.String,
 			DisplayName:  f.DisplayName,
 			Avatar:       f.Avatar,
 			About:        f.About,
@@ -104,49 +109,89 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	res.Servers = make(map[string]ServerWithChannels)
-	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
+	if len(servers) > 0 {
+		serversMap, err := processServers(ctx, servers)
+		if err != nil {
+			return nil, err
+		}
+
+		res.Servers = serversMap
+	}
+
+	return &res, nil
+}
+
+func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
+	serverIDs := make([]string, 0, len(servers))
+	for _, server := range servers {
+		serverIDs = append(serverIDs, server.ID)
+	}
+
+	allChannels, err := db.Query.GetChannelsFromServers(ctx, serverIDs)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, server := range servers {
-		channelMap := make(map[string]ChannelsWithMembers)
-		channels, err := db.Query.GetChannelsFromServer(ctx, server.ID)
+	allMembers, err := db.Query.GetMembersFromServers(ctx, serverIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	userIDSet := make(map[string]bool)
+	for _, channel := range allChannels {
+		for _, userID := range channel.Users {
+			userIDSet[userID] = true
+		}
+	}
+
+	userIDs := make([]string, 0, len(userIDSet))
+	for userId := range userIDSet {
+		userIDs = append(userIDs, userId)
+	}
+
+	var allUsers []db.GetUsersByIdsRow
+	if len(userIDs) > 0 {
+		allUsers, err = db.Query.GetUsersByIds(ctx, userIDs)
 		if err != nil {
 			return nil, err
 		}
+	}
 
-		for _, channelRaw := range channels {
-			channel := ChannelsWithMembers{
-				channelRaw,
-				[]db.GetServerMembersRow{},
-			}
+	userMap := make(map[string]db.GetUsersByIdsRow)
+	for _, user := range allUsers {
+		userMap[user.ID] = user
+	}
 
-			if len(channelRaw.Users) > 0 {
-				for _, userId := range channelRaw.Users {
-					user, err := db.Query.GetUserById(ctx, userId)
-					channel.Users = append(channel.Users, db.GetServerMembersRow{
-						ID:          user.ID,
-						Username:    user.Username,
-						DisplayName: user.DisplayName,
-						Avatar:      user.Avatar,
-					})
-					if err != nil {
-						return nil, err
-					}
+	channelsByServer := make(map[string][]db.Channel)
+	for _, channel := range allChannels {
+		channelsByServer[channel.ServerID] = append(channelsByServer[channel.ServerID], channel)
+	}
+
+	membersByServer := make(map[string][]db.GetMembersFromServersRow)
+	for _, member := range allMembers {
+		membersByServer[member.ServerID] = append(membersByServer[member.ServerID], member)
+	}
+
+	result := make(map[string]ServerWithChannels)
+	for _, server := range servers {
+		channelMap := make(map[string]ChannelsWithMembers)
+
+		for _, channel := range channelsByServer[server.ID] {
+			channelUsers := make([]db.GetUsersByIdsRow, 0, len(channel.Users))
+			for _, userID := range channel.Users {
+				if user, exists := userMap[userID]; exists {
+					channelUsers = append(channelUsers, user)
 				}
 			}
 
-			channelMap[channel.ID] = channel
+			channelMap[channel.ID] = ChannelsWithMembers{
+				channel,
+				channelUsers,
+			}
 		}
 
-		users, err := db.Query.GetServerMembers(ctx, server.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		s := ServerWithChannels{
-			db.Server{
+		result[server.ID] = ServerWithChannels{
+			Server: db.Server{
 				ID:          server.ID,
 				OwnerID:     server.OwnerID,
 				Name:        server.Name,
@@ -157,15 +202,13 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 				CreatedAt:   server.CreatedAt,
 				UpdatedAt:   server.UpdatedAt,
 			},
-			server.X.Int32,
-			server.Y.Int32,
-			channelMap,
-			int(server.MemberCount),
-			users,
+			X:           server.X.Int32,
+			Y:           server.Y.Int32,
+			Channels:    channelMap,
+			MemberCount: int(server.MemberCount),
+			Members:     membersByServer[server.ID],
 		}
-
-		res.Servers[server.ID] = s
 	}
 
-	return &res, nil
+	return result, nil
 }
