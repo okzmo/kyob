@@ -131,7 +131,8 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 						serversStore.removeChannel(value.serverId, value.channelId);
-						windows.closeDeadWindow(value.channelId);
+						const channelWindow = windows.getWindow({ channelId: value.channelId });
+						if (channelWindow) windows.closeDeadWindow(channelWindow.id);
 					}
 					break;
 				case 'newUser':
@@ -246,6 +247,8 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 						userStore.deleteFriend(value.inviteId);
+						const friendChatWindow = windows.getWindow({ friendId: value.userId });
+						if (friendChatWindow) windows.closeDeadWindow(friendChatWindow.id);
 					}
 					break;
 			}

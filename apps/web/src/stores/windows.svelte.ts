@@ -8,6 +8,22 @@ class Windows {
 		return this.openWindows.find((w) => w.id === this.activeWindow);
 	}
 
+	getWindow({ id, channelId, friendId }: { id?: string; channelId?: string; friendId?: string }) {
+		return this.openWindows.find((w) => {
+			if (id) {
+				return w.id === id;
+			}
+
+			if (channelId) {
+				return w.channelId === channelId;
+			}
+
+			if (friendId) {
+				return w.friendId === friendId;
+			}
+		});
+	}
+
 	createWindow({
 		id,
 		serverId,
@@ -33,11 +49,8 @@ class Windows {
 		this.openWindows = this.openWindows.filter((w) => w.id !== id);
 	}
 
-	closeDeadWindow(channelId: string) {
-		const exist = this.openWindows.find((w) => w.channelId === channelId);
-		if (exist) {
-			this.openWindows = this.openWindows.filter((w) => w.id !== exist.id);
-		}
+	closeDeadWindow(id: string) {
+		this.openWindows = this.openWindows.filter((w) => w.id !== id);
 	}
 }
 
