@@ -53,7 +53,7 @@
 </script>
 
 <button
-	class="group hocus:bg-accent-100/15 flex w-full items-center gap-x-2.5 rounded-xl py-1.5 pr-4 pl-2 text-left transition-colors hover:cursor-pointer"
+	class="group hocus:bg-main-800 hocus:inner-main-700 relative flex w-full items-center gap-x-2.5 py-1.5 pr-4 pl-1.5 text-left transition hover:cursor-pointer"
 	onclick={() => {
 		windows.createWindow({
 			id: `window-${id}`,
@@ -64,14 +64,12 @@
 		isOpen = false;
 	}}
 >
-	<img src={avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] rounded-full object-cover" />
+	<img src={avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] object-cover" />
 	<div class="flex flex-col">
-		<p class="group-hocus:text-accent-50 leading-[1.15rem] font-medium transition-colors">
+		<p class="leading-[1.15rem] font-medium transition-colors">
 			{displayName}
 		</p>
-		<p
-			class="text-main-400 group-hocus:text-accent-200 text-sm leading-[1.15rem] transition-colors"
-		>
+		<p class="text-main-400 group-hocus:text-main-300 text-sm leading-[1.15rem] transition-colors">
 			Connected
 		</p>
 	</div>

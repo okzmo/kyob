@@ -11,7 +11,7 @@
 
 {#if isOwner}
 	<ContextMenu.Item
-		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
+		class="context-menu-item"
 		onclick={() => {
 			core.deactivateMapDragging();
 			core.openCreateChannelModal.status = true;

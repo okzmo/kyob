@@ -4,6 +4,7 @@
 	import { windows } from '../../stores/windows.svelte';
 	import type { Channel, Friend, Server } from '../../types/types';
 	import ChatWindowTopBar from './ChatWindowTopBar.svelte';
+	import Corners from '../ui/Corners/Corners.svelte';
 
 	let width = $state(550);
 	let height = $state(400);
@@ -106,14 +107,15 @@
 <div
 	transition:fly={{ duration: 75, y: 10 }}
 	id={`window-${id}`}
-	class={['absolute flex flex-col', windows.activeWindow === id ? 'z-[52]' : 'z-[51] opacity-40']}
+	class={['absolute flex flex-col', windows.activeWindow === id ? 'z-[52]' : 'z-[40] opacity-40']}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
 	<ChatWindowTopBar {id} {server} {channel} {friend} />
 	<div
 		style="width: {width}px; height: {height}px"
-		class="bg-main-900 border-main-800 relative flex items-start overflow-hidden rounded-b-[14px] border-r border-b border-l"
+		class="bg-main-900 inner-main-800 relative mt-0.5 flex items-start overflow-hidden"
 	>
+		<Corners color="border-main-700" />
 		{@render children()}
 		<div
 			id={`window-resize-${id}`}

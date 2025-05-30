@@ -6,12 +6,15 @@
 	--ui-accent-200: #828ab0;
 	--ui-accent-100: #a3b3ff;
 	--ui-accent-10065: #a3b3ffa6;
+	--ui-accent-10050: #a3b3ff80;
 	--ui-accent-10040: #a3b3ff66;
 	--ui-accent-10025: #a3b3ff40;
 	--ui-accent-10020: #a3b3ff33;
 	--ui-accent-10015: #a3b3ff26;
+	--ui-accent-10000: #a3b3ff00;
 	--ui-mention-100: #ffa13a;
 	--ui-mention-10065: #ffa13aa6;
+	--ui-mention-10045: #ffa13a73;
 	--ui-mention-10025: #ffa13a40;
 	--ui-mention-10020: #ffa13a33;
 	--ui-mention-10015: #ffa13a26;
@@ -26,7 +29,9 @@
 	--ui-main-500: #525260;
 	--ui-main-600: #4b4b58;
 	--ui-main-700: #3b3b45;
+	--ui-main-70000: #3b3b4500;
 	--ui-main-800: #212126;
+	--ui-main-80025: #21212640;
 	--ui-main-850: #18181b;
 	--ui-main-900: #121215;
 }
@@ -40,6 +45,7 @@
 	--color-accent-100: var(--ui-accent-100);
 	--color-accent-200: var(--ui-accent-200);
 	--color-accent-800: var(--ui-accent-800);
+	--color-mention-100: var(--ui-mention-100);
 	--color-main-50: var(--ui-main-50);
 	--color-main-200: var(--ui-main-200);
 	--color-main-300: var(--ui-main-300);
@@ -47,6 +53,7 @@
 	--color-main-450: var(--ui-main-450);
 	--color-main-500: var(--ui-main-500);
 	--color-main-600: var(--ui-main-600);
+	--color-main-700: var(--ui-main-700);
 	--color-main-800: var(--ui-main-800);
 	--color-main-850: var(--ui-main-850);
 	--color-main-900: var(--ui-main-900);
@@ -131,12 +138,114 @@ body {
 }
 
 .message-mention {
-	background: radial-gradient(
-		50% 66.18% at 50% 50%,
-		var(--ui-mention-10015) 0%,
-		var(--ui-mention-10020) 100%
-	);
+	background-color: var(--ui-mention-10015);
 	box-shadow:
-		inset 0px 0px 16px var(--ui-mention-10025),
-		inset 0px 0px 0px 0.5px var(--ui-mention-10065);
+		inset 0px 0px 25px var(--ui-mention-10025),
+		inset 0px 0px 0px 1px var(--ui-mention-10045);
+
+	&:hover {
+		background-color: var(--ui-mention-10025);
+	}
+
+	&:focus-visible {
+		background-color: var(--ui-mention-10025);
+	}
+}
+
+.hocus\:inner-accent\/15 {
+	@apply hocus:shadow-[inset_0_0_0_1px_var(--ui-accent-10015)];
+}
+
+.inner-accent\/15 {
+	@apply shadow-[inset_0_0_0_1px_var(--ui-accent-10015)];
+}
+
+.hocus\:inner-accent\/25 {
+	&:hover {
+		box-shadow:
+			inset 0px 0px 0px 1px var(--ui-accent-10025),
+			inset 0px 0px 14px 0.5px var(--ui-accent-10025);
+	}
+
+	&:focus-visible {
+		box-shadow:
+			inset 0px 0px 0px 1px var(--ui-accent-10025),
+			inset 0px 0px 14px 0.5px var(--ui-accent-10025);
+	}
+}
+
+.inner-shadow-input {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 20px 0.5px #21212666;
+
+	&:hover {
+		background-color: var(--ui-main-80025);
+		box-shadow:
+			inset 0 0 0 1px var(--color-main-500),
+			inset 0px 0px 14px 0.5px #3b3b4566;
+	}
+}
+
+.inner-shadow-main-800 {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 20px 0.5px rgba(33, 33, 38, 0.4);
+}
+
+.inner-main-800 {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 10px 0.5px rgba(33, 33, 38, 0.4);
+}
+
+.inner-main-50\/10 {
+	box-shadow: inset 0 0 0 1px #fafafa1a;
+}
+
+.hocus\:inner-main-700 {
+	@apply hocus:shadow-[inset_0_0_0_1px_var(--color-main-700)];
+}
+
+.context-menu-item {
+	@apply flex h-10 items-center justify-between py-3 pr-1.5 pl-3 font-medium transition duration-100 select-none hover:cursor-pointer focus-visible:outline-none;
+
+	&:hover {
+		background-color: var(--color-main-800);
+		box-shadow: inset 0 0 0 1px var(--color-main-700);
+	}
+
+	&:focus-visible {
+		background-color: var(--color-main-800);
+		box-shadow: inset 0 0 0 1px var(--color-main-700);
+	}
+}
+
+.context-menu-item-danger {
+	@apply flex h-10 items-center justify-between py-3 pr-1.5 pl-3 font-medium transition duration-100 select-none hover:cursor-pointer focus-visible:outline-none;
+
+	&:hover {
+		background-color: oklch(70.4% 0.191 22.216 / 0.2);
+		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
+		color: oklch(70.4% 0.191 22.216);
+	}
+
+	&:focus-visible {
+		background-color: oklch(70.4% 0.191 22.216 / 0.2);
+		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
+		color: oklch(70.4% 0.191 22.216);
+	}
+}
+
+.top-bar-button {
+	box-shadow: inset 0px 0px 0px 1px var(--ui-main-70000);
+	transition: box-shadow 100ms ease-out;
+
+	&:hover {
+		box-shadow: inset 0px 0px 0px 1px var(--ui-accent-10050);
+	}
+
+	&:focus-visible {
+		box-shadow: inset 0px 0px 0px 1px var(--ui-accent-10050);
+	}
 }

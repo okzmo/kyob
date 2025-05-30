@@ -170,7 +170,9 @@
 		class="bottom-[4rem] left-[0.4rem] w-[calc(100%-0.8rem)]"
 	/>
 {/if}
-<div class="bg-main-900 border-t-main-800 absolute bottom-0 left-0 flex w-full border-t px-4">
+<div
+	class="bg-main-900 inner-shadow-input absolute bottom-2 left-2 flex w-[calc(100%-1rem)] px-4 transition duration-100"
+>
 	<button
 		class="text-main-600 hocus:text-main-200 absolute top-4.5 left-4 transition-colors duration-100 hover:cursor-pointer"
 	>

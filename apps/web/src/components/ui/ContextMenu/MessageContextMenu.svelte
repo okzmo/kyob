@@ -52,29 +52,20 @@
 	}
 </script>
 
-<ContextMenu.Item
-	class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
-	onclick={() => handleCopyMessage(targetId)}
->
+<ContextMenu.Item class="context-menu-item" onclick={() => handleCopyMessage(targetId)}>
 	<div class="flex w-full items-center justify-between">
 		Copy text
 		<CopyIcon height={20} width={20} />
 	</div>
 </ContextMenu.Item>
 {#if authorId === userStore.user?.id}
-	<ContextMenu.Item
-		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
-		onclick={() => handleEdit(targetId)}
-	>
+	<ContextMenu.Item class="context-menu-item" onclick={() => handleEdit(targetId)}>
 		<div class="flex w-full items-center justify-between">
 			Edit Message
 			<Pen height={20} width={20} />
 		</div>
 	</ContextMenu.Item>
-	<ContextMenu.Item
-		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
-		onclick={() => handleDelete(targetId)}
-	>
+	<ContextMenu.Item class="context-menu-item-danger" onclick={() => handleDelete(targetId)}>
 		<p class="flex items-center">Delete Message</p>
 		<Bin height={20} width={20} />
 	</ContextMenu.Item>

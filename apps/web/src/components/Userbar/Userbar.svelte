@@ -5,20 +5,18 @@
 	import IconButton from '../ui/IconButton/IconButton.svelte';
 	import { userStore } from '../../stores/user.svelte';
 	import UserProfile from '../UserProfile/UserProfile.svelte';
+	import Corners from '../ui/Corners/Corners.svelte';
 </script>
 
 <div
-	class="bg-main-900/80 border-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 rounded-2xl border py-1 pr-2 pl-1 backdrop-blur-2xl transition-colors duration-100"
+	class="bg-main-900/80 inner-shadow-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 py-1 pr-2 pl-1 backdrop-blur-2xl transition-colors duration-100"
 >
+	<Corners color="border-main-700" />
 	<UserProfile user={userStore.user!}>
 		<button
-			class="group hocus:bg-accent-100/15 flex items-center gap-x-2.5 rounded-xl py-1 pr-4 pl-2 text-left transition-colors hover:cursor-pointer"
+			class="group hocus:bg-accent-100/15 hocus:inner-accent/15 relative flex items-center gap-x-2.5 py-1 pr-4 pl-1 text-left transition hover:cursor-pointer"
 		>
-			<img
-				src={userStore.user?.avatar}
-				alt="avatar"
-				class="h-[2.75rem] w-[2.75rem] rounded-full object-cover"
-			/>
+			<img src={userStore.user?.avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] object-cover" />
 			<div class="flex flex-col">
 				<p
 					class="group-hocus:text-accent-50 text-sm leading-[1.15rem] font-medium transition-colors"

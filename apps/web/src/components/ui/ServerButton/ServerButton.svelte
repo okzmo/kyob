@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { elasticInOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
+	import Corners from '../Corners/Corners.svelte';
 
 	interface Props {
 		id: string;
@@ -18,18 +19,15 @@
 <button
 	transition:scale={{ start: 0, duration: 800, easing: elasticInOut }}
 	id="serverButton-{id}"
-	class="group server-button absolute h-[4rem] w-[4rem] hover:cursor-pointer"
+	class="group absolute h-[4rem] w-[4rem] hover:cursor-pointer"
 	aria-label={`${name} server background`}
 	style="transform: translate({x}px, {y}px);"
 	onclick={() => {
 		goto(`/${href}`);
 	}}
 >
-	<img
-		src={avatar}
-		alt={name.slice(0, 2).toUpperCase()}
-		class="transition-radius group-hocus:rounded-2xl h-full w-full rounded-[50%] object-cover"
-	/>
+	<Corners color="border-accent-100" hide class="duration-100" />
+	<img src={avatar} alt={name.slice(0, 2).toUpperCase()} class="h-full w-full object-cover" />
 </button>
 
 <style>
@@ -40,24 +38,26 @@
 		position: absolute;
 		left: 0;
 		top: 0;
-		border-radius: 50%;
-		box-shadow: 0px 0px 0px 1px #6a6a7c;
+		box-shadow:
+			inset 0px 0px 0px 1px var(--color-main-700),
+			inset 0px 0px 12px var(--ui-accent-10000);
+		background-color: var(--ui-accent-10000);
 		transition:
-			border-radius 350ms cubic-bezier(0.65, 0.05, 0, 1),
-			box-shadow 350ms cubic-bezier(0.65, 0.05, 0, 1);
+			background-color 100ms ease-out,
+			box-shadow 100ms ease-out;
 	}
 
 	button:hover::before {
-		border-radius: 16px;
-		box-shadow: 0px 0px 0px 2.5px #fafafa;
+		box-shadow:
+			inset 0px 0px 0px 1px var(--ui-accent-10050),
+			inset 0px 0px 12px var(--ui-accent-10050);
+		background-color: var(--ui-accent-10020);
 	}
 
 	button:focus-visible::before {
-		border-radius: 16px;
-		box-shadow: 0px 0px 0px 2.5px #fafafa;
-	}
-
-	.transition-radius {
-		transition: border-radius 350ms cubic-bezier(0.65, 0.05, 0, 1);
+		box-shadow:
+			inset 0px 0px 0px 1px var(--ui-accent-10050),
+			inset 0px 0px 12px var(--ui-accent-10050);
+		background-color: var(--ui-accent-10020);
 	}
 </style>

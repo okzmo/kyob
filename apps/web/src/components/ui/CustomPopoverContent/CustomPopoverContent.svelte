@@ -6,6 +6,7 @@
 	let {
 		x,
 		y,
+		preserveBackdrop = false,
 		ref = $bindable(null),
 		children,
 		...restProps
@@ -13,6 +14,7 @@
 		children?: Snippet;
 		x?: number;
 		y?: number;
+		preserveBackdrop?: boolean;
 	} = $props();
 </script>
 
@@ -20,7 +22,7 @@
 	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
 			<div {...wrapperProps}>
-				<div {...props} transition:flyBlur={{ x, y }}>
+				<div {...props} transition:flyBlur={{ x, y, preserveBackdrop }}>
 					{@render children?.()}
 				</div>
 			</div>

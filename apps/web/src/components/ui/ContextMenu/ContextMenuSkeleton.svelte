@@ -5,6 +5,7 @@
 	import MessageContextMenu from './MessageContextMenu.svelte';
 	import ChannelMapContextMenu from './ChannelMapContextMenu/ChannelMapContextMenu.svelte';
 	import ServerMapContextMenu from './ServerMapContextMenu/ServerMapContextMenu.svelte';
+	import Corners from '../Corners/Corners.svelte';
 
 	interface Props {
 		target?: string | undefined;
@@ -21,9 +22,10 @@
 
 <ContextMenu.Portal>
 	<ContextMenu.Content
-		class="bg-main-900 border-main-800 flex w-[225px] flex-col gap-y-1 rounded-xl border p-2"
+		class="bg-main-900 inner-shadow-main-800 relative flex w-[225px] flex-col gap-y-1 p-2"
 		onmousedown={contextMenuMouseDown}
 	>
+		<Corners color="border-main-700" />
 		{#if target?.includes('serverButton')}
 			<ServerContextMenu {targetId} />
 		{:else if target?.includes('channelButton')}

@@ -23,22 +23,18 @@
 	}
 </script>
 
-<ContextMenu.Item
-	class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
->
+<ContextMenu.Item class="context-menu-item">
 	<div class="flex w-full items-center justify-between">Mark as read</div>
 </ContextMenu.Item>
 {#if isOwner}
-	<ContextMenu.Item
-		class="rounded-button data-highlighted:bg-main-800 flex h-10 items-center rounded-lg py-3 pr-1.5 pl-3  font-medium select-none hover:cursor-pointer focus-visible:outline-none"
-	>
+	<ContextMenu.Item class="context-menu-item">
 		<div class="flex w-full items-center justify-between">
 			Edit Channel
 			<UserInvite height={20} width={20} />
 		</div>
 	</ContextMenu.Item>
 	<ContextMenu.Item
-		class="rounded-button flex h-10 items-center justify-between rounded-lg py-3 pr-1.5 pl-3 font-medium  text-red-400 select-none hover:cursor-pointer focus-visible:outline-none  data-highlighted:bg-red-400/20"
+		class="context-menu-item-danger"
 		onclick={() => deleteChannel(page.params.server_id, targetId)}
 	>
 		<p class="flex items-center">Delete Channel</p>

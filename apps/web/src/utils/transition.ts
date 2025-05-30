@@ -56,11 +56,19 @@ export function scaleBlur(
 
 export function flyBlur(
 	node: Element,
-	{ delay = 0, duration = 75, easing = cubicOut, y = 0, x = 0, opacity = 0, blurAmount = 8 }
+	{
+		delay = 0,
+		duration = 75,
+		easing = cubicOut,
+		y = 0,
+		x = 0,
+		opacity = 0,
+		blurAmount = 8,
+		preserveBackdrop = false
+	}
 ): TransitionConfig {
 	const style = getComputedStyle(node);
 	const target_opacity = +style.opacity;
-	const transform = style.transform === 'none' ? '' : style.transform;
 	const od = target_opacity * (1 - opacity);
 	const [x_value, x_unit] = split_css_unit(x);
 	const [y_value, y_unit] = split_css_unit(y);
@@ -69,11 +77,10 @@ export function flyBlur(
 		delay,
 		duration,
 		easing,
-		css: (t, u) => `
-        transform: ${transform} translate(${(1 - t) * x_value}${x_unit}, ${(1 - t) * y_value}${y_unit});
-        opacity: ${target_opacity - od * u};
-        filter: blur(${blurAmount * u}px);
-      `
+		css: (t, u) =>
+			preserveBackdrop
+				? `position: relative; top: ${(1 - t) * y_value}${y_unit}; left: ${(1 - t) * x_value}${x_unit}; opacity: ${target_opacity - od * u};`
+				: `transform: translate(${(1 - t) * x_value}${x_unit}, ${(1 - t) * y_value}${y_unit}); opacity: ${target_opacity - od * u}; filter: blur(${blurAmount * u}px);`
 	};
 }
 

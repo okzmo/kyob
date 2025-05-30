@@ -8,6 +8,7 @@
 	import EditMessageInput from '../editMessageInput/editMessageInput.svelte';
 	import type { Channel, Server, User } from '../../../types/types';
 	import UserProfile from '../../UserProfile/UserProfile.svelte';
+	import Corners from '../../ui/Corners/Corners.svelte';
 
 	interface Props {
 		id: string;
@@ -60,6 +61,9 @@
 				: 'hocus:bg-main-800/50'
 	]}
 >
+	{#if isUserMentioned}
+		<Corners color="border-mention-100" />
+	{/if}
 	<UserProfile user={author as User}>
 		<img
 			src={author.avatar}

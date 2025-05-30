@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { userStore } from '../../stores/user.svelte';
 	import { windows } from '../../stores/windows.svelte';
+	import Corners from '../ui/Corners/Corners.svelte';
 	import Close from '../ui/icons/Close.svelte';
 
 	let { id, server, channel, friend } = $props();
@@ -17,10 +18,11 @@
 <div
 	id={`window-top-bar-${id}`}
 	class={[
-		'flex h-[2.375rem] w-full items-center justify-between rounded-t-[14px] border px-2.5 transition-colors duration-100',
-		userStore.mention ? 'bg-accent-200 border-accent-100' : 'bg-main-800 border-main-600'
+		'inner-main-800 relative flex h-[2.375rem] w-full items-center justify-between px-2.5 transition duration-100 hover:cursor-grab active:cursor-grabbing',
+		userStore.mention ? 'bg-accent-200' : 'bg-main-900'
 	]}
 >
+	<Corners color="border-main-700" />
 	<div
 		class={[
 			'flex items-center gap-x-2 text-sm transition-colors duration-100 select-none',
@@ -53,8 +55,8 @@
 	</div>
 	<button
 		class={[
-			'flex items-center justify-center rounded-md p-0.5 transition-colors duration-100 hover:cursor-pointer',
-			userStore.mention ? 'hocus:bg-red-600' : 'hocus:bg-main-600'
+			'flex items-center justify-center p-0.5 transition duration-100 hover:cursor-pointer',
+			userStore.mention ? 'hocus:bg-red-600' : 'hocus:bg-main-800 hocus:inner-main-700'
 		]}
 		onclick={() => windows.closeWindow(id)}
 	>
