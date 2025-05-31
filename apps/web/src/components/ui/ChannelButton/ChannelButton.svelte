@@ -19,7 +19,7 @@
 <button
 	id="channelButton-{id}"
 	class={[
-		'group hocus:bg-accent-800 inner-shadow-main-800 hocus:text-accent-50 hocus:inner-accent/25 absolute z-50 flex items-center gap-x-2.5 px-4 py-3 font-medium transition-[color,box-shadow] duration-100 hover:cursor-pointer',
+		'group hocus:bg-accent-800 inner-shadow-main-800 hocus:text-accent-50 hocus:inner-accent/25 absolute z-20 flex items-center gap-x-2.5 px-4 py-3 font-medium transition-[color,box-shadow] duration-100 hover:cursor-pointer',
 		unread ? 'bg-main-800 text-main-50' : 'bg-main-900 text-main-400'
 	]}
 	style="transform: translate({x}px, {y}px);"

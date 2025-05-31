@@ -7,8 +7,18 @@ export const SignUpSchema = v.object({
 		v.nonEmpty('Please enter your email.'),
 		v.email('The email is badly formatted.')
 	),
-	username: v.pipe(v.string(), v.nonEmpty('Please enter a username.')),
-	display_name: v.pipe(v.string(), v.nonEmpty('Please enter a display name.')),
+	username: v.pipe(
+		v.string(),
+		v.minLength(1, 'The length must be equal or above 1 character.'),
+		v.maxLength(20, 'The length must be equal or below 20 characters.'),
+		v.nonEmpty('Please enter a username.')
+	),
+	display_name: v.pipe(
+		v.string(),
+		v.minLength(1, 'The length must be equal or above 1 character.'),
+		v.maxLength(20, 'The length must be equal or below 20 characters.'),
+		v.nonEmpty('Please enter a display name.')
+	),
 	password: v.pipe(
 		v.string(),
 		v.nonEmpty('Please enter a password.'),
@@ -25,7 +35,7 @@ export const SignInSchema = v.object({
 export const CreateServerSchema = v.object({
 	name: v.pipe(
 		v.string(),
-		v.maxLength(50, 'The length must be equal or below 50 characters.'),
+		v.maxLength(20, 'The length must be equal or below 20 characters.'),
 		v.nonEmpty('Please enter a name for your realm.')
 	),
 	description: v.pipe(
@@ -53,7 +63,8 @@ export interface CreateServerType extends v.InferInput<typeof CreateServerSchema
 export const CreateChannelSchema = v.object({
 	name: v.pipe(
 		v.string(),
-		v.maxLength(50, 'The length must be equal or below 50 characters.'),
+		v.minLength(1, 'The length must be equal or above 1 character.'),
+		v.maxLength(20, 'The length must be equal or below 20 characters.'),
 		v.nonEmpty('Please enter a name for this channel.')
 	),
 	type: v.pipe(v.enum(ChannelTypes)),
@@ -108,3 +119,36 @@ export const DeleteFriendSchema = v.object({
 });
 
 export interface DeleteFriendType extends v.InferInput<typeof DeleteFriendSchema> {}
+
+export const UpdateAccountSchema = v.object({
+	email: v.optional(v.pipe(v.string(), v.email('The email is badly formatted.'))),
+	username: v.optional(
+		v.pipe(
+			v.string(),
+			v.minLength(1, 'The length must be equal or above 1 character.'),
+			v.maxLength(20, 'The length must be equal or below 20 characters.')
+		)
+	),
+	display_name: v.optional(
+		v.pipe(
+			v.string(),
+			v.minLength(1, 'The length must be equal or above 1 character.'),
+			v.maxLength(20, 'The length must be equal or below 20 characters.')
+		)
+	)
+});
+
+export interface UpdateAccountType extends v.InferInput<typeof UpdateAccountSchema> {}
+
+export const UpdatePasswordSchema = v.object({
+	current_password: v.pipe(v.string(), v.nonEmpty('Please enter your old password.')),
+	new_password: v.pipe(
+		v.string(),
+		v.nonEmpty('Please enter a new password.'),
+		v.minLength(8, 'This password is too short.'),
+		v.maxLength(254, 'This password is too long.')
+	),
+	confirm: v.pipe(v.string(), v.nonEmpty('Please the same password as the new one.'))
+});
+
+export interface UpdatePasswordType extends v.InferInput<typeof UpdatePasswordSchema> {}

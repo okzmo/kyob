@@ -8,10 +8,10 @@ SELECT * FROM users WHERE id = $1;
 SELECT id, username, display_name, avatar FROM users WHERE id = ANY($1::text[]);
 
 -- name: GetUserFacts :many
-SELECT label, value FROM facts WHERE user_id = $1;
+SELECT id, label, value FROM facts WHERE user_id = $1;
 
 -- name: GetUserLinks :many
-SELECT label, url FROM links WHERE user_id = $1;
+SELECT id, label, url FROM links WHERE user_id = $1;
 
 -- name: GetUserMinimal :one
 SELECT id, username, display_name, avatar FROM users WHERE id = $1;
@@ -42,7 +42,7 @@ UPDATE users
   set about = $2
 WHERE id = $1;
 
--- name: UpdateUserUsername :exec
+-- name: UpdateUserUsername :execresult
 UPDATE users
   set username = $2
 WHERE id = $1;

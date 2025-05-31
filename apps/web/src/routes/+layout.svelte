@@ -8,11 +8,8 @@
 	import '@fontsource/outfit/800.css';
 	import '@fontsource/outfit/900.css';
 	import '../app.css';
-	import GridDots from '../components/GridDots.svelte';
 
 	let { children } = $props();
 </script>
 
 {@render children()}
-
-<GridDots />

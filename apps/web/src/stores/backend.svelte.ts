@@ -17,7 +17,8 @@ import type {
 	JoinServerErrors,
 	LeaveServerErrors,
 	SetupErrors,
-	StandardError
+	StandardError,
+	UpdateAccountErrors
 } from '../types/errors';
 import type {
 	AcceptFriendType,
@@ -27,7 +28,8 @@ import type {
 	CreateServerType,
 	DeleteFriendType,
 	EditMessageType,
-	JoinServerType
+	JoinServerType,
+	UpdateAccountType
 } from '../types/schemas';
 import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
@@ -613,6 +615,41 @@ class Backend {
 			const errBody = await (error as StandardError).response.json();
 
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async updateAccount(body: UpdateAccountType): Promise<Result<void, UpdateAccountErrors>> {
+		try {
+			const res = await client.post('user/update_account', {
+				body: JSON.stringify(body)
+			});
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
+			if (errBody.status === 403 && errBody.code === 'ERR_USERNAME_IN_USE') {
+				return err({ code: 'ERR_USERNAME_IN_USE', error: errBody.error });
+			}
+
+			if (errBody.status === 403 && errBody.code === 'ERR_EMAIL_IN_USE') {
+				return err({ code: 'ERR_EMAIL_IN_USE', error: errBody.error });
+			}
+
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async logout() {
+		try {
+			await client.post('logout');
+		} catch (error) {
+			console.log(error);
 		}
 	}
 }

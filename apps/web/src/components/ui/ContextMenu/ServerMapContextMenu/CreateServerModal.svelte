@@ -3,7 +3,6 @@
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { CreateServerSchema } from '../../../../types/schemas';
-	import Close from '../../icons/Close.svelte';
 	import Cropper from 'svelte-easy-crop';
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
@@ -11,17 +10,21 @@
 	import { animateCoordinates } from '../../../../utils/transition';
 	import type { Server } from '../../../../types/types';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
-	import LoadingIcon from '../../icons/LoadingIcon.svelte';
 	import { delay } from '../../../../utils/delay';
-	import Check from '../../icons/Check.svelte';
+	import Corners from '../../Corners/Corners.svelte';
+	import SubmitButton from '../../SubmitButton/SubmitButton.svelte';
+	import FormInput from '../../FormInput/FormInput.svelte';
+	import FooterDialog from '../../CustomDialogContent/FooterDialog.svelte';
 
 	let avatar = $state<string | undefined>();
 	let crop = $state({ x: 0, y: 0 });
 	let zoom = $state(1);
 	let minZoom = $state(3);
 	let maxZoom = $state(5);
-	let isLoading = $state(false);
-	let isSuccess = $state(false);
+
+	let isSubmitting = $state(false);
+	let isSubmitted = $state(false);
+	let buttonWidth = $derived(isSubmitted || isSubmitting ? 40 : 154);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateServerSchema)), {
 		dataType: 'json',
@@ -32,13 +35,13 @@
 				form.data.x = Math.round(core.openCreateServerModal.x - core.totalOffsetServerMap.x - 32);
 				form.data.y = Math.round(core.openCreateServerModal.y - core.totalOffsetServerMap.y - 32);
 
-				isLoading = true;
+				isSubmitting = true;
 				const res = await backend.createServer(form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
 						console.log(res.error.error);
 					}
-					isLoading = false;
+					isSubmitting = false;
 				}
 
 				if (res.isOk()) {
@@ -49,11 +52,13 @@
 						active_count: [],
 						hidden: false
 					};
-					serversStore.addServer(server);
-					isLoading = false;
-					isSuccess = true;
 
-					await delay(600);
+					serversStore.addServer(server);
+
+					await delay(500);
+					isSubmitting = false;
+					isSubmitted = true;
+					await delay(1000);
 
 					core.openCreateServerModal.status = false;
 					const targetX = -(server.x - window.innerWidth / 2 + 32);
@@ -74,7 +79,7 @@
 						core.activateMapDragging();
 					}, 500);
 
-					isSuccess = false;
+					isSubmitted = false;
 				}
 			}
 		}
@@ -102,6 +107,8 @@
 			$form.avatar = image;
 		}
 	}
+
+	let isEmpty = $derived(!$form.name && !$form.avatar);
 </script>
 
 <Dialog.Root
@@ -113,18 +120,8 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<CustomDialogContent
-			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
-		>
+		<CustomDialogContent>
 			<form method="post" use:enhance enctype="multipart/form-data">
-				<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
-					<Dialog.Close
-						type="button"
-						class="text-main-400 hocus:text-main-50 absolute top-1/2 right-5 -translate-y-1/2 transition-colors hover:cursor-pointer"
-					>
-						<Close width={18} height={18} />
-					</Dialog.Close>
-				</div>
 				<div class="flex items-center justify-between px-8">
 					<div>
 						<Dialog.Title class="text-lg font-semibold">Create a new realm</Dialog.Title>
@@ -135,12 +132,18 @@
 					</div>
 					<div
 						class={[
-							'relative h-[85px] w-[85px] overflow-hidden rounded-[50%] border-2 text-transparent transition-colors hover:cursor-pointer',
+							'group relative h-[85px] w-[85px] overflow-hidden text-transparent transition-colors hover:cursor-pointer',
 							$errors.avatar
-								? 'hocus:bg-red-400/35 border-red-400 bg-red-400/15'
-								: 'border-accent-100 bg-accent-100/15 hocus:bg-accent-100/35'
+								? 'hocus:bg-red-400/25 inner-red-400/20 hocus:inner-red-400/40 bg-red-400/15'
+								: 'inner-accent/15 bg-accent-100/15 hocus:bg-accent-100/35 hocus:inner-accent-no-shadow/25'
 						]}
 					>
+						<Corners
+							color={$errors.avatar ? 'border-red-400/50' : 'border-accent-100/50'}
+							class={$errors.avatar
+								? 'group-hocus:border-red-400'
+								: 'group-hocus:border-accent-100'}
+						/>
 						<input
 							type="file"
 							id="avatar"
@@ -153,7 +156,7 @@
 							<Cropper
 								image={avatar}
 								cropSize={{ height: 85, width: 85 }}
-								cropShape="round"
+								cropShape="rect"
 								showGrid={false}
 								bind:crop
 								bind:zoom
@@ -167,78 +170,36 @@
 					</div>
 				</div>
 
-				<div class="mt-4 flex flex-col px-8">
-					<div class="flex items-center gap-x-1">
-						<label
-							for="realm-name"
-							class={['text-sm', $errors.name ? 'text-red-400 ' : 'text-main-500']}
-							>Realm name</label
-						>
-						{#if $errors.name}
-							<p class="text-sm text-red-400">- {$errors.name}</p>
-						{/if}
-					</div>
-					<input
-						id="realm-name"
-						type="text"
-						bind:value={$form.name}
-						placeholder="My cool community"
-						class={[
-							'bg-main-800 border-main-600 placeholder:text-main-400 mt-1.5 rounded-xl border py-2.5 focus-visible:ring-0',
-							$errors.name ? 'border-red-400' : 'border-main-600'
-						]}
-					/>
-				</div>
+				<FormInput
+					title="Realm name"
+					id="realm-name"
+					type="text"
+					bind:error={$errors.name}
+					bind:inputValue={$form.name}
+					placeholder="My cool community"
+				/>
 
-				<div class="mt-4 flex flex-col px-8">
-					<div class="flex items-center gap-x-1">
-						<label
-							for="realm-description"
-							class={['text-sm', $errors.description ? 'text-red-400 ' : 'text-main-500']}
-							>Realm description</label
-						>
-						{#if $errors.description}
-							<p class="text-sm text-red-400">- {$errors.description}</p>
-						{/if}
-					</div>
-					<textarea
-						id="realm-description"
-						bind:value={$form.description}
-						placeholder="Here we do..."
-						class={[
-							'bg-main-800 border-main-600 placeholder:text-main-400 mt-1.5 min-h-[8rem] rounded-xl border py-2.5 focus-visible:ring-0',
-							$errors.description ? 'border-red-400' : 'border-main-600'
-						]}
-					></textarea>
-				</div>
+				<FormInput
+					title="Realm description"
+					id="realm-description"
+					type="textarea"
+					bind:error={$errors.description}
+					bind:inputValue={$form.description}
+					placeholder="Here we do..."
+				/>
 
-				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
-					<button
+				<FooterDialog>
+					<SubmitButton
 						type="submit"
-						class={[
-							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
-							!isLoading && !isSuccess ? 'w-40 ' : 'w-10'
-						]}
+						{buttonWidth}
+						{isEmpty}
+						{isSubmitting}
+						{isSubmitted}
+						class="absolute top-1/2 right-5 -translate-y-1/2"
 					>
-						{#if isLoading}
-							<LoadingIcon
-								height={20}
-								width={20}
-								transition={{ duration: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else if isSuccess}
-							<Check
-								height={20}
-								width={20}
-								transition={{ duration: 100, delay: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else}
-							Create your realm
-						{/if}
-					</button>
-				</div>
+						Create your realm
+					</SubmitButton>
+				</FooterDialog>
 			</form>
 		</CustomDialogContent>
 	</Dialog.Portal>

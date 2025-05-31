@@ -3,17 +3,19 @@
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { CreateChannelSchema } from '../../../../types/schemas';
-	import Close from '../../icons/Close.svelte';
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
 	import { page } from '$app/state';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { delay } from '../../../../utils/delay';
-	import LoadingIcon from '../../icons/LoadingIcon.svelte';
-	import Check from '../../icons/Check.svelte';
+	import CloseDialogButton from '../../CustomDialogContent/CloseDialogButton.svelte';
+	import FooterDialog from '../../CustomDialogContent/FooterDialog.svelte';
+	import SubmitButton from '../../SubmitButton/SubmitButton.svelte';
+	import FormInput from '../../FormInput/FormInput.svelte';
 
-	let isLoading = $state(false);
-	let isSuccess = $state(false);
+	let isSubmitting = $state(false);
+	let isSubmitted = $state(false);
+	let buttonWidth = $derived(isSubmitted || isSubmitting ? 40 : 130);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(CreateChannelSchema)), {
 		dataType: 'json',
@@ -25,7 +27,7 @@
 				form.data.x = core.openCreateChannelModal.x;
 				form.data.y = core.openCreateChannelModal.y;
 
-				isLoading = true;
+				isSubmitting = true;
 				const res = await backend.createChannel(serverId, form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
@@ -34,23 +36,25 @@
 					if (res.error.code === 'ERR_UNAUTHORIZED') {
 						console.log(res.error.error);
 					}
-					isLoading = false;
+					isSubmitting = false;
 				}
 
 				if (res.isOk()) {
-					isLoading = false;
-					isSuccess = true;
-
-					await delay(600);
+					await delay(1000);
+					isSubmitting = false;
+					isSubmitted = true;
+					await delay(2000);
 
 					core.openCreateChannelModal.status = false;
 					core.activateMapDragging();
 
-					isSuccess = false;
+					isSubmitted = false;
 				}
 			}
 		}
 	});
+
+	let isEmpty = $derived(!$form.name);
 </script>
 
 <Dialog.Root
@@ -62,16 +66,8 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<CustomDialogContent
-			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
-		>
-			<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
-				<Dialog.Close
-					class="text-main-400 hocus:text-main-50 absolute top-1/2 right-5 -translate-y-1/2 transition-colors hover:cursor-pointer"
-				>
-					<Close width={18} height={18} />
-				</Dialog.Close>
-			</div>
+		<CustomDialogContent>
+			<CloseDialogButton />
 			<div class="flex items-center justify-between px-8">
 				<div>
 					<Dialog.Title class="text-lg font-semibold">Create a new channel</Dialog.Title>
@@ -83,56 +79,27 @@
 			</div>
 
 			<form method="post" use:enhance>
-				<div class="mt-4 flex flex-col px-8">
-					<div class="flex items-center gap-x-1">
-						<label
-							for="channel-name"
-							class={['text-sm', $errors.name ? 'text-red-400 ' : 'text-main-500']}
-							>Channel name</label
-						>
-						{#if $errors.name}
-							<p class="text-sm text-red-400">- {$errors.name}</p>
-						{/if}
-					</div>
-					<input
-						id="channel-name"
-						type="text"
-						bind:value={$form.name}
-						placeholder="General"
-						class={[
-							'bg-main-800 border-main-600 placeholder:text-main-400 mt-1.5 rounded-xl border py-2.5 focus-visible:ring-0',
-							$errors.name ? 'border-red-400' : 'border-main-600'
-						]}
-					/>
-				</div>
+				<FormInput
+					title="Channel name"
+					id="channel-name"
+					bind:error={$errors.name}
+					bind:inputValue={$form.name}
+					placeholder="General"
+					type="text"
+				/>
 
-				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
-					<button
+				<FooterDialog>
+					<SubmitButton
 						type="submit"
-						class={[
-							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
-							!isLoading && !isSuccess ? 'w-34 ' : 'w-10'
-						]}
+						{buttonWidth}
+						{isEmpty}
+						{isSubmitting}
+						{isSubmitted}
+						class="absolute top-1/2 right-5 -translate-y-1/2"
 					>
-						{#if isLoading}
-							<LoadingIcon
-								height={20}
-								width={20}
-								transition={{ duration: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else if isSuccess}
-							<Check
-								height={20}
-								width={20}
-								transition={{ duration: 100, delay: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else}
-							Create channel
-						{/if}
-					</button>
-				</div>
+						Create channel
+					</SubmitButton>
+				</FooterDialog>
 			</form>
 		</CustomDialogContent>
 	</Dialog.Portal>

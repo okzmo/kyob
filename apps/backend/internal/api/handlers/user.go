@@ -30,6 +30,37 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusContinue, user)
 }
 
+func UpdateAccount(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateAccountBody
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = services.UpdateAccount(r.Context(), &body)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrUsernameInUse):
+			utils.RespondWithError(w, http.StatusForbidden, "Username already in use.", "ERR_USERNAME_IN_USE")
+		case errors.Is(err, services.ErrEmailInUse):
+			utils.RespondWithError(w, http.StatusForbidden, "Email already in use.", "ERR_EMAIL_IN_USE")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+}
+
 func AddFriend(w http.ResponseWriter, r *http.Request) {
 	var body services.AddFriendBody
 	user := r.Context().Value("user").(db.User)

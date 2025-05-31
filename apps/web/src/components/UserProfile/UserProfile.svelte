@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover, Separator } from 'bits-ui';
-	import { type Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import type { User } from '../../types/types';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
 	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
@@ -9,23 +9,26 @@
 	interface Props {
 		children: Snippet;
 		user: User;
+		align?: 'start' | 'center' | 'end';
+		side?: 'top' | 'right' | 'bottom' | 'left';
+		sideOffset?: number;
 	}
 
-	let { children, user }: Props = $props();
+	let { children, user, align = 'start', side = 'top', sideOffset = 10 }: Props = $props();
+
+	onMount(() => {
+		document.documentElement.style.setProperty('--user-color-85', '#153c45d9');
+		document.documentElement.style.setProperty('--user-color-95', '#153c45f2');
+		document.documentElement.style.setProperty('--user-color', '#153c45');
+	});
 </script>
 
 <Popover.Root>
 	<Popover.Trigger>
 		{@render children()}
 	</Popover.Trigger>
-	<CustomPopoverContent
-		class="relative z-[999] w-[20rem] p-0"
-		align="start"
-		side="top"
-		sideOffset={10}
-		y={10}
-	>
-		<div class="relative z-[2] h-full overflow-hidden bg-[#153c45]">
+	<CustomPopoverContent class="relative z-[999] w-[20rem] p-0" {align} {side} {sideOffset} y={10}>
+		<div class="relative z-[2] h-full overflow-hidden bg-[var(--user-color)]">
 			{#if user.avatar}
 				<figure class="absolute top-0 left-0 z-[4] h-[14rem] w-full">
 					<img
@@ -90,11 +93,11 @@
 		z-index: 2;
 		background: linear-gradient(
 			180deg,
-			rgba(21, 60, 69, 0) 50%,
-			rgba(21, 60, 69, 0.85) 80%,
-			rgba(21, 60, 69, 0.95) 90%,
-			rgba(21, 60, 69, 1) 14rem,
-			#153c45 100%
+			transparent 50%,
+			var(--user-color-85) 80%,
+			var(--user-color-95) 90%,
+			var(--user-color) 14rem,
+			var(--user-color) 100%
 		);
 	}
 </style>

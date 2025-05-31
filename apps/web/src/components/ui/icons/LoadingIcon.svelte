@@ -1,24 +1,14 @@
 <script lang="ts">
-	import { fly, type FlyParams } from 'svelte/transition';
-
 	interface Props {
 		height: number;
 		width: number;
 		class?: string;
-		transition?: FlyParams;
 	}
 
-	let { class: classes, height = 24, width = 24, transition }: Props = $props();
+	let { class: classes, height = 24, width = 24 }: Props = $props();
 </script>
 
-<svg
-	transition:fly={transition}
-	xmlns="http://www.w3.org/2000/svg"
-	{width}
-	{height}
-	class={classes}
-	viewBox="0 0 24 24"
->
+<svg xmlns="http://www.w3.org/2000/svg" {width} {height} class={classes} viewBox="0 0 24 24">
 	<g
 		fill="none"
 		stroke="currentColor"

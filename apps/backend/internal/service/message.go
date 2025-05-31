@@ -31,7 +31,7 @@ type EditMessageBody struct {
 
 type MessageResponse struct {
 	ID               string          `json:"id"`
-	Author           db.User         `json:"author"`
+	Author           UserResponse    `json:"author"`
 	ServerId         string          `json:"server_id"`
 	ChannelId        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
@@ -129,9 +129,28 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 			return nil, err
 		}
 
+		links, err := db.Query.GetUserLinks(ctx, author.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		facts, err := db.Query.GetUserFacts(ctx, author.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		messages = append(messages, MessageResponse{
-			ID:               message.ID,
-			Author:           author,
+			ID: message.ID,
+			Author: UserResponse{
+				ID:          author.ID,
+				Username:    author.Username,
+				DisplayName: author.DisplayName,
+				Avatar:      author.Avatar,
+				Banner:      author.Banner,
+				About:       author.About,
+				Links:       links,
+				Facts:       facts,
+			},
 			ServerId:         message.ServerID,
 			ChannelId:        message.ChannelID,
 			Content:          message.Content,

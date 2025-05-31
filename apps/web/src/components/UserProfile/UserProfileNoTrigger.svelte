@@ -21,19 +21,9 @@
 			}
 
 			if (res.isOk()) {
-				if (res.value.gradient_top && res.value.gradient_bottom) {
-					document.documentElement.style.setProperty('--user-gradient-top', res.value.gradient_top);
-					document.documentElement.style.setProperty(
-						'--user-gradient-bottom',
-						res.value.gradient_bottom
-					);
-				} else {
-					document.documentElement.style.setProperty('--user-gradient-top', 'var(--ui-main-800)');
-					document.documentElement.style.setProperty(
-						'--user-gradient-bottom',
-						'var(--ui-main-800)'
-					);
-				}
+				document.documentElement.style.setProperty('--user-color-85', '#153c45d9');
+				document.documentElement.style.setProperty('--user-color-95', '#153c45f2');
+				document.documentElement.style.setProperty('--user-color', '#153c45');
 				core.profiles.push(res.value);
 				return res.value;
 			}

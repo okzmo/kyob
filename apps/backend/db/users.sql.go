@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -119,10 +120,11 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 }
 
 const getUserFacts = `-- name: GetUserFacts :many
-SELECT label, value FROM facts WHERE user_id = $1
+SELECT id, label, value FROM facts WHERE user_id = $1
 `
 
 type GetUserFactsRow struct {
+	ID    string      `json:"id"`
 	Label pgtype.Text `json:"label"`
 	Value pgtype.Text `json:"value"`
 }
@@ -136,7 +138,7 @@ func (q *Queries) GetUserFacts(ctx context.Context, userID string) ([]GetUserFac
 	var items []GetUserFactsRow
 	for rows.Next() {
 		var i GetUserFactsRow
-		if err := rows.Scan(&i.Label, &i.Value); err != nil {
+		if err := rows.Scan(&i.ID, &i.Label, &i.Value); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -148,10 +150,11 @@ func (q *Queries) GetUserFacts(ctx context.Context, userID string) ([]GetUserFac
 }
 
 const getUserLinks = `-- name: GetUserLinks :many
-SELECT label, url FROM links WHERE user_id = $1
+SELECT id, label, url FROM links WHERE user_id = $1
 `
 
 type GetUserLinksRow struct {
+	ID    string      `json:"id"`
 	Label pgtype.Text `json:"label"`
 	Url   pgtype.Text `json:"url"`
 }
@@ -165,7 +168,7 @@ func (q *Queries) GetUserLinks(ctx context.Context, userID string) ([]GetUserLin
 	var items []GetUserLinksRow
 	for rows.Next() {
 		var i GetUserLinksRow
-		if err := rows.Scan(&i.Label, &i.Url); err != nil {
+		if err := rows.Scan(&i.ID, &i.Label, &i.Url); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -315,7 +318,7 @@ func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPassword
 	return err
 }
 
-const updateUserUsername = `-- name: UpdateUserUsername :exec
+const updateUserUsername = `-- name: UpdateUserUsername :execresult
 UPDATE users
   set username = $2
 WHERE id = $1
@@ -326,7 +329,6 @@ type UpdateUserUsernameParams struct {
 	Username string `json:"username"`
 }
 
-func (q *Queries) UpdateUserUsername(ctx context.Context, arg UpdateUserUsernameParams) error {
-	_, err := q.db.Exec(ctx, updateUserUsername, arg.ID, arg.Username)
-	return err
+func (q *Queries) UpdateUserUsername(ctx context.Context, arg UpdateUserUsernameParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserUsername, arg.ID, arg.Username)
 }

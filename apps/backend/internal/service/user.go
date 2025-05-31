@@ -3,12 +3,17 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/okzmo/kyob/db"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
-var ErrAddingItself = errors.New("user adding itself")
+var (
+	ErrAddingItself  = errors.New("user adding itself")
+	ErrUsernameInUse = errors.New("username in use")
+	ErrEmailInUse    = errors.New("email in use")
+)
 
 type AddFriendBody struct {
 	Username string `validate:"required" json:"username"`
@@ -24,6 +29,12 @@ type RemoveFriendBody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
 	FriendID     string `validate:"required" json:"friend_id"`
 	UserID       string `validate:"required" json:"user_id"`
+}
+
+type UpdateAccountBody struct {
+	Email       string `validate:"omitempty,email" json:"email"`
+	Username    string `validate:"omitempty,min=1,max=20" json:"username"`
+	DisplayName string `validate:"omitempty,min=1,max=20" json:"display_name"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -57,7 +68,60 @@ func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 		Facts:          facts,
 	}
 
+	fmt.Println(res)
+
 	return res, nil
+}
+
+func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
+	user := ctx.Value("user").(db.User)
+
+	if body.Username != "" {
+		_, err := db.Query.GetUser(ctx, db.GetUserParams{
+			Username: body.Username,
+		})
+		if err == nil {
+			return ErrUsernameInUse
+		}
+
+		res, err := db.Query.UpdateUserUsername(ctx, db.UpdateUserUsernameParams{
+			ID:       user.ID,
+			Username: body.Username,
+		})
+		fmt.Println(res)
+		if err != nil {
+			return err
+		}
+	}
+
+	if body.DisplayName != "" {
+		err := db.Query.UpdateUserDisplayName(ctx, db.UpdateUserDisplayNameParams{
+			ID:          user.ID,
+			DisplayName: body.DisplayName,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if body.Email != "" {
+		_, err := db.Query.GetUser(ctx, db.GetUserParams{
+			Email: body.Email,
+		})
+		if err == nil {
+			return ErrEmailInUse
+		}
+
+		err = db.Query.UpdateUserEmail(ctx, db.UpdateUserEmailParams{
+			ID:    user.ID,
+			Email: body.Email,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error) {

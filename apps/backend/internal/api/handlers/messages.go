@@ -35,6 +35,37 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 
 	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
 
+	links, err := db.Query.GetUserLinks(r.Context(), user.ID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	facts, err := db.Query.GetUserFacts(r.Context(), user.ID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var protoLinks []*proto.UserLinksRow
+	for _, link := range links {
+		protoLink := &proto.UserLinksRow{
+			Id:    link.ID,
+			Label: link.Label.String,
+			Url:   link.Url.String,
+		}
+		protoLinks = append(protoLinks, protoLink)
+	}
+
+	var protoFacts []*proto.UserFactsRow
+	for _, fact := range facts {
+		protoFact := &proto.UserFactsRow{
+			Id:    fact.ID,
+			Label: fact.Label.String,
+			Value: fact.Value.String,
+		}
+		protoFacts = append(protoFacts, protoFact)
+	}
+
 	switch body.Type {
 	case "SEND":
 		mess := &proto.IncomingChatMessage{
@@ -48,6 +79,8 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 				GradientTop:    &user.GradientTop.String,
 				GradientBottom: &user.GradientBottom.String,
 				About:          &user.About.String,
+				Links:          protoLinks,
+				Facts:          protoFacts,
 				CreatedAt:      timestamppb.New(user.CreatedAt),
 			},
 			Content:       body.Content,

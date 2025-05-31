@@ -19,6 +19,7 @@
 	import Audio from '../../components/Audio.svelte';
 	import UserProfileNoTrigger from '../../components/UserProfile/UserProfileNoTrigger.svelte';
 	import AddFriendModal from '../../components/Topbar/friends/AddFriendModal.svelte';
+	import GridDots from '../../components/GridDots.svelte';
 
 	let contextMenuTarget: string | undefined = $state();
 	let contextMenuTargetAuthor: string | undefined = $state();
@@ -110,3 +111,5 @@
 <Audio />
 <UserProfileNoTrigger />
 <AddFriendModal />
+
+<GridDots />

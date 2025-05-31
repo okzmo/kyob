@@ -64,7 +64,7 @@
 	{#if isUserMentioned}
 		<Corners color="border-mention-100" />
 	{/if}
-	<UserProfile user={author as User}>
+	<UserProfile user={author as User} side="right" align="center">
 		<img
 			src={author.avatar}
 			alt="{author.username}'s avatar"

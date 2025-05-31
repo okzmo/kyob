@@ -3,18 +3,20 @@
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { JoinServerSchema } from '../../../../types/schemas';
-	import Close from '../../icons/Close.svelte';
 	import { core } from '../../../../stores/core.svelte';
 	import { backend } from '../../../../stores/backend.svelte';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { serversStore } from '../../../../stores/servers.svelte';
 	import type { Server } from '../../../../types/types';
-	import Check from '../../icons/Check.svelte';
-	import LoadingIcon from '../../icons/LoadingIcon.svelte';
 	import { delay } from '../../../../utils/delay';
+	import FooterDialog from '../../CustomDialogContent/FooterDialog.svelte';
+	import SubmitButton from '../../SubmitButton/SubmitButton.svelte';
+	import FormInput from '../../FormInput/FormInput.svelte';
+	import CloseDialogButton from '../../CustomDialogContent/CloseDialogButton.svelte';
 
-	let isLoading = $state(false);
-	let isSuccess = $state(false);
+	let isSubmitting = $state(false);
+	let isSubmitted = $state(false);
+	let buttonWidth = $derived(isSubmitted || isSubmitting ? 40 : 100);
 
 	const { form, errors, enhance } = superForm(defaults(valibot(JoinServerSchema)), {
 		dataType: 'json',
@@ -25,13 +27,13 @@
 				form.data.x = core.openJoinServerModal.x;
 				form.data.y = core.openJoinServerModal.y;
 
-				isLoading = true;
+				isSubmitting = true;
 				const res = await backend.joinServer(form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
 						console.log(res.error.error);
 					}
-					isLoading = false;
+					isSubmitting = false;
 				}
 
 				if (res.isOk()) {
@@ -39,10 +41,11 @@
 						...res.value
 					};
 					serversStore.addServer(server);
-					isLoading = false;
-					isSuccess = true;
 
-					await delay(600);
+					await delay(1000);
+					isSubmitting = false;
+					isSubmitted = true;
+					await delay(2000);
 
 					core.openJoinServerModal.status = false;
 					core.activateMapDragging();
@@ -50,6 +53,8 @@
 			}
 		}
 	});
+
+	let isEmpty = $derived(!$form.invite_url);
 </script>
 
 <Dialog.Root
@@ -61,16 +66,9 @@
 >
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
-		<CustomDialogContent
-			class="bg-main-900 border-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2 rounded-2xl border"
-		>
-			<div class="border-b-main-800 relative mb-8 w-full border-b py-7">
-				<Dialog.Close
-					class="text-main-400 hocus:text-main-50 absolute top-1/2 right-5 -translate-y-1/2 transition-colors hover:cursor-pointer"
-				>
-					<Close width={18} height={18} />
-				</Dialog.Close>
-			</div>
+		<CustomDialogContent>
+			<CloseDialogButton />
+
 			<div class="flex items-center justify-between px-8">
 				<div>
 					<Dialog.Title class="text-lg font-semibold">Join a realm</Dialog.Title>
@@ -82,56 +80,27 @@
 			</div>
 
 			<form method="post" use:enhance>
-				<div class="mt-4 flex flex-col px-8">
-					<div class="flex items-center gap-x-1">
-						<label
-							for="channel-name"
-							class={['text-sm', $errors.invite_url ? 'text-red-400 ' : 'text-main-500']}
-							>Invitation link</label
-						>
-						{#if $errors.invite_url}
-							<p class="text-sm text-red-400">- {$errors.invite_url}</p>
-						{/if}
-					</div>
-					<input
-						id="channel-name"
-						type="text"
-						bind:value={$form.invite_url}
-						placeholder="https://kyob.app/invite/123"
-						class={[
-							'bg-main-800 border-main-600 placeholder:text-main-400 mt-1.5 rounded-xl border py-2.5 focus-visible:ring-0',
-							$errors.invite_url ? 'border-red-400' : 'border-main-600'
-						]}
-					/>
-				</div>
+				<FormInput
+					title="Invitation link"
+					type="text"
+					id="invite-url"
+					bind:error={$errors.invite_url}
+					bind:inputValue={$form.invite_url}
+					placeholder="https://kyob.app/invite/123"
+				/>
 
-				<div class="border-t-main-800 relative mt-8 w-full border-t py-9">
-					<button
+				<FooterDialog>
+					<SubmitButton
 						type="submit"
-						class={[
-							'hocus:text-main-50 bg-accent-100/15 text-accent-50 hocus:bg-accent-100/75 absolute top-1/2 right-3 flex h-10 -translate-y-1/2 items-center justify-center rounded-lg transition-all hover:cursor-pointer',
-							!isLoading && !isSuccess ? 'w-26 ' : 'w-10'
-						]}
+						{buttonWidth}
+						{isEmpty}
+						{isSubmitting}
+						{isSubmitted}
+						class="absolute top-1/2 right-5 -translate-y-1/2"
 					>
-						{#if isLoading}
-							<LoadingIcon
-								height={20}
-								width={20}
-								transition={{ duration: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else if isSuccess}
-							<Check
-								height={20}
-								width={20}
-								transition={{ duration: 100, delay: 100, y: 5 }}
-								class="absolute"
-							/>
-						{:else}
-							Join realm
-						{/if}
-					</button>
-				</div>
+						Join realm
+					</SubmitButton>
+				</FooterDialog>
 			</form>
 		</CustomDialogContent>
 	</Dialog.Portal>

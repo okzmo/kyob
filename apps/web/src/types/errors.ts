@@ -97,3 +97,9 @@ export interface DeleteFriendErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface UpdateAccountErrors {
+	code: 'ERR_USERNAME_IN_USE' | 'ERR_EMAIL_IN_USE' | 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}

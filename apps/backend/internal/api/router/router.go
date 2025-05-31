@@ -33,6 +33,7 @@ func Setup() {
 			r.Get("/connect/{user_id}", handlers.WS)
 			r.Get("/setup", handlers.Setup)
 			r.Get("/user/{user_id}", handlers.GetUser)
+			r.Post("/user/update_account", handlers.UpdateAccount)
 			r.Post("/server", handlers.CreateServer)
 			r.Post("/server/join", handlers.JoinServer)
 			r.Post("/server/{id}/leave", handlers.LeaveServer)
