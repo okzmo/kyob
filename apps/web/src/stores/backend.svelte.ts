@@ -18,7 +18,8 @@ import type {
 	LeaveServerErrors,
 	SetupErrors,
 	StandardError,
-	UpdateAccountErrors
+	UpdateAccountErrors,
+	UpdateAvatarErrors
 } from '../types/errors';
 import type {
 	AcceptFriendType,
@@ -29,7 +30,8 @@ import type {
 	DeleteFriendType,
 	EditMessageType,
 	JoinServerType,
-	UpdateAccountType
+	UpdateAccountType,
+	UpdateAvatarType
 } from '../types/schemas';
 import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
@@ -650,6 +652,31 @@ class Backend {
 			await client.post('logout');
 		} catch (error) {
 			console.log(error);
+		}
+	}
+
+	async updateAvatar(
+		body: UpdateAvatarType
+	): Promise<Result<{ banner: string; avatar: string }, UpdateAvatarErrors>> {
+		try {
+			const formData = new FormData();
+			formData.append('avatar', body.avatar);
+			formData.append('crop_banner', JSON.stringify(body.crop_banner));
+			formData.append('crop_avatar', JSON.stringify(body.crop_avatar));
+
+			const res = await client.post('user/update_avatar', {
+				body: formData
+			});
+
+			const data = (await res.json()) as { banner: string; avatar: string };
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 }

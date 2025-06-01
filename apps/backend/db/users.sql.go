@@ -18,7 +18,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
-RETURNING id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at
+RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -49,8 +49,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Avatar,
 		&i.Banner,
 		&i.About,
-		&i.GradientTop,
-		&i.GradientBottom,
+		&i.MainColor,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -67,7 +66,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at FROM users WHERE email = $1 OR username = $2
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at FROM users WHERE email = $1 OR username = $2
 `
 
 type GetUserParams struct {
@@ -87,8 +86,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 		&i.Avatar,
 		&i.Banner,
 		&i.About,
-		&i.GradientTop,
-		&i.GradientBottom,
+		&i.MainColor,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -96,7 +94,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, password, display_name, avatar, banner, about, gradient_top, gradient_bottom, created_at, updated_at FROM users WHERE id = $1
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
@@ -111,8 +109,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.Avatar,
 		&i.Banner,
 		&i.About,
-		&i.GradientTop,
-		&i.GradientBottom,
+		&i.MainColor,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -245,8 +242,8 @@ WHERE id = $1
 `
 
 type UpdateUserAboutParams struct {
-	ID    string      `json:"id"`
-	About pgtype.Text `json:"about"`
+	ID    string `json:"id"`
+	About []byte `json:"about"`
 }
 
 func (q *Queries) UpdateUserAbout(ctx context.Context, arg UpdateUserAboutParams) error {
@@ -254,19 +251,20 @@ func (q *Queries) UpdateUserAbout(ctx context.Context, arg UpdateUserAboutParams
 	return err
 }
 
-const updateUserAvatar = `-- name: UpdateUserAvatar :exec
+const updateUserAvatarNBanner = `-- name: UpdateUserAvatarNBanner :exec
 UPDATE users
-  set avatar = $2
+  set avatar = $2, banner = $3
 WHERE id = $1
 `
 
-type UpdateUserAvatarParams struct {
+type UpdateUserAvatarNBannerParams struct {
 	ID     string      `json:"id"`
 	Avatar pgtype.Text `json:"avatar"`
+	Banner pgtype.Text `json:"banner"`
 }
 
-func (q *Queries) UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) error {
-	_, err := q.db.Exec(ctx, updateUserAvatar, arg.ID, arg.Avatar)
+func (q *Queries) UpdateUserAvatarNBanner(ctx context.Context, arg UpdateUserAvatarNBannerParams) error {
+	_, err := q.db.Exec(ctx, updateUserAvatarNBanner, arg.ID, arg.Avatar, arg.Banner)
 	return err
 }
 

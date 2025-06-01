@@ -114,7 +114,7 @@ type GetFriendsRow struct {
 	ID                 string      `json:"id"`
 	DisplayName        string      `json:"display_name"`
 	Avatar             pgtype.Text `json:"avatar"`
-	About              pgtype.Text `json:"about"`
+	About              []byte      `json:"about"`
 	Accepted           bool        `json:"accepted"`
 	FriendshipID       string      `json:"friendship_id"`
 	FriendshipSenderID string      `json:"friendship_sender_id"`

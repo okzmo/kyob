@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -35,6 +36,13 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		slog.Error("Failed to read file", "err", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to process file.")
+		return
+	}
+
 	body.Name = r.FormValue("name")
 	body.Description = r.FormValue("description")
 	body.Private = r.FormValue("private") == "true"
@@ -62,7 +70,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	server, err := services.CreateServer(r.Context(), file, fileHeader, &body)
+	server, err := services.CreateServer(r.Context(), fileData, fileHeader, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

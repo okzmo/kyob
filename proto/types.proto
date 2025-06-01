@@ -38,11 +38,11 @@ message User {
   string display_name = 4;
   optional string avatar = 5;
   optional string banner = 6;
-  optional string gradient_top = 7;
-  optional string gradient_bottom = 8;
-  optional string about = 9;
-  google.protobuf.Timestamp created_at = 10;
-  repeated UserLinksRow links = 11; repeated UserFactsRow facts = 12;
+  optional string main_color = 7;
+  optional bytes about = 8;
+  google.protobuf.Timestamp created_at = 9;
+  repeated UserLinksRow links = 10; 
+  repeated UserFactsRow facts = 11;
 }
 
 message IncomingChatMessage {

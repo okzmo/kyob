@@ -32,9 +32,9 @@ UPDATE users
   set display_name = $2
 WHERE id = $1;
 
--- name: UpdateUserAvatar :exec
+-- name: UpdateUserAvatarNBanner :exec
 UPDATE users
-  set avatar = $2
+  set avatar = $2, banner = $3
 WHERE id = $1;
 
 -- name: UpdateUserAbout :exec

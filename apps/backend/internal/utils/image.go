@@ -1,16 +1,15 @@
 package utils
 
 import (
-	"mime/multipart"
-
 	"github.com/davidbyttow/govips/v2/vips"
 )
 
-func CropImage(file multipart.File, x, y, width, height int) ([]byte, error) {
-	image, err := vips.NewImageFromReader(file)
+func CropImage(file []byte, x, y, width, height int) ([]byte, error) {
+	image, err := vips.NewImageFromBuffer(file)
 	if err != nil {
 		return nil, err
 	}
+	defer image.Close()
 
 	err = image.ExtractArea(x, y, width, height)
 	if err != nil {

@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -24,29 +25,28 @@ type ChannelsWithMembers struct {
 }
 
 type UserResponse struct {
-	ID             string               `json:"id"`
-	Email          string               `json:"email"`
-	Username       string               `json:"username"`
-	DisplayName    string               `json:"display_name"`
-	Avatar         pgtype.Text          `json:"avatar"`
-	Banner         pgtype.Text          `json:"banner"`
-	GradientTop    pgtype.Text          `json:"gradient_top"`
-	GradientBottom pgtype.Text          `json:"gradient_bottom"`
-	About          pgtype.Text          `json:"about"`
-	CreatedAt      time.Time            `json:"created_at"`
-	Links          []db.GetUserLinksRow `json:"links"`
-	Facts          []db.GetUserFactsRow `json:"facts"`
+	ID          string               `json:"id"`
+	Email       string               `json:"email"`
+	Username    string               `json:"username"`
+	DisplayName string               `json:"display_name"`
+	Avatar      pgtype.Text          `json:"avatar"`
+	Banner      pgtype.Text          `json:"banner"`
+	MainColor   pgtype.Text          `json:"main_color"`
+	About       json.RawMessage      `json:"about"`
+	CreatedAt   time.Time            `json:"created_at"`
+	Links       []db.GetUserLinksRow `json:"links"`
+	Facts       []db.GetUserFactsRow `json:"facts"`
 }
 
 type FriendResponse struct {
-	ID           string      `json:"id"`
-	FriendshipID string      `json:"friendship_id"`
-	ChannelID    string      `json:"channel_id"`
-	DisplayName  string      `json:"display_name"`
-	Avatar       pgtype.Text `json:"avatar"`
-	About        pgtype.Text `json:"about"`
-	Accepted     bool        `json:"accepted"`
-	Sender       bool        `json:"sender"`
+	ID           string          `json:"id"`
+	FriendshipID string          `json:"friendship_id"`
+	ChannelID    string          `json:"channel_id"`
+	DisplayName  string          `json:"display_name"`
+	Avatar       pgtype.Text     `json:"avatar"`
+	About        json.RawMessage `json:"about"`
+	Accepted     bool            `json:"accepted"`
+	Sender       bool            `json:"sender"`
 }
 
 type SetupResponse struct {
@@ -81,18 +81,17 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	res.User = UserResponse{
-		ID:             ctxUser.ID,
-		Email:          ctxUser.Email,
-		Username:       ctxUser.Username,
-		DisplayName:    ctxUser.DisplayName,
-		Avatar:         ctxUser.Avatar,
-		Banner:         ctxUser.Banner,
-		GradientTop:    ctxUser.GradientTop,
-		GradientBottom: ctxUser.GradientBottom,
-		About:          ctxUser.About,
-		CreatedAt:      ctxUser.CreatedAt,
-		Facts:          facts,
-		Links:          links,
+		ID:          ctxUser.ID,
+		Email:       ctxUser.Email,
+		Username:    ctxUser.Username,
+		DisplayName: ctxUser.DisplayName,
+		Avatar:      ctxUser.Avatar,
+		Banner:      ctxUser.Banner,
+		MainColor:   ctxUser.MainColor,
+		About:       ctxUser.About,
+		CreatedAt:   ctxUser.CreatedAt,
+		Facts:       facts,
+		Links:       links,
 	}
 
 	for _, f := range friends {

@@ -10,9 +10,8 @@ CREATE TABLE users(
   display_name VARCHAR(255) NOT NULL,
   avatar VARCHAR(255),
   banner VARCHAR(255),
-  about TEXT,
-  gradient_top VARCHAR(255),
-  gradient_bottom VARCHAR(255),
+  about JSONB,
+  main_color VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );

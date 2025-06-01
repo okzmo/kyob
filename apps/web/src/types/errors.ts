@@ -103,3 +103,15 @@ export interface UpdateAccountErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface UpdateProfileErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
+export interface UpdateAvatarErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}

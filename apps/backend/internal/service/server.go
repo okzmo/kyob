@@ -76,7 +76,7 @@ type ServerInviteResponse struct {
 	InviteLink string `json:"invite_link"`
 }
 
-func CreateServer(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, server *CreateServerBody) (*ServerResponse, error) {
+func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, server *CreateServerBody) (*ServerResponse, error) {
 	image, err := utils.CropImage(file, server.Crop.X, server.Crop.Y, server.Crop.Width, server.Crop.Height)
 	if err != nil {
 		slog.Error("image cropping error", "err", err)

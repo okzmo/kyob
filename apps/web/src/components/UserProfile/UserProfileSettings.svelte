@@ -9,6 +9,12 @@
 	import Cropper from 'svelte-easy-crop';
 	import FooterDialog from '../ui/CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../ui/SubmitButton/SubmitButton.svelte';
+	import { backend } from '../../stores/backend.svelte';
+	import { userStore } from '../../stores/user.svelte';
+	import { delay } from '../../utils/delay';
+	import { UpdateAvatarSchema } from '../../types/schemas';
+	import ColorThief, { type RGBColor } from 'colorthief';
+	import * as v from 'valibot';
 
 	interface Props {
 		user: User;
@@ -24,9 +30,14 @@
 
 	let openImageModal = $state(false);
 	let avatar = $state<string | undefined>();
+	let image = $state<File | undefined>();
+	let colors = $state<RGBColor[]>([]);
+	let mainColor = $state<RGBColor | null>();
 
 	let cropBanner = $state({ x: 0, y: 0 });
 	let cropAvatar = $state({ x: 0, y: 0 });
+	let cropBannerPixels = $state({ x: 0, y: 0, height: 0, width: 0 });
+	let cropAvatarPixels = $state({ x: 0, y: 0, height: 0, width: 0 });
 
 	let zoomAvatar = $state(1);
 	let zoomBanner = $state(1);
@@ -38,7 +49,9 @@
 
 	function onFile(e: Event) {
 		const target = e.target as HTMLInputElement;
-		const image = target.files?.[0];
+		image = target.files?.[0];
+
+		const colorThief = new ColorThief();
 
 		if (image) {
 			const dataUrl = URL.createObjectURL(image);
@@ -49,8 +62,16 @@
 				const aspectBanner = 320 / 224;
 				const aspectImage = img.naturalWidth / img.naturalHeight;
 
-				minZoomAvatar = aspectImage > 1 ? aspectImage / aspectAvatar : aspectAvatar / aspectImage;
-				minZoomBanner = aspectImage > 1 ? aspectImage / aspectBanner : aspectBanner / aspectImage;
+				const importantColor = colorThief.getColor(img);
+				const palette = colorThief.getPalette(img);
+				if (importantColor) {
+					colors.push(importantColor);
+					mainColor = importantColor;
+				}
+				if (palette) colors.push(...palette);
+
+				minZoomAvatar = Math.max(aspectAvatar / aspectImage, aspectImage / aspectAvatar);
+				minZoomBanner = Math.max(aspectBanner / aspectImage, aspectImage / aspectBanner);
 
 				zoomAvatar = minZoomAvatar;
 				zoomBanner = minZoomBanner;
@@ -63,11 +84,38 @@
 		}
 	}
 
-	function handleNewAvatar() {
-		console.log(cropBanner, cropAvatar);
+	async function handleNewAvatar() {
+		if (!image) return;
+		const parsedData = v.parse(UpdateAvatarSchema, {
+			avatar: image,
+			crop_banner: cropBannerPixels,
+			crop_avatar: cropAvatarPixels
+		});
+
+		isSubmitting = true;
+		const res = await backend.updateAvatar(parsedData);
+
+		if (res.isErr()) {
+			console.error(res.error.error);
+			isSubmitting = false;
+			return;
+		}
+
+		if (res.isOk()) {
+			await delay(500);
+			isSubmitting = false;
+			isSubmitted = true;
+			await delay(1000);
+
+			userStore.user!.avatar = res.value.avatar;
+			userStore.user!.banner = res.value.banner;
+			openImageModal = false;
+
+			isSubmitted = false;
+		}
 	}
 
-	let isEmpty = $derived(!avatar);
+	let isEmpty = $derived(!avatar || !image);
 </script>
 
 <Dialog.Root open={openImageModal} onOpenChange={(s) => (openImageModal = s)}>
@@ -77,7 +125,7 @@
 		<div class="flex items-center justify-between px-8">
 			<div>
 				<Dialog.Title class="text-lg font-semibold">Change your avatar</Dialog.Title>
-				<Dialog.Description class="text-main-400 max-w-[24rem]  text-sm">
+				<Dialog.Description class="text-main-400 max-w-[24rem] text-sm">
 					It will be used as your profile banner and avatar.
 				</Dialog.Description>
 			</div>
@@ -87,7 +135,12 @@
 			{#if avatar}
 				<button
 					class="inner-red-400/20 hocus:bg-red-400/30 hocus:inner-red-400/40 relative bg-red-400/15 px-2 py-1 text-red-400 transition-colors duration-100 hover:cursor-pointer"
-					onclick={() => (avatar = undefined)}
+					onclick={() => {
+						avatar = undefined;
+						image = undefined;
+						mainColor = null;
+						colors = [];
+					}}
 				>
 					Remove avatar
 				</button>
@@ -120,6 +173,9 @@
 							bind:zoom={zoomBanner}
 							minZoom={minZoomBanner}
 							maxZoom={maxZoomBanner}
+							oncropcomplete={(e) => {
+								cropAvatarPixels = e.pixels;
+							}}
 						/>
 					</div>
 
@@ -133,9 +189,30 @@
 							bind:zoom={zoomAvatar}
 							minZoom={minZoomAvatar}
 							maxZoom={maxZoomAvatar}
+							oncropcomplete={(e) => {
+								cropBannerPixels = e.pixels;
+							}}
 						/>
 					</div>
 				</div>
+				{#if colors.length > 0 && mainColor}
+					<p class="mt-3 text-lg font-semibold">Main color</p>
+					<div class="mt-1 flex gap-x-1">
+						{#each colors as color, idx (idx)}
+							<button
+								class={[
+									'h-7 w-10 border transition-colors hover:cursor-pointer',
+									mainColor.join(',') === color.join(',')
+										? 'border-main-50'
+										: 'border-main-800 hocus:border-main-500'
+								]}
+								aria-label="color"
+								style="background-color: rgb({color.join(',')});"
+								onclick={() => (mainColor = color)}
+							></button>
+						{/each}
+					</div>
+				{/if}
 			{/if}
 		</div>
 

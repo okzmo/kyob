@@ -369,21 +369,20 @@ func (x *UserFactsRow) GetValue() string {
 }
 
 type User struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email          string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	Username       string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
-	DisplayName    string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Avatar         *string                `protobuf:"bytes,5,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Banner         *string                `protobuf:"bytes,6,opt,name=banner,proto3,oneof" json:"banner,omitempty"`
-	GradientTop    *string                `protobuf:"bytes,7,opt,name=gradient_top,json=gradientTop,proto3,oneof" json:"gradient_top,omitempty"`
-	GradientBottom *string                `protobuf:"bytes,8,opt,name=gradient_bottom,json=gradientBottom,proto3,oneof" json:"gradient_bottom,omitempty"`
-	About          *string                `protobuf:"bytes,9,opt,name=about,proto3,oneof" json:"about,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Links          []*UserLinksRow        `protobuf:"bytes,11,rep,name=links,proto3" json:"links,omitempty"`
-	Facts          []*UserFactsRow        `protobuf:"bytes,12,rep,name=facts,proto3" json:"facts,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Avatar        *string                `protobuf:"bytes,5,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	Banner        *string                `protobuf:"bytes,6,opt,name=banner,proto3,oneof" json:"banner,omitempty"`
+	MainColor     *string                `protobuf:"bytes,7,opt,name=main_color,json=mainColor,proto3,oneof" json:"main_color,omitempty"`
+	About         []byte                 `protobuf:"bytes,8,opt,name=about,proto3,oneof" json:"about,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Links         []*UserLinksRow        `protobuf:"bytes,10,rep,name=links,proto3" json:"links,omitempty"`
+	Facts         []*UserFactsRow        `protobuf:"bytes,11,rep,name=facts,proto3" json:"facts,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -458,25 +457,18 @@ func (x *User) GetBanner() string {
 	return ""
 }
 
-func (x *User) GetGradientTop() string {
-	if x != nil && x.GradientTop != nil {
-		return *x.GradientTop
+func (x *User) GetMainColor() string {
+	if x != nil && x.MainColor != nil {
+		return *x.MainColor
 	}
 	return ""
 }
 
-func (x *User) GetGradientBottom() string {
-	if x != nil && x.GradientBottom != nil {
-		return *x.GradientBottom
+func (x *User) GetAbout() []byte {
+	if x != nil {
+		return x.About
 	}
-	return ""
-}
-
-func (x *User) GetAbout() string {
-	if x != nil && x.About != nil {
-		return *x.About
-	}
-	return ""
+	return nil
 }
 
 func (x *User) GetCreatedAt() *timestamppb.Timestamp {
@@ -2302,26 +2294,25 @@ const file_types_proto_rawDesc = "" +
 	"\fUserFactsRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\"\xec\x03\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\"\xa4\x03\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12!\n" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x1b\n" +
 	"\x06avatar\x18\x05 \x01(\tH\x00R\x06avatar\x88\x01\x01\x12\x1b\n" +
-	"\x06banner\x18\x06 \x01(\tH\x01R\x06banner\x88\x01\x01\x12&\n" +
-	"\fgradient_top\x18\a \x01(\tH\x02R\vgradientTop\x88\x01\x01\x12,\n" +
-	"\x0fgradient_bottom\x18\b \x01(\tH\x03R\x0egradientBottom\x88\x01\x01\x12\x19\n" +
-	"\x05about\x18\t \x01(\tH\x04R\x05about\x88\x01\x01\x129\n" +
+	"\x06banner\x18\x06 \x01(\tH\x01R\x06banner\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
-	"\x05links\x18\v \x03(\v2\x13.types.UserLinksRowR\x05links\x12)\n" +
-	"\x05facts\x18\f \x03(\v2\x13.types.UserFactsRowR\x05factsB\t\n" +
+	"main_color\x18\a \x01(\tH\x02R\tmainColor\x88\x01\x01\x12\x19\n" +
+	"\x05about\x18\b \x01(\fH\x03R\x05about\x88\x01\x01\x129\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
+	"\x05links\x18\n" +
+	" \x03(\v2\x13.types.UserLinksRowR\x05links\x12)\n" +
+	"\x05facts\x18\v \x03(\v2\x13.types.UserFactsRowR\x05factsB\t\n" +
 	"\a_avatarB\t\n" +
-	"\a_bannerB\x0f\n" +
-	"\r_gradient_topB\x12\n" +
-	"\x10_gradient_bottomB\b\n" +
+	"\a_bannerB\r\n" +
+	"\v_main_colorB\b\n" +
 	"\x06_about\"\xe4\x01\n" +
 	"\x13IncomingChatMessage\x12#\n" +
 	"\x06author\x18\x01 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +

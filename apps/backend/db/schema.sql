@@ -221,9 +221,8 @@ CREATE TABLE public.users (
     display_name character varying(255) NOT NULL,
     avatar character varying(255),
     banner character varying(255),
-    about text,
-    gradient_top character varying(255),
-    gradient_bottom character varying(255),
+    about jsonb,
+    main_color character varying(255),
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

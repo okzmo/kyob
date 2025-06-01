@@ -213,16 +213,15 @@ type Token struct {
 }
 
 type User struct {
-	ID             string      `json:"id"`
-	Email          string      `json:"email"`
-	Username       string      `json:"username"`
-	Password       string      `json:"password"`
-	DisplayName    string      `json:"display_name"`
-	Avatar         pgtype.Text `json:"avatar"`
-	Banner         pgtype.Text `json:"banner"`
-	About          pgtype.Text `json:"about"`
-	GradientTop    pgtype.Text `json:"gradient_top"`
-	GradientBottom pgtype.Text `json:"gradient_bottom"`
-	CreatedAt      time.Time   `json:"created_at"`
-	UpdatedAt      time.Time   `json:"updated_at"`
+	ID          string      `json:"id"`
+	Email       string      `json:"email"`
+	Username    string      `json:"username"`
+	Password    string      `json:"password"`
+	DisplayName string      `json:"display_name"`
+	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
+	About       []byte      `json:"about"`
+	MainColor   pgtype.Text `json:"main_color"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
 }

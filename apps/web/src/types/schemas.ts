@@ -131,18 +131,7 @@ export interface UpdateAccountType extends v.InferInput<typeof UpdateAccountSche
 
 export const UpdateProfileSchema = v.object({
 	display_name: v.optional(v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.'))),
-	about: v.pipe(v.string(), v.maxLength(280, 'Maximum 280 characters.')),
-	avatar: v.pipe(
-		v.file('Please select an image file.'),
-		v.mimeType(['image/jpeg', 'image/png', 'image/gif'], 'Please select a JPEG, PNG or GIF file.'),
-		v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
-	),
-	crop: v.object({
-		height: v.number(),
-		width: v.number(),
-		x: v.number(),
-		y: v.number()
-	}),
+	about: v.any(),
 	links: v.optional(
 		v.array(
 			v.object({
@@ -162,6 +151,31 @@ export const UpdateProfileSchema = v.object({
 });
 
 export interface UpdateProfileType extends v.InferInput<typeof UpdateProfileSchema> {}
+
+export const UpdateAvatarSchema = v.object({
+	avatar: v.pipe(
+		v.file('Please select an image file.'),
+		v.mimeType(
+			['image/jpeg', 'image/jpg', 'image/png', 'image/gif'],
+			'Please select a JPEG, PNG or GIF file.'
+		),
+		v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
+	),
+	crop_avatar: v.object({
+		height: v.number(),
+		width: v.number(),
+		x: v.number(),
+		y: v.number()
+	}),
+	crop_banner: v.object({
+		height: v.number(),
+		width: v.number(),
+		x: v.number(),
+		y: v.number()
+	})
+});
+
+export interface UpdateAvatarType extends v.InferInput<typeof UpdateAvatarSchema> {}
 
 export const UpdatePasswordSchema = v.object({
 	current_password: v.pipe(v.string(), v.nonEmpty('Please enter your old password.')),

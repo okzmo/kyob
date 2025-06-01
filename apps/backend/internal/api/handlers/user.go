@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -61,6 +63,65 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
 
+func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateAvatarBody
+
+	err := r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Failed to parse given image.")
+		return
+	}
+
+	file, fileHeader, err := r.FormFile("avatar")
+	if err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Failed to get image.")
+		return
+	}
+	defer file.Close()
+
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		slog.Error("Failed to read file", "err", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to process file.")
+		return
+	}
+
+	var cropAvatar, cropBanner services.Crop
+	cropAvatarJSON := r.FormValue("crop_avatar")
+	cropBannerJSON := r.FormValue("crop_banner")
+
+	if err := json.Unmarshal([]byte(cropAvatarJSON), &cropAvatar); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid crop data.")
+		return
+	}
+
+	if err := json.Unmarshal([]byte(cropBannerJSON), &cropBanner); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid crop data.")
+		return
+	}
+
+	body.CropAvatar = cropAvatar
+	body.CropBanner = cropBanner
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	res, err := services.UpdateAvatar(r.Context(), fileData, fileHeader, &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusContinue, res)
+}
+
 func AddFriend(w http.ResponseWriter, r *http.Request) {
 	var body services.AddFriendBody
 	user := r.Context().Value("user").(db.User)
@@ -96,7 +157,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 			Id:          user.ID,
 			DisplayName: user.DisplayName,
 			Avatar:      &user.Avatar.String,
-			About:       &user.About.String,
+			About:       user.About,
 		},
 	}
 
@@ -162,7 +223,7 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 			Id:          friend.ID,
 			DisplayName: friend.DisplayName,
 			Avatar:      &friend.Avatar.String,
-			About:       &friend.About.String,
+			About:       friend.About,
 		},
 		Sender: true,
 	}
