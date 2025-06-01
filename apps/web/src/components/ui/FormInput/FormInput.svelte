@@ -1,11 +1,14 @@
 <script lang="ts">
+	import AboutInput from '../../settings/AboutInput.svelte';
+
 	interface Props {
 		id: string;
 		inputValue: any;
 		error: any;
 		placeholder: string;
 		title: string;
-		type: 'text' | 'password' | 'textarea';
+		type: 'text' | 'password' | 'textarea' | 'rich';
+		class?: string;
 	}
 
 	let {
@@ -14,18 +17,19 @@
 		error = $bindable(),
 		placeholder,
 		title,
-		type
+		type,
+		class: classes
 	}: Props = $props();
 </script>
 
-<div class="mt-4 flex flex-col px-8">
+<div class={['flex flex-col', classes]}>
 	<div class="flex items-center gap-x-1">
 		<label for={id} class={['text-sm', error ? 'text-red-400' : 'text-main-500']}>{title}</label>
 		{#if error}
 			<p class="text-sm text-red-400">- {error}</p>
 		{/if}
 	</div>
-	{#if type !== 'textarea'}
+	{#if type !== 'textarea' && type !== 'rich'}
 		<input
 			{id}
 			{type}
@@ -36,7 +40,7 @@
 				error ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
 			]}
 		/>
-	{:else}
+	{:else if type === 'textarea'}
 		<textarea
 			{id}
 			bind:value={inputValue}
@@ -46,5 +50,7 @@
 				error ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
 			]}
 		></textarea>
+	{:else if type === 'rich'}
+		<AboutInput bind:content={inputValue} {placeholder} />
 	{/if}
 </div>

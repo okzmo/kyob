@@ -139,6 +139,9 @@
 				editor = editor;
 			},
 			editorProps: {
+				attributes: {
+					class: 'chat-input'
+				},
 				handleKeyDown: (_, ev) => {
 					if (
 						ev.key === 'Enter' &&

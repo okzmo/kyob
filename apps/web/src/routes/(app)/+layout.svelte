@@ -42,6 +42,10 @@
 			userStore.friends = res.value.friends;
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
+
+			document.documentElement.style.setProperty('--user-color-85', '#153c45d9');
+			document.documentElement.style.setProperty('--user-color-95', '#153c45f2');
+			document.documentElement.style.setProperty('--user-color', '#153c45');
 		}
 	});
 

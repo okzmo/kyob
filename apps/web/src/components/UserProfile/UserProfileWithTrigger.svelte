@@ -1,0 +1,26 @@
+<script lang="ts">
+	import { Popover } from 'bits-ui';
+	import { type Snippet } from 'svelte';
+	import type { User } from '../../types/types';
+	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
+	import UserProfile from './UserProfile.svelte';
+
+	interface Props {
+		children: Snippet;
+		user: User;
+		align?: 'start' | 'center' | 'end';
+		side?: 'top' | 'right' | 'bottom' | 'left';
+		sideOffset?: number;
+	}
+
+	let { children, user, align = 'start', side = 'top', sideOffset = 10 }: Props = $props();
+</script>
+
+<Popover.Root>
+	<Popover.Trigger>
+		{@render children()}
+	</Popover.Trigger>
+	<CustomPopoverContent class="relative z-[999] w-[20rem] p-0" {align} {side} {sideOffset} y={10}>
+		<UserProfile {user} />
+	</CustomPopoverContent>
+</Popover.Root>

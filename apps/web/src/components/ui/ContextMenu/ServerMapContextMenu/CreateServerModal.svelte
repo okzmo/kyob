@@ -177,6 +177,7 @@
 					bind:error={$errors.name}
 					bind:inputValue={$form.name}
 					placeholder="My cool community"
+					class="mt-4 px-8"
 				/>
 
 				<FormInput
@@ -186,6 +187,7 @@
 					bind:error={$errors.description}
 					bind:inputValue={$form.description}
 					placeholder="Here we do..."
+					class="mt-4 px-8"
 				/>
 
 				<FooterDialog>

@@ -123,22 +123,45 @@ export interface DeleteFriendType extends v.InferInput<typeof DeleteFriendSchema
 export const UpdateAccountSchema = v.object({
 	email: v.optional(v.pipe(v.string(), v.email('The email is badly formatted.'))),
 	username: v.optional(
-		v.pipe(
-			v.string(),
-			v.minLength(1, 'The length must be equal or above 1 character.'),
-			v.maxLength(20, 'The length must be equal or below 20 characters.')
-		)
-	),
-	display_name: v.optional(
-		v.pipe(
-			v.string(),
-			v.minLength(1, 'The length must be equal or above 1 character.'),
-			v.maxLength(20, 'The length must be equal or below 20 characters.')
-		)
+		v.pipe(v.string(), v.maxLength(20, 'The length must be equal or below 20 characters.'))
 	)
 });
 
 export interface UpdateAccountType extends v.InferInput<typeof UpdateAccountSchema> {}
+
+export const UpdateProfileSchema = v.object({
+	display_name: v.optional(v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.'))),
+	about: v.pipe(v.string(), v.maxLength(280, 'Maximum 280 characters.')),
+	avatar: v.pipe(
+		v.file('Please select an image file.'),
+		v.mimeType(['image/jpeg', 'image/png', 'image/gif'], 'Please select a JPEG, PNG or GIF file.'),
+		v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
+	),
+	crop: v.object({
+		height: v.number(),
+		width: v.number(),
+		x: v.number(),
+		y: v.number()
+	}),
+	links: v.optional(
+		v.array(
+			v.object({
+				label: v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.')),
+				url: v.pipe(v.string(), v.url())
+			})
+		)
+	),
+	facts: v.optional(
+		v.array(
+			v.object({
+				label: v.pipe(v.string()),
+				value: v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.'))
+			})
+		)
+	)
+});
+
+export interface UpdateProfileType extends v.InferInput<typeof UpdateProfileSchema> {}
 
 export const UpdatePasswordSchema = v.object({
 	current_password: v.pipe(v.string(), v.nonEmpty('Please enter your old password.')),

@@ -85,6 +85,7 @@
 					bind:error={$errors.username}
 					bind:inputValue={$form.username}
 					placeholder="bob"
+					class="mt-4 px-8"
 				/>
 
 				<FooterDialog>

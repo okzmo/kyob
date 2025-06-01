@@ -8,6 +8,7 @@
 	let {
 		ref = $bindable(null),
 		children,
+		class: classes,
 		...restProps
 	}: WithoutChildrenOrChild<Dialog.ContentProps> & {
 		children?: Snippet;
@@ -18,7 +19,10 @@
 	{#snippet child({ props, open })}
 		{#if open}
 			<div
-				class="bg-main-900 inner-main-800 fixed top-1/2 left-1/2 w-[550px] -translate-1/2"
+				class={[
+					'bg-main-900 inner-main-800 fixed top-1/2 left-1/2 z-50 w-[550px] -translate-1/2',
+					classes
+				]}
 				{...props}
 				transition:scaleBlur={{}}
 			>

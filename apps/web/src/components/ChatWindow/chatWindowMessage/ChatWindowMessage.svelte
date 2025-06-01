@@ -9,6 +9,7 @@
 	import type { Channel, Server, User } from '../../../types/types';
 	import UserProfile from '../../UserProfile/UserProfile.svelte';
 	import Corners from '../../ui/Corners/Corners.svelte';
+	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
 
 	interface Props {
 		id: string;
@@ -64,22 +65,22 @@
 	{#if isUserMentioned}
 		<Corners color="border-mention-100" />
 	{/if}
-	<UserProfile user={author as User} side="right" align="center">
+	<UserProfileWithTrigger user={author as User} side="right" align="center">
 		<img
 			src={author.avatar}
 			alt="{author.username}'s avatar"
-			class="h-[3rem] w-[3rem] rounded-full object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
+			class="h-[3rem] w-[3rem] object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
 		/>
-	</UserProfile>
+	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">
 		<div class="flex items-baseline gap-x-2.5 select-none">
-			<UserProfile user={author as User}>
+			<UserProfileWithTrigger user={author as User}>
 				<p
 					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
 				>
 					{author.display_name}
 				</p>
-			</UserProfile>
+			</UserProfileWithTrigger>
 			<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
 				{formatMessageTime(time)}
 			</time>

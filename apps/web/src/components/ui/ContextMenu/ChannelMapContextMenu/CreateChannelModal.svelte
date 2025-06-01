@@ -86,6 +86,7 @@
 					bind:inputValue={$form.name}
 					placeholder="General"
 					type="text"
+					class="mt-4 px-8"
 				/>
 
 				<FooterDialog>

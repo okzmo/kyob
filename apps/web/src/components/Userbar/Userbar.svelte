@@ -4,15 +4,15 @@
 	import Microphone from '../ui/icons/Microphone.svelte';
 	import IconButton from '../ui/IconButton/IconButton.svelte';
 	import { userStore } from '../../stores/user.svelte';
-	import UserProfile from '../UserProfile/UserProfile.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
+	import UserProfileWithTrigger from '../UserProfile/UserProfileWithTrigger.svelte';
 </script>
 
 <div
 	class="bg-main-900/80 inner-shadow-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 py-1 pr-2 pl-1 backdrop-blur-2xl transition-colors duration-100"
 >
 	<Corners color="border-main-700" />
-	<UserProfile user={userStore.user!}>
+	<UserProfileWithTrigger user={userStore.user!}>
 		<button
 			class="group hocus:bg-accent-100/15 hocus:inner-accent/15 relative flex items-center gap-x-2.5 py-1 pr-4 pl-1 text-left transition hover:cursor-pointer"
 		>
@@ -30,7 +30,7 @@
 				</p>
 			</div>
 		</button>
-	</UserProfile>
+	</UserProfileWithTrigger>
 	<div class="flex items-center gap-x-1">
 		<IconButton Icon={Headphone} label="Headphone" />
 		<IconButton Icon={Microphone} label="Microphone" />

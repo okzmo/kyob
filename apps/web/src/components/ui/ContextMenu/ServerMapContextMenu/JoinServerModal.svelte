@@ -87,6 +87,7 @@
 					bind:error={$errors.invite_url}
 					bind:inputValue={$form.invite_url}
 					placeholder="https://kyob.app/invite/123"
+					class="mt-4 px-8"
 				/>
 
 				<FooterDialog>

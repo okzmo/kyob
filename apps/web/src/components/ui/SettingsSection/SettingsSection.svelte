@@ -5,12 +5,13 @@
 		title: string;
 		description?: string;
 		children: Snippet;
+		class?: string;
 	}
 
-	let { title, description, children }: Props = $props();
+	let { title, description, children, class: classes }: Props = $props();
 </script>
 
-<section class="">
+<section class={classes}>
 	<h4 class="text-lg font-semibold">{title}</h4>
 	{#if description}
 		<p class="text-main-400 text-sm">{description}</p>

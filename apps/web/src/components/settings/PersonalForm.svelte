@@ -20,7 +20,6 @@
 			if (form.valid) {
 				isSubmitting = true;
 				const res = await backend.updateAccount({
-					display_name: form.data.display_name?.trim(),
 					username: form.data.username?.trim(),
 					email: form.data.email?.trim()
 				});
@@ -43,7 +42,6 @@
 
 				if (res.isOk()) {
 					if (form.data.username) userStore.user!.username = form.data.username;
-					if (form.data.display_name) userStore.user!.display_name = form.data.display_name;
 					if (form.data.email) userStore.user!.email = form.data.email;
 
 					await delay(1000);
@@ -57,7 +55,7 @@
 		}
 	});
 
-	let isEmpty = $derived(!$form.username && !$form.display_name && !$form.email);
+	let isEmpty = $derived(!$form.username && !$form.email);
 </script>
 
 <form class="mt-2 flex flex-col gap-y-3" use:enhance>
@@ -85,50 +83,34 @@
 
 		<div class="flex w-[50%] flex-col gap-y-1">
 			<div class="flex items-center gap-x-1">
-				<label for="displayName" class={['w-fit', $errors.display_name && 'text-red-400']}
-					>Display name</label
-				>
-				{#if $errors.display_name}
-					<p class="text-red-400">- {$errors.display_name}</p>
+				<label for="email" class={['w-fit', $errors.email && 'text-red-400']}>Email</label>
+				{#if $errors.email}
+					<p class="text-red-400">- {$errors.email}</p>
 				{/if}
 			</div>
 			<input
-				id="displayName"
-				name="displayName"
-				autocomplete="off"
-				type="text"
+				id="email"
+				name="email"
+				type="email"
+				autocomplete="email"
 				class={[
-					'bg-main-900 placeholder:text-main-400 hocus:bg-main-800/50 w-full transition-colors duration-100 focus:ring-0',
-					$errors.display_name ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
+					'bg-main-900 placeholder:text-main-400 hocus:bg-main-800/50 max-w-[20rem] transition-colors duration-100 focus:ring-0',
+					$errors.email ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
 				]}
-				placeholder={userStore.user?.display_name}
-				bind:value={$form.display_name}
+				placeholder={userStore.user?.email}
+				bind:value={$form.email}
 			/>
 		</div>
 	</div>
 
-	<div class="flex flex-col gap-y-1">
-		<div class="flex items-center gap-x-1">
-			<label for="email" class={['w-fit', $errors.email && 'text-red-400']}>Email</label>
-			{#if $errors.email}
-				<p class="text-red-400">- {$errors.email}</p>
-			{/if}
-		</div>
-		<input
-			id="email"
-			name="email"
-			type="email"
-			autocomplete="email"
-			class={[
-				'bg-main-900 placeholder:text-main-400 hocus:bg-main-800/50 max-w-[20rem] transition-colors duration-100 focus:ring-0',
-				$errors.email ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
-			]}
-			placeholder={userStore.user?.email}
-			bind:value={$form.email}
-		/>
-	</div>
-
-	<SubmitButton type="submit" {buttonWidth} {isEmpty} {isSubmitting} {isSubmitted} class="relative">
+	<SubmitButton
+		type="submit"
+		{buttonWidth}
+		{isEmpty}
+		{isSubmitting}
+		{isSubmitted}
+		class="relative mt-2"
+	>
 		Save your informations
 	</SubmitButton>
 </form>
