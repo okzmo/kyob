@@ -1,12 +1,20 @@
 <script lang="ts">
+	import SubmitButton from 'components/ui/SubmitButton/SubmitButton.svelte';
 	import FormInput from '../ui/FormInput/FormInput.svelte';
+	import FactsInput from 'components/ui/FactsInput/FactsInput.svelte';
+	import LinksInput from 'components/ui/LinksInput/LinksInput.svelte';
 
 	let {
 		user,
 		about = $bindable(),
 		displayName = $bindable(),
+		facts = $bindable(),
+		links = $bindable(),
 		errors = $bindable(),
-		enhance
+		enhance,
+		isSubmitted = $bindable(),
+		isSubmitting = $bindable(),
+		buttonWidth
 	} = $props();
 </script>
 
@@ -27,4 +35,11 @@
 		bind:inputValue={about}
 		placeholder="I like potatoes"
 	/>
+
+	<LinksInput bind:links />
+	<FactsInput bind:facts />
+
+	<SubmitButton type="submit" {buttonWidth} {isSubmitting} {isSubmitted} class="relative mt-2">
+		Save my profile
+	</SubmitButton>
 </form>

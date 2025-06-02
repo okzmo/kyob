@@ -2,7 +2,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import { Placeholder } from '@tiptap/extensions';
+	import { CharacterCount, Placeholder } from '@tiptap/extensions';
+	import { Plugin } from '@tiptap/pm/state';
 
 	let element: Element;
 	let editor: Editor;
@@ -10,11 +11,31 @@
 
 	let { placeholder, content = $bindable() } = $props();
 
+	const limitConsecutiveBreaksPlugin = new Plugin({
+		filterTransaction(transaction) {
+			if (!transaction.docChanged) return true;
+
+			const maxDeepness = 6;
+			let deepness = 0;
+
+			transaction.doc.descendants((node) => {
+				if (node.type.name === 'paragraph') {
+					deepness++;
+				}
+			});
+
+			return deepness <= maxDeepness;
+		}
+	});
+
 	onMount(() => {
 		editor = new Editor({
 			element: element,
 			content: content,
 			extensions: [
+				CharacterCount.configure({
+					limit: 150
+				}),
 				StarterKit.configure({
 					gapcursor: false,
 					dropcursor: false,
@@ -31,7 +52,10 @@
 				editor = editor;
 			},
 			onUpdate: ({ editor }) => {
-				content = editor.getText();
+				content = editor.getJSON();
+			},
+			onCreate: ({ editor }) => {
+				editor.registerPlugin(limitConsecutiveBreaksPlugin);
 			},
 			editorProps: {
 				attributes: {

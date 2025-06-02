@@ -6,10 +6,10 @@
 	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from '../chatWindowInput/MentionsList.svelte';
 	import { CustomMention } from '../chatWindowInput/mentions';
-	import { serversStore } from '../../../stores/servers.svelte';
-	import { windows } from '../../../stores/windows.svelte';
-	import { core } from '../../../stores/core.svelte';
-	import { backend } from '../../../stores/backend.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { windows } from 'stores/windows.svelte';
+	import { core } from 'stores/core.svelte';
+	import { backend } from 'stores/backend.svelte';
 
 	let element: Element;
 	let editor: Editor;

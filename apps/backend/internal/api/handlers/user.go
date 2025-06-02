@@ -65,6 +65,7 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 
 func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateAvatarBody
+	var cropAvatar, cropBanner services.Crop
 
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
@@ -88,9 +89,9 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var cropAvatar, cropBanner services.Crop
 	cropAvatarJSON := r.FormValue("crop_avatar")
 	cropBannerJSON := r.FormValue("crop_banner")
+	mainColor := r.FormValue("main_color")
 
 	if err := json.Unmarshal([]byte(cropAvatarJSON), &cropAvatar); err != nil {
 		slog.Error(err.Error())
@@ -106,6 +107,7 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 
 	body.CropAvatar = cropAvatar
 	body.CropBanner = cropBanner
+	body.MainColor = mainColor
 
 	err = validate.Struct(body)
 	if err != nil {

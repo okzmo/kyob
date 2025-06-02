@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Separator } from 'bits-ui';
-	import type { User } from '../../types/types';
+	import type { User } from 'types/types';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 

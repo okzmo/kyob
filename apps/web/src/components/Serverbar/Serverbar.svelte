@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { serversStore } from '../../stores/servers.svelte';
-	import type { Server } from '../../types/types';
+	import { serversStore } from 'stores/servers.svelte';
+	import type { Server } from 'types/types';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import ServerbarMembers from './ServerbarMembers.svelte';
 

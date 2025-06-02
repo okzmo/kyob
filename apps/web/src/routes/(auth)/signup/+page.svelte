@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import AuthForm from '../../../components/auth/AuthForm.svelte';
-	import { SignUpSchema } from '../../../types/schemas';
+	import AuthForm from 'components/auth/AuthForm.svelte';
+	import { SignUpSchema } from 'types/schemas';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { goto } from '$app/navigation';
 

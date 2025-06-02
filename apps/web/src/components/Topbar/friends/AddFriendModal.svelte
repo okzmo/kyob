@@ -3,14 +3,14 @@
 	import CustomDialogContent from '../../ui/CustomDialogContent/CustomDialogContent.svelte';
 	import { defaults, superForm, setError } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { core } from '../../../stores/core.svelte';
-	import { AddFriendSchema } from '../../../types/schemas';
-	import { backend } from '../../../stores/backend.svelte';
+	import { core } from 'stores/core.svelte';
+	import { AddFriendSchema } from 'types/schemas';
+	import { backend } from 'stores/backend.svelte';
 	import CloseDialogButton from '../../ui/CustomDialogContent/CloseDialogButton.svelte';
 	import FooterDialog from '../../ui/CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../../ui/SubmitButton/SubmitButton.svelte';
 	import FormInput from '../../ui/FormInput/FormInput.svelte';
-	import { delay } from '../../../utils/delay';
+	import { delay } from 'utils/delay';
 
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);

@@ -75,6 +75,8 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const contentStr = new TextDecoder().decode(wsMess.content.value?.content);
+						const authorAbout = new TextDecoder().decode(wsMess.content.value?.author!.about);
+
 						const message: Message = {
 							id: wsMess.content.value.id,
 							author: {
@@ -82,11 +84,10 @@ class Backend {
 								username: wsMess.content.value.author!.username,
 								display_name: wsMess.content.value.author!.displayName,
 								avatar: wsMess.content.value.author!.avatar,
-								about: wsMess.content.value.author!.about,
+								about: JSON.parse(authorAbout),
 								banner: wsMess.content.value.author!.banner,
 								email: wsMess.content.value.author!.email,
-								gradient_top: wsMess.content.value.author!.gradientTop,
-								gradient_bottom: wsMess.content.value.author!.gradientBottom,
+								main_color: wsMess.content.value.author!.mainColor,
 								facts: wsMess.content.value.author!.facts,
 								links: wsMess.content.value.author!.links
 							},
@@ -143,10 +144,11 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
+						const about = new TextDecoder().decode(value.user?.about);
 
 						const newUser: Partial<User> = {
 							id: value.user?.id,
-							about: value.user?.about,
+							about: JSON.parse(about),
 							username: value.user?.username,
 							display_name: value.user?.displayName,
 							avatar: value.user?.avatar
@@ -205,12 +207,13 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
+						const about = new TextDecoder().decode(value.user?.about);
 
 						const newFriend: Friend = {
 							id: value.user?.id,
 							display_name: value.user?.displayName,
 							avatar: value.user?.avatar,
-							about: value.user?.about,
+							about: JSON.parse(about),
 							friendship_id: value.inviteId,
 							accepted: false,
 							sender: false
@@ -223,13 +226,14 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
+						const about = new TextDecoder().decode(value.user?.about);
 
 						if (value.sender) {
 							const newFriend: Friend = {
 								id: value.user?.id,
 								display_name: value.user?.displayName,
 								avatar: value.user?.avatar,
-								about: value.user?.about,
+								about: JSON.parse(about),
 								friendship_id: value.inviteId,
 								channel_id: value.channelId,
 								accepted: true,
@@ -657,18 +661,19 @@ class Backend {
 
 	async updateAvatar(
 		body: UpdateAvatarType
-	): Promise<Result<{ banner: string; avatar: string }, UpdateAvatarErrors>> {
+	): Promise<Result<{ banner: string; avatar: string; main_color: string }, UpdateAvatarErrors>> {
 		try {
 			const formData = new FormData();
 			formData.append('avatar', body.avatar);
 			formData.append('crop_banner', JSON.stringify(body.crop_banner));
 			formData.append('crop_avatar', JSON.stringify(body.crop_avatar));
+			if (body.main_color) formData.append('main_color', body.main_color);
 
 			const res = await client.post('user/update_avatar', {
 				body: formData
 			});
 
-			const data = (await res.json()) as { banner: string; avatar: string };
+			const data = (await res.json()) as { banner: string; avatar: string; main_color: string };
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}

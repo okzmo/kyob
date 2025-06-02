@@ -4,7 +4,7 @@
 	import CustomPopoverContent from '../../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 	import FriendsList from './FriendsList.svelte';
 	import AddFriend from './AddFriend.svelte';
-	import { userStore } from '../../../stores/user.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import Corners from '../../ui/Corners/Corners.svelte';
 
 	let isOpen = $state(false);

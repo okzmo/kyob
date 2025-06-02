@@ -34,7 +34,7 @@ WHERE id = $1;
 
 -- name: UpdateUserAvatarNBanner :exec
 UPDATE users
-  set avatar = $2, banner = $3
+  set avatar = $2, banner = $3, main_color = $4
 WHERE id = $1;
 
 -- name: UpdateUserAbout :exec

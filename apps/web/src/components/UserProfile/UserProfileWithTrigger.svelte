@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
 	import { type Snippet } from 'svelte';
-	import type { User } from '../../types/types';
+	import type { User } from 'types/types';
 	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 	import UserProfile from './UserProfile.svelte';
 

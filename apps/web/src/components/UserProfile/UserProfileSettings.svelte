@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '../../types/types';
+	import type { User } from 'types/types';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import { Dialog, Separator } from 'bits-ui';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
@@ -9,17 +9,20 @@
 	import Cropper from 'svelte-easy-crop';
 	import FooterDialog from '../ui/CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../ui/SubmitButton/SubmitButton.svelte';
-	import { backend } from '../../stores/backend.svelte';
-	import { userStore } from '../../stores/user.svelte';
-	import { delay } from '../../utils/delay';
-	import { UpdateAvatarSchema } from '../../types/schemas';
+	import { backend } from 'stores/backend.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import { delay } from 'utils/delay';
+	import { UpdateAvatarSchema } from 'types/schemas';
 	import ColorThief, { type RGBColor } from 'colorthief';
 	import * as v from 'valibot';
+	import { generateHTML, type JSONContent } from '@tiptap/core';
+	import StarterKit from '@tiptap/starter-kit';
+	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
 
 	interface Props {
 		user: User;
 		displayName?: string;
-		about?: string;
+		about?: JSONContent;
 	}
 
 	let { user, about = $bindable(), displayName = $bindable() }: Props = $props();
@@ -27,6 +30,29 @@
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
 	let buttonWidth = $derived(isSubmitted || isSubmitting ? 40 : 135);
+	let toggleAbout = $state(false);
+	let aboutText = $derived.by(() => {
+		if (!about) return;
+
+		const html = generateHTML(trimEmptyNodes(about), [
+			StarterKit.configure({
+				gapcursor: false,
+				dropcursor: false,
+				heading: false,
+				orderedList: false,
+				bulletList: false,
+				blockquote: false
+			})
+		]);
+
+		const { paragraphs, enoughMatches } = extractFirstNParagraphs(html, 2);
+
+		if (!toggleAbout && enoughMatches) {
+			return { content: paragraphs, enoughMatches };
+		}
+
+		return { content: html, enoughMatches };
+	});
 
 	let openImageModal = $state(false);
 	let avatar = $state<string | undefined>();
@@ -89,7 +115,8 @@
 		const parsedData = v.parse(UpdateAvatarSchema, {
 			avatar: image,
 			crop_banner: cropBannerPixels,
-			crop_avatar: cropAvatarPixels
+			crop_avatar: cropAvatarPixels,
+			main_color: mainColor?.join(',')
 		});
 
 		isSubmitting = true;
@@ -109,6 +136,7 @@
 
 			userStore.user!.avatar = res.value.avatar;
 			userStore.user!.banner = res.value.banner;
+			userStore.user!.main_color = res.value.main_color;
 			openImageModal = false;
 
 			isSubmitted = false;
@@ -257,8 +285,21 @@
 		<Corners color="border-main-50/35" />
 		<h3 class="text-xl font-semibold">{displayName}</h3>
 		<p class="text-main-50/65 text-sm leading-none">{user.username}</p>
-		{#if user?.about || about}
-			<p class="text-main-50/80 mt-2">{about}</p>
+		{#if aboutText}
+			<div class="text-main-50/80 mt-2 [&>p]:min-h-[24px]">
+				{@html aboutText.content}
+			</div>
+			{#if aboutText.enoughMatches}
+				{#if !toggleAbout}
+					<span>...</span>
+				{/if}
+				<button
+					class="hocus:text-main-50/75 w-fit text-left text-sm transition-colors hover:cursor-pointer"
+					onclick={() => (toggleAbout = !toggleAbout)}
+				>
+					{toggleAbout ? 'Hide' : 'Show more'}
+				</button>
+			{/if}
 		{/if}
 		{#if user.facts || user.links}
 			<Separator.Root class="bg-main-50/25 my-5 h-[1px] w-full" />

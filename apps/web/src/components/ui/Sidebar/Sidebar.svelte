@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { backend } from '../../../stores/backend.svelte';
+	import { backend } from 'stores/backend.svelte';
 	import Corners from '../Corners/Corners.svelte';
+	import { page } from '$app/state';
 
 	interface Props {
 		type: 'general' | 'server';
@@ -56,8 +57,11 @@
 					<a
 						href={link.locked ? '#' : link.href}
 						class={[
-							'group text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 relative block w-full px-3 py-1 transition duration-100',
-							link.locked && 'opacity-50 hover:cursor-not-allowed'
+							'group relative block w-full px-3 py-1 transition duration-100',
+							link.locked && 'opacity-50 hover:cursor-not-allowed',
+							page.url.pathname === link.href
+								? 'bg-main-800 text-main-50 inner-main-700'
+								: 'text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 '
 						]}
 					>
 						<Corners color="border-main-300" class="group-hocus:border-main-200" />

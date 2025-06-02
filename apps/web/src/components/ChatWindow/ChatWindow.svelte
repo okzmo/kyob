@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { serversStore } from '../../stores/servers.svelte';
-	import { userStore } from '../../stores/user.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import ChatWindowInput from './chatWindowInput/ChatWindowInput.svelte';
 	import ChatWindowMessage from './chatWindowMessage/ChatWindowMessage.svelte';
 	import ChatWindowSkeleton from './ChatWindowSkeleton.svelte';

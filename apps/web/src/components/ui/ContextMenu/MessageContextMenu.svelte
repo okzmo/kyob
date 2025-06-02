@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui';
 	import Bin from '../icons/Bin.svelte';
-	import { userStore } from '../../../stores/user.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import Pen from '../icons/Pen.svelte';
 	import CopyIcon from '../icons/CopyIcon.svelte';
-	import { backend } from '../../../stores/backend.svelte';
-	import { windows } from '../../../stores/windows.svelte';
-	import { core } from '../../../stores/core.svelte';
-	import { serversStore } from '../../../stores/servers.svelte';
+	import { backend } from 'stores/backend.svelte';
+	import { windows } from 'stores/windows.svelte';
+	import { core } from 'stores/core.svelte';
+	import { serversStore } from 'stores/servers.svelte';
 	import { generateText } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { CustomMention } from '../../ChatWindow/chatWindowInput/mentions';

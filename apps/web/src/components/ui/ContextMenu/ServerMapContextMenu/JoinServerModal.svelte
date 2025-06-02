@@ -2,12 +2,12 @@
 	import { Dialog } from 'bits-ui';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { JoinServerSchema } from '../../../../types/schemas';
-	import { core } from '../../../../stores/core.svelte';
-	import { backend } from '../../../../stores/backend.svelte';
+	import { JoinServerSchema } from 'types/schemas';
+	import { core } from 'stores/core.svelte';
+	import { backend } from 'stores/backend.svelte';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
-	import { serversStore } from '../../../../stores/servers.svelte';
-	import type { Server } from '../../../../types/types';
+	import { serversStore } from 'stores/servers.svelte';
+	import type { Server } from 'types/types';
 	import { delay } from '../../../../utils/delay';
 	import FooterDialog from '../../CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../../SubmitButton/SubmitButton.svelte';

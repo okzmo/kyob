@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui';
-	import { core } from '../../../../stores/core.svelte';
+	import { core } from 'stores/core.svelte';
 	import Plus from '../../icons/Plus.svelte';
 	import JoinIcon from '../../icons/JoinIcon.svelte';
 </script>

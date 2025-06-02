@@ -2,10 +2,10 @@
 	import { ContextMenu } from 'bits-ui';
 	import UserInvite from '../icons/UserInvite.svelte';
 	import Bin from '../icons/Bin.svelte';
-	import { serversStore } from '../../../stores/servers.svelte';
-	import { userStore } from '../../../stores/user.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import { page } from '$app/state';
-	import { backend } from '../../../stores/backend.svelte';
+	import { backend } from 'stores/backend.svelte';
 
 	interface Props {
 		targetId: string;

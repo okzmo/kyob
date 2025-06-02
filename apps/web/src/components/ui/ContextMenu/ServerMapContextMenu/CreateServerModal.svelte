@@ -2,13 +2,13 @@
 	import { Dialog } from 'bits-ui';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { CreateServerSchema } from '../../../../types/schemas';
+	import { CreateServerSchema } from 'types/schemas';
 	import Cropper from 'svelte-easy-crop';
-	import { core } from '../../../../stores/core.svelte';
-	import { backend } from '../../../../stores/backend.svelte';
-	import { serversStore } from '../../../../stores/servers.svelte';
+	import { core } from 'stores/core.svelte';
+	import { backend } from 'stores/backend.svelte';
+	import { serversStore } from 'stores/servers.svelte';
 	import { animateCoordinates } from '../../../../utils/transition';
-	import type { Server } from '../../../../types/types';
+	import type { Server } from 'types/types';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { delay } from '../../../../utils/delay';
 	import Corners from '../../Corners/Corners.svelte';

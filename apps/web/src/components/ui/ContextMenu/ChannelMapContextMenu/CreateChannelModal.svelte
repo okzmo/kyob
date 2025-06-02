@@ -2,9 +2,9 @@
 	import { Dialog } from 'bits-ui';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { CreateChannelSchema } from '../../../../types/schemas';
-	import { core } from '../../../../stores/core.svelte';
-	import { backend } from '../../../../stores/backend.svelte';
+	import { CreateChannelSchema } from 'types/schemas';
+	import { core } from 'stores/core.svelte';
+	import { backend } from 'stores/backend.svelte';
 	import { page } from '$app/state';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { delay } from '../../../../utils/delay';

@@ -3,7 +3,7 @@
 	import Headphone from '../ui/icons/Headphone.svelte';
 	import Microphone from '../ui/icons/Microphone.svelte';
 	import IconButton from '../ui/IconButton/IconButton.svelte';
-	import { userStore } from '../../stores/user.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../UserProfile/UserProfileWithTrigger.svelte';
 </script>

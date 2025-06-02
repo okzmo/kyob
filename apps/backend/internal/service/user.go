@@ -45,13 +45,15 @@ type UpdateAccountBody struct {
 }
 
 type UpdateAvatarBody struct {
-	CropAvatar Crop `validate:"required" json:"crop_avatar"`
-	CropBanner Crop `validate:"required" json:"crop_banner"`
+	CropAvatar Crop   `validate:"required" json:"crop_avatar"`
+	CropBanner Crop   `validate:"required" json:"crop_banner"`
+	MainColor  string `json:"main_color"`
 }
 
 type UpdateAvatarResponse struct {
-	Banner string `json:"avatar"`
-	Avatar string `json:"banner"`
+	Banner    string `json:"avatar"`
+	Avatar    string `json:"banner"`
+	MainColor string `json:"main_color"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -143,6 +145,7 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
 	user := ctx.Value("user").(db.User)
 	client := s3.NewFromConfig(GetS3Config())
+	fmt.Println(body)
 
 	avatar, err := utils.CropImage(file, body.CropAvatar.X, body.CropAvatar.Y, body.CropAvatar.Width, body.CropAvatar.Height)
 	if err != nil {
@@ -156,8 +159,9 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		return nil, err
 	}
 
-	avatarFileName := fmt.Sprintf("avatar-%s.webp", user.ID)
-	bannerFileName := fmt.Sprintf("banner-%s.webp", user.ID)
+	randomId := utils.GenerateRandomId(8)
+	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", user.ID, randomId)
+	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", user.ID, randomId)
 
 	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Key:    &avatarFileName,
@@ -181,18 +185,21 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 
 	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
 	bannerUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
+	mainColor := pgtype.Text{String: body.MainColor, Valid: true}
 	err = db.Query.UpdateUserAvatarNBanner(ctx, db.UpdateUserAvatarNBannerParams{
-		ID:     user.ID,
-		Avatar: avatarUrl,
-		Banner: bannerUrl,
+		ID:        user.ID,
+		Avatar:    avatarUrl,
+		Banner:    bannerUrl,
+		MainColor: mainColor,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &UpdateAvatarResponse{
-		Banner: bannerUrl.String,
-		Avatar: avatarUrl.String,
+		Banner:    bannerUrl.String,
+		Avatar:    avatarUrl.String,
+		MainColor: mainColor.String,
 	}, nil
 }
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui';
-	import { serversStore } from '../../../../stores/servers.svelte';
-	import { userStore } from '../../../../stores/user.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import { page } from '$app/state';
-	import { core } from '../../../../stores/core.svelte';
+	import { core } from 'stores/core.svelte';
 	import UserInvite from '../../icons/UserInvite.svelte';
 
 	let isOwner = $derived(serversStore.isOwner(userStore.user?.id || '', page.params.server_id));

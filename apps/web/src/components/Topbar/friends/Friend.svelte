@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
-	import { backend } from '../../../stores/backend.svelte';
-	import { userStore } from '../../../stores/user.svelte';
+	import { backend } from 'stores/backend.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import Check from '../../ui/icons/Check.svelte';
 	import Close from '../../ui/icons/Close.svelte';
 	import MoreIcon from '../../ui/icons/MoreIcon.svelte';
 	import CustomPopoverContent from '../../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 	import Bin from '../../ui/icons/Bin.svelte';
-	import { windows } from '../../../stores/windows.svelte';
+	import { windows } from 'stores/windows.svelte';
 
 	let {
 		id,

@@ -5,14 +5,14 @@
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { Placeholder } from '@tiptap/extensions';
-	import { backend } from '../../../stores/backend.svelte';
-	import type { Channel, Friend, Server, User } from '../../../types/types';
+	import { backend } from 'stores/backend.svelte';
+	import type { Channel, Friend, Server, User } from 'types/types';
 	import { PluginKey } from '@tiptap/pm/state';
 	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from './MentionsList.svelte';
 	import { CustomMention } from './mentions';
-	import { serversStore } from '../../../stores/servers.svelte';
-	import { windows } from '../../../stores/windows.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { windows } from 'stores/windows.svelte';
 
 	interface Props {
 		friend?: Friend;

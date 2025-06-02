@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
 	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
-	import { core } from '../../stores/core.svelte';
-	import { backend } from '../../stores/backend.svelte';
+	import { core } from 'stores/core.svelte';
+	import { backend } from 'stores/backend.svelte';
 	import UserProfile from './UserProfile.svelte';
 
 	let userProfile = $derived.by(async () => {

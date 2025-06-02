@@ -172,7 +172,8 @@ export const UpdateAvatarSchema = v.object({
 		width: v.number(),
 		x: v.number(),
 		y: v.number()
-	})
+	}),
+	main_color: v.optional(v.string())
 });
 
 export interface UpdateAvatarType extends v.InferInput<typeof UpdateAvatarSchema> {}

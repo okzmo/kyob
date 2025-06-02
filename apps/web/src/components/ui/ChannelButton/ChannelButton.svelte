@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { windows } from '../../../stores/windows.svelte';
+	import { windows } from 'stores/windows.svelte';
 	import Corners from '../Corners/Corners.svelte';
 	import HashChat from '../icons/HashChat.svelte';
 

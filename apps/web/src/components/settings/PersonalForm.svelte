@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { userStore } from '../../stores/user.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import { defaults, setError, superForm } from 'sveltekit-superforms';
-	import { UpdateAccountSchema } from '../../types/schemas';
-	import { backend } from '../../stores/backend.svelte';
+	import { UpdateAccountSchema } from 'types/schemas';
+	import { backend } from 'stores/backend.svelte';
 	import { delay } from '../../utils/delay';
 	import SubmitButton from '../ui/SubmitButton/SubmitButton.svelte';
 

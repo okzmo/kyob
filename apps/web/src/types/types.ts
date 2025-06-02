@@ -47,6 +47,18 @@ export interface Server {
 	hidden: boolean;
 }
 
+export interface Fact {
+	id: string;
+	label: string;
+	value: string;
+}
+
+export interface Link {
+	id: string;
+	label: string;
+	url: string;
+}
+
 export interface User {
 	id: string;
 	email: string;
@@ -54,17 +66,10 @@ export interface User {
 	display_name: string;
 	avatar: string;
 	banner: string;
-	gradient_top?: string;
-	gradient_bottom?: string;
+	main_color?: string;
 	about?: string;
-	facts?: {
-		label: string;
-		value: string;
-	}[];
-	links?: {
-		label: string;
-		url: string;
-	}[];
+	facts?: Fact[];
+	links?: Link[];
 }
 
 export interface Friend extends Partial<User> {

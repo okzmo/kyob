@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { backend } from '../../stores/backend.svelte';
+	import { backend } from 'stores/backend.svelte';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();

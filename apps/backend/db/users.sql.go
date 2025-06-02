@@ -253,18 +253,24 @@ func (q *Queries) UpdateUserAbout(ctx context.Context, arg UpdateUserAboutParams
 
 const updateUserAvatarNBanner = `-- name: UpdateUserAvatarNBanner :exec
 UPDATE users
-  set avatar = $2, banner = $3
+  set avatar = $2, banner = $3, main_color = $4
 WHERE id = $1
 `
 
 type UpdateUserAvatarNBannerParams struct {
-	ID     string      `json:"id"`
-	Avatar pgtype.Text `json:"avatar"`
-	Banner pgtype.Text `json:"banner"`
+	ID        string      `json:"id"`
+	Avatar    pgtype.Text `json:"avatar"`
+	Banner    pgtype.Text `json:"banner"`
+	MainColor pgtype.Text `json:"main_color"`
 }
 
 func (q *Queries) UpdateUserAvatarNBanner(ctx context.Context, arg UpdateUserAvatarNBannerParams) error {
-	_, err := q.db.Exec(ctx, updateUserAvatarNBanner, arg.ID, arg.Avatar, arg.Banner)
+	_, err := q.db.Exec(ctx, updateUserAvatarNBanner,
+		arg.ID,
+		arg.Avatar,
+		arg.Banner,
+		arg.MainColor,
+	)
 	return err
 }
 

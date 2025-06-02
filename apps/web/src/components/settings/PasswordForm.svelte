@@ -2,8 +2,8 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import { defaults, superForm } from 'sveltekit-superforms';
-	import { UpdatePasswordSchema } from '../../types/schemas';
-	import { backend } from '../../stores/backend.svelte';
+	import { UpdatePasswordSchema } from 'types/schemas';
+	import { backend } from 'stores/backend.svelte';
 
 	const { form, errors, enhance } = superForm(defaults(valibot(UpdatePasswordSchema)), {
 		SPA: true,

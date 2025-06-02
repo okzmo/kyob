@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Friend from './Friend.svelte';
-	import type { Friend as FriendType } from '../../../types/types';
+	import type { Friend as FriendType } from 'types/types';
 
 	interface Props {
 		friends: FriendType[];

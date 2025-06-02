@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import { formatMessageTime } from '../../../utils/date';
+	import { formatMessageTime } from 'utils/date';
 	import { CustomMention } from '../chatWindowInput/mentions';
 	import { onMount } from 'svelte';
-	import { core } from '../../../stores/core.svelte';
+	import { core } from 'stores/core.svelte';
 	import EditMessageInput from '../editMessageInput/editMessageInput.svelte';
-	import type { Channel, Server, User } from '../../../types/types';
-	import UserProfile from '../../UserProfile/UserProfile.svelte';
+	import type { Channel, Server, User } from 'types/types';
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
 

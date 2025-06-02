@@ -1,7 +1,7 @@
 import { PasteRule } from '@tiptap/core';
 import Mention from '@tiptap/extension-mention';
-import { windows } from '../../../stores/windows.svelte';
-import { serversStore } from '../../../stores/servers.svelte';
+import { windows } from 'stores/windows.svelte';
+import { serversStore } from 'stores/servers.svelte';
 
 export const CustomMention = Mention.extend({
 	addPasteRules() {

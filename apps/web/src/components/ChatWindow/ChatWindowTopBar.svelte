@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { userStore } from '../../stores/user.svelte';
-	import { windows } from '../../stores/windows.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import { windows } from 'stores/windows.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import Close from '../ui/icons/Close.svelte';
 

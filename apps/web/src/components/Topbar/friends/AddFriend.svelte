@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { core } from '../../../stores/core.svelte';
+	import { core } from 'stores/core.svelte';
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import PlusSimple from '../../ui/icons/PlusSimple.svelte';
 

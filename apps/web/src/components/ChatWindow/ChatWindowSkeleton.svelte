@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { onMount, type Snippet } from 'svelte';
-	import { windows } from '../../stores/windows.svelte';
-	import type { Channel, Friend, Server } from '../../types/types';
+	import { windows } from 'stores/windows.svelte';
+	import type { Channel, Friend, Server } from 'types/types';
 	import ChatWindowTopBar from './ChatWindowTopBar.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 

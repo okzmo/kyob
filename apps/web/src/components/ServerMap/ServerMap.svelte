@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import ServerButton from '../ui/ServerButton/ServerButton.svelte';
-	import type { Server } from '../../types/types';
-	import { windows } from '../../stores/windows.svelte';
-	import { core } from '../../stores/core.svelte';
+	import type { Server } from 'types/types';
+	import { windows } from 'stores/windows.svelte';
+	import { core } from 'stores/core.svelte';
 	import CreateServerModal from '../ui/ContextMenu/ServerMapContextMenu/CreateServerModal.svelte';
 	import JoinServerModal from '../ui/ContextMenu/ServerMapContextMenu/JoinServerModal.svelte';
 
