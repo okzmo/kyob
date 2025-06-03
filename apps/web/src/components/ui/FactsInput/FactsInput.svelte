@@ -101,7 +101,9 @@
 		<CloseDialogButton />
 		<div class="flex items-center justify-between px-8">
 			<div>
-				<Dialog.Title class="text-lg font-semibold">Add a fact</Dialog.Title>
+				<Dialog.Title class="text-lg font-semibold">
+					{dialogMode === 'create' ? 'Add a fact' : 'Edit your fact'}
+				</Dialog.Title>
 				<Dialog.Description class="text-main-400 max-w-[24rem] text-sm">
 					Your birthday, your first job, tell us about yourself.
 				</Dialog.Description>

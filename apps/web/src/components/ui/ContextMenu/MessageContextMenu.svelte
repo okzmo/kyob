@@ -65,7 +65,10 @@
 			<Pen height={20} width={20} />
 		</div>
 	</ContextMenu.Item>
-	<ContextMenu.Item class="context-menu-item-danger" onclick={() => handleDelete(targetId)}>
+	<ContextMenu.Item
+		class="context-menu-item-danger text-red-400"
+		onclick={() => handleDelete(targetId)}
+	>
 		<p class="flex items-center">Delete Message</p>
 		<Bin height={20} width={20} />
 	</ContextMenu.Item>

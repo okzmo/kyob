@@ -253,18 +253,16 @@ body {
 }
 
 .context-menu-item-danger {
-	@apply flex h-10 items-center justify-between py-3 pr-1.5 pl-3 font-medium transition duration-100 select-none hover:cursor-pointer focus-visible:outline-none;
+	@apply flex h-10 items-center justify-between py-3 pr-1.5 pl-3 font-medium text-red-400 transition duration-100 select-none hover:cursor-pointer focus-visible:outline-none;
 
 	&:hover {
 		background-color: oklch(70.4% 0.191 22.216 / 0.2);
 		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
-		color: oklch(70.4% 0.191 22.216);
 	}
 
 	&:focus-visible {
 		background-color: oklch(70.4% 0.191 22.216 / 0.2);
 		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
-		color: oklch(70.4% 0.191 22.216);
 	}
 }
 
