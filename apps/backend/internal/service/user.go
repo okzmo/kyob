@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -39,9 +40,27 @@ type RemoveFriendBody struct {
 }
 
 type UpdateAccountBody struct {
-	Email       string `validate:"omitempty,email" json:"email"`
-	Username    string `validate:"omitempty,min=1,max=20" json:"username"`
-	DisplayName string `validate:"omitempty,min=1,max=20" json:"display_name"`
+	Email    string `validate:"omitempty,email" json:"email"`
+	Username string `validate:"omitempty,min=1,max=20" json:"username"`
+}
+
+type Link struct {
+	Id    string `json:"id"`
+	Label string `json:"label"`
+	Url   string `json:"url"`
+}
+
+type Fact struct {
+	Id    string `json:"id"`
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
+type UpdateProfileBody struct {
+	DisplayName string          `validate:"required,max=20" json:"display_name"`
+	About       json.RawMessage `json:"about"`
+	Links       []Link          `json:"links"`
+	Facts       []Fact          `json:"facts"`
 }
 
 type UpdateAvatarBody struct {
@@ -51,8 +70,8 @@ type UpdateAvatarBody struct {
 }
 
 type UpdateAvatarResponse struct {
-	Banner    string `json:"avatar"`
-	Avatar    string `json:"banner"`
+	Avatar    string `json:"avatar"`
+	Banner    string `json:"banner"`
 	MainColor string `json:"main_color"`
 }
 
@@ -60,16 +79,6 @@ func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 	user, err := db.Query.GetUserById(ctx, userId)
 	if err != nil {
 		return nil, ErrUserNotFound
-	}
-
-	links, err := db.Query.GetUserLinks(ctx, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	facts, err := db.Query.GetUserFacts(ctx, user.ID)
-	if err != nil {
-		return nil, err
 	}
 
 	res := &UserResponse{
@@ -82,11 +91,9 @@ func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 		MainColor:   user.MainColor,
 		About:       user.About,
 		CreatedAt:   user.CreatedAt,
-		Links:       links,
-		Facts:       facts,
+		Links:       user.Links,
+		Facts:       user.Facts,
 	}
-
-	fmt.Println(res)
 
 	return res, nil
 }
@@ -112,16 +119,6 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 		}
 	}
 
-	if body.DisplayName != "" {
-		err := db.Query.UpdateUserDisplayName(ctx, db.UpdateUserDisplayNameParams{
-			ID:          user.ID,
-			DisplayName: body.DisplayName,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
 	if body.Email != "" {
 		_, err := db.Query.GetUser(ctx, db.GetUserParams{
 			Email: body.Email,
@@ -142,10 +139,71 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 	return nil
 }
 
+func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
+	user := ctx.Value("user").(db.User)
+
+	if body.DisplayName != "" {
+		err := db.Query.UpdateUserDisplayName(ctx, db.UpdateUserDisplayNameParams{
+			ID:          user.ID,
+			DisplayName: body.DisplayName,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if len(body.About) > 0 {
+		err := db.Query.UpdateUserAbout(ctx, db.UpdateUserAboutParams{
+			ID:    user.ID,
+			About: body.About,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	links := make([]Link, 0)
+	for _, link := range body.Links {
+		link.Id = utils.Node.Generate().String()
+		links = append(links, link)
+	}
+	jsonLinks, err := json.Marshal(links)
+	if err != nil {
+		return err
+	}
+
+	err = db.Query.UpdateUserLinks(ctx, db.UpdateUserLinksParams{
+		ID:    user.ID,
+		Links: jsonLinks,
+	})
+	if err != nil {
+		return err
+	}
+
+	facts := make([]Fact, 0)
+	for _, fact := range body.Facts {
+		fact.Id = utils.Node.Generate().String()
+		facts = append(facts, fact)
+	}
+	jsonFacts, err := json.Marshal(facts)
+	if err != nil {
+		return err
+	}
+
+	err = db.Query.UpdateUserFacts(ctx, db.UpdateUserFactsParams{
+		ID:    user.ID,
+		Facts: jsonFacts,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
 	user := ctx.Value("user").(db.User)
 	client := s3.NewFromConfig(GetS3Config())
-	fmt.Println(body)
 
 	avatar, err := utils.CropImage(file, body.CropAvatar.X, body.CropAvatar.Y, body.CropAvatar.Width, body.CropAvatar.Height)
 	if err != nil {

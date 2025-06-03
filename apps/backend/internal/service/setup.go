@@ -25,17 +25,17 @@ type ChannelsWithMembers struct {
 }
 
 type UserResponse struct {
-	ID          string               `json:"id"`
-	Email       string               `json:"email"`
-	Username    string               `json:"username"`
-	DisplayName string               `json:"display_name"`
-	Avatar      pgtype.Text          `json:"avatar"`
-	Banner      pgtype.Text          `json:"banner"`
-	MainColor   pgtype.Text          `json:"main_color"`
-	About       json.RawMessage      `json:"about"`
-	CreatedAt   time.Time            `json:"created_at"`
-	Links       []db.GetUserLinksRow `json:"links"`
-	Facts       []db.GetUserFactsRow `json:"facts"`
+	ID          string          `json:"id"`
+	Email       string          `json:"email"`
+	Username    string          `json:"username"`
+	DisplayName string          `json:"display_name"`
+	Avatar      pgtype.Text     `json:"avatar"`
+	Banner      pgtype.Text     `json:"banner"`
+	MainColor   pgtype.Text     `json:"main_color"`
+	About       json.RawMessage `json:"about"`
+	Links       json.RawMessage `json:"links"`
+	Facts       json.RawMessage `json:"facts"`
+	CreatedAt   time.Time       `json:"created_at"`
 }
 
 type FriendResponse struct {
@@ -60,16 +60,6 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 
 	ctxUser := ctx.Value("user").(db.User)
 
-	facts, err := db.Query.GetUserFacts(ctx, ctxUser.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	links, err := db.Query.GetUserLinks(ctx, ctxUser.ID)
-	if err != nil {
-		return nil, err
-	}
-
 	friends, err := db.Query.GetFriends(ctx, ctxUser.ID)
 	if err != nil {
 		return nil, err
@@ -90,8 +80,8 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		MainColor:   ctxUser.MainColor,
 		About:       ctxUser.About,
 		CreatedAt:   ctxUser.CreatedAt,
-		Facts:       facts,
-		Links:       links,
+		Links:       ctxUser.Links,
+		Facts:       ctxUser.Facts,
 	}
 
 	for _, f := range friends {

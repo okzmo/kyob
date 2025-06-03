@@ -12,9 +12,9 @@
 </script>
 
 <section class={classes}>
-	<h4 class="text-lg font-semibold">{title}</h4>
+	<h4 class="text-lg font-semibold select-none">{title}</h4>
 	{#if description}
-		<p class="text-main-400 text-sm">{description}</p>
+		<p class="text-main-400 text-sm select-none">{description}</p>
 	{/if}
 	{@render children()}
 </section>

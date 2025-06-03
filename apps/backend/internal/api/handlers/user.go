@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -57,6 +58,30 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 		default:
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+}
+
+func UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateProfileBody
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = services.UpdateProfile(r.Context(), &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -120,6 +145,7 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	fmt.Println(res)
 
 	utils.RespondWithJSON(w, http.StatusContinue, res)
 }

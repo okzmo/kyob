@@ -95,7 +95,7 @@
 						{isEmpty}
 						{isSubmitting}
 						{isSubmitted}
-						class="absolute top-1/2 right-5 -translate-y-1/2"
+						class="relative"
 					>
 						Add friend
 					</SubmitButton>

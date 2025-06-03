@@ -15,6 +15,11 @@ SELECT * FROM servers;
 -- name: IsMember :execresult
 SELECT id FROM server_membership WHERE server_id = $1 AND user_id = $2;
 
+-- name: GetServersCountFromUser :one
+SELECT count(id)
+FROM server_membership
+WHERE user_id = $1;
+
 -- name: GetServersFromUser :many
 SELECT DISTINCT s.*, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s

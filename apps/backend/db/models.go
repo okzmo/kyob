@@ -123,16 +123,6 @@ type Channel struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
-type Fact struct {
-	ID        string      `json:"id"`
-	UserID    string      `json:"user_id"`
-	Icon      pgtype.Text `json:"icon"`
-	Label     pgtype.Text `json:"label"`
-	Value     pgtype.Text `json:"value"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
-}
-
 type Friend struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"user_id"`
@@ -147,15 +137,6 @@ type Invite struct {
 	ServerID string    `json:"server_id"`
 	InviteID string    `json:"invite_id"`
 	ExpireAt time.Time `json:"expire_at"`
-}
-
-type Link struct {
-	ID        string      `json:"id"`
-	UserID    string      `json:"user_id"`
-	Label     pgtype.Text `json:"label"`
-	Url       pgtype.Text `json:"url"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
 }
 
 type Message struct {
@@ -222,6 +203,8 @@ type User struct {
 	Banner      pgtype.Text `json:"banner"`
 	About       []byte      `json:"about"`
 	MainColor   pgtype.Text `json:"main_color"`
+	Links       []byte      `json:"links"`
+	Facts       []byte      `json:"facts"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }

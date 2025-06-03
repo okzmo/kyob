@@ -31,7 +31,8 @@ import type {
 	EditMessageType,
 	JoinServerType,
 	UpdateAccountType,
-	UpdateAvatarType
+	UpdateAvatarType,
+	UpdateProfileType
 } from '../types/schemas';
 import { fromBinary } from '@bufbuild/protobuf';
 import { serversStore } from './servers.svelte';
@@ -76,6 +77,8 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const contentStr = new TextDecoder().decode(wsMess.content.value?.content);
 						const authorAbout = new TextDecoder().decode(wsMess.content.value?.author!.about);
+						const authorLinks = new TextDecoder().decode(wsMess.content.value?.author!.links);
+						const authorFacts = new TextDecoder().decode(wsMess.content.value?.author!.facts);
 
 						const message: Message = {
 							id: wsMess.content.value.id,
@@ -88,8 +91,8 @@ class Backend {
 								banner: wsMess.content.value.author!.banner,
 								email: wsMess.content.value.author!.email,
 								main_color: wsMess.content.value.author!.mainColor,
-								facts: wsMess.content.value.author!.facts,
-								links: wsMess.content.value.author!.links
+								links: JSON.parse(authorLinks),
+								facts: JSON.parse(authorFacts)
 							},
 							server_id: wsMess.content.value.serverId,
 							channel_id: wsMess.content.value.channelId,
@@ -287,10 +290,13 @@ class Backend {
 			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response?.json();
-			if (errBody?.status === 401) {
-				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 401:
+					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody?.error || '' });
 		}
 	}
 
@@ -317,10 +323,14 @@ class Backend {
 			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 400) {
-				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+			switch (errBody) {
+				case errBody.status === 400:
+					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				case errBody.status === 403 && errBody.code === 'ERR_TOO_MANY_SERVERS':
+					return err({ code: 'ERR_TOO_MANY_SERVERS', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -338,13 +348,14 @@ class Backend {
 			return ok(data.server);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 400) {
-				return err({ code: errBody.code, error: errBody.error });
+			switch (errBody) {
+				case errBody.status === 400:
+					return err({ code: errBody.code, error: errBody.error });
+				case errBody.status === 404:
+					return err({ code: 'ERR_INVITE_SERVER_NOT_FOUND', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			if (errBody.status === 404) {
-				return err({ code: 'ERR_INVITE_SERVER_NOT_FOUND', error: errBody.error });
-			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -360,10 +371,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 401) {
-				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 401:
+					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -400,10 +414,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 401) {
-				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 401:
+					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -422,10 +439,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 401) {
-				return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 401:
+					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -450,10 +470,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 400) {
-				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 400:
+					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -479,10 +502,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 400) {
-				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 400:
+					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -530,10 +556,13 @@ class Backend {
 			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 404) {
-				return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 404:
+					return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -553,10 +582,13 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 400) {
-				return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+
+			switch (errBody) {
+				case errBody.status === 400:
+					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -574,15 +606,15 @@ class Backend {
 			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			if (errBody.status === 404) {
-				return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
-			}
 
-			if (errBody.status === 403) {
-				return err({ code: 'ERR_ADDING_ITSELF', error: errBody.error });
+			switch (errBody) {
+				case errBody.status === 404:
+					return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
+				case errBody.status === 403:
+					return err({ code: 'ERR_ADDING_ITSELF', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -639,15 +671,14 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			if (errBody.status === 403 && errBody.code === 'ERR_USERNAME_IN_USE') {
-				return err({ code: 'ERR_USERNAME_IN_USE', error: errBody.error });
+			switch (errBody) {
+				case errBody.status === 403 && errBody.code === 'ERR_USERNAME_IN_USE':
+					return err({ code: 'ERR_USERNAME_IN_USE', error: errBody.error });
+				case errBody.status === 403 && errBody.code === 'ERR_EMAIL_IN_USE':
+					return err({ code: 'ERR_EMAIL_IN_USE', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
-
-			if (errBody.status === 403 && errBody.code === 'ERR_EMAIL_IN_USE') {
-				return err({ code: 'ERR_EMAIL_IN_USE', error: errBody.error });
-			}
-
-			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
 	}
 
@@ -679,6 +710,24 @@ class Backend {
 			}
 
 			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async updateProfile(body: UpdateProfileType): Promise<Result<void, UpdateAvatarErrors>> {
+		try {
+			const res = await client.post('user/update_profile', {
+				body: JSON.stringify(body)
+			});
+
+			const data = (await res.json()) as { banner: string; avatar: string; main_color: string };
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });

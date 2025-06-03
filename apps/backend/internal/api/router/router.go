@@ -35,6 +35,7 @@ func Setup() {
 			r.Get("/user/{user_id}", handlers.GetUser)
 			r.Post("/user/update_account", handlers.UpdateAccount)
 			r.Post("/user/update_avatar", handlers.UpdateAvatar)
+			r.Post("/user/update_profile", handlers.UpdateProfile)
 			r.Post("/server", handlers.CreateServer)
 			r.Post("/server/join", handlers.JoinServer)
 			r.Post("/server/{id}/leave", handlers.LeaveServer)

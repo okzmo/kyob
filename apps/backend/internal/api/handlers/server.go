@@ -72,7 +72,12 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 
 	server, err := services.CreateServer(r.Context(), fileData, fileHeader, &body)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch {
+		case errors.Is(err, services.ErrTooManyServers):
+			utils.RespondWithError(w, http.StatusForbidden, "You cannot create more than 200 servers.", "ERR_TOO_MANY_SERVERS")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

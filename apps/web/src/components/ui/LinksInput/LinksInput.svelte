@@ -6,6 +6,8 @@
 	import CloseDialogButton from '../CustomDialogContent/CloseDialogButton.svelte';
 	import FooterDialog from '../CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../SubmitButton/SubmitButton.svelte';
+	import { generateRandomId } from 'utils/randomId';
+	import Button from '../Button/Button.svelte';
 
 	interface Props {
 		links: Link[];
@@ -14,13 +16,43 @@
 	let { links = $bindable() }: Props = $props();
 
 	let openDialog = $state(false);
+	let dialogMode = $state<'create' | 'edit'>('create');
+	let editLinkId = $state('');
 	let label = $state('');
 	let url = $state('');
 
-	function handleClick() {
-		links = [...links, { id: '0', label, url }];
+	function openEditMode(linkId: string, linkLabel: string, linkUrl: string) {
+		dialogMode = 'edit';
+		editLinkId = linkId;
+		label = linkLabel;
+		url = linkUrl;
+		openDialog = true;
+	}
+
+	function handleRemove() {
+		links = links.filter((l) => l.id !== editLinkId);
+		editLinkId = '';
 		label = '';
 		url = '';
+
+		openDialog = false;
+	}
+
+	function handleClick() {
+		if (dialogMode === 'edit') {
+			const linkToEdit = links.find((l) => l.id === editLinkId);
+			if (!linkToEdit) return;
+			links = links.map((link) => (link.id === editLinkId ? { ...link, label, url } : link));
+		} else if (dialogMode === 'create') {
+			if (links.length >= 2) return;
+			links = [...links, { id: generateRandomId(), label, url }];
+		}
+
+		editLinkId = '';
+		label = '';
+		url = '';
+
+		openDialog = false;
 	}
 </script>
 
@@ -29,22 +61,31 @@
 	<ul class="bg-main-900 border-main-800 mt-1.5 flex w-full flex-col gap-y-1 border p-1">
 		{#if links && links.length > 0}
 			{#each links as link (link.id)}
-				<div
+				<button
+					type="button"
 					class="bg-main-900 inner-main-800 hocus:bg-accent-100/20 hocus:inner-accent-no-shadow/25 text-main-300 hocus:text-accent-50 flex w-full items-center gap-x-2 px-3 py-1.5 transition duration-100 hover:cursor-pointer"
+					onclick={() => openEditMode(link.id, link.label, link.url)}
 				>
 					{link.label}
-				</div>
+				</button>
 			{/each}
 		{/if}
 		<li>
 			<button
 				type="button"
-				class="bg-main-900 inner-main-800 hocus:bg-accent-100/20 hocus:inner-accent-no-shadow/25 text-main-300 hocus:text-accent-50 flex w-full items-center justify-center gap-x-2 py-1.5 transition duration-100 hover:cursor-pointer"
+				class={[
+					' flex w-full items-center justify-center gap-x-2 py-1.5 transition duration-100',
+					links?.length < 2
+						? 'bg-main-900 inner-main-800 hocus:bg-accent-100/20 hocus:inner-accent-no-shadow/25 text-main-300 hocus:text-accent-50 hover:cursor-pointer'
+						: 'inner-red-400/20 hocus:bg-red-400/25 hocus:inner-red-400/40 bg-red-400/15 text-red-400 hover:cursor-not-allowed'
+				]}
 				onclick={() => {
+					if (links.length >= 2) return;
+					dialogMode = 'create';
 					openDialog = true;
 				}}
 			>
-				0 / 2
+				{links?.length || 0} / 2
 				<PlusSimple height={14} width={14} />
 			</button>
 		</li>
@@ -85,12 +126,15 @@
 		</div>
 
 		<FooterDialog>
+			{#if dialogMode === 'edit'}
+				<Button variants="danger" onclick={handleRemove}>Remove Link</Button>
+			{/if}
 			<SubmitButton
 				type="button"
-				class="absolute top-1/2 right-5 -translate-y-1/2 px-3"
-				onclick={handleClick}
+				class="relative px-3"
+				onclick={links.length >= 2 ? undefined : handleClick}
 			>
-				Add link
+				{dialogMode === 'create' ? 'Add Link' : 'Edit Link'}
 			</SubmitButton>
 		</FooterDialog>
 	</CustomDialogContent>

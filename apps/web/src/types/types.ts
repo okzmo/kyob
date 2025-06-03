@@ -67,9 +67,9 @@ export interface User {
 	avatar: string;
 	banner: string;
 	main_color?: string;
-	about?: string;
-	facts?: Fact[];
-	links?: Link[];
+	about?: any;
+	facts: Fact[];
+	links: Link[];
 }
 
 export interface Friend extends Partial<User> {

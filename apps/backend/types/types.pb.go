@@ -379,8 +379,8 @@ type User struct {
 	MainColor     *string                `protobuf:"bytes,7,opt,name=main_color,json=mainColor,proto3,oneof" json:"main_color,omitempty"`
 	About         []byte                 `protobuf:"bytes,8,opt,name=about,proto3,oneof" json:"about,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Links         []*UserLinksRow        `protobuf:"bytes,10,rep,name=links,proto3" json:"links,omitempty"`
-	Facts         []*UserFactsRow        `protobuf:"bytes,11,rep,name=facts,proto3" json:"facts,omitempty"`
+	Links         []byte                 `protobuf:"bytes,10,opt,name=links,proto3" json:"links,omitempty"`
+	Facts         []byte                 `protobuf:"bytes,11,opt,name=facts,proto3" json:"facts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -478,14 +478,14 @@ func (x *User) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *User) GetLinks() []*UserLinksRow {
+func (x *User) GetLinks() []byte {
 	if x != nil {
 		return x.Links
 	}
 	return nil
 }
 
-func (x *User) GetFacts() []*UserFactsRow {
+func (x *User) GetFacts() []byte {
 	if x != nil {
 		return x.Facts
 	}
@@ -2294,7 +2294,7 @@ const file_types_proto_rawDesc = "" +
 	"\fUserFactsRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\"\xa4\x03\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\"\xfa\x02\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
@@ -2306,10 +2306,10 @@ const file_types_proto_rawDesc = "" +
 	"main_color\x18\a \x01(\tH\x02R\tmainColor\x88\x01\x01\x12\x19\n" +
 	"\x05about\x18\b \x01(\fH\x03R\x05about\x88\x01\x01\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x14\n" +
 	"\x05links\x18\n" +
-	" \x03(\v2\x13.types.UserLinksRowR\x05links\x12)\n" +
-	"\x05facts\x18\v \x03(\v2\x13.types.UserFactsRowR\x05factsB\t\n" +
+	" \x01(\fR\x05links\x12\x14\n" +
+	"\x05facts\x18\v \x01(\fR\x05factsB\t\n" +
 	"\a_avatarB\t\n" +
 	"\a_bannerB\r\n" +
 	"\v_main_colorB\b\n" +
@@ -2529,24 +2529,22 @@ var file_types_proto_depIdxs = []int32{
 	26, // 9: types.WSMessage.accept_friend:type_name -> types.AcceptFriendInvite
 	27, // 10: types.WSMessage.delete_friend:type_name -> types.DeleteFriend
 	30, // 11: types.User.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 12: types.User.links:type_name -> types.UserLinksRow
-	2,  // 13: types.User.facts:type_name -> types.UserFactsRow
-	3,  // 14: types.IncomingChatMessage.author:type_name -> types.User
-	3,  // 15: types.BroadcastChatMessage.author:type_name -> types.User
-	30, // 16: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	30, // 17: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 18: types.BroadcastNewUserInServer.user:type_name -> types.User
-	3,  // 19: types.BroadcastChannelCreation.users:type_name -> types.User
-	30, // 20: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	30, // 21: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 22: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 23: types.SendFriendInvite.user:type_name -> types.User
-	3,  // 24: types.AcceptFriendInvite.user:type_name -> types.User
-	25, // [25:25] is the sub-list for method output_type
-	25, // [25:25] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	3,  // 12: types.IncomingChatMessage.author:type_name -> types.User
+	3,  // 13: types.BroadcastChatMessage.author:type_name -> types.User
+	30, // 14: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	30, // 15: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 16: types.BroadcastNewUserInServer.user:type_name -> types.User
+	3,  // 17: types.BroadcastChannelCreation.users:type_name -> types.User
+	30, // 18: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	30, // 19: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 20: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 21: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 22: types.AcceptFriendInvite.user:type_name -> types.User
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }

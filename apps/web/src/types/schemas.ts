@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import { ChannelTypes } from './types';
+import { userStore } from 'stores/user.svelte';
 
 export const SignUpSchema = v.object({
 	email: v.pipe(
@@ -130,23 +131,34 @@ export const UpdateAccountSchema = v.object({
 export interface UpdateAccountType extends v.InferInput<typeof UpdateAccountSchema> {}
 
 export const UpdateProfileSchema = v.object({
-	display_name: v.optional(v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.'))),
+	display_name: v.optional(
+		v.pipe(
+			v.string(),
+			v.minLength(1, 'Minimum 1 character.'),
+			v.maxLength(20, 'Maximum 20 characters.')
+		),
+		''
+	),
 	about: v.any(),
 	links: v.optional(
 		v.array(
 			v.object({
+				id: v.string(),
 				label: v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.')),
 				url: v.pipe(v.string(), v.url())
 			})
-		)
+		),
+		[]
 	),
 	facts: v.optional(
 		v.array(
 			v.object({
+				id: v.string(),
 				label: v.pipe(v.string()),
 				value: v.pipe(v.string(), v.maxLength(20, 'Maximum 20 characters.'))
 			})
-		)
+		),
+		[]
 	)
 });
 

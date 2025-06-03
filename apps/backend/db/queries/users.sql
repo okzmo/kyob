@@ -7,12 +7,6 @@ SELECT * FROM users WHERE id = $1;
 -- name: GetUsersByIds :many
 SELECT id, username, display_name, avatar FROM users WHERE id = ANY($1::text[]);
 
--- name: GetUserFacts :many
-SELECT id, label, value FROM facts WHERE user_id = $1;
-
--- name: GetUserLinks :many
-SELECT id, label, url FROM links WHERE user_id = $1;
-
 -- name: GetUserMinimal :one
 SELECT id, username, display_name, avatar FROM users WHERE id = $1;
 
@@ -55,4 +49,14 @@ WHERE id = $1;
 -- name: UpdateUserPassword :exec
 UPDATE users
   set password = $2
+WHERE id = $1;
+
+-- name: UpdateUserLinks :exec
+UPDATE users
+  set links = $2
+WHERE id = $1;
+
+-- name: UpdateUserFacts :exec
+UPDATE users
+  set facts = $2
 WHERE id = $1;

@@ -31,10 +31,10 @@
 <button
 	{type}
 	class={[
-		'group inner-accent/15  bg-accent-100/15 text-accent-50 flex h-8 items-center justify-center overflow-hidden py-1 whitespace-nowrap transition-[box-shadow,color,width] duration-300',
+		'group inner-accent/15  bg-accent-100/15 text-accent-50 flex h-8 items-center justify-center overflow-hidden py-1 whitespace-nowrap transition-[box-shadow,color,width,opacity] duration-300',
 		!isEmpty
 			? 'hocus:bg-accent-100/25 hocus:inner-accent-no-shadow/25 hover:cursor-pointer'
-			: 'hover:cursor-not-allowed',
+			: 'opacity-50 hover:cursor-not-allowed',
 		classes
 	]}
 	style="width: {buttonWidth}px;"
@@ -47,10 +47,16 @@
 			<LoadingIcon height={20} width={20} />
 		</div>
 	{:else if isSubmitted}
-		<div class="absolute" transition:fly={{ duration: 200, delay: 300, y: 5 }}>
+		<div
+			class="absolute"
+			in:fly={{ duration: 200, delay: 200, y: 5 }}
+			out:fly={{ duration: 200, y: 5 }}
+		>
 			<Check height={20} width={20} />
 		</div>
 	{:else}
-		<span transition:fly={{ duration: 100, y: 5 }}>{@render children()}</span>
+		<span in:fly={{ duration: 100, delay: 200, y: 5 }} out:fly={{ duration: 100, y: 5 }}>
+			{@render children()}
+		</span>
 	{/if}
 </button>

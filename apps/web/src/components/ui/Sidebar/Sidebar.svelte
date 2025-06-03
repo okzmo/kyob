@@ -39,7 +39,7 @@
 	};
 </script>
 
-<aside class="mt-20 flex h-screen w-[20rem] flex-col gap-y-6 overflow-auto">
+<aside class="mt-20 flex h-screen w-[20rem] flex-col gap-y-6 overflow-auto select-none">
 	<a
 		href="/"
 		class={[

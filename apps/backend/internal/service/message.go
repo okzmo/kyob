@@ -129,16 +129,6 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 			return nil, err
 		}
 
-		links, err := db.Query.GetUserLinks(ctx, author.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		facts, err := db.Query.GetUserFacts(ctx, author.ID)
-		if err != nil {
-			return nil, err
-		}
-
 		messages = append(messages, MessageResponse{
 			ID: message.ID,
 			Author: UserResponse{
@@ -148,8 +138,8 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 				Avatar:      author.Avatar,
 				Banner:      author.Banner,
 				About:       author.About,
-				Links:       links,
-				Facts:       facts,
+				Links:       author.Links,
+				Facts:       author.Facts,
 			},
 			ServerId:         message.ServerID,
 			ChannelId:        message.ChannelID,

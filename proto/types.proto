@@ -41,8 +41,8 @@ message User {
   optional string main_color = 7;
   optional bytes about = 8;
   google.protobuf.Timestamp created_at = 9;
-  repeated UserLinksRow links = 10; 
-  repeated UserFactsRow facts = 11;
+  bytes links = 10; 
+  bytes facts = 11;
 }
 
 message IncomingChatMessage {

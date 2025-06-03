@@ -23,6 +23,7 @@ var (
 	ErrUnauthorizedServerDeletion = errors.New("cannot delete this server")
 	ErrServerNotFound             = errors.New("server not found")
 	ErrNoIdInInvite               = errors.New("failed to find id in invite url")
+	ErrTooManyServers             = errors.New("servers limit")
 )
 
 type Crop struct {
@@ -98,6 +99,11 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	}
 
 	user := ctx.Value("user").(db.User)
+	nbServers, _ := db.Query.GetServersCountFromUser(ctx, user.ID)
+	if nbServers >= 200 {
+		return nil, ErrTooManyServers
+	}
+
 	newServer, err := db.Query.CreateServer(ctx, db.CreateServerParams{
 		ID:          utils.Node.Generate().String(),
 		OwnerID:     user.ID,

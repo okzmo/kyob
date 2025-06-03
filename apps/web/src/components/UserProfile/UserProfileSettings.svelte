@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from 'types/types';
+	import type { Fact, Link, User } from 'types/types';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import { Dialog, Separator } from 'bits-ui';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
@@ -18,14 +18,23 @@
 	import { generateHTML, type JSONContent } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
+	import Button from 'components/ui/Button/Button.svelte';
 
 	interface Props {
 		user: User;
 		displayName?: string;
 		about?: JSONContent;
+		links: Link[];
+		facts: Fact[];
 	}
 
-	let { user, about = $bindable(), displayName = $bindable() }: Props = $props();
+	let {
+		user,
+		about = $bindable(),
+		displayName = $bindable(),
+		links = $bindable(),
+		facts = $bindable()
+	}: Props = $props();
 
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
@@ -34,7 +43,7 @@
 	let aboutText = $derived.by(() => {
 		if (!about) return;
 
-		const html = generateHTML(trimEmptyNodes(about), [
+		const html = generateHTML(trimEmptyNodes(about || user.about), [
 			StarterKit.configure({
 				gapcursor: false,
 				dropcursor: false,
@@ -161,8 +170,8 @@
 
 		<div class="mt-4 px-8">
 			{#if avatar}
-				<button
-					class="inner-red-400/20 hocus:bg-red-400/30 hocus:inner-red-400/40 relative bg-red-400/15 px-2 py-1 text-red-400 transition-colors duration-100 hover:cursor-pointer"
+				<Button
+					variants="danger"
 					onclick={() => {
 						avatar = undefined;
 						image = undefined;
@@ -171,7 +180,7 @@
 					}}
 				>
 					Remove avatar
-				</button>
+				</Button>
 			{:else}
 				<label
 					for="avatar-profile"
@@ -202,7 +211,7 @@
 							minZoom={minZoomBanner}
 							maxZoom={maxZoomBanner}
 							oncropcomplete={(e) => {
-								cropAvatarPixels = e.pixels;
+								cropBannerPixels = e.pixels;
 							}}
 						/>
 					</div>
@@ -218,7 +227,7 @@
 							minZoom={minZoomAvatar}
 							maxZoom={maxZoomAvatar}
 							oncropcomplete={(e) => {
-								cropBannerPixels = e.pixels;
+								cropAvatarPixels = e.pixels;
 							}}
 						/>
 					</div>
@@ -251,7 +260,7 @@
 				{isEmpty}
 				{isSubmitting}
 				{isSubmitted}
-				class="absolute top-1/2 right-5 -translate-y-1/2"
+				class="relative"
 				onclick={handleNewAvatar}
 			>
 				Use new avatar
@@ -260,7 +269,9 @@
 	</CustomDialogContent>
 </Dialog.Root>
 
-<div class="relative z-[2] h-full w-[20rem] shrink-0 overflow-hidden bg-[var(--user-color)]">
+<div
+	class="relative z-[2] h-full w-[20rem] shrink-0 overflow-hidden bg-[var(--user-color)] select-none"
+>
 	<button
 		class="bg-main-900/70 hocus:bg-main-800/70 text-main-400 hocus:text-main-50 absolute top-2 right-2 z-10 p-1.5 backdrop-blur-2xl transition duration-100 hover:cursor-pointer"
 		onclick={() => (openImageModal = true)}
@@ -271,7 +282,7 @@
 	{#if user.avatar}
 		<figure class="absolute top-0 left-0 z-[4] h-[14rem] w-full">
 			<img
-				src={user.avatar}
+				src={user.banner}
 				alt="{user.username}'s banner"
 				class="h-full w-full transform-gpu object-cover"
 			/>
@@ -301,11 +312,11 @@
 				</button>
 			{/if}
 		{/if}
-		{#if user.facts || user.links}
+		{#if facts.length > 0 || links.length > 0}
 			<Separator.Root class="bg-main-50/25 my-5 h-[1px] w-full" />
-			{#if user.links}
+			{#if links.length > 0}
 				<p class="text-main-50/65 mb-2 text-sm font-semibold">Links</p>
-				{#each user.links as link, idx (idx)}
+				{#each links as link, idx (idx)}
 					<a
 						href={link.url}
 						class="hocus:bg-main-50/20 bg-main-50/10 inner-main-50/10 relative flex w-full flex-col px-4 py-2.5 transition-colors duration-100"
@@ -318,15 +329,17 @@
 					</a>
 				{/each}
 			{/if}
-		{/if}
-		{#if user.facts}
-			<p class="text-main-50/65 mt-5 mb-2 text-sm font-semibold">Facts</p>
-			{#each user.facts as link, idx (idx)}
-				<div class="flex items-center gap-x-2">
-					<span class="text-main-50/40">{link.label}</span>
-					<span class="text-main-50 font-semibold">{link.value}</span>
-				</div>
-			{/each}
+			{#if facts.length > 0}
+				<p class={['text-main-50/65 mb-2 text-sm font-semibold', links.length > 0 && 'mt-5 ']}>
+					Facts
+				</p>
+				{#each facts as link, idx (idx)}
+					<div class="flex items-center gap-x-2">
+						<span class="text-main-50/50">{link.label}</span>
+						<span class="text-main-50 font-semibold">{link.value}</span>
+					</div>
+				{/each}
+			{/if}
 		{/if}
 	</div>
 </div>

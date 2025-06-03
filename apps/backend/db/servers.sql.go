@@ -256,6 +256,19 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 	return items, nil
 }
 
+const getServersCountFromUser = `-- name: GetServersCountFromUser :one
+SELECT count(id)
+FROM server_membership
+WHERE user_id = $1
+`
+
+func (q *Queries) GetServersCountFromUser(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getServersCountFromUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getServersFromUser = `-- name: GetServersFromUser :many
 SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s

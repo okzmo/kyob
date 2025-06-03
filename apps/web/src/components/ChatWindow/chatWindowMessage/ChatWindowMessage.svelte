@@ -73,7 +73,7 @@
 	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">
 		<div class="flex items-baseline gap-x-2.5 select-none">
-			<UserProfileWithTrigger user={author as User}>
+			<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5}>
 				<p
 					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
 				>

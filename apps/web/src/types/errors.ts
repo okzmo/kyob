@@ -17,7 +17,7 @@ export interface MessagesErrors {
 }
 
 export interface CreateServerErrors {
-	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNKNOWN';
+	code: 'ERR_VALIDATION_FAILED' | 'ERR_TOO_MANY_SERVERS' | 'ERR_UNKNOWN';
 	error: string;
 	cause?: any;
 }

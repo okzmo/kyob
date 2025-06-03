@@ -18,7 +18,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
-RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at
+RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -50,6 +50,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Banner,
 		&i.About,
 		&i.MainColor,
+		&i.Links,
+		&i.Facts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -66,7 +68,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at FROM users WHERE email = $1 OR username = $2
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at FROM users WHERE email = $1 OR username = $2
 `
 
 type GetUserParams struct {
@@ -87,6 +89,8 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 		&i.Banner,
 		&i.About,
 		&i.MainColor,
+		&i.Links,
+		&i.Facts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -94,7 +98,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, created_at, updated_at FROM users WHERE id = $1
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
@@ -110,70 +114,12 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.Banner,
 		&i.About,
 		&i.MainColor,
+		&i.Links,
+		&i.Facts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const getUserFacts = `-- name: GetUserFacts :many
-SELECT id, label, value FROM facts WHERE user_id = $1
-`
-
-type GetUserFactsRow struct {
-	ID    string      `json:"id"`
-	Label pgtype.Text `json:"label"`
-	Value pgtype.Text `json:"value"`
-}
-
-func (q *Queries) GetUserFacts(ctx context.Context, userID string) ([]GetUserFactsRow, error) {
-	rows, err := q.db.Query(ctx, getUserFacts, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetUserFactsRow
-	for rows.Next() {
-		var i GetUserFactsRow
-		if err := rows.Scan(&i.ID, &i.Label, &i.Value); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getUserLinks = `-- name: GetUserLinks :many
-SELECT id, label, url FROM links WHERE user_id = $1
-`
-
-type GetUserLinksRow struct {
-	ID    string      `json:"id"`
-	Label pgtype.Text `json:"label"`
-	Url   pgtype.Text `json:"url"`
-}
-
-func (q *Queries) GetUserLinks(ctx context.Context, userID string) ([]GetUserLinksRow, error) {
-	rows, err := q.db.Query(ctx, getUserLinks, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetUserLinksRow
-	for rows.Next() {
-		var i GetUserLinksRow
-		if err := rows.Scan(&i.ID, &i.Label, &i.Url); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const getUserMinimal = `-- name: GetUserMinimal :one
@@ -303,6 +249,38 @@ type UpdateUserEmailParams struct {
 
 func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error {
 	_, err := q.db.Exec(ctx, updateUserEmail, arg.ID, arg.Email)
+	return err
+}
+
+const updateUserFacts = `-- name: UpdateUserFacts :exec
+UPDATE users
+  set facts = $2
+WHERE id = $1
+`
+
+type UpdateUserFactsParams struct {
+	ID    string `json:"id"`
+	Facts []byte `json:"facts"`
+}
+
+func (q *Queries) UpdateUserFacts(ctx context.Context, arg UpdateUserFactsParams) error {
+	_, err := q.db.Exec(ctx, updateUserFacts, arg.ID, arg.Facts)
+	return err
+}
+
+const updateUserLinks = `-- name: UpdateUserLinks :exec
+UPDATE users
+  set links = $2
+WHERE id = $1
+`
+
+type UpdateUserLinksParams struct {
+	ID    string `json:"id"`
+	Links []byte `json:"links"`
+}
+
+func (q *Queries) UpdateUserLinks(ctx context.Context, arg UpdateUserLinksParams) error {
+	_, err := q.db.Exec(ctx, updateUserLinks, arg.ID, arg.Links)
 	return err
 }
 

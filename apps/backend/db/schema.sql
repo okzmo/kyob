@@ -67,21 +67,6 @@ CREATE TABLE public.channels (
 
 
 --
--- Name: facts; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.facts (
-    id character varying(20) NOT NULL,
-    user_id character varying(20) NOT NULL,
-    icon character varying(255),
-    label character varying(255),
-    value character varying(255),
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
 -- Name: friends; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -104,20 +89,6 @@ CREATE TABLE public.invites (
     server_id character varying(20) NOT NULL,
     invite_id character varying(255) NOT NULL,
     expire_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: links; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.links (
-    id character varying(20) NOT NULL,
-    user_id character varying(20) NOT NULL,
-    label character varying(255),
-    url character varying(255),
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -223,6 +194,8 @@ CREATE TABLE public.users (
     banner character varying(255),
     about jsonb,
     main_color character varying(255),
+    links jsonb DEFAULT '[]'::jsonb,
+    facts jsonb DEFAULT '[]'::jsonb,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -234,14 +207,6 @@ CREATE TABLE public.users (
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_pkey PRIMARY KEY (id);
-
-
---
--- Name: facts facts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.facts
-    ADD CONSTRAINT facts_pkey PRIMARY KEY (id);
 
 
 --
@@ -258,14 +223,6 @@ ALTER TABLE ONLY public.friends
 
 ALTER TABLE ONLY public.invites
     ADD CONSTRAINT invites_pkey PRIMARY KEY (id);
-
-
---
--- Name: links links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.links
-    ADD CONSTRAINT links_pkey PRIMARY KEY (id);
 
 
 --
@@ -385,14 +342,6 @@ ALTER TABLE ONLY public.channels
 
 
 --
--- Name: facts facts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.facts
-    ADD CONSTRAINT facts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
 -- Name: friends friends_friend_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -414,14 +363,6 @@ ALTER TABLE ONLY public.friends
 
 ALTER TABLE ONLY public.invites
     ADD CONSTRAINT invites_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
-
-
---
--- Name: links links_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.links
-    ADD CONSTRAINT links_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

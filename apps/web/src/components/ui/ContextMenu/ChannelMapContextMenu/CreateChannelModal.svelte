@@ -40,10 +40,10 @@
 				}
 
 				if (res.isOk()) {
-					await delay(1000);
+					await delay(500);
 					isSubmitting = false;
 					isSubmitted = true;
-					await delay(2000);
+					await delay(1000);
 
 					core.openCreateChannelModal.status = false;
 					core.activateMapDragging();
@@ -96,7 +96,7 @@
 						{isEmpty}
 						{isSubmitting}
 						{isSubmitted}
-						class="absolute top-1/2 right-5 -translate-y-1/2"
+						class="relative"
 					>
 						Create channel
 					</SubmitButton>

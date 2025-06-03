@@ -31,5 +31,5 @@ export function extractFirstNParagraphs(htmlString: string, n = 3) {
 	const pattern = /<p>.*?<\/p>/gs;
 	const matches = htmlString.match(pattern) || [];
 
-	return { paragraphs: matches.slice(0, n).join(''), enoughMatches: matches.length >= n };
+	return { paragraphs: matches.slice(0, n).join(''), enoughMatches: matches.length > n };
 }

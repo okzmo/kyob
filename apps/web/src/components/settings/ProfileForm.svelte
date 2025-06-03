@@ -14,11 +14,12 @@
 		enhance,
 		isSubmitted = $bindable(),
 		isSubmitting = $bindable(),
+		isEmpty,
 		buttonWidth
 	} = $props();
 </script>
 
-<form use:enhance class="flex min-w-[35%] flex-col gap-y-4">
+<form use:enhance class="flex min-w-[35%] flex-col gap-y-4 select-none">
 	<FormInput
 		type="text"
 		title="Display name"
@@ -39,7 +40,14 @@
 	<LinksInput bind:links />
 	<FactsInput bind:facts />
 
-	<SubmitButton type="submit" {buttonWidth} {isSubmitting} {isSubmitted} class="relative mt-2">
+	<SubmitButton
+		type="submit"
+		{buttonWidth}
+		{isSubmitting}
+		{isSubmitted}
+		{isEmpty}
+		class="relative mt-2"
+	>
 		Save my profile
 	</SubmitButton>
 </form>

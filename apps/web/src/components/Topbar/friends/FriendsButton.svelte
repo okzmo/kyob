@@ -20,7 +20,7 @@
 		<People height={22} width={22} />
 	</Popover.Trigger>
 	<CustomPopoverContent
-		class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2"
+		class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
 		align="end"
 		side="bottom"
 		sideOffset={10}
