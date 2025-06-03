@@ -5,7 +5,13 @@ import (
 )
 
 func CropImage(file []byte, x, y, width, height int) ([]byte, error) {
-	image, err := vips.NewImageFromBuffer(file)
+	intSet := vips.IntParameter{}
+	intSet.Set(-1)
+
+	params := vips.NewImportParams()
+	params.NumPages = intSet
+
+	image, err := vips.LoadImageFromBuffer(file, params)
 	if err != nil {
 		return nil, err
 	}

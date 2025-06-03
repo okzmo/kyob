@@ -64,7 +64,7 @@
 		const item = props.items[index];
 
 		if (item) {
-			props.command({ 'user-id': item.id, avatar: item.avatar, label: item.display_name });
+			props.command({ 'user-id': item.id, label: item.display_name });
 		}
 	}
 </script>

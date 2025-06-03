@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
-func GetS3Config() aws.Config {
+func GetAWSConfig() aws.Config {
 	region := os.Getenv("AWS_REGION")
 	keyId := os.Getenv("AWS_ACCESS_KEY_ID")
 	secretKey := os.Getenv("AWS_SECRET_ACCESS_KEY")

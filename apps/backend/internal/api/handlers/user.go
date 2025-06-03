@@ -106,6 +106,7 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
+	fmt.Println(fileHeader.Header)
 
 	fileData, err := io.ReadAll(file)
 	if err != nil {

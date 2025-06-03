@@ -11,16 +11,18 @@
 		align?: 'start' | 'center' | 'end';
 		side?: 'top' | 'right' | 'bottom' | 'left';
 		sideOffset?: number;
+		y?: number;
+		x?: number;
 	}
 
-	let { children, user, align = 'start', side = 'top', sideOffset = 10 }: Props = $props();
+	let { children, user, align = 'start', side = 'top', sideOffset = 10, y, x }: Props = $props();
 </script>
 
 <Popover.Root>
 	<Popover.Trigger>
 		{@render children()}
 	</Popover.Trigger>
-	<CustomPopoverContent class="relative z-[999] w-[20rem] p-0" {align} {side} {sideOffset} y={10}>
+	<CustomPopoverContent class="relative z-[999] w-[20rem] p-0" {align} {side} {sideOffset} {y} {x}>
 		<UserProfile {user} />
 	</CustomPopoverContent>
 </Popover.Root>

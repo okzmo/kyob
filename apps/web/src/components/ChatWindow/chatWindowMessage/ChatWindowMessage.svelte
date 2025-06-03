@@ -64,7 +64,7 @@
 	{#if isUserMentioned}
 		<Corners color="border-mention-100" />
 	{/if}
-	<UserProfileWithTrigger user={author as User} side="right" align="center">
+	<UserProfileWithTrigger user={author as User} side="right" align="center" x={-10}>
 		<img
 			src={author.avatar}
 			alt="{author.username}'s avatar"
@@ -73,7 +73,7 @@
 	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">
 		<div class="flex items-baseline gap-x-2.5 select-none">
-			<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5}>
+			<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5} y={-10}>
 				<p
 					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
 				>
@@ -113,20 +113,7 @@
 							class: 'mention'
 						},
 						renderHTML({ options, node }) {
-							return [
-								'button',
-								options.HTMLAttributes,
-								[
-									'img',
-									{
-										src:
-											node.attrs.avatar ||
-											'https://i.pinimg.com/736x/f0/8c/7f/f08c7f9ce8f3529ecc5a07968636cf84.jpg',
-										alt: `${node.attrs.label || ''} avatar`
-									}
-								],
-								`${node.attrs.label}`
-							];
+							return ['button', options.HTMLAttributes, `${node.attrs.label}`];
 						}
 					})
 				])}

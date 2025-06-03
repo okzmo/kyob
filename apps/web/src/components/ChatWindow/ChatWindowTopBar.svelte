@@ -34,7 +34,7 @@
 				<img
 					src={friend.avatar}
 					alt="{friend.display_name} avatar"
-					class="h-[1.25rem] w-[1.25rem] rounded-full"
+					class="pointer-events-none h-[1.25rem] w-[1.25rem] rounded-full"
 				/>
 				<p class="select-none">{friend.display_name}</p>
 			</div>
@@ -43,7 +43,7 @@
 				<img
 					src={server.avatar}
 					alt="{server.name} server background"
-					class="h-[1.25rem] w-[1.25rem] rounded-full"
+					class="pointer-events-none h-[1.25rem] w-[1.25rem] rounded-full"
 				/>
 				<p class="select-none">{server.name}</p>
 			</div>

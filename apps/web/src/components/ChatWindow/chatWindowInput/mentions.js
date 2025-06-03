@@ -18,7 +18,6 @@ export const CustomMention = Mention.extend({
 						const attributes = {
 							'user-id': userId,
 							label: user?.display_name || 'Unknown User',
-							avatar: user?.avatar || '',
 							mentionSuggestionChar: '@'
 						};
 
@@ -32,9 +31,6 @@ export const CustomMention = Mention.extend({
 	addAttributes() {
 		return {
 			'user-id': {
-				default: null
-			},
-			avatar: {
 				default: null
 			},
 			label: {

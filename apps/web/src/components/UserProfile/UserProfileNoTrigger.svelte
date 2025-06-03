@@ -21,9 +21,18 @@
 			}
 
 			if (res.isOk()) {
-				document.documentElement.style.setProperty('--user-color-85', '#153c45d9');
-				document.documentElement.style.setProperty('--user-color-95', '#153c45f2');
-				document.documentElement.style.setProperty('--user-color', '#153c45');
+				document.documentElement.style.setProperty(
+					'--user-color-85',
+					`rgba(${res.value.main_color}, 0.85)`
+				);
+				document.documentElement.style.setProperty(
+					'--user-color-95',
+					`rgba(${res.value.main_color}, 0.95)`
+				);
+				document.documentElement.style.setProperty(
+					'--user-color',
+					`rgba(${res.value.main_color}, 1)`
+				);
 				core.profiles.push(res.value);
 				return res.value;
 			}
@@ -46,7 +55,6 @@
 		class="gradient-user-profile relative w-[20rem] rounded-lg p-1"
 		align="start"
 		side="top"
-		sideOffset={10}
 		y={10}
 		customAnchor={core.profileOpen.element}
 	>

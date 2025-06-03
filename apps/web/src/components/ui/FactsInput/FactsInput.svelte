@@ -55,7 +55,7 @@
 </script>
 
 <div class="flex flex-col">
-	<label for="facts" class="text-main-500">Facts</label>
+	<label for="facts" class="text-main-500 text-sm">Facts</label>
 	<ul class="bg-main-900 border-main-800 mt-1.5 flex w-full flex-col gap-y-1 border p-1">
 		{#if facts && facts.length > 0}
 			{#each facts as fact (fact.id)}

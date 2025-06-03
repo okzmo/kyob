@@ -203,7 +203,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
 
 func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
 	user := ctx.Value("user").(db.User)
-	client := s3.NewFromConfig(GetS3Config())
+	s3Client := s3.NewFromConfig(GetAWSConfig())
 
 	avatar, err := utils.CropImage(file, body.CropAvatar.X, body.CropAvatar.Y, body.CropAvatar.Width, body.CropAvatar.Height)
 	if err != nil {
@@ -221,7 +221,7 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", user.ID, randomId)
 	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", user.ID, randomId)
 
-	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Key:    &avatarFileName,
 		Bucket: aws.String("nyo-files"),
 		Body:   bytes.NewReader(avatar),
@@ -231,7 +231,7 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		return nil, err
 	}
 
-	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Key:    &bannerFileName,
 		Bucket: aws.String("nyo-files"),
 		Body:   bytes.NewReader(banner),

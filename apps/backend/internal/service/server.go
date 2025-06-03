@@ -87,7 +87,7 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	id := utils.GenerateRandomId(8)
 	imgFileName := fmt.Sprintf("avatar-server-%s.webp", id)
 
-	client := s3.NewFromConfig(GetS3Config())
+	client := s3.NewFromConfig(GetAWSConfig())
 	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Key:    &imgFileName,
 		Bucket: aws.String("nyo-files"),
