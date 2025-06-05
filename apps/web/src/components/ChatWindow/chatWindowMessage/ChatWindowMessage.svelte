@@ -53,7 +53,7 @@
 	data-author-id={author.id}
 	bind:this={message}
 	class={[
-		' relative flex gap-x-3 px-4 py-2 transition-colors duration-100',
+		'relative flex items-start gap-x-3 px-4 py-2 transition-colors duration-100',
 		isUserMentioned
 			? 'message-mention'
 			: core.editingMessage.id === id
@@ -68,7 +68,8 @@
 		<img
 			src={author.avatar}
 			alt="{author.username}'s avatar"
-			class="h-[3rem] w-[3rem] object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
+			class="mt-[2.5px] h-[3rem] w-[3rem] object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
+			draggable="false"
 		/>
 	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">

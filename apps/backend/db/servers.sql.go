@@ -40,7 +40,7 @@ type CreateServerParams struct {
 	OwnerID     string      `json:"owner_id"`
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
-	Description pgtype.Text `json:"description"`
+	Description []byte      `json:"description"`
 	Private     bool        `json:"private"`
 }
 
@@ -193,7 +193,7 @@ type GetServerWithChannelsRow struct {
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
-	Description pgtype.Text `json:"description"`
+	Description []byte      `json:"description"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
@@ -282,7 +282,7 @@ type GetServersFromUserRow struct {
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
-	Description pgtype.Text `json:"description"`
+	Description []byte      `json:"description"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
@@ -426,9 +426,9 @@ UPDATE servers SET description = $1 WHERE id = $2 AND owner_id = $3
 `
 
 type UpdateServerDescriptionParams struct {
-	Description pgtype.Text `json:"description"`
-	ID          string      `json:"id"`
-	OwnerID     string      `json:"owner_id"`
+	Description []byte `json:"description"`
+	ID          string `json:"id"`
+	OwnerID     string `json:"owner_id"`
 }
 
 func (q *Queries) UpdateServerDescription(ctx context.Context, arg UpdateServerDescriptionParams) error {

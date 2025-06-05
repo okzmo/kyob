@@ -229,3 +229,9 @@ func (s *server) KillChannel(ctx *actor.Context, msg *protoTypes.KillChannel) {
 		UsersEngine.Send(userPID, msg)
 	}
 }
+
+func (s *server) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.BroadcastUserInformations) {
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}

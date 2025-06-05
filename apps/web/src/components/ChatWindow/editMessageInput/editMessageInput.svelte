@@ -156,7 +156,7 @@
 	<MentionsList
 		props={mentionProps}
 		bind:this={mentionsListEl}
-		class="bottom-[4.5rem] left-2 w-[calc(100%-1rem)]"
+		class="absolute -top-[2.25rem] left-2 w-[calc(100%-1rem)]"
 	/>
 {/if}
 <div class="pointer-events-auto w-full" bind:this={element}></div>

@@ -85,6 +85,8 @@ func (s *server) Receive(ctx *actor.Context) {
 		s.RemoveServer(ctx, msg)
 	case *protoTypes.BodyNewUserInServer:
 		s.NewUser(ctx, msg)
+	case *protoTypes.BroadcastUserInformations:
+		s.BroadcastUserInformations(ctx, msg)
 	}
 }
 
@@ -125,6 +127,8 @@ func (c *channel) Receive(ctx *actor.Context) {
 		c.EditMessage(ctx, msg)
 	case *protoTypes.DeleteChatMessage:
 		c.DeleteMessage(ctx, msg)
+	case *protoTypes.BroadcastUserInformations:
+		c.BroadcastUserInformations(ctx, msg)
 	}
 }
 
@@ -182,6 +186,10 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.DeleteFriend(ctx, msg)
 	case *protoTypes.KillChannel:
 		u.ChannelKilled(ctx, msg)
+	case *protoTypes.UserChangedInformations:
+		u.ChangingUserInformations(ctx, msg)
+	case *protoTypes.BroadcastUserInformations:
+		u.BroadcastUserInformations(ctx, msg)
 	}
 }
 

@@ -85,6 +85,7 @@ body {
 .chat-input {
 	display: flex;
 	flex-direction: column-reverse;
+	padding: 1rem 2.8rem;
 }
 
 .tiptap p.is-editor-empty:first-child::before {
@@ -294,6 +295,21 @@ body {
 	);
 }
 
+.server-profile-gradient {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	background: linear-gradient(
+		180deg,
+		transparent 50%,
+		var(--server-color-85) 80%,
+		var(--server-color-95) 90%,
+		var(--server-color) 14rem,
+		var(--server-color) 100%
+	);
+}
+
 .about-me-input {
-	@apply bg-main-900 hocus:bg-main-800/50 border-main-800 hocus:border-main-700 mt-1.5 h-30 max-w-[21.5rem] resize-none overflow-auto border px-3 py-2 transition-colors duration-100 focus:ring-0;
+	@apply bg-main-900 hocus:bg-main-800/50 border-main-800 hocus:border-main-700 mt-1.5 h-30 resize-none overflow-auto border px-3 py-2 transition-colors duration-100 focus:ring-0;
 }

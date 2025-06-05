@@ -10,7 +10,7 @@ import (
 )
 
 type ServerWithChannels struct {
-	db.Server
+	ServerResponse
 	X int32 `json:"x"`
 	Y int32 `json:"y"`
 	// Roles    []db.Role         `json:"roles"`
@@ -180,22 +180,22 @@ func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (ma
 		}
 
 		result[server.ID] = ServerWithChannels{
-			Server: db.Server{
+			ServerResponse{
 				ID:          server.ID,
 				OwnerID:     server.OwnerID,
 				Name:        server.Name,
 				Avatar:      server.Avatar,
 				Banner:      server.Banner,
-				Description: server.Description,
+				Description: json.RawMessage(server.Description),
 				Private:     server.Private,
 				CreatedAt:   server.CreatedAt,
 				UpdatedAt:   server.UpdatedAt,
 			},
-			X:           server.X.Int32,
-			Y:           server.Y.Int32,
-			Channels:    channelMap,
-			MemberCount: int(server.MemberCount),
-			Members:     membersByServer[server.ID],
+			server.X.Int32,
+			server.Y.Int32,
+			channelMap,
+			int(server.MemberCount),
+			membersByServer[server.ID],
 		}
 	}
 

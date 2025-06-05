@@ -37,7 +37,7 @@ export interface Server {
 	name: string;
 	avatar: string;
 	banner: string;
-	description?: string;
+	description?: any;
 	x: number;
 	y: number;
 	channels: Record<string, Channel>;

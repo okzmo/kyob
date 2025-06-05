@@ -39,10 +39,7 @@ export const CreateServerSchema = v.object({
 		v.maxLength(20, 'The length must be equal or below 20 characters.'),
 		v.nonEmpty('Please enter a name for your realm.')
 	),
-	description: v.pipe(
-		v.string(),
-		v.maxLength(280, 'The length must be equal or below 280 characters.')
-	),
+	description: v.any(),
 	avatar: v.pipe(
 		v.file('Please select an image file.'),
 		v.mimeType(['image/jpeg', 'image/png'], 'Please select a JPEG or PNG file.'),

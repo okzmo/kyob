@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -34,14 +35,14 @@ RETURNING id, author_id, server_id, channel_id, content, mentions_users, mention
 `
 
 type CreateMessageParams struct {
-	ID               string   `json:"id"`
-	AuthorID         string   `json:"author_id"`
-	ServerID         string   `json:"server_id"`
-	ChannelID        string   `json:"channel_id"`
-	Content          []byte   `json:"content"`
-	MentionsUsers    []string `json:"mentions_users"`
-	MentionsChannels []string `json:"mentions_channels"`
-	Attached         []string `json:"attached"`
+	ID               string          `json:"id"`
+	AuthorID         string          `json:"author_id"`
+	ServerID         string          `json:"server_id"`
+	ChannelID        string          `json:"channel_id"`
+	Content          json.RawMessage `json:"content"`
+	MentionsUsers    []string        `json:"mentions_users"`
+	MentionsChannels []string        `json:"mentions_channels"`
+	Attached         []string        `json:"attached"`
 }
 
 func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (Message, error) {
@@ -148,11 +149,11 @@ WHERE id = $4 AND author_id = $5
 `
 
 type UpdateMessageParams struct {
-	Content          []byte   `json:"content"`
-	MentionsUsers    []string `json:"mentions_users"`
-	MentionsChannels []string `json:"mentions_channels"`
-	ID               string   `json:"id"`
-	AuthorID         string   `json:"author_id"`
+	Content          json.RawMessage `json:"content"`
+	MentionsUsers    []string        `json:"mentions_users"`
+	MentionsChannels []string        `json:"mentions_channels"`
+	ID               string          `json:"id"`
+	AuthorID         string          `json:"author_id"`
 }
 
 func (q *Queries) UpdateMessage(ctx context.Context, arg UpdateMessageParams) (pgconn.CommandTag, error) {
@@ -170,9 +171,9 @@ UPDATE messages SET content = $1 WHERE id = $2 AND author_id = $3
 `
 
 type UpdateMessageContentParams struct {
-	Content  []byte `json:"content"`
-	ID       string `json:"id"`
-	AuthorID string `json:"author_id"`
+	Content  json.RawMessage `json:"content"`
+	ID       string          `json:"id"`
+	AuthorID string          `json:"author_id"`
 }
 
 func (q *Queries) UpdateMessageContent(ctx context.Context, arg UpdateMessageContentParams) (pgconn.CommandTag, error) {

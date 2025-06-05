@@ -140,6 +140,7 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 				About:       author.About,
 				Links:       author.Links,
 				Facts:       author.Facts,
+				MainColor:   author.MainColor,
 			},
 			ServerId:         message.ServerID,
 			ChannelId:        message.ChannelID,

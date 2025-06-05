@@ -16,6 +16,7 @@ import type {
 	GetUserErrors,
 	JoinServerErrors,
 	LeaveServerErrors,
+	MessagesErrors,
 	SetupErrors,
 	StandardError,
 	UpdateAccountErrors,
@@ -40,6 +41,7 @@ import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { windows } from './windows.svelte';
 import { sounds } from './audio.svelte';
 import { userStore } from './user.svelte';
+import { core } from './core.svelte';
 
 const client = ky.create({
 	prefixUrl: `${import.meta.env.VITE_API_URL}/authenticated`,
@@ -80,20 +82,24 @@ class Backend {
 						const authorLinks = new TextDecoder().decode(wsMess.content.value?.author!.links);
 						const authorFacts = new TextDecoder().decode(wsMess.content.value?.author!.facts);
 
+						console.log(wsMess.content.value);
+						const author: Partial<User> = {
+							id: wsMess.content.value.author!.id,
+							username: wsMess.content.value.author!.username,
+							display_name: wsMess.content.value.author!.displayName,
+							avatar: wsMess.content.value.author!.avatar,
+							banner: wsMess.content.value.author!.banner,
+							email: wsMess.content.value.author!.email,
+							main_color: wsMess.content.value.author!.mainColor
+						};
+
+						if (authorLinks?.length > 0) author.links = JSON.parse(authorLinks);
+						if (authorAbout?.length > 0) author.about = JSON.parse(authorAbout);
+						if (authorFacts?.length > 0) author.facts = JSON.parse(authorFacts);
+
 						const message: Message = {
 							id: wsMess.content.value.id,
-							author: {
-								id: wsMess.content.value.author!.id,
-								username: wsMess.content.value.author!.username,
-								display_name: wsMess.content.value.author!.displayName,
-								avatar: wsMess.content.value.author!.avatar,
-								about: JSON.parse(authorAbout),
-								banner: wsMess.content.value.author!.banner,
-								email: wsMess.content.value.author!.email,
-								main_color: wsMess.content.value.author!.mainColor,
-								links: JSON.parse(authorLinks),
-								facts: JSON.parse(authorFacts)
-							},
+							author: author,
 							server_id: wsMess.content.value.serverId,
 							channel_id: wsMess.content.value.channelId,
 							content: JSON.parse(contentStr),
@@ -151,11 +157,12 @@ class Backend {
 
 						const newUser: Partial<User> = {
 							id: value.user?.id,
-							about: JSON.parse(about),
 							username: value.user?.username,
 							display_name: value.user?.displayName,
 							avatar: value.user?.avatar
 						};
+
+						if (about.length > 0) newUser.about = JSON.parse(about);
 						serversStore.addMember(value.serverId, newUser);
 					}
 					break;
@@ -216,11 +223,11 @@ class Backend {
 							id: value.user?.id,
 							display_name: value.user?.displayName,
 							avatar: value.user?.avatar,
-							about: JSON.parse(about),
 							friendship_id: value.inviteId,
 							accepted: false,
 							sender: false
 						};
+						if (about.length > 0) newFriend.about = JSON.parse(about);
 
 						userStore.addFriend(newFriend);
 					}
@@ -236,12 +243,12 @@ class Backend {
 								id: value.user?.id,
 								display_name: value.user?.displayName,
 								avatar: value.user?.avatar,
-								about: JSON.parse(about),
 								friendship_id: value.inviteId,
 								channel_id: value.channelId,
 								accepted: true,
 								sender: true
 							};
+							if (about.length > 0) newFriend.about = JSON.parse(about);
 
 							userStore.acceptFriend({
 								friendshipId: value.inviteId,
@@ -260,6 +267,35 @@ class Backend {
 						userStore.deleteFriend(value.inviteId);
 						const friendChatWindow = windows.getWindow({ friendId: value.userId });
 						if (friendChatWindow) windows.closeDeadWindow(friendChatWindow.id);
+					}
+					break;
+				case 'userChanged':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						const about = new TextDecoder().decode(value.userInformations?.about);
+						const facts = new TextDecoder().decode(value.userInformations?.facts);
+						const links = new TextDecoder().decode(value.userInformations?.links);
+
+						const user: Partial<User> = {
+							avatar: value.userInformations?.avatar,
+							banner: value.userInformations?.banner,
+							username: value.userInformations?.username,
+							display_name: value.userInformations?.displayName,
+							main_color: value.userInformations?.mainColor
+						};
+
+						if (about.length > 0) user.about = JSON.parse(about);
+						if (facts.length > 0) user.facts = JSON.parse(facts);
+						if (links.length > 0) user.links = JSON.parse(links);
+
+						if (value.serverId) {
+							serversStore.modifyMember(value.serverId, value.userId, user);
+						} else {
+							userStore.modifyFriend(value.userId, user);
+						}
+
+						core.modifyProfile(value.userId, user);
 					}
 					break;
 			}
@@ -291,7 +327,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response?.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 401:
 					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 				default:
@@ -304,7 +340,7 @@ class Backend {
 		try {
 			const formData = new FormData();
 			formData.append('name', body.name);
-			formData.append('description', body.description);
+			formData.append('description', JSON.stringify(body.description));
 			formData.append('avatar', body.avatar);
 			formData.append('crop', JSON.stringify(body.crop));
 			formData.append('private', String(body.private));
@@ -323,7 +359,7 @@ class Backend {
 			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 400:
 					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
 				case errBody.status === 403 && errBody.code === 'ERR_TOO_MANY_SERVERS':
@@ -348,7 +384,7 @@ class Backend {
 			return ok(data.server);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 400:
 					return err({ code: errBody.code, error: errBody.error });
 				case errBody.status === 404:
@@ -372,7 +408,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 401:
 					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 				default:
@@ -415,7 +451,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 401:
 					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 				default:
@@ -440,7 +476,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 401:
 					return err({ code: 'ERR_UNAUTHORIZED', error: errBody.error });
 				default:
@@ -471,7 +507,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 400:
 					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
 				default:
@@ -503,7 +539,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 400:
 					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
 				default:
@@ -512,7 +548,7 @@ class Backend {
 		}
 	}
 
-	async getMessages(channelId: string): Promise<Result<Message[], SetupErrors>> {
+	async getMessages(channelId: string): Promise<Result<Message[], MessagesErrors>> {
 		try {
 			const res = await client.get(`messages/${channelId}`);
 
@@ -557,7 +593,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 404:
 					return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
 				default:
@@ -583,7 +619,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 400:
 					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
 				default:
@@ -607,7 +643,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 404:
 					return err({ code: 'ERR_USER_NOT_FOUND', error: errBody.error });
 				case errBody.status === 403:
@@ -671,7 +707,7 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 
-			switch (errBody) {
+			switch (true) {
 				case errBody.status === 403 && errBody.code === 'ERR_USERNAME_IN_USE':
 					return err({ code: 'ERR_USERNAME_IN_USE', error: errBody.error });
 				case errBody.status === 403 && errBody.code === 'ERR_EMAIL_IN_USE':

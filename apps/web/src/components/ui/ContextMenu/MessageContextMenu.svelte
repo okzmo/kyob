@@ -14,6 +14,8 @@
 
 	let { authorId, targetId } = $props();
 
+	let haveSelection = $derived(window.getSelection()?.type === 'Range');
+
 	function handleDelete(messageId: string) {
 		const window = windows.getActiveWindow();
 		if (!window?.serverId || !window.channelId) return;
@@ -25,11 +27,15 @@
 	}
 
 	function handleCopyMessage(messageId: string) {
-		const window = windows.getActiveWindow();
-		if (!window?.serverId || !window.channelId) return;
-		const message = serversStore.getMessage(window.serverId, window.channelId, messageId);
+		const activeWindow = windows.getActiveWindow();
+		if (!activeWindow?.serverId || !activeWindow.channelId) return;
+		const message = serversStore.getMessage(
+			activeWindow.serverId,
+			activeWindow.channelId,
+			messageId
+		);
 
-		const text = generateText(message?.content, [
+		let text = generateText(message?.content, [
 			StarterKit.configure({
 				gapcursor: false,
 				dropcursor: false,
@@ -48,28 +54,38 @@
 			})
 		]);
 
+		if (haveSelection) {
+			const selection = window.getSelection();
+			const start = selection?.anchorOffset;
+			const finish = selection?.focusOffset;
+
+			if (finish !== 1) text = text.slice(start, finish);
+		}
+
 		navigator.clipboard.writeText(text);
 	}
 </script>
 
 <ContextMenu.Item class="context-menu-item" onclick={() => handleCopyMessage(targetId)}>
 	<div class="flex w-full items-center justify-between">
-		Copy text
+		{haveSelection ? 'Copy selection' : 'Copy text'}
 		<CopyIcon height={20} width={20} />
 	</div>
 </ContextMenu.Item>
 {#if authorId === userStore.user?.id}
-	<ContextMenu.Item class="context-menu-item" onclick={() => handleEdit(targetId)}>
-		<div class="flex w-full items-center justify-between">
-			Edit Message
-			<Pen height={20} width={20} />
-		</div>
-	</ContextMenu.Item>
-	<ContextMenu.Item
-		class="context-menu-item-danger text-red-400"
-		onclick={() => handleDelete(targetId)}
-	>
-		<p class="flex items-center">Delete Message</p>
-		<Bin height={20} width={20} />
-	</ContextMenu.Item>
+	{#if !haveSelection}
+		<ContextMenu.Item class="context-menu-item" onclick={() => handleEdit(targetId)}>
+			<div class="flex w-full items-center justify-between">
+				Edit Message
+				<Pen height={20} width={20} />
+			</div>
+		</ContextMenu.Item>
+		<ContextMenu.Item
+			class="context-menu-item-danger text-red-400"
+			onclick={() => handleDelete(targetId)}
+		>
+			<p class="flex items-center">Delete Message</p>
+			<Bin height={20} width={20} />
+		</ContextMenu.Item>
+	{/if}
 {/if}

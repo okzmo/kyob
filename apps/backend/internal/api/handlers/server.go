@@ -44,7 +44,13 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body.Name = r.FormValue("name")
-	body.Description = r.FormValue("description")
+	descriptionJSON := r.FormValue("description")
+	if err := json.Unmarshal([]byte(descriptionJSON), &body.Description); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid description.")
+		return
+	}
+
 	body.Private = r.FormValue("private") == "true"
 	x, errX := strconv.Atoi(r.FormValue("x"))
 	y, errY := strconv.Atoi(r.FormValue("y"))

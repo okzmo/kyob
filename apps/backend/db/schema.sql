@@ -160,7 +160,7 @@ CREATE TABLE public.servers (
     name character varying(255) NOT NULL,
     avatar character varying(255),
     banner character varying(255),
-    description text,
+    description jsonb,
     private boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL

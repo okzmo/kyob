@@ -109,11 +109,10 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 			return ErrUsernameInUse
 		}
 
-		res, err := db.Query.UpdateUserUsername(ctx, db.UpdateUserUsernameParams{
+		_, err = db.Query.UpdateUserUsername(ctx, db.UpdateUserUsernameParams{
 			ID:       user.ID,
 			Username: body.Username,
 		})
-		fmt.Println(res)
 		if err != nil {
 			return err
 		}
@@ -139,7 +138,7 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 	return nil
 }
 
-func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
+func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte, error) {
 	user := ctx.Value("user").(db.User)
 
 	if body.DisplayName != "" {
@@ -148,7 +147,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
 			DisplayName: body.DisplayName,
 		})
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 	}
 
@@ -158,18 +157,21 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
 			About: body.About,
 		})
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 	}
 
 	links := make([]Link, 0)
-	for _, link := range body.Links {
+	for i, link := range body.Links {
+		if i >= 2 {
+			break
+		}
 		link.Id = utils.Node.Generate().String()
 		links = append(links, link)
 	}
 	jsonLinks, err := json.Marshal(links)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	err = db.Query.UpdateUserLinks(ctx, db.UpdateUserLinksParams{
@@ -177,17 +179,20 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
 		Links: jsonLinks,
 	})
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	facts := make([]Fact, 0)
-	for _, fact := range body.Facts {
+	for i, fact := range body.Facts {
+		if i >= 3 {
+			break
+		}
 		fact.Id = utils.Node.Generate().String()
 		facts = append(facts, fact)
 	}
 	jsonFacts, err := json.Marshal(facts)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	err = db.Query.UpdateUserFacts(ctx, db.UpdateUserFactsParams{
@@ -195,10 +200,10 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) error {
 		Facts: jsonFacts,
 	})
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	return nil
+	return jsonFacts, jsonLinks, nil
 }
 
 func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {

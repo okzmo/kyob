@@ -16,6 +16,7 @@ message WSMessage {
     SendFriendInvite friend_invite = 9;
     AcceptFriendInvite accept_friend = 10;
     DeleteFriend delete_friend = 11;
+    BroadcastUserInformations user_changed = 12;
   }
 }
 
@@ -225,4 +226,26 @@ message Connect {
 }
 message Disconnect {
   string type = 1;
+}
+
+message UserInformations {
+  optional string username = 1;
+  optional string display_name = 2;
+  optional string avatar = 3;
+  optional string banner = 4;
+  optional bytes facts = 5;
+  optional bytes links = 6;
+  optional bytes about = 7;
+  optional string main_color= 8;
+}
+
+message UserChangedInformations {
+  string user_id = 1;
+  UserInformations user_informations = 2;
+}
+
+message BroadcastUserInformations {
+  string user_id = 1;
+  string server_id = 2;
+  UserInformations user_informations = 3;
 }

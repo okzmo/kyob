@@ -183,11 +183,12 @@
 				<FormInput
 					title="Realm description"
 					id="realm-description"
-					type="textarea"
+					type="rich"
 					bind:error={$errors.description}
 					bind:inputValue={$form.description}
 					placeholder="Here we do..."
 					class="mt-4 px-8"
+					inputClass="w-full"
 				/>
 
 				<FooterDialog>

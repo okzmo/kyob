@@ -79,3 +79,9 @@ func (c *channel) DeleteMessage(ctx *actor.Context, msg *protoTypes.DeleteChatMe
 		UsersEngine.Send(user, msg)
 	}
 }
+
+func (c *channel) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.BroadcastUserInformations) {
+	for user := range c.users {
+		UsersEngine.Send(user, msg)
+	}
+}

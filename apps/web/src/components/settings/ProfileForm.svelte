@@ -35,6 +35,7 @@
 		bind:error={errors.about}
 		bind:inputValue={about}
 		placeholder="I like potatoes"
+		inputClass="max-w-[21.5rem]"
 	/>
 
 	<LinksInput bind:links />

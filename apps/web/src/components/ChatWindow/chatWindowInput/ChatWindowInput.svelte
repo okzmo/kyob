@@ -166,25 +166,21 @@
 	});
 </script>
 
-{#if mentionProps}
-	<MentionsList
-		props={mentionProps}
-		bind:this={mentionsListEl}
-		class="bottom-[4rem] left-[0.4rem] w-[calc(100%-0.8rem)]"
-	/>
-{/if}
-<div
-	class="bg-main-900 inner-shadow-input absolute bottom-2 left-2 flex w-[calc(100%-1rem)] px-4 transition duration-100"
->
-	<button
-		class="text-main-600 hocus:text-main-200 absolute top-4.5 left-4 transition-colors duration-100 hover:cursor-pointer"
-	>
-		<Plus height={20} width={20} />
-	</button>
-	<div class="max-h-[10rem] w-full px-7 py-4" bind:this={element}></div>
-	<button
-		class="text-main-600 hocus:text-main-200 absolute top-4.5 right-4 transition-colors duration-100 hover:cursor-pointer"
-	>
-		<EmojiIcon height={20} width={20} />
-	</button>
+<div class="absolute bottom-2 left-2 flex w-[calc(100%-1rem)] flex-col gap-y-1">
+	{#if mentionProps}
+		<MentionsList props={mentionProps} bind:this={mentionsListEl} class="w-full" />
+	{/if}
+	<div class="bg-main-900 inner-shadow-input relative flex w-full transition duration-100">
+		<button
+			class="text-main-600 hocus:text-main-200 absolute top-4.5 left-4 z-[1] transition-colors duration-100 hover:cursor-pointer"
+		>
+			<Plus height={20} width={20} />
+		</button>
+		<div class="max-h-[10rem] w-full" bind:this={element}></div>
+		<button
+			class="text-main-600 hocus:text-main-200 absolute top-4.5 right-4 z-[1] transition-colors duration-100 hover:cursor-pointer"
+		>
+			<EmojiIcon height={20} width={20} />
+		</button>
+	</div>
 </div>

@@ -8,6 +8,7 @@ import (
 	"github.com/anthdm/hollywood/actor"
 	"github.com/lxzan/gws"
 	"github.com/okzmo/kyob/db"
+	"github.com/okzmo/kyob/internal/utils"
 	protoTypes "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/proto"
 )
@@ -209,6 +210,38 @@ func (u *user) DeleteFriend(ctx *actor.Context, msg *protoTypes.DeleteFriend) {
 	msgToSend := &protoTypes.WSMessage{
 		Content: &protoTypes.WSMessage_DeleteFriend{
 			DeleteFriend: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) ChangingUserInformations(ctx *actor.Context, msg *protoTypes.UserChangedInformations) {
+	for server := range u.servers {
+		if server.ID != "server/global" {
+			ServersEngine.Send(server, &protoTypes.BroadcastUserInformations{
+				UserId:           msg.UserId,
+				ServerId:         utils.GetEntityIdFromPID(server),
+				UserInformations: msg.UserInformations,
+			})
+		}
+	}
+
+	for channel := range u.channels {
+		if strings.Contains(channel.ID, "global") {
+			ServersEngine.Send(channel, &protoTypes.BroadcastUserInformations{
+				UserId:           msg.UserId,
+				UserInformations: msg.UserInformations,
+			})
+		}
+	}
+}
+
+func (u *user) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.BroadcastUserInformations) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_UserChanged{
+			UserChanged: msg,
 		},
 	}
 

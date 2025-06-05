@@ -1,3 +1,4 @@
+import { message } from 'sveltekit-superforms';
 import type { Channel, Message, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 
@@ -42,7 +43,7 @@ class Servers {
 		if (!messages || messages.length <= 0) {
 			const res = await backend.getMessages(channelId);
 			if (res.isOk()) {
-				this.servers[serverId].channels[channelId].messages = res.value;
+				this.servers[serverId].channels[channelId].messages = res.value || [];
 				return this.servers[serverId].channels[channelId].messages;
 			}
 		}
@@ -71,8 +72,6 @@ class Servers {
 		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
 		if (Array.isArray(messages)) {
 			messages.push(message);
-		} else {
-			this.servers[serverId].channels[message.channel_id].messages = [message];
 		}
 	}
 
@@ -142,6 +141,15 @@ class Servers {
 
 		const server = this.getServer(serverId);
 		server.members.push(user);
+	}
+
+	modifyMember(serverId: string, userId: string, user: Partial<User>) {
+		const member = this.servers[serverId].members.find((m) => m.id === userId);
+		if (!member) return;
+
+		if (user.avatar) member.avatar = user.avatar;
+		if (user.display_name) member.display_name = user.display_name;
+		if (user.username) member.username = user.username;
 	}
 
 	disconnectUser(serverId: string, userId: string, type: string) {

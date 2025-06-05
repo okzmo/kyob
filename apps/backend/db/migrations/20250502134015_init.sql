@@ -34,7 +34,7 @@ CREATE TABLE servers(
   name VARCHAR(255) NOT NULL,
   avatar VARCHAR(255),
   banner VARCHAR(255),
-  description TEXT,
+  description JSONB,
   private BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL

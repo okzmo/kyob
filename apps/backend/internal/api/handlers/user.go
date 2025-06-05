@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -61,6 +60,17 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if body.Username != "" {
+		user := r.Context().Value("user").(db.User)
+		userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
+		actors.UsersEngine.Send(userPID, &proto.UserChangedInformations{
+			UserId: user.ID,
+			UserInformations: &proto.UserInformations{
+				Username: &body.Username,
+			},
+		})
+	}
+
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
 
@@ -79,11 +89,31 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.UpdateProfile(r.Context(), &body)
+	facts, links, err := services.UpdateProfile(r.Context(), &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	user := r.Context().Value("user").(db.User)
+	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
+	messageToSend := &proto.UserChangedInformations{
+		UserId: user.ID,
+		UserInformations: &proto.UserInformations{
+			DisplayName: &body.DisplayName,
+			About:       body.About,
+		},
+	}
+
+	if len(links) > 0 {
+		messageToSend.UserInformations.Links = links
+	}
+
+	if len(facts) > 0 {
+		messageToSend.UserInformations.Facts = facts
+	}
+
+	actors.UsersEngine.Send(userPID, messageToSend)
 
 	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
 }
@@ -106,7 +136,6 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	fmt.Println(fileHeader.Header)
 
 	fileData, err := io.ReadAll(file)
 	if err != nil {
@@ -146,7 +175,17 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	fmt.Println(res)
+
+	user := r.Context().Value("user").(db.User)
+	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
+	actors.UsersEngine.Send(userPID, &proto.UserChangedInformations{
+		UserId: user.ID,
+		UserInformations: &proto.UserInformations{
+			Avatar:    &res.Avatar,
+			Banner:    &res.Banner,
+			MainColor: &body.MainColor,
+		},
+	})
 
 	utils.RespondWithJSON(w, http.StatusContinue, res)
 }

@@ -9,6 +9,7 @@
 		title: string;
 		type: 'text' | 'password' | 'textarea' | 'rich';
 		class?: string;
+		inputClass?: string;
 	}
 
 	let {
@@ -18,7 +19,8 @@
 		placeholder,
 		title,
 		type,
-		class: classes
+		class: classes,
+		inputClass
 	}: Props = $props();
 </script>
 
@@ -51,6 +53,6 @@
 			]}
 		></textarea>
 	{:else if type === 'rich'}
-		<AboutInput bind:content={inputValue} {placeholder} />
+		<AboutInput bind:content={inputValue} {placeholder} class={inputClass} />
 	{/if}
 </div>

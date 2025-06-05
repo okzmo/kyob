@@ -87,28 +87,32 @@
 
 		if ($form.display_name !== user?.display_name) return false;
 
-		const formAbout = generateText($form.about, [
-			StarterKit.configure({
-				gapcursor: false,
-				dropcursor: false,
-				heading: false,
-				orderedList: false,
-				bulletList: false,
-				blockquote: false
-			})
-		]);
-		const userAbout = generateText(user.about || {}, [
-			StarterKit.configure({
-				gapcursor: false,
-				dropcursor: false,
-				heading: false,
-				orderedList: false,
-				bulletList: false,
-				blockquote: false
-			})
-		]);
+		if ($form.about && !user.about) return false;
 
-		if (formAbout !== userAbout) return false;
+		if ($form.about && user.about) {
+			const formAbout = generateText($form.about, [
+				StarterKit.configure({
+					gapcursor: false,
+					dropcursor: false,
+					heading: false,
+					orderedList: false,
+					bulletList: false,
+					blockquote: false
+				})
+			]);
+			const userAbout = generateText(user.about || {}, [
+				StarterKit.configure({
+					gapcursor: false,
+					dropcursor: false,
+					heading: false,
+					orderedList: false,
+					bulletList: false,
+					blockquote: false
+				})
+			]);
+
+			if (formAbout !== userAbout) return false;
+		}
 
 		if ($form.links.length > user.links.length || $form.links.length < user.links.length)
 			return false;

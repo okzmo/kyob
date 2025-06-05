@@ -17,6 +17,15 @@ class UserStore {
 		return this.friends?.find((f) => f.id === id);
 	}
 
+	modifyFriend(friendId: string, informations: Partial<User>) {
+		const friend = this.friends.find((f) => f.id === friendId);
+		if (!friend) return;
+
+		if (informations.display_name) friend.display_name = informations.display_name;
+		if (informations.avatar) friend.avatar = informations.avatar;
+		if (informations.about) friend.about = informations.about;
+	}
+
 	acceptFriend({
 		friendshipId,
 		friend,

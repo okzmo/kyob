@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -140,16 +141,16 @@ type Invite struct {
 }
 
 type Message struct {
-	ID               string    `json:"id"`
-	AuthorID         string    `json:"author_id"`
-	ServerID         string    `json:"server_id"`
-	ChannelID        string    `json:"channel_id"`
-	Content          []byte    `json:"content"`
-	MentionsUsers    []string  `json:"mentions_users"`
-	MentionsChannels []string  `json:"mentions_channels"`
-	Attached         []string  `json:"attached"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID               string          `json:"id"`
+	AuthorID         string          `json:"author_id"`
+	ServerID         string          `json:"server_id"`
+	ChannelID        string          `json:"channel_id"`
+	Content          json.RawMessage `json:"content"`
+	MentionsUsers    []string        `json:"mentions_users"`
+	MentionsChannels []string        `json:"mentions_channels"`
+	Attached         []string        `json:"attached"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
 type Role struct {
@@ -169,7 +170,7 @@ type Server struct {
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
-	Description pgtype.Text `json:"description"`
+	Description []byte      `json:"description"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`

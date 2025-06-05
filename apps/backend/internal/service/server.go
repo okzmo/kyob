@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -34,19 +35,19 @@ type Crop struct {
 }
 
 type CreateServerBody struct {
-	Name        string `validate:"required,max=50" json:"name"`
-	Description string `validate:"max=280" json:"description"`
-	Private     bool   `json:"private"`
-	Crop        Crop   `validate:"required" json:"crop"`
-	X           int    `validate:"required" json:"x"`
-	Y           int    `validate:"required" json:"y"`
+	Name        string          `validate:"required,max=50" json:"name"`
+	Description json.RawMessage `json:"description"`
+	Private     bool            `json:"private"`
+	Crop        Crop            `validate:"required" json:"crop"`
+	X           int             `validate:"required" json:"x"`
+	Y           int             `validate:"required" json:"y"`
 }
 
 type EditServerBody struct {
-	Name        string `validate:"max=50" json:"name"`
-	Avatar      string `json:"avatar"`
-	Banner      string `json:"banner"`
-	Description string `validate:"max=280" json:"description"`
+	Name        string          `validate:"max=50" json:"name"`
+	Avatar      string          `json:"avatar"`
+	Banner      string          `json:"banner"`
+	Description json.RawMessage `json:"description"`
 }
 
 type JoinServerBody struct {
@@ -56,17 +57,17 @@ type JoinServerBody struct {
 }
 
 type ServerResponse struct {
-	ID          string      `json:"id"`
-	OwnerID     string      `json:"owner_id"`
-	Name        string      `json:"name"`
-	Avatar      pgtype.Text `json:"avatar"`
-	Banner      pgtype.Text `json:"banner"`
-	Description pgtype.Text `json:"description"`
-	Private     bool        `json:"private"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdatedAt   time.Time   `json:"updated_at"`
-	X           int         `json:"x"`
-	Y           int         `json:"y"`
+	ID          string          `json:"id"`
+	OwnerID     string          `json:"owner_id"`
+	Name        string          `json:"name"`
+	Avatar      pgtype.Text     `json:"avatar"`
+	Banner      pgtype.Text     `json:"banner"`
+	Description json.RawMessage `json:"description"`
+	Private     bool            `json:"private"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+	X           int             `json:"x"`
+	Y           int             `json:"y"`
 }
 
 type JoinServerResponse struct {
@@ -109,7 +110,7 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		OwnerID:     user.ID,
 		Name:        server.Name,
 		Avatar:      pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), imgFileName), Valid: true},
-		Description: pgtype.Text{String: server.Description, Valid: true},
+		Description: server.Description,
 		Private:     server.Private,
 	})
 	if err != nil {
@@ -163,10 +164,10 @@ func EditServer(ctx context.Context, id string, body *EditServerBody) error {
 		}
 	}
 
-	if body.Description != "" {
+	if len(body.Description) > 0 {
 		err := db.Query.UpdateServerDescription(ctx, db.UpdateServerDescriptionParams{
 			ID:          id,
-			Description: pgtype.Text{String: body.Description, Valid: true},
+			Description: body.Description,
 			OwnerID:     user.ID,
 		})
 		if err != nil {
@@ -295,7 +296,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	}
 
 	s := ServerWithChannels{
-		db.Server{
+		ServerResponse{
 			ID:          server.ID,
 			OwnerID:     server.OwnerID,
 			Name:        server.Name,

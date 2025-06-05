@@ -43,19 +43,6 @@
 			userStore.friends = res.value.friends;
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
-
-			document.documentElement.style.setProperty(
-				'--user-color-85',
-				`rgba(${res.value.user.main_color}, 0.85)`
-			);
-			document.documentElement.style.setProperty(
-				'--user-color-95',
-				`rgba(${res.value.user.main_color}, 0.95)`
-			);
-			document.documentElement.style.setProperty(
-				'--user-color',
-				`rgba(${res.value.user.main_color}, 1)`
-			);
 		}
 	});
 
@@ -72,7 +59,16 @@
 		const targetAuthor = (e.target as HTMLElement).dataset?.authorId;
 		const identifier = targetId.split('-')[0] as ContextMenuTarget;
 		if (!contextMenuTargets.includes(identifier)) {
-			e.preventDefault();
+			const selection = window.getSelection();
+			if (selection?.type === 'Range') {
+				const targetParent = (e.target as HTMLElement).parentElement?.parentElement?.parentElement;
+				const targetId = targetParent?.id;
+				const targetAuthor = targetParent?.dataset?.authorId;
+				if (targetId?.includes('message')) {
+					contextMenuTarget = targetId;
+					contextMenuTargetAuthor = targetAuthor;
+				}
+			}
 		} else {
 			switch (identifier) {
 				case 'inServer':

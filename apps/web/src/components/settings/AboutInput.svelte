@@ -9,7 +9,7 @@
 	let editor: Editor;
 	let contentSet = $state(false);
 
-	let { placeholder, content = $bindable() } = $props();
+	let { placeholder, content = $bindable(), class: classes } = $props();
 
 	const limitConsecutiveBreaksPlugin = new Plugin({
 		filterTransaction(transaction) {
@@ -79,4 +79,4 @@
 	});
 </script>
 
-<div class="pointer-events-auto w-full" bind:this={element}></div>
+<div class={['pointer-events-auto', classes]} bind:this={element}></div>

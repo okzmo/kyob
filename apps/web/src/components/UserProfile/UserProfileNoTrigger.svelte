@@ -9,6 +9,18 @@
 		if (core.profileOpen.status) {
 			const existingProfile = core.profiles.find((p) => p.id === core.profileOpen.userId);
 			if (existingProfile) {
+				document.documentElement.style.setProperty(
+					'--user-color-85',
+					`rgba(${existingProfile.main_color}, 0.85)`
+				);
+				document.documentElement.style.setProperty(
+					'--user-color-95',
+					`rgba(${existingProfile.main_color}, 0.95)`
+				);
+				document.documentElement.style.setProperty(
+					'--user-color',
+					`rgba(${existingProfile.main_color}, 1)`
+				);
 				return existingProfile;
 			}
 

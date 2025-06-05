@@ -6,6 +6,7 @@
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		user: User;
@@ -35,6 +36,18 @@
 		}
 
 		return { content: html, enoughMatches };
+	});
+
+	onMount(() => {
+		document.documentElement.style.setProperty(
+			'--user-color-85',
+			`rgba(${user?.main_color}, 0.85)`
+		);
+		document.documentElement.style.setProperty(
+			'--user-color-95',
+			`rgba(${user?.main_color}, 0.95)`
+		);
+		document.documentElement.style.setProperty('--user-color', `rgba(${user?.main_color}, 1)`);
 	});
 </script>
 
