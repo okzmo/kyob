@@ -2,13 +2,14 @@
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { formatMessageTime } from 'utils/date';
-	import { CustomMention } from '../chatWindowInput/mentions';
+	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 	import { onMount } from 'svelte';
 	import { core } from 'stores/core.svelte';
 	import EditMessageInput from '../editMessageInput/editMessageInput.svelte';
 	import type { Channel, Server, User } from 'types/types';
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
+	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
 
 	interface Props {
 		id: string;
@@ -108,6 +109,14 @@
 						orderedList: false,
 						bulletList: false,
 						blockquote: false
+					}),
+					EmojisSuggestion.configure({
+						HTMLAttributes: {
+							class: 'emoji'
+						},
+						renderHTML({ options, node }) {
+							return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
+						}
 					}),
 					CustomMention.configure({
 						HTMLAttributes: {

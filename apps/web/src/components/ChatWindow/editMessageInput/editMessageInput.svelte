@@ -2,12 +2,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import { PluginKey } from '@tiptap/pm/state';
 	import type { SuggestionProps } from '@tiptap/suggestion';
-	import MentionsList from '../chatWindowInput/MentionsList.svelte';
-	import { CustomMention } from '../chatWindowInput/mentions';
-	import { serversStore } from 'stores/servers.svelte';
-	import { windows } from 'stores/windows.svelte';
+	import MentionsList from 'components/ChatWindow/chatWindowInput/extensions/mentions/MentionsList.svelte';
+	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 	import { core } from 'stores/core.svelte';
 	import { backend } from 'stores/backend.svelte';
 
@@ -66,55 +63,7 @@
 							options.HTMLAttributes,
 							`${node.attrs.mentionSuggestionChar}${node.attrs.label}`
 						];
-					},
-					renderText({ node }) {
-						return `<@${node.attrs['user-id']}>`;
-					},
-					suggestions: [
-						{
-							char: '@',
-							pluginKey: new PluginKey('at'),
-							items: ({ query }) => {
-								const res = [];
-
-								const activeWindow = windows.getActiveWindow();
-								if (!activeWindow?.serverId) return [];
-								const users = serversStore.getServer(activeWindow?.serverId).members;
-
-								for (const user of users) {
-									if (
-										user?.username?.toLowerCase().includes(query.toLowerCase()) ||
-										user?.display_name?.toLowerCase().includes(query.toLowerCase())
-									) {
-										res.push(user);
-									}
-								}
-
-								return res;
-							},
-							render: () => {
-								return {
-									onStart: (props) => {
-										mentionProps = props;
-									},
-									onUpdate: (props) => {
-										mentionProps = props;
-									},
-									onExit: () => {
-										mentionProps = null;
-									},
-									onKeyDown: (props) => {
-										if (props.event.key === 'Escape') {
-											mentionProps = null;
-											return true;
-										}
-
-										return mentionsListEl?.handleKeyDown(props);
-									}
-								};
-							}
-						}
-					]
+					}
 				})
 			],
 			onTransaction: () => {

@@ -6,13 +6,13 @@
 	import StarterKit from '@tiptap/starter-kit';
 	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from 'stores/backend.svelte';
-	import type { Channel, Friend, Server, User } from 'types/types';
-	import { PluginKey } from '@tiptap/pm/state';
+	import type { Channel, Friend, Server } from 'types/types';
 	import type { SuggestionProps } from '@tiptap/suggestion';
-	import MentionsList from './MentionsList.svelte';
-	import { CustomMention } from './mentions';
-	import { serversStore } from 'stores/servers.svelte';
-	import { windows } from 'stores/windows.svelte';
+	import MentionsList from './extensions/mentions/MentionsList.svelte';
+	import { CustomMention } from './extensions/mentions/mentions';
+	import EmojisList from './extensions/emojis/EmojisList.svelte';
+	import { editorStore } from 'stores/editor.svelte';
+	import { EmojisSuggestion } from './extensions/emojis/emojis';
 
 	interface Props {
 		friend?: Friend;
@@ -24,8 +24,9 @@
 
 	let element: Element;
 	let editor: Editor;
-	let mentionProps = $state<SuggestionProps | null>();
-	let mentionsListEl = $state<any>();
+
+	let emojiProps = $state<SuggestionProps | null>();
+	let emojisListEl = $state<any>();
 
 	async function prepareMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
@@ -65,6 +66,14 @@
 						? `Message ${friend.display_name}`
 						: `Message #${channel?.name} in ${server?.name}`
 				}),
+				EmojisSuggestion.configure({
+					HTMLAttributes: {
+						class: 'editor-emoji'
+					},
+					renderHTML({ options, node }) {
+						return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
+					}
+				}),
 				CustomMention.configure({
 					HTMLAttributes: {
 						class: 'editor-mention'
@@ -75,64 +84,7 @@
 							options.HTMLAttributes,
 							`${node.attrs.mentionSuggestionChar}${node.attrs.label}`
 						];
-					},
-					renderText({ node }) {
-						return `<@${node.attrs['user-id']}>`;
-					},
-					suggestions: [
-						{
-							char: '@',
-							pluginKey: new PluginKey('at'),
-							items: ({ query }) => {
-								const res = [];
-
-								const activeWindow = windows.getActiveWindow();
-								if (!activeWindow?.serverId) return [];
-
-								let users: Partial<User>[] = [];
-
-								if (activeWindow.serverId === 'global' && activeWindow.channelId) {
-									users =
-										serversStore.getChannel(activeWindow.serverId, activeWindow.channelId).users ||
-										[];
-								} else {
-									users = serversStore.getServer(activeWindow?.serverId).members;
-								}
-
-								for (const user of users) {
-									if (
-										user?.username?.toLowerCase().includes(query.toLowerCase()) ||
-										user?.display_name?.toLowerCase().includes(query.toLowerCase())
-									) {
-										res.push(user);
-									}
-								}
-
-								return res;
-							},
-							render: () => {
-								return {
-									onStart: (props) => {
-										mentionProps = props;
-									},
-									onUpdate: (props) => {
-										mentionProps = props;
-									},
-									onExit: () => {
-										mentionProps = null;
-									},
-									onKeyDown: (props) => {
-										if (props.event.key === 'Escape') {
-											mentionProps = null;
-											return true;
-										}
-
-										return mentionsListEl?.handleKeyDown(props);
-									}
-								};
-							}
-						}
-					]
+					}
 				})
 			],
 			onTransaction: () => {
@@ -146,7 +98,8 @@
 					if (
 						ev.key === 'Enter' &&
 						!ev.shiftKey &&
-						(!mentionProps || mentionProps.items.length === 0)
+						(!editorStore.mentionProps || editorStore.mentionProps.items.length === 0) &&
+						(!editorStore.emojiProps || editorStore.emojiProps.items.length === 0)
 					) {
 						ev.preventDefault();
 						prepareMessage(editor.getJSON());
@@ -167,8 +120,19 @@
 </script>
 
 <div class="absolute bottom-2 left-2 flex w-[calc(100%-1rem)] flex-col gap-y-1">
-	{#if mentionProps}
-		<MentionsList props={mentionProps} bind:this={mentionsListEl} class="w-full" />
+	{#if editorStore.mentionProps}
+		<MentionsList
+			props={editorStore.mentionProps}
+			bind:this={editorStore.mentionsListEl}
+			class="w-full"
+		/>
+	{/if}
+	{#if editorStore.emojiProps}
+		<EmojisList
+			props={editorStore.emojiProps}
+			bind:this={editorStore.emojisListEl}
+			class="w-full"
+		/>
 	{/if}
 	<div class="bg-main-900 inner-shadow-input relative flex w-full transition duration-100">
 		<button

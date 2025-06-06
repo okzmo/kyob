@@ -10,7 +10,7 @@
 	import { serversStore } from 'stores/servers.svelte';
 	import { generateText } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import { CustomMention } from '../../ChatWindow/chatWindowInput/mentions';
+	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 
 	let { authorId, targetId } = $props();
 
