@@ -12,11 +12,16 @@ import (
 )
 
 const acceptFriend = `-- name: AcceptFriend :exec
-UPDATE friends SET accepted=true WHERE id=$1
+UPDATE friends SET accepted=true WHERE id=$1 AND user_id <> $2
 `
 
-func (q *Queries) AcceptFriend(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, acceptFriend, id)
+type AcceptFriendParams struct {
+	ID     string `json:"id"`
+	UserID string `json:"user_id"`
+}
+
+func (q *Queries) AcceptFriend(ctx context.Context, arg AcceptFriendParams) error {
+	_, err := q.db.Exec(ctx, acceptFriend, arg.ID, arg.UserID)
 	return err
 }
 

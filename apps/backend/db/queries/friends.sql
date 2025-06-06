@@ -7,7 +7,7 @@ INSERT INTO friends (
 RETURNING *;
 
 -- name: AcceptFriend :exec
-UPDATE friends SET accepted=true WHERE id=$1;
+UPDATE friends SET accepted=true WHERE id=$1 AND user_id <> $2;
 
 -- name: DeleteFriend :exec
 DELETE FROM friends WHERE id=$1;

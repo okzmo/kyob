@@ -267,6 +267,19 @@ body {
 	}
 }
 
+.top-bar-button-notif {
+	box-shadow: inset 0px 0px 0px 1px oklch(70.4% 0.191 22.216 / 0);
+	transition: box-shadow 100ms ease-out;
+
+	&:hover {
+		box-shadow: inset 0px 0px 0px 1px oklch(70.4% 0.191 22.216 / 0.5);
+	}
+
+	&:focus-visible {
+		box-shadow: inset 0px 0px 0px 1px oklch(70.4% 0.191 22.216 / 0.5);
+	}
+}
+
 .top-bar-button {
 	box-shadow: inset 0px 0px 0px 1px var(--ui-main-70000);
 	transition: box-shadow 100ms ease-out;

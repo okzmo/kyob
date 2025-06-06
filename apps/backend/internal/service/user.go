@@ -9,6 +9,8 @@ import (
 	"log/slog"
 	"mime/multipart"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -225,7 +227,11 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	randomId := utils.GenerateRandomId(8)
 	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", user.ID, randomId)
 	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", user.ID, randomId)
+	oldAvatarSplit := strings.Split(user.Avatar.String, "/")
+	oldBannerSplit := strings.Split(user.Banner.String, "/")
+	defaultAvatars := []string{"avatar_1.webp", "avatar_2.webp", "avatar_3.webp", "avatar_4.webp"}
 
+	// upload new avatars
 	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Key:    &avatarFileName,
 		Bucket: aws.String("nyo-files"),
@@ -244,6 +250,30 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	if err != nil {
 		slog.Error("failed uploading user banner", "err", err)
 		return nil, err
+	}
+
+	if !slices.Contains(defaultAvatars, oldAvatarSplit[len(oldAvatarSplit)-1]) {
+		// delete old avatar
+		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Key:    aws.String(oldAvatarSplit[len(oldAvatarSplit)-1]),
+			Bucket: aws.String("nyo-files"),
+		})
+		if err != nil {
+			slog.Error("failed deleting user avatar", "err", err)
+			return nil, err
+		}
+	}
+
+	if !slices.Contains(defaultAvatars, oldBannerSplit[len(oldBannerSplit)-1]) {
+		// delete old banner
+		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Key:    aws.String(oldBannerSplit[len(oldBannerSplit)-1]),
+			Bucket: aws.String("nyo-files"),
+		})
+		if err != nil {
+			slog.Error("failed deleting user banner", "err", err)
+			return nil, err
+		}
 	}
 
 	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
@@ -293,7 +323,11 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 }
 
 func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, *db.Channel, error) {
-	err := db.Query.AcceptFriend(ctx, body.FriendshipID)
+	user := ctx.Value("user").(db.User)
+	err := db.Query.AcceptFriend(ctx, db.AcceptFriendParams{
+		ID:     body.FriendshipID,
+		UserID: user.ID,
+	})
 	if err != nil {
 		return nil, nil, err
 	}

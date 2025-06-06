@@ -42,10 +42,10 @@
 				}
 
 				if (res.isOk()) {
-					await delay(1000);
+					await delay(500);
 					isSubmitting = false;
 					isSubmitted = true;
-					await delay(2000);
+					await delay(1000);
 
 					core.openAddFriendModal.status = false;
 					core.activateMapDragging();

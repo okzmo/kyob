@@ -82,7 +82,6 @@ class Backend {
 						const authorLinks = new TextDecoder().decode(wsMess.content.value?.author!.links);
 						const authorFacts = new TextDecoder().decode(wsMess.content.value?.author!.facts);
 
-						console.log(wsMess.content.value);
 						const author: Partial<User> = {
 							id: wsMess.content.value.author!.id,
 							username: wsMess.content.value.author!.username,

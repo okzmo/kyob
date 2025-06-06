@@ -14,9 +14,9 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  id, email, username, display_name, avatar, password
+  id, email, username, display_name, avatar, banner, main_color, password
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at
 `
@@ -27,6 +27,8 @@ type CreateUserParams struct {
 	Username    string      `json:"username"`
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
+	MainColor   pgtype.Text `json:"main_color"`
 	Password    string      `json:"password"`
 }
 
@@ -37,6 +39,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Username,
 		arg.DisplayName,
 		arg.Avatar,
+		arg.Banner,
+		arg.MainColor,
 		arg.Password,
 	)
 	var i User

@@ -4,7 +4,6 @@
 	import { generateHTML } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
-	import { userStore } from 'stores/user.svelte';
 	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 
 	interface Props {

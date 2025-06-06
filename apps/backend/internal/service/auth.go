@@ -4,7 +4,10 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"log/slog"
+	"math/rand"
+	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -66,13 +69,18 @@ func SignUp(ctx context.Context, email string, username string, displayName stri
 		return nil, err
 	}
 
+	avatarFileName := fmt.Sprintf("avatar_%d.webp", rand.Intn(4)+1)
+	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
+	mainColor := pgtype.Text{String: "12,12,16", Valid: true}
 	dbUser, err := db.Query.CreateUser(ctx, db.CreateUserParams{
 		ID:          utils.Node.Generate().String(),
 		Email:       email,
 		DisplayName: displayName,
 		Username:    username,
 		Password:    hashedPassword,
-		Avatar:      pgtype.Text{String: "test", Valid: true},
+		Avatar:      avatarUrl,
+		Banner:      avatarUrl,
+		MainColor:   mainColor,
 	})
 	if err != nil {
 		return nil, err

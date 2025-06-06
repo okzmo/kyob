@@ -40,7 +40,7 @@ class Servers {
 	async getMessages(serverId: string, channelId: string) {
 		const messages = this.servers[serverId]?.channels[channelId]?.messages;
 
-		if (!messages || messages.length <= 0) {
+		if (!messages) {
 			const res = await backend.getMessages(channelId);
 			if (res.isOk()) {
 				this.servers[serverId].channels[channelId].messages = res.value || [];
