@@ -108,46 +108,50 @@
 				</p>
 			{/if}
 		</div>
-		<div class="pointer-events-auto flex flex-col gap-y-1">
+		<div class="flex flex-col gap-y-1">
 			{#if core.editingMessage.id === id}
 				<EditMessageInput {server} {channel} {content} messageId={id} />
 			{:else}
-				{@html generateHTML(content, [
-					StarterKit.configure({
-						gapcursor: false,
-						dropcursor: false,
-						heading: false,
-						orderedList: false,
-						bulletList: false,
-						blockquote: false
-					}),
-					EmojisSuggestion.configure({
-						HTMLAttributes: {
-							class: 'emoji'
-						},
-						renderHTML({ options, node }) {
-							return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
-						}
-					}),
-					CustomMention.configure({
-						HTMLAttributes: {
-							class: 'mention'
-						},
-						renderHTML({ options, node }) {
-							return ['button', options.HTMLAttributes, `${node.attrs.label}`];
-						}
-					})
-				])}
+				<div class="[&>p]:pointer-events-auto">
+					{@html generateHTML(content, [
+						StarterKit.configure({
+							gapcursor: false,
+							dropcursor: false,
+							heading: false,
+							orderedList: false,
+							bulletList: false,
+							blockquote: false
+						}),
+						EmojisSuggestion.configure({
+							HTMLAttributes: {
+								class: 'emoji'
+							},
+							renderHTML({ options, node }) {
+								return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
+							}
+						}),
+						CustomMention.configure({
+							HTMLAttributes: {
+								class: 'mention'
+							},
+							renderHTML({ options, node }) {
+								return ['button', options.HTMLAttributes, `${node.attrs.label}`];
+							}
+						})
+					])}
+				</div>
 			{/if}
 			{#if attachments.length > 0}
 				<div
 					class={attachments.length > 1
-						? 'grid w-fit max-w-[65%] grid-cols-2 gap-2'
-						: 'max-w-[45%]'}
+						? 'grid w-fit max-w-[90%] grid-cols-2 gap-2 @xl:max-w-[65%] @3xl:max-w-[45%] @5xl:max-w-[35%]'
+						: 'max-w-[75%] @xl:max-w-[50%] @3xl:max-w-[35%] @5xl:max-w-[25%]'}
 				>
 					{#each attachments as attachment, idx (idx)}
-						<figure class="attachment relative select-none">
-							<img src={attachment} alt="Attachment" class="w-full" />
+						<figure
+							class={['attachment relative select-none', attachments.length > 1 && 'aspect-square']}
+						>
+							<img src={attachment} alt="Attachment" class="h-full w-full object-cover" />
 						</figure>
 					{/each}
 				</div>

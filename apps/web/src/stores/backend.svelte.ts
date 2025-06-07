@@ -104,6 +104,7 @@ class Backend {
 							content: JSON.parse(contentStr),
 							mentions_users: wsMess.content.value.mentionsUsers,
 							mentions_channels: wsMess.content.value.mentionsChannels,
+							attachments: wsMess.content.value.attachments,
 							updated_at: timestampDate(wsMess.content.value.createdAt!).toISOString(),
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
@@ -524,12 +525,14 @@ class Backend {
 		messageId: string,
 		body: EditMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
+		const formData = new FormData();
+		formData.append('type', 'EDIT');
+		formData.append('content', JSON.stringify(body.content));
+		body.mentions_users?.forEach((user) => formData.append('mentions_users[]', user));
+
 		try {
 			const res = await client.patch(`messages/${serverId}/${channelId}/${messageId}`, {
-				body: JSON.stringify({
-					...body,
-					type: 'EDIT'
-				})
+				body: formData
 			});
 
 			const data = await res.json();

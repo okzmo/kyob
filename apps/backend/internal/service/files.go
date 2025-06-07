@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -37,8 +38,16 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 			return nil, fmt.Errorf("failed to open file: %w", err)
 		}
 
+		fmt.Println(fileHeader.Header.Get("Content-Type"))
+
 		randomId := utils.GenerateRandomId(16)
-		fileName := fmt.Sprintf("attachment-%s.webp", randomId)
+		var fileName string
+		if strings.Contains(fileHeader.Header.Get("Content-Type"), "image") {
+			fileName = fmt.Sprintf("attachment-%s.webp", randomId)
+		} else {
+			mimeType := fileHeader.Header.Get("Content-Type")
+			fileName = fmt.Sprintf("attachment-%s.%s", randomId, strings.Split(mimeType, "/")[1])
+		}
 
 		_, err = as.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 			Key:    &fileName,

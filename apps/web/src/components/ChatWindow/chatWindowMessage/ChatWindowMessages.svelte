@@ -14,7 +14,7 @@
 
 <div
 	bind:this={scrollContent}
-	class="flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col gap-y-2 overflow-y-auto pt-2 pb-4"
+	class="@container flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col gap-y-2 overflow-y-auto pt-2 pb-4"
 >
 	{#if messages.length > 0}
 		{#each messages as message (message.id)}

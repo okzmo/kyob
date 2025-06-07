@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/okzmo/kyob/db"
 	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
@@ -108,6 +111,23 @@ func EditMessage(ctx context.Context, userId string, serverId string, channelId 
 }
 
 func DeleteMessage(ctx context.Context, messageId string, userId string) error {
+	s3Client := s3.NewFromConfig(GetAWSConfig())
+
+	mess, err := db.Query.GetMessage(ctx, messageId)
+	if err != nil {
+		return err
+	}
+
+	if len(mess.Attached) > 0 {
+		for _, attachment := range mess.Attached {
+			attachmentSplit := strings.Split(attachment, "/")
+			s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
+				Key:    aws.String(attachmentSplit[len(attachmentSplit)-1]),
+				Bucket: aws.String("nyo-files"),
+			})
+		}
+	}
+
 	res, err := db.Query.DeleteMessage(ctx, db.DeleteMessageParams{
 		ID:       messageId,
 		AuthorID: userId,
