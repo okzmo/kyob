@@ -8,7 +8,6 @@
 	import { page } from '$app/state';
 	import CustomDialogContent from '../../CustomDialogContent/CustomDialogContent.svelte';
 	import { delay } from '../../../../utils/delay';
-	import CloseDialogButton from '../../CustomDialogContent/CloseDialogButton.svelte';
 	import FooterDialog from '../../CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../../SubmitButton/SubmitButton.svelte';
 	import FormInput from '../../FormInput/FormInput.svelte';
@@ -67,7 +66,6 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20" />
 		<CustomDialogContent>
-			<CloseDialogButton />
 			<div class="flex items-center justify-between px-8">
 				<div>
 					<Dialog.Title class="text-lg font-semibold">Create a new channel</Dialog.Title>

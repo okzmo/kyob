@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
-	import { onMount, type Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 	import type { User } from 'types/types';
 	import CustomPopoverContent from '../ui/CustomPopoverContent/CustomPopoverContent.svelte';
 	import UserProfile from './UserProfile.svelte';
@@ -29,7 +29,7 @@
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>
+	<Popover.Trigger class="shrink-0">
 		{@render children()}
 	</Popover.Trigger>
 	<CustomPopoverContent

@@ -516,6 +516,7 @@ type IncomingChatMessage struct {
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
 	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
 	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	Attachments      []string               `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -588,6 +589,13 @@ func (x *IncomingChatMessage) GetMentionsUsers() []string {
 func (x *IncomingChatMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
+	}
+	return nil
+}
+
+func (x *IncomingChatMessage) GetAttachments() []string {
+	if x != nil {
+		return x.Attachments
 	}
 	return nil
 }
@@ -761,7 +769,8 @@ type BroadcastChatMessage struct {
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
 	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
 	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Attachments      []string               `protobuf:"bytes,8,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -841,6 +850,13 @@ func (x *BroadcastChatMessage) GetMentionsUsers() []string {
 func (x *BroadcastChatMessage) GetMentionsChannels() []string {
 	if x != nil {
 		return x.MentionsChannels
+	}
+	return nil
+}
+
+func (x *BroadcastChatMessage) GetAttachments() []string {
+	if x != nil {
+		return x.Attachments
 	}
 	return nil
 }
@@ -2542,7 +2558,7 @@ const file_types_proto_rawDesc = "" +
 	"\a_avatarB\t\n" +
 	"\a_bannerB\r\n" +
 	"\v_main_colorB\b\n" +
-	"\x06_about\"\xe4\x01\n" +
+	"\x06_about\"\x86\x02\n" +
 	"\x13IncomingChatMessage\x12#\n" +
 	"\x06author\x18\x01 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
@@ -2550,7 +2566,8 @@ const file_types_proto_rawDesc = "" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
 	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
 	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\"\xf3\x01\n" +
+	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\x12 \n" +
+	"\vattachments\x18\a \x03(\tR\vattachments\"\xf3\x01\n" +
 	"\x0fEditChatMessage\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
@@ -2567,7 +2584,7 @@ const file_types_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x04 \x01(\tR\tmessageId\"\xb0\x02\n" +
+	"message_id\x18\x04 \x01(\tR\tmessageId\"\xd2\x02\n" +
 	"\x14BroadcastChatMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\x06author\x18\x02 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
@@ -2576,9 +2593,10 @@ const file_types_proto_rawDesc = "" +
 	"channel_id\x18\x04 \x01(\tR\tchannelId\x12\x18\n" +
 	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
 	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x129\n" +
+	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x12 \n" +
+	"\vattachments\x18\b \x03(\tR\vattachments\x129\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x02\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x02\n" +
 	"\x14BroadcastEditMessage\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1b\n" +

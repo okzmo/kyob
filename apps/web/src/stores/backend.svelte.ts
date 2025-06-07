@@ -490,11 +490,14 @@ class Backend {
 		body: CreateMessageType
 	): Promise<Result<void, CreateMessageErrors>> {
 		try {
+			const formData = new FormData();
+			formData.append('type', 'SEND');
+			formData.append('content', JSON.stringify(body.content));
+			body.mentions_users?.forEach((user) => formData.append('mentions_users[]', user));
+			body.attachments?.forEach((attachment) => formData.append('attachments[]', attachment));
+
 			const res = await client.post(`messages/${serverId}/${channelId}`, {
-				body: JSON.stringify({
-					...body,
-					type: 'SEND'
-				})
+				body: formData
 			});
 
 			const data = await res.json();

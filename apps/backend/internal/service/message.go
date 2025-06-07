@@ -22,6 +22,7 @@ type MessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
+	Attachments      []string        `json:"attachments"`
 	Type             string          `json:"type"`
 }
 
@@ -37,6 +38,7 @@ type MessageResponse struct {
 	Content          json.RawMessage `json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
+	Attachments      []string        `json:"attachments"`
 	CreatedAt        time.Time       `json:"created_at"`
 	UpdatedAt        time.Time       `json:"updated_at"`
 }
@@ -60,6 +62,7 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId string, chann
 		Content:          body.Content,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
+		Attached:         body.Attachments,
 	})
 	if err != nil {
 		return nil, err
@@ -73,6 +76,7 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId string, chann
 		Content:          m.Content,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
+		Attachments:      body.Attachments,
 		CreatedAt:        timestamppb.New(m.CreatedAt),
 	}
 	return message, nil
@@ -147,6 +151,7 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 			Content:          message.Content,
 			MentionsUsers:    message.MentionsUsers,
 			MentionsChannels: message.MentionsChannels,
+			Attachments:      message.Attached,
 			UpdatedAt:        message.UpdatedAt,
 			CreatedAt:        message.CreatedAt,
 		})

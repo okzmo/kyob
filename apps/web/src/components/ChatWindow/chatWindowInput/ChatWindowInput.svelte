@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import EmojiIcon from '../../ui/icons/EmojiIcon.svelte';
-	import Plus from '../../ui/icons/Plus.svelte';
+	import EmojiIcon from 'components/ui/icons/EmojiIcon.svelte';
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from 'stores/backend.svelte';
 	import type { Channel, Friend, Server } from 'types/types';
-	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from './extensions/mentions/MentionsList.svelte';
 	import { CustomMention } from './extensions/mentions/mentions';
 	import EmojisList from './extensions/emojis/EmojisList.svelte';
 	import { editorStore } from 'stores/editor.svelte';
 	import { EmojisSuggestion } from './extensions/emojis/emojis';
+	import AttachmentButton from './AttachmentButton.svelte';
+	import Attachments from './Attachments.svelte';
 
 	interface Props {
 		friend?: Friend;
@@ -24,9 +24,7 @@
 
 	let element: Element;
 	let editor: Editor;
-
-	let emojiProps = $state<SuggestionProps | null>();
-	let emojisListEl = $state<any>();
+	let attachments = $state<File[]>([]);
 
 	async function prepareMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
@@ -38,7 +36,8 @@
 
 		const payload = {
 			content: message,
-			mentions_users: [...new Set(ids)]
+			mentions_users: [...new Set(ids)],
+			attachments
 		};
 
 		const res = await backend.sendMessage(server.id, channel.id, payload);
@@ -47,6 +46,7 @@
 		}
 
 		editor.commands.clearContent();
+		attachments = [];
 	}
 
 	onMount(() => {
@@ -119,7 +119,7 @@
 	});
 </script>
 
-<div class="absolute bottom-2 left-2 flex w-[calc(100%-1rem)] flex-col gap-y-1">
+<div class="flex w-full flex-col gap-y-1 px-2 pb-2">
 	{#if editorStore.mentionProps}
 		<MentionsList
 			props={editorStore.mentionProps}
@@ -134,17 +134,19 @@
 			class="w-full"
 		/>
 	{/if}
-	<div class="bg-main-900 inner-shadow-input relative flex w-full transition duration-100">
-		<button
-			class="text-main-600 hocus:text-main-200 absolute top-4.5 left-4 z-[1] transition-colors duration-100 hover:cursor-pointer"
-		>
-			<Plus height={20} width={20} />
-		</button>
-		<div class="max-h-[10rem] w-full" bind:this={element}></div>
-		<button
-			class="text-main-600 hocus:text-main-200 absolute top-4.5 right-4 z-[1] transition-colors duration-100 hover:cursor-pointer"
-		>
-			<EmojiIcon height={20} width={20} />
-		</button>
+	<div class="bg-main-900 inner-shadow-input relative flex w-full flex-col transition duration-100">
+		<div class="flex w-full">
+			<AttachmentButton bind:attachments />
+			<div class="max-h-[10rem] w-full" bind:this={element}></div>
+			<button
+				class="text-main-600 hocus:text-main-200 absolute top-4.5 right-4 z-[1] transition-colors duration-100 hover:cursor-pointer"
+			>
+				<EmojiIcon height={20} width={20} />
+			</button>
+		</div>
+
+		{#if attachments.length > 0}
+			<Attachments bind:attachments />
+		{/if}
 	</div>
 </div>

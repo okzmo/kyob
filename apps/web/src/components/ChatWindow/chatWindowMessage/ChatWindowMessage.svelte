@@ -20,8 +20,19 @@
 		isEdited: boolean;
 		server: Server;
 		channel: Channel;
+		attachments: string[];
 	}
-	let { id, author, content, time, isUserMentioned, isEdited, server, channel }: Props = $props();
+	let {
+		id,
+		author,
+		content,
+		time,
+		isUserMentioned,
+		isEdited,
+		server,
+		channel,
+		attachments
+	}: Props = $props();
 
 	let message = $state<HTMLElement>();
 
@@ -74,7 +85,7 @@
 		/>
 	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">
-		<div class="flex items-baseline gap-x-2.5 select-none">
+		<div class="flex items-baseline gap-x-2.5">
 			<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5} y={-10}>
 				<p
 					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
@@ -128,6 +139,28 @@
 					})
 				])}
 			{/if}
+			{#if attachments.length > 0}
+				<div
+					class={attachments.length > 1
+						? 'grid w-fit max-w-[65%] grid-cols-2 gap-2'
+						: 'max-w-[45%]'}
+				>
+					{#each attachments as attachment, idx (idx)}
+						<figure class="attachment relative select-none">
+							<img src={attachment} alt="Attachment" class="w-full" />
+						</figure>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
+
+<style>
+	.attachment::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		box-shadow: inset 0 0 0 1px #fafafa33;
+	}
+</style>

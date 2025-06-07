@@ -6,7 +6,6 @@
 	import { core } from 'stores/core.svelte';
 	import { AddFriendSchema } from 'types/schemas';
 	import { backend } from 'stores/backend.svelte';
-	import CloseDialogButton from '../../ui/CustomDialogContent/CloseDialogButton.svelte';
 	import FooterDialog from '../../ui/CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../../ui/SubmitButton/SubmitButton.svelte';
 	import FormInput from '../../ui/FormInput/FormInput.svelte';
@@ -67,7 +66,6 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="fixed inset-0 bg-black/20 transition-opacity" />
 		<CustomDialogContent>
-			<CloseDialogButton />
 			<div class="flex items-center justify-between px-8">
 				<div>
 					<Dialog.Title class="text-lg font-semibold">Add a new friend</Dialog.Title>

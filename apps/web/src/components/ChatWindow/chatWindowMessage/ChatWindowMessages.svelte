@@ -27,6 +27,7 @@
 				isEdited={message.created_at !== message.updated_at}
 				{server}
 				{channel}
+				attachments={message.attachments || []}
 			/>
 		{/each}
 	{:else}

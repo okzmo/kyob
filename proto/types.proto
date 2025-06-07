@@ -53,6 +53,7 @@ message IncomingChatMessage {
   bytes content = 4;
   repeated string mentions_users = 5;
   repeated string mentions_channels = 6;
+  repeated string attachments = 7;
 }
 
 message EditChatMessage {
@@ -80,7 +81,8 @@ message BroadcastChatMessage {
   bytes content = 5;
   repeated string mentions_users = 6;
   repeated string mentions_channels = 7;
-  google.protobuf.Timestamp created_at = 8;
+  repeated string attachments = 8;
+  google.protobuf.Timestamp created_at = 9;
 }
 
 message BroadcastEditMessage {

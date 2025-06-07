@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -21,11 +22,23 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 
 	var body services.MessageBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
+	body.Type = r.FormValue("type")
+	body.MentionsUsers = r.Form["mentions_users[]"]
+	contentJSON := r.FormValue("content")
+	if err := json.Unmarshal([]byte(contentJSON), &body.Content); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid message content.")
+		return
+	}
+
+	attachmentService := services.NewAttachmentService()
+	files := r.MultipartForm.File["attachments[]"]
+	attachments, err := attachmentService.ProcessAttachments(files, 10<<20)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	body.Attachments = attachments
 
 	err = validate.Struct(body)
 	if err != nil {
@@ -55,6 +68,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 			ServerId:      serverId,
 			ChannelId:     channelId,
 			MentionsUsers: body.MentionsUsers,
+			Attachments:   body.Attachments,
 		}
 
 		actors.ServersEngine.Send(channelPID, mess)

@@ -113,7 +113,7 @@
 	<ChatWindowTopBar {id} {server} {channel} {friend} />
 	<div
 		style="width: {width}px; height: {height}px"
-		class="bg-main-900 inner-main-800 relative mt-0.5 flex items-start overflow-hidden"
+		class="bg-main-900 inner-main-800 relative mt-0.5 flex flex-col items-start overflow-hidden"
 	>
 		<Corners color="border-main-700" />
 		{@render children()}

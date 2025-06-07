@@ -4,7 +4,6 @@
 	import { Dialog, Separator } from 'bits-ui';
 	import LinkOutside from '../ui/icons/LinkOutside.svelte';
 	import CustomDialogContent from '../ui/CustomDialogContent/CustomDialogContent.svelte';
-	import CloseDialogButton from '../ui/CustomDialogContent/CloseDialogButton.svelte';
 	import Pen from '../ui/icons/Pen.svelte';
 	import Cropper from 'svelte-easy-crop';
 	import FooterDialog from '../ui/CustomDialogContent/FooterDialog.svelte';
@@ -158,7 +157,6 @@
 <Dialog.Root open={openImageModal} onOpenChange={(s) => (openImageModal = s)}>
 	<Dialog.Overlay class="fixed inset-0 z-50 bg-black/20" />
 	<CustomDialogContent>
-		<CloseDialogButton />
 		<div class="flex items-center justify-between px-8">
 			<div>
 				<Dialog.Title class="text-lg font-semibold">Change your avatar</Dialog.Title>

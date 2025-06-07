@@ -97,6 +97,7 @@ export interface Message {
 	content: any;
 	mentions_users: string[];
 	mentions_channels: string[];
+	attachments: string[];
 	updated_at: string;
 	created_at: string;
 }

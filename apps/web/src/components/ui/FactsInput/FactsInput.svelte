@@ -3,7 +3,6 @@
 	import PlusSimple from '../icons/PlusSimple.svelte';
 	import { Dialog } from 'bits-ui';
 	import CustomDialogContent from '../CustomDialogContent/CustomDialogContent.svelte';
-	import CloseDialogButton from '../CustomDialogContent/CloseDialogButton.svelte';
 	import FooterDialog from '../CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../SubmitButton/SubmitButton.svelte';
 	import { generateRandomId } from 'utils/randomId';
@@ -98,7 +97,6 @@
 <Dialog.Root open={openDialog} onOpenChange={(s) => (openDialog = s)}>
 	<Dialog.Overlay class="fixed inset-0 z-50 bg-black/20" />
 	<CustomDialogContent>
-		<CloseDialogButton />
 		<div class="flex items-center justify-between px-8">
 			<div>
 				<Dialog.Title class="text-lg font-semibold">

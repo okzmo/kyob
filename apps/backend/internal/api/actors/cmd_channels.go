@@ -38,6 +38,7 @@ func (c *channel) NewMessage(ctx *actor.Context, msg *protoTypes.IncomingChatMes
 	messageToSend := &services.MessageBody{
 		Content:       msg.Content,
 		MentionsUsers: msg.MentionsUsers,
+		Attachments:   msg.Attachments,
 	}
 
 	message, err := services.CreateMessage(context.TODO(), msg.Author, msg.ServerId, msg.ChannelId, messageToSend)
