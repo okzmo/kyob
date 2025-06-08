@@ -18,14 +18,16 @@
 	} = $props();
 </script>
 
-<Popover.Content bind:ref {...restProps} forceMount={true}>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:flyBlur={{ x, y, preserveBackdrop }}>
-					{@render children?.()}
+<Popover.Portal>
+	<Popover.Content bind:ref {...restProps} forceMount={true}>
+		{#snippet child({ wrapperProps, props, open })}
+			{#if open}
+				<div {...wrapperProps}>
+					<div {...props} transition:flyBlur={{ x, y, preserveBackdrop }}>
+						{@render children?.()}
+					</div>
 				</div>
-			</div>
-		{/if}
-	{/snippet}
-</Popover.Content>
+			{/if}
+		{/snippet}
+	</Popover.Content>
+</Popover.Portal>

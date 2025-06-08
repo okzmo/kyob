@@ -53,7 +53,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	})
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }
 
 type signUpParams struct {
@@ -110,5 +110,5 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 		Expires: time.Now().Add(-30 * (24 * time.Hour)),
 	})
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }

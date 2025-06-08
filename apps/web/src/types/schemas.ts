@@ -76,14 +76,7 @@ export const CreateMessageSchema = v.object({
 	content: v.any(),
 	mentions_users: v.optional(v.array(v.string())),
 	mentions_channels: v.optional(v.array(v.string())),
-	attachments: v.optional(
-		v.array(
-			v.pipe(
-				v.file('Please select a valid file.'),
-				v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
-			)
-		)
-	)
+	attachments: v.optional(v.array(v.pipe(v.file('Please select a valid file.'))))
 });
 
 export interface CreateMessageType extends v.InferInput<typeof CreateMessageSchema> {}

@@ -31,14 +31,13 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 
 	for _, fileHeader := range files {
 		if fileHeader.Size > maxSize {
-			return nil, fmt.Errorf("file %s exceeds maximum size", fileHeader.Filename)
+			// we ignore big files
+			continue
 		}
 		file, err := fileHeader.Open()
 		if err != nil {
 			return nil, fmt.Errorf("failed to open file: %w", err)
 		}
-
-		fmt.Println(fileHeader.Header.Get("Content-Type"))
 
 		randomId := utils.GenerateRandomId(16)
 		var fileName string

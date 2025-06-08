@@ -32,8 +32,8 @@
 		</button>
 	</UserProfileWithTrigger>
 	<div class="flex items-center gap-x-1">
-		<IconButton Icon={Headphone} label="Headphone" />
 		<IconButton Icon={Microphone} label="Microphone" />
+		<IconButton Icon={Headphone} label="Headphone" />
 		<IconButton Icon={Gear} href="/settings" label="Settings" />
 	</div>
 </div>

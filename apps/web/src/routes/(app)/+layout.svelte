@@ -20,6 +20,7 @@
 	import { serversStore } from 'stores/servers.svelte';
 	import { userStore } from 'stores/user.svelte';
 	import { contextMenuTargets, type ContextMenuTarget } from 'types/types';
+	import AttachmentsModal from 'components/ChatWindow/AttachmentsModal.svelte';
 
 	let contextMenuTarget: string | undefined = $state();
 	let contextMenuTargetAuthor: string | undefined = $state();
@@ -122,6 +123,7 @@
 <Audio />
 <UserProfileNoTrigger />
 <AddFriendModal />
+<AttachmentsModal />
 
 {#if !onSettingsPage}
 	<GridDots />

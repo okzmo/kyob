@@ -41,10 +41,10 @@
 					};
 					serversStore.addServer(server);
 
-					await delay(1000);
+					await delay(400);
 					isSubmitting = false;
 					isSubmitted = true;
-					await delay(2000);
+					await delay(800);
 
 					core.openJoinServerModal.status = false;
 					core.activateMapDragging();

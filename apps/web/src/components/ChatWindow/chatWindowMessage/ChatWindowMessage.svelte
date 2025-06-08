@@ -10,6 +10,7 @@
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
 	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
+	import ChatWindowMessagesAttachments from './ChatWindowMessagesAttachments.svelte';
 
 	interface Props {
 		id: string;
@@ -65,7 +66,7 @@
 	data-author-id={author.id}
 	bind:this={message}
 	class={[
-		'relative flex items-start gap-x-3 px-4 py-2 transition-colors duration-100',
+		'@container relative flex items-start gap-x-3 px-4 py-2 transition-colors duration-100',
 		isUserMentioned
 			? 'message-mention'
 			: core.editingMessage.id === id
@@ -108,7 +109,7 @@
 				</p>
 			{/if}
 		</div>
-		<div class="flex flex-col gap-y-1">
+		<div class="flex w-full flex-col gap-y-1">
 			{#if core.editingMessage.id === id}
 				<EditMessageInput {server} {channel} {content} messageId={id} />
 			{:else}
@@ -142,19 +143,7 @@
 				</div>
 			{/if}
 			{#if attachments.length > 0}
-				<div
-					class={attachments.length > 1
-						? 'grid w-fit max-w-[90%] grid-cols-2 gap-2 @xl:max-w-[65%] @3xl:max-w-[45%] @5xl:max-w-[35%]'
-						: 'max-w-[75%] @xl:max-w-[50%] @3xl:max-w-[35%] @5xl:max-w-[25%]'}
-				>
-					{#each attachments as attachment, idx (idx)}
-						<figure
-							class={['attachment relative select-none', attachments.length > 1 && 'aspect-square']}
-						>
-							<img src={attachment} alt="Attachment" class="h-full w-full object-cover" />
-						</figure>
-					{/each}
-				</div>
+				<ChatWindowMessagesAttachments {attachments} />
 			{/if}
 		</div>
 	</div>

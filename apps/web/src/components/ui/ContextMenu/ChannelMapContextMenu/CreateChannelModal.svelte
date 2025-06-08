@@ -39,10 +39,10 @@
 				}
 
 				if (res.isOk()) {
-					await delay(500);
+					await delay(400);
 					isSubmitting = false;
 					isSubmitted = true;
-					await delay(1000);
+					await delay(800);
 
 					core.openCreateChannelModal.status = false;
 					core.activateMapDragging();

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Plus from 'components/ui/icons/Plus.svelte';
+	import { errorsStore } from 'stores/errors.svelte';
 
 	interface Props {
 		attachments: File[];
@@ -10,7 +11,13 @@
 	function onFile(e: Event) {
 		const target = e.target as HTMLInputElement;
 		if (target.files) {
-			attachments = [...attachments, ...target.files];
+			for (const file of target.files) {
+				if (file.size > 15 << 20) {
+					errorsStore.attachmentError = true;
+					break;
+				}
+				attachments.push(file);
+			}
 		}
 	}
 </script>

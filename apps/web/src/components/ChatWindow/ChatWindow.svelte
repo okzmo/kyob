@@ -4,6 +4,7 @@
 	import ChatWindowInput from './chatWindowInput/ChatWindowInput.svelte';
 	import ChatWindowSkeleton from './ChatWindowSkeleton.svelte';
 	import ChatWindowMessages from './chatWindowMessage/ChatWindowMessages.svelte';
+	import ChatWindowErrors from './ChatWindowErrors.svelte';
 
 	interface Props {
 		id: string;
@@ -25,4 +26,6 @@
 		<ChatWindowMessages {channel} {server} messages={allMessages} />
 	{/await}
 	<ChatWindowInput {channel} {server} {friend} />
+
+	<ChatWindowErrors />
 </ChatWindowSkeleton>

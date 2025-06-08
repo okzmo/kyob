@@ -100,15 +100,9 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 
 func EditServer(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-
 	var body services.EditServerBody
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
 
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -125,7 +119,7 @@ func EditServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }
 
 func DeleteServer(w http.ResponseWriter, r *http.Request) {
@@ -139,7 +133,7 @@ func DeleteServer(w http.ResponseWriter, r *http.Request) {
 	serverPID := actors.ServersEngine.Registry.GetPID("server", id)
 	actors.ServersEngine.Send(serverPID, protoMessage)
 
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }
 
 func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
@@ -151,20 +145,15 @@ func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteId)})
+	utils.RespondWithJSON(w, http.StatusOK, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteId)})
 }
 
 func JoinServer(w http.ResponseWriter, r *http.Request) {
 	var body services.JoinServerBody
-	err := json.NewDecoder(r.Body).Decode(&body)
+
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error(), "ERR_VALIDATION_FAILED")
 		return
 	}
 
@@ -196,7 +185,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	utils.RespondWithJSON(w, http.StatusContinue, services.JoinServerResponse{Server: *server})
+	utils.RespondWithJSON(w, http.StatusOK, services.JoinServerResponse{Server: *server})
 }
 
 func LeaveServer(w http.ResponseWriter, r *http.Request) {
@@ -215,5 +204,5 @@ func LeaveServer(w http.ResponseWriter, r *http.Request) {
 		Type: "LEAVE_SERVER",
 	}, userPID)
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }

@@ -29,19 +29,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, user)
+	utils.RespondWithJSON(w, http.StatusOK, user)
 }
 
 func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateAccountBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -71,19 +65,13 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }
 
 func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateProfileBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -115,14 +103,14 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	actors.UsersEngine.Send(userPID, messageToSend)
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }
 
 func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateAvatarBody
 	var cropAvatar, cropBanner services.Crop
 
-	err := r.ParseMultipartForm(32 << 20)
+	err := r.ParseMultipartForm(15 << 20)
 	if err != nil {
 		slog.Error(err.Error())
 		utils.RespondWithError(w, http.StatusBadRequest, "Failed to parse given image.")
@@ -187,25 +175,19 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	utils.RespondWithJSON(w, http.StatusContinue, res)
+	utils.RespondWithJSON(w, http.StatusOK, res)
 }
 
 func AddFriend(w http.ResponseWriter, r *http.Request) {
 	var body services.AddFriendBody
+
+	err := utils.ParseAndValidate(r, validate, &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	user := r.Context().Value("user").(db.User)
-
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
 	inviteId, friendId, err := services.AddFriend(r.Context(), &body)
 	if err != nil {
 		switch {
@@ -232,19 +214,13 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 	friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
 	actors.UsersEngine.Send(friendPid, inviteMessage)
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }
 
 func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 	var body services.AcceptFriendBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -304,19 +280,13 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 	}
 	actors.UsersEngine.Send(userPid, receiverMessage)
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }
 
 func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 	var body services.RemoveFriendBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -342,5 +312,5 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 		Users:     []string{body.FriendID, body.UserID},
 	})
 
-	utils.RespondWithJSON(w, http.StatusContinue, DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
 }

@@ -18,5 +18,5 @@ func Setup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, *all)
+	utils.RespondWithJSON(w, http.StatusOK, *all)
 }

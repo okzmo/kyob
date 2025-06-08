@@ -44,11 +44,11 @@
 					if (form.data.username) userStore.user!.username = form.data.username;
 					if (form.data.email) userStore.user!.email = form.data.email;
 
-					await delay(1000);
+					await delay(400);
 					isSubmitting = false;
 					isSubmitted = true;
+					await delay(800);
 
-					await delay(2000);
 					isSubmitted = false;
 				}
 			}

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -15,16 +14,9 @@ import (
 
 func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	serverId := chi.URLParam(r, "server_id")
-
 	var body services.CreateChannelBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -49,16 +41,9 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 
 func EditChannel(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-
 	var body services.EditChannelBody
 
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	err = validate.Struct(body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -75,7 +60,7 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }
 
 func DeleteChannel(w http.ResponseWriter, r *http.Request) {
@@ -91,5 +76,5 @@ func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
 	actors.ServersEngine.Send(serverPID, protoMessage)
 
-	utils.RespondWithJSON(w, http.StatusContinue, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }

@@ -12,9 +12,10 @@
 		Icon: Component<IconProps>;
 		href?: string;
 		label: string;
+		class?: string;
 	}
 
-	let { Icon, href, label }: Props = $props();
+	let { Icon, href, label, class: classes }: Props = $props();
 </script>
 
 {#if href}
@@ -29,7 +30,10 @@
 {:else}
 	<button
 		aria-label={label}
-		class="text-main-400 group hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition hover:cursor-pointer"
+		class={[
+			'text-main-400 group hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition hover:cursor-pointer',
+			classes
+		]}
 	>
 		<Corners color="border-accent-100" hide />
 		<Icon height={22} width={22} />

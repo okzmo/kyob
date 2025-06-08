@@ -43,7 +43,7 @@
 >
 	<Corners color="border-accent-100" />
 	{#if isSubmitting}
-		<div class="absolute" transition:fly={{ duration: 200, delay: 100, y: 5 }}>
+		<div class="absolute" transition:fly={{ duration: 200, delay: 150, y: 5 }}>
 			<LoadingIcon height={20} width={20} />
 		</div>
 	{:else if isSubmitted}

@@ -47,7 +47,7 @@ export interface DeleteChannelErrors {
 }
 
 export interface CreateMessageErrors {
-	code: 'ERR_VALIDATION_FAILED' | 'ERR_UNKNOWN';
+	code: 'ERR_VALIDATION_FAILED' | 'ERR_MESSAGE_TOO_BIG' | 'ERR_UNKNOWN';
 	error: string;
 	cause?: any;
 }

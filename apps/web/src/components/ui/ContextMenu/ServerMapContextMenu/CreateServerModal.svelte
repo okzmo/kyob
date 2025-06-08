@@ -55,10 +55,10 @@
 
 					serversStore.addServer(server);
 
-					await delay(500);
+					await delay(400);
 					isSubmitting = false;
 					isSubmitted = true;
-					await delay(1000);
+					await delay(800);
 
 					core.openCreateServerModal.status = false;
 					const targetX = -(server.x - window.innerWidth / 2 + 32);

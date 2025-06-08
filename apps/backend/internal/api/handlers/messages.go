@@ -33,7 +33,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 
 	attachmentService := services.NewAttachmentService()
 	files := r.MultipartForm.File["attachments[]"]
-	attachments, err := attachmentService.ProcessAttachments(files, 10<<20)
+	attachments, err := attachmentService.ProcessAttachments(files, 15<<20)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -117,5 +117,5 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusContinue, messages)
+	utils.RespondWithJSON(w, http.StatusOK, messages)
 }

@@ -34,6 +34,7 @@
 	--ui-main-80025: #21212640;
 	--ui-main-850: #18181b;
 	--ui-main-900: #121215;
+	--ui-main-950: #0b0b0e;
 }
 
 @theme {
@@ -57,6 +58,7 @@
 	--color-main-800: var(--ui-main-800);
 	--color-main-850: var(--ui-main-850);
 	--color-main-900: var(--ui-main-900);
+	--color-main-950: var(--ui-main-950);
 }
 
 @custom-variant hocus (&:hover, &:focus-visible);

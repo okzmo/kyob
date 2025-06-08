@@ -137,10 +137,10 @@
 		}
 
 		if (res.isOk()) {
-			await delay(500);
+			await delay(400);
 			isSubmitting = false;
 			isSubmitted = true;
-			await delay(1000);
+			await delay(800);
 
 			userStore.user!.avatar = res.value.avatar;
 			userStore.user!.banner = res.value.banner;

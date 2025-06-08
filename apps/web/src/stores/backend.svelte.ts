@@ -513,6 +513,8 @@ class Backend {
 			switch (true) {
 				case errBody.status === 400:
 					return err({ code: 'ERR_VALIDATION_FAILED', error: errBody.error });
+				case errBody.status === 413:
+					return err({ code: 'ERR_MESSAGE_TOO_BIG', error: errBody.error });
 				default:
 					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 			}
