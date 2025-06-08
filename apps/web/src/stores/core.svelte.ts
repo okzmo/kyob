@@ -8,7 +8,7 @@ class Core {
 	openCreateServerModal = $state({ status: false, x: 0, y: 0 });
 	openAddFriendModal = $state({ status: false });
 	openJoinServerModal = $state({ status: false, x: 0, y: 0 });
-	openAttachmentsModal = $state({ status: false, attachments: [] });
+	openAttachmentsModal = $state({ status: false, idx: 0, attachments: [] });
 	editingMessage = $state({ id: '' });
 	profiles = $state<User[]>([]);
 	profileOpen = $state<{

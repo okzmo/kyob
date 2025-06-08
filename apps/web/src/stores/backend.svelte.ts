@@ -563,6 +563,7 @@ class Backend {
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
+			console.log(data);
 
 			return ok(data);
 		} catch (error) {

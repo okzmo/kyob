@@ -11,6 +11,8 @@
 	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
 	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
 	import ChatWindowMessagesAttachments from './ChatWindowMessagesAttachments.svelte';
+	import ChatWindowMessageUser from './ChatWindowMessageUser.svelte';
+	import ChatWindowMessageContent from './ChatWindowMessageContent.svelte';
 
 	interface Props {
 		id: string;
@@ -86,74 +88,7 @@
 		/>
 	</UserProfileWithTrigger>
 	<div class="pointer-events-none pt-1">
-		<div class="flex items-baseline gap-x-2.5">
-			<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5} y={-10}>
-				<p
-					class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
-				>
-					{author.display_name}
-				</p>
-			</UserProfileWithTrigger>
-			<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
-				{formatMessageTime(time)}
-			</time>
-			{#if core.editingMessage.id === id || isEdited}
-				<p
-					class={[
-						'absolute  right-3 uppercase',
-						core.editingMessage.id !== id && isUserMentioned && '!text-main-300',
-						core.editingMessage.id !== id ? 'text-main-600 top-3 text-xs' : 'text-accent-50 top-2'
-					]}
-				>
-					[{core.editingMessage.id !== id ? 'Edited' : 'Editing'}]
-				</p>
-			{/if}
-		</div>
-		<div class="flex w-full flex-col gap-y-1">
-			{#if core.editingMessage.id === id}
-				<EditMessageInput {server} {channel} {content} messageId={id} />
-			{:else}
-				<div class="[&>p]:pointer-events-auto">
-					{@html generateHTML(content, [
-						StarterKit.configure({
-							gapcursor: false,
-							dropcursor: false,
-							heading: false,
-							orderedList: false,
-							bulletList: false,
-							blockquote: false
-						}),
-						EmojisSuggestion.configure({
-							HTMLAttributes: {
-								class: 'emoji'
-							},
-							renderHTML({ options, node }) {
-								return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
-							}
-						}),
-						CustomMention.configure({
-							HTMLAttributes: {
-								class: 'mention'
-							},
-							renderHTML({ options, node }) {
-								return ['button', options.HTMLAttributes, `${node.attrs.label}`];
-							}
-						})
-					])}
-				</div>
-			{/if}
-			{#if attachments.length > 0}
-				<ChatWindowMessagesAttachments {attachments} />
-			{/if}
-		</div>
+		<ChatWindowMessageUser {id} {author} {time} {isUserMentioned} {isEdited} />
+		<ChatWindowMessageContent {id} {server} {channel} {content} {attachments} />
 	</div>
 </div>
-
-<style>
-	.attachment::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		box-shadow: inset 0 0 0 1px #fafafa33;
-	}
-</style>

@@ -22,7 +22,8 @@
 
 	$effect(() => {
 		attachments.forEach((file, idx) => {
-			if (getFileType(file) === 'image') {
+			const fileType = getFileType(file);
+			if (fileType === 'image' || fileType === 'video') {
 				objectUrls[idx] = URL.createObjectURL(file);
 			} else {
 				objectUrls[idx] = null;
@@ -48,6 +49,19 @@
 					<Close height={16} width={16} class="text-red-400" />
 				</button>
 				<img src={objectUrls[idx]} alt={attachment.name} class="h-full w-full object-cover" />
+			</figure>
+		{:else if fileType === 'video'}
+			<figure class="attachment relative aspect-square h-20 w-20">
+				<button
+					class="hocus:border-red-400 hocus:bg-red-400/40 absolute top-1 right-1 border border-red-400/50 bg-red-400/20 transition-colors duration-100 hover:cursor-pointer"
+					onclick={() => removeAttachment(attachment, idx)}
+				>
+					<Close height={16} width={16} class="text-red-400" />
+				</button>
+				<video class="h-full w-full object-cover">
+					<source src={objectUrls[idx]} />
+					<track kind="captions" />
+				</video>
 			</figure>
 		{/if}
 	{/each}

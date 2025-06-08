@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="bg-main-900/80 inner-shadow-input group fixed bottom-5 left-1/2 z-50 flex w-[18.5rem] -translate-x-1/2 items-center px-4 py-1 backdrop-blur-2xl transition-all duration-100 focus-within:w-[22rem]"
+	class="bg-main-900/80 inner-shadow-input group fixed bottom-5 left-1/2 z-50 flex w-[18.5rem] -translate-x-1/2 items-center px-4 py-1 backdrop-blur-2xl transition-all duration-100 select-none focus-within:w-[22rem]"
 >
 	<Corners color="border-main-700" class="group-hocus:border-main-300" />
 	<MagnifyingGlass

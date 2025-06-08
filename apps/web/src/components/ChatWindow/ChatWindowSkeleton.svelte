@@ -83,7 +83,7 @@
 
 	function windowMouseDown(e: MouseEvent) {
 		e.stopImmediatePropagation();
-		windows.activeWindow = id;
+		windows.setActiveWindow(id);
 	}
 
 	onMount(() => {
@@ -105,9 +105,13 @@
 </script>
 
 <div
-	transition:fly={{ duration: 75, y: 10 }}
+	in:fly={{ duration: 300, y: 20 }}
+	out:fly={{ duration: 150, y: 20 }}
 	id={`window-${id}`}
-	class={['absolute flex flex-col', windows.activeWindow === id ? 'z-[52]' : 'z-[40] opacity-40']}
+	class={[
+		'absolute flex flex-col transition-opacity duration-75',
+		windows.activeWindow === id ? 'z-[52]' : 'z-[40] opacity-40'
+	]}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
 	<ChatWindowTopBar {id} {server} {channel} {friend} />

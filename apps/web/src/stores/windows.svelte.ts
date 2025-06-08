@@ -3,6 +3,16 @@ import type { Window } from '../types/types';
 class Windows {
 	openWindows = $state<Window[]>([]);
 	activeWindow = $state<string | null>();
+	lastActiveWindow = $state<string | null>();
+
+	setActiveWindow(window: string | null) {
+		if (this.activeWindow) this.lastActiveWindow = this.activeWindow;
+		this.activeWindow = window;
+	}
+
+	reuseLastWindow() {
+		this.activeWindow = this.lastActiveWindow;
+	}
 
 	getActiveWindow() {
 		return this.openWindows.find((w) => w.id === this.activeWindow);

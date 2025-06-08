@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -146,6 +147,7 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(m)
 
 	for _, message := range m {
 		author, err := db.Query.GetUserById(ctx, message.AuthorID)

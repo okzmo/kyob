@@ -4,17 +4,11 @@
 
 	let { messages, server, channel } = $props();
 	let scrollContent = $state<HTMLElement | null>();
-
-	$effect(() => {
-		if (messages.length && scrollContent) {
-			scrollContent.scrollTo(0, scrollContent.scrollHeight);
-		}
-	});
 </script>
 
 <div
 	bind:this={scrollContent}
-	class="relative flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col gap-y-2 overflow-y-auto pt-2 pb-4"
+	class="relative flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col-reverse gap-y-2 overflow-y-auto pt-2 pb-4"
 >
 	{#if messages.length > 0}
 		{#each messages as message (message.id)}

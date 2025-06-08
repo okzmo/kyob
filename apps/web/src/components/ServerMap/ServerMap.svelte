@@ -19,7 +19,7 @@
 	function handleMouseDown(e: MouseEvent) {
 		if (e.buttons !== 1 || !core.canDragMap) return;
 		dragging = true;
-		windows.activeWindow = null;
+		windows.setActiveWindow(null);
 		startPos = { x: e.clientX, y: e.clientY };
 		lastMousePos = { x: e.clientX, y: e.clientY };
 		lastTimestamp = Date.now();

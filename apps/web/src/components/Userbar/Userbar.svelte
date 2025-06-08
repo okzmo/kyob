@@ -14,7 +14,7 @@
 	<Corners color="border-main-700" />
 	<UserProfileWithTrigger user={userStore.user!} y={10} alignOffset={-4}>
 		<button
-			class="group hocus:bg-accent-100/15 hocus:inner-accent/15 relative flex items-center gap-x-2.5 py-1 pr-4 pl-1 text-left transition hover:cursor-pointer"
+			class="group hocus:bg-accent-100/15 hocus:inner-accent/15 relative flex items-center gap-x-2.5 py-1 pr-4 pl-1 text-left transition select-none hover:cursor-pointer"
 		>
 			<img src={userStore.user?.avatar} alt="avatar" class="h-[2.75rem] w-[2.75rem] object-cover" />
 			<div class="flex flex-col">

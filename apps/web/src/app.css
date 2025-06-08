@@ -71,8 +71,17 @@ body {
 	overflow: hidden;
 }
 
+* {
+	caret-color: var(--ui-accent-100);
+}
+
 *:focus-visible {
 	outline: 0px;
+}
+
+*::selection {
+	color: var(--ui-accent-select-fg);
+	background: var(--ui-accent-select-bg);
 }
 
 ::-moz-selection {
