@@ -6,7 +6,7 @@
 		class: string;
 	}
 
-	let { props, class: classes }: Props = $props();
+	let { props, class: classes, style }: Props = $props();
 
 	let selectedIndex = $state(0);
 	let scrollableMenu = $state<HTMLDivElement>();

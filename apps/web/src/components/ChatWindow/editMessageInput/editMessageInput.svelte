@@ -116,18 +116,20 @@
 	});
 </script>
 
-{#if editorStore.currentInput === 'edit' && editorStore.mentionProps}
-	<MentionsList
-		props={editorStore.mentionProps}
-		bind:this={editorStore.mentionsListEl}
-		class="absolute -top-[2.25rem] left-3.5 w-[calc(100%-1.5rem)]"
-	/>
-{/if}
-{#if editorStore.currentInput === 'edit' && editorStore.emojiProps}
-	<EmojisList
-		props={editorStore.emojiProps}
-		bind:this={editorStore.emojisListEl}
-		class="absolute -top-[2.25rem] left-3.5 w-[calc(100%-1.5rem)]"
-	/>
-{/if}
+<div class="absolute top-2 left-0 w-[calc(100%-1.5rem)]">
+	{#if editorStore.currentInput === 'edit' && editorStore.mentionProps}
+		<MentionsList
+			props={editorStore.mentionProps}
+			bind:this={editorStore.mentionsListEl}
+			class="absolute bottom-0 left-3.5 w-full"
+		/>
+	{/if}
+	{#if editorStore.currentInput === 'edit' && editorStore.emojiProps}
+		<EmojisList
+			bind:this={editorStore.emojisListEl}
+			props={editorStore.emojiProps}
+			class="absolute bottom-0 left-3.5 w-full"
+		/>
+	{/if}
+</div>
 <div class="pointer-events-auto w-full" bind:this={element}></div>
