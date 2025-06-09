@@ -27,11 +27,11 @@ func (q *Queries) CheckChannelMembership(ctx context.Context, arg CheckChannelMe
 
 const createMessage = `-- name: CreateMessage :one
 INSERT INTO messages (
-  id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached
+  id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7, $8
 )
-RETURNING id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at
+RETURNING id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at
 `
 
 type CreateMessageParams struct {
@@ -42,7 +42,7 @@ type CreateMessageParams struct {
 	Content          json.RawMessage `json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
-	Attached         []string        `json:"attached"`
+	Attachments      []byte          `json:"attachments"`
 }
 
 func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (Message, error) {
@@ -54,7 +54,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		arg.Content,
 		arg.MentionsUsers,
 		arg.MentionsChannels,
-		arg.Attached,
+		arg.Attachments,
 	)
 	var i Message
 	err := row.Scan(
@@ -65,7 +65,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		&i.Content,
 		&i.MentionsUsers,
 		&i.MentionsChannels,
-		&i.Attached,
+		&i.Attachments,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -86,7 +86,7 @@ func (q *Queries) DeleteMessage(ctx context.Context, arg DeleteMessageParams) (p
 }
 
 const getMessage = `-- name: GetMessage :one
-SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE id = $1
+SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE id = $1
 `
 
 func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
@@ -100,7 +100,7 @@ func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
 		&i.Content,
 		&i.MentionsUsers,
 		&i.MentionsChannels,
-		&i.Attached,
+		&i.Attachments,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -108,7 +108,7 @@ func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
 }
 
 const getMessagesFromChannel = `-- name: GetMessagesFromChannel :many
-SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attached, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
+SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
 `
 
 func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) ([]Message, error) {
@@ -128,7 +128,7 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) 
 			&i.Content,
 			&i.MentionsUsers,
 			&i.MentionsChannels,
-			&i.Attached,
+			&i.Attachments,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {

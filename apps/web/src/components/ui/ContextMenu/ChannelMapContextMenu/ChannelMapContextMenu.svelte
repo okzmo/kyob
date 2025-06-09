@@ -14,7 +14,7 @@
 		class="context-menu-item"
 		onclick={() => {
 			core.deactivateMapDragging();
-			core.openCreateChannelModal.status = true;
+			core.createChannelModal.status = true;
 		}}
 	>
 		<div class="flex w-full items-center justify-between">

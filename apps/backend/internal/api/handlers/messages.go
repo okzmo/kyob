@@ -31,19 +31,21 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	attachmentService := services.NewAttachmentService()
 	files := r.MultipartForm.File["attachments[]"]
-	attachments, err := attachmentService.ProcessAttachments(files, 15<<20)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	body.Attachments = attachments
+	if len(files) > 0 {
+		attachmentService := services.NewAttachmentService()
+		attachments, err := attachmentService.ProcessAttachments(files, 15<<20)
+		if err != nil {
+			utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		body.Attachments = attachments
 
-	err = validate.Struct(body)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
+		err = validate.Struct(body)
+		if err != nil {
+			utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+			return
+		}
 	}
 
 	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)

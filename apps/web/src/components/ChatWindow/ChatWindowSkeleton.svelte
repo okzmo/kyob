@@ -6,17 +6,6 @@
 	import ChatWindowTopBar from './ChatWindowTopBar.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 
-	let width = $state(550);
-	let height = $state(400);
-	let startPos = $state({ x: 0, y: 0 });
-	let offset = $state({ x: 100, y: 150 });
-	let totalOffset = $state({ x: 100, y: 150 });
-	let dragging = $state(false);
-
-	let resizing = $state(false);
-	let startPosResizing = $state({ x: 0, y: 0 });
-	let initialSize = $state({ width: 0, height: 0 });
-
 	interface Props {
 		id: string;
 		server?: Server;
@@ -26,6 +15,15 @@
 	}
 
 	let { id, children, server, channel, friend }: Props = $props();
+
+	let windowState = $state(windows.openWindows.find((w) => w.id === id)!);
+	let startPos = $state({ x: 0, y: 0 });
+	let offset = $state({ x: windowState.x, y: windowState.y });
+	let dragging = $state(false);
+
+	let resizing = $state(false);
+	let startPosResizing = $state({ x: 0, y: 0 });
+	let initialSize = $state({ width: 0, height: 0 });
 
 	function chatTopBarMouseDown(e: MouseEvent) {
 		dragging = true;
@@ -37,7 +35,8 @@
 
 	function chatTopBarMouseUp() {
 		dragging = false;
-		totalOffset = { ...offset };
+		windowState.x = offset.x;
+		windowState.y = offset.y;
 
 		document.removeEventListener('mouseup', chatTopBarMouseUp);
 		document.removeEventListener('mousemove', chatTopBarMouseMove);
@@ -51,15 +50,15 @@
 		const dy = e.clientY - startPos.y;
 
 		offset = {
-			x: Math.max(0, Math.min(totalOffset.x + dx, window.innerWidth - width)),
-			y: Math.max(0, Math.min(totalOffset.y + dy, window.innerHeight - height - 38))
+			x: Math.max(0, Math.min(windowState.x + dx, window.innerWidth - windowState.width)),
+			y: Math.max(0, Math.min(windowState.y + dy, window.innerHeight - windowState.height - 38))
 		};
 	}
 
 	function chatResizeMouseDown(e: MouseEvent) {
 		resizing = true;
 		startPosResizing = { x: e.clientX, y: e.clientY };
-		initialSize = { width, height };
+		initialSize = { height: windowState?.height, width: windowState?.width };
 
 		document.addEventListener('mouseup', stopResizing);
 		document.addEventListener('mousemove', chatResizing);
@@ -69,13 +68,14 @@
 		if (!resizing) return;
 		e.preventDefault();
 
-		width = Math.max(450, initialSize.width + (e.clientX - startPosResizing.x));
-		height = Math.max(250, initialSize.height + (e.clientY - startPosResizing.y));
+		windowState.width = Math.max(450, initialSize.width + (e.clientX - startPosResizing.x));
+		windowState.height = Math.max(250, initialSize.height + (e.clientY - startPosResizing.y));
 	}
 
 	function stopResizing() {
 		resizing = false;
-		totalOffset = { ...offset };
+		windowState.x = offset.x;
+		windowState.y = offset.y;
 
 		document.removeEventListener('mouseup', stopResizing);
 		document.removeEventListener('mousemove', chatResizing);
@@ -116,7 +116,7 @@
 >
 	<ChatWindowTopBar {id} {server} {channel} {friend} />
 	<div
-		style="width: {width}px; height: {height}px"
+		style="width: {windowState?.width}px; height: {windowState?.height}px"
 		class="bg-main-900 inner-main-800 relative mt-0.5 flex flex-col items-start overflow-hidden"
 	>
 		<Corners color="border-main-700" />

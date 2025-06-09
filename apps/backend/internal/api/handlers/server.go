@@ -45,10 +45,12 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 
 	body.Name = r.FormValue("name")
 	descriptionJSON := r.FormValue("description")
-	if err := json.Unmarshal([]byte(descriptionJSON), &body.Description); err != nil {
-		slog.Error(err.Error())
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid description.")
-		return
+	if descriptionJSON != "" {
+		if err := json.Unmarshal([]byte(descriptionJSON), &body.Description); err != nil {
+			slog.Error(err.Error())
+			utils.RespondWithError(w, http.StatusBadRequest, "Invalid description.")
+			return
+		}
 	}
 
 	body.Private = r.FormValue("private") == "true"
@@ -65,7 +67,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	var crop services.Crop
 	if err := json.Unmarshal([]byte(cropJSON), &crop); err != nil {
 		slog.Error(err.Error())
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid  crop data.")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid crop data.")
 		return
 	}
 	body.Crop = crop

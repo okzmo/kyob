@@ -4,8 +4,8 @@
 	import type { Server } from 'types/types';
 	import { windows } from 'stores/windows.svelte';
 	import { core } from 'stores/core.svelte';
-	import CreateServerModal from '../ui/ContextMenu/ServerMapContextMenu/CreateServerModal.svelte';
-	import JoinServerModal from '../ui/ContextMenu/ServerMapContextMenu/JoinServerModal.svelte';
+	import CreateServerModal from 'components/modals/CreateServerModal.svelte';
+	import JoinServerModal from 'components/modals/JoinServerModal.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });

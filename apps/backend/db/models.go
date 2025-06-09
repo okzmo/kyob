@@ -148,7 +148,7 @@ type Message struct {
 	Content          json.RawMessage `json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
-	Attached         []string        `json:"attached"`
+	Attachments      []byte          `json:"attachments"`
 	CreatedAt        time.Time       `json:"created_at"`
 	UpdatedAt        time.Time       `json:"updated_at"`
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
+	import CreateChannelModal from 'components/modals/CreateChannelModal.svelte';
+	import { core } from 'stores/core.svelte';
+	import { windows } from 'stores/windows.svelte';
 	import { onMount } from 'svelte';
 	import type { Channel } from 'types/types';
 	import ChannelButton from '../ui/ChannelButton/ChannelButton.svelte';
-	import { windows } from 'stores/windows.svelte';
-	import CreateChannelModal from '../ui/ContextMenu/ChannelMapContextMenu/CreateChannelModal.svelte';
-	import { core } from 'stores/core.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });

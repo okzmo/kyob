@@ -104,7 +104,7 @@ CREATE TABLE public.messages (
     content jsonb NOT NULL,
     mentions_users character varying(20)[],
     mentions_channels character varying(20)[],
-    attached text[],
+    attachments jsonb DEFAULT '[]'::jsonb,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

@@ -9,7 +9,7 @@
 	class="context-menu-item"
 	onclick={() => {
 		core.deactivateMapDragging();
-		core.openCreateServerModal.status = true;
+		core.createServerModal.status = true;
 	}}
 >
 	<div class="flex w-full items-center justify-between">
@@ -21,7 +21,7 @@
 	class="context-menu-item"
 	onclick={() => {
 		core.deactivateMapDragging();
-		core.openJoinServerModal.status = true;
+		core.joinServerModal.status = true;
 	}}
 >
 	<div class="flex w-full items-center justify-between">

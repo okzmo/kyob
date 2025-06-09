@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Close from 'components/ui/icons/Close.svelte';
+	import FileIcon from 'components/ui/icons/File.svelte';
 	import { onDestroy } from 'svelte';
 
 	interface Props {
@@ -41,7 +42,7 @@
 		{@const fileType = getFileType(attachment)}
 
 		{#if fileType === 'image' && objectUrls[idx]}
-			<figure class="attachment relative aspect-square h-20 w-20">
+			<figure class="attachment-input relative aspect-square h-20 w-20">
 				<button
 					class="hocus:border-red-400 hocus:bg-red-400/40 absolute top-1 right-1 border border-red-400/50 bg-red-400/20 transition-colors duration-100 hover:cursor-pointer"
 					onclick={() => removeAttachment(attachment, idx)}
@@ -51,7 +52,7 @@
 				<img src={objectUrls[idx]} alt={attachment.name} class="h-full w-full object-cover" />
 			</figure>
 		{:else if fileType === 'video'}
-			<figure class="attachment relative aspect-square h-20 w-20">
+			<figure class="attachment-input relative aspect-square h-20 w-20">
 				<button
 					class="hocus:border-red-400 hocus:bg-red-400/40 absolute top-1 right-1 border border-red-400/50 bg-red-400/20 transition-colors duration-100 hover:cursor-pointer"
 					onclick={() => removeAttachment(attachment, idx)}
@@ -63,12 +64,25 @@
 					<track kind="captions" />
 				</video>
 			</figure>
+		{:else}
+			<figure
+				class="attachment-input relative flex aspect-square h-20 w-20 flex-col items-center justify-center gap-y-1"
+			>
+				<button
+					class="hocus:border-red-400 hocus:bg-red-400/40 absolute top-1 right-1 border border-red-400/50 bg-red-400/20 transition-colors duration-100 hover:cursor-pointer"
+					onclick={() => removeAttachment(attachment, idx)}
+				>
+					<Close height={16} width={16} class="text-red-400" />
+				</button>
+				<FileIcon height={32} width={32} />
+				<p class="w-[calc(100%-1.5rem)] truncate">{attachment.name}</p>
+			</figure>
 		{/if}
 	{/each}
 </div>
 
 <style>
-	.attachment::before {
+	.attachment-input::before {
 		content: '';
 		position: absolute;
 		inset: 0;

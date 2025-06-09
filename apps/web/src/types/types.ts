@@ -18,6 +18,11 @@ export interface Window {
 	channelId?: string;
 	serverId?: string;
 	friendId?: string;
+	width: number;
+	height: number;
+	x: number;
+	y: number;
+	tab: 'chat' | 'call';
 }
 
 export interface Channel {
@@ -89,6 +94,14 @@ export interface DefaultResponse {
 	message: string;
 }
 
+export interface Attachment {
+	id: string;
+	url: string;
+	file_name: string;
+	file_size: string;
+	type: string;
+}
+
 export interface Message {
 	id: string;
 	author: Partial<User>;
@@ -97,7 +110,7 @@ export interface Message {
 	content: any;
 	mentions_users: string[];
 	mentions_channels: string[];
-	attachments: string[];
+	attachments: Attachment[];
 	updated_at: string;
 	created_at: string;
 }

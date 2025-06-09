@@ -5,7 +5,7 @@
 
 	onMount(() => {
 		if (page.url.pathname === '/settings') {
-			goto('/settings/account');
+			goto('/settings/account', { replaceState: true });
 		}
 	});
 </script>

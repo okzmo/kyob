@@ -4,11 +4,11 @@ class Core {
 	canDragMap = $state(true);
 	offsetServerMap = $state({ x: 0, y: 0 });
 	totalOffsetServerMap = $state({ x: 0, y: 0 });
-	openCreateChannelModal = $state({ status: false, x: 0, y: 0 });
-	openCreateServerModal = $state({ status: false, x: 0, y: 0 });
-	openAddFriendModal = $state({ status: false });
-	openJoinServerModal = $state({ status: false, x: 0, y: 0 });
-	openAttachmentsModal = $state({ status: false, idx: 0, attachments: [] });
+	createChannelModal = $state({ status: false, x: 0, y: 0 });
+	createServerModal = $state({ status: false, x: 0, y: 0 });
+	addFriendModal = $state({ status: false });
+	joinServerModal = $state({ status: false, x: 0, y: 0 });
+	attachmentsModal = $state({ status: false, idx: 0, attachments: [] });
 	editingMessage = $state({ id: '' });
 	profiles = $state<User[]>([]);
 	profileOpen = $state<{
@@ -59,6 +59,17 @@ class Core {
 		if (user.links) profile.links = user.links;
 		if (user.about) profile.about = user.about;
 		if (user.main_color) profile.main_color = user.main_color;
+	}
+
+	openAttachmentsModal(attachments: any, idx: number) {
+		core.attachmentsModal.status = true;
+		core.attachmentsModal.attachments = attachments;
+		core.attachmentsModal.idx = idx;
+	}
+
+	closeAttachmentsModal() {
+		core.attachmentsModal.status = false;
+		core.attachmentsModal.idx = 0;
 	}
 }
 

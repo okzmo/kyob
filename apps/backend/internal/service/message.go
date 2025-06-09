@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -26,7 +25,7 @@ type MessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
-	Attachments      []string        `json:"attachments"`
+	Attachments      json.RawMessage `json:"attachments"`
 	Type             string          `json:"type"`
 }
 
@@ -42,7 +41,7 @@ type MessageResponse struct {
 	Content          json.RawMessage `json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
-	Attachments      []string        `json:"attachments"`
+	Attachments      json.RawMessage `json:"attachments"`
 	CreatedAt        time.Time       `json:"created_at"`
 	UpdatedAt        time.Time       `json:"updated_at"`
 }
@@ -66,7 +65,7 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId string, chann
 		Content:          body.Content,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
-		Attached:         body.Attachments,
+		Attachments:      body.Attachments,
 	})
 	if err != nil {
 		return nil, err
@@ -119,9 +118,15 @@ func DeleteMessage(ctx context.Context, messageId string, userId string) error {
 		return err
 	}
 
-	if len(mess.Attached) > 0 {
-		for _, attachment := range mess.Attached {
-			attachmentSplit := strings.Split(attachment, "/")
+	if len(mess.Attachments) > 0 {
+		var attachments []Attachment
+		err := json.Unmarshal(mess.Attachments, &attachments)
+		if err != nil {
+			return err
+		}
+
+		for _, attachment := range attachments {
+			attachmentSplit := strings.Split(attachment.Url, "/")
 			s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 				Key:    aws.String(attachmentSplit[len(attachmentSplit)-1]),
 				Bucket: aws.String("nyo-files"),
@@ -147,7 +152,6 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(m)
 
 	for _, message := range m {
 		author, err := db.Query.GetUserById(ctx, message.AuthorID)
@@ -173,7 +177,7 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 			Content:          message.Content,
 			MentionsUsers:    message.MentionsUsers,
 			MentionsChannels: message.MentionsChannels,
-			Attachments:      message.Attached,
+			Attachments:      message.Attachments,
 			UpdatedAt:        message.UpdatedAt,
 			CreatedAt:        message.CreatedAt,
 		})

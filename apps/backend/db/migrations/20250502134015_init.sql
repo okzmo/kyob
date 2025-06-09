@@ -74,7 +74,7 @@ CREATE TABLE messages(
   content JSONB NOT NULL,
   mentions_users VARCHAR(20) ARRAY,
   mentions_channels VARCHAR(20) ARRAY,
-  attached TEXT ARRAY,
+  attachments JSONB DEFAULT '[]',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );

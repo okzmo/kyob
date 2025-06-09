@@ -516,7 +516,7 @@ type IncomingChatMessage struct {
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
 	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
 	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	Attachments      []string               `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	Attachments      []byte                 `protobuf:"bytes,7,opt,name=attachments,proto3" json:"attachments,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -593,7 +593,7 @@ func (x *IncomingChatMessage) GetMentionsChannels() []string {
 	return nil
 }
 
-func (x *IncomingChatMessage) GetAttachments() []string {
+func (x *IncomingChatMessage) GetAttachments() []byte {
 	if x != nil {
 		return x.Attachments
 	}
@@ -769,7 +769,7 @@ type BroadcastChatMessage struct {
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
 	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
 	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	Attachments      []string               `protobuf:"bytes,8,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	Attachments      []byte                 `protobuf:"bytes,8,opt,name=attachments,proto3" json:"attachments,omitempty"`
 	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -854,7 +854,7 @@ func (x *BroadcastChatMessage) GetMentionsChannels() []string {
 	return nil
 }
 
-func (x *BroadcastChatMessage) GetAttachments() []string {
+func (x *BroadcastChatMessage) GetAttachments() []byte {
 	if x != nil {
 		return x.Attachments
 	}
@@ -2567,7 +2567,7 @@ const file_types_proto_rawDesc = "" +
 	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
 	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
 	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\x12 \n" +
-	"\vattachments\x18\a \x03(\tR\vattachments\"\xf3\x01\n" +
+	"\vattachments\x18\a \x01(\fR\vattachments\"\xf3\x01\n" +
 	"\x0fEditChatMessage\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
@@ -2594,7 +2594,7 @@ const file_types_proto_rawDesc = "" +
 	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
 	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
 	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x12 \n" +
-	"\vattachments\x18\b \x03(\tR\vattachments\x129\n" +
+	"\vattachments\x18\b \x01(\fR\vattachments\x129\n" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x02\n" +
 	"\x14BroadcastEditMessage\x12\x1d\n" +

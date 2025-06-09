@@ -1,16 +1,9 @@
 <script lang="ts">
-	import { generateHTML } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import { formatMessageTime } from 'utils/date';
-	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 	import { onMount } from 'svelte';
 	import { core } from 'stores/core.svelte';
-	import EditMessageInput from '../editMessageInput/editMessageInput.svelte';
 	import type { Channel, Server, User } from 'types/types';
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
-	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
-	import ChatWindowMessagesAttachments from './ChatWindowMessagesAttachments.svelte';
 	import ChatWindowMessageUser from './ChatWindowMessageUser.svelte';
 	import ChatWindowMessageContent from './ChatWindowMessageContent.svelte';
 

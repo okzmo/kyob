@@ -71,7 +71,7 @@ class Servers {
 	addMessage(serverId: string, message: Message) {
 		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
 		if (Array.isArray(messages)) {
-			messages.push(message);
+			messages.unshift(message);
 		}
 	}
 

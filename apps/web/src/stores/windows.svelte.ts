@@ -51,7 +51,17 @@ class Windows {
 			return;
 		}
 
-		this.openWindows.push({ id, serverId, channelId, friendId });
+		this.openWindows.push({
+			id,
+			serverId,
+			channelId,
+			friendId,
+			width: 550,
+			height: 400,
+			x: 100,
+			y: 150,
+			tab: 'chat'
+		});
 		this.activeWindow = id;
 	}
 

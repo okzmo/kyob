@@ -78,6 +78,7 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const contentStr = new TextDecoder().decode(wsMess.content.value?.content);
+						const attachments = new TextDecoder().decode(wsMess.content.value?.attachments);
 						const authorAbout = new TextDecoder().decode(wsMess.content.value?.author!.about);
 						const authorLinks = new TextDecoder().decode(wsMess.content.value?.author!.links);
 						const authorFacts = new TextDecoder().decode(wsMess.content.value?.author!.facts);
@@ -104,7 +105,7 @@ class Backend {
 							content: JSON.parse(contentStr),
 							mentions_users: wsMess.content.value.mentionsUsers,
 							mentions_channels: wsMess.content.value.mentionsChannels,
-							attachments: wsMess.content.value.attachments,
+							attachments: attachments.length > 0 ? JSON.parse(attachments) : [],
 							updated_at: timestampDate(wsMess.content.value.createdAt!).toISOString(),
 							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
 						};
@@ -340,12 +341,13 @@ class Backend {
 		try {
 			const formData = new FormData();
 			formData.append('name', body.name);
-			formData.append('description', JSON.stringify(body.description));
 			formData.append('avatar', body.avatar);
 			formData.append('crop', JSON.stringify(body.crop));
 			formData.append('private', String(body.private));
 			formData.append('x', String(body.x));
 			formData.append('y', String(body.y));
+
+			if (body.description) formData.append('description', JSON.stringify(body.description));
 
 			const res = await client.post('server', {
 				body: formData
@@ -563,7 +565,6 @@ class Backend {
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
-			console.log(data);
 
 			return ok(data);
 		} catch (error) {

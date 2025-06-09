@@ -3,6 +3,7 @@
 	import { backend } from 'stores/backend.svelte';
 	import Corners from '../Corners/Corners.svelte';
 	import { page } from '$app/state';
+	import { windows } from 'stores/windows.svelte';
 
 	interface Props {
 		type: 'general' | 'server';
@@ -40,15 +41,15 @@
 </script>
 
 <aside class="mt-20 flex h-screen w-[20rem] flex-col gap-y-6 overflow-auto select-none">
-	<a
-		href="/"
+	<button
 		class={[
-			'group text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 relative block w-full px-3 py-1 transition duration-100'
+			'group text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 relative block w-full px-3 py-1 text-left transition duration-100'
 		]}
+		onclick={() => history.back()}
 	>
 		<Corners color="border-main-300" class="group-hocus:border-main-200" />
 		Go back
-	</a>
+	</button>
 	{#each Object.entries(SECTIONS[type]) as section, idx (idx)}
 		<ul>
 			<h2 class="text-main-500 mb-1 text-xs font-bold uppercase">{section[0]}</h2>
