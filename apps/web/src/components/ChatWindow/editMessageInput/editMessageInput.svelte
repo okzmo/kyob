@@ -2,16 +2,16 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import type { SuggestionProps } from '@tiptap/suggestion';
 	import MentionsList from 'components/ChatWindow/chatWindowInput/extensions/mentions/MentionsList.svelte';
 	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 	import { core } from 'stores/core.svelte';
 	import { backend } from 'stores/backend.svelte';
+	import { editorStore } from 'stores/editor.svelte';
+	import EmojisList from '../chatWindowInput/extensions/emojis/EmojisList.svelte';
+	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
 
 	let element: Element;
 	let editor: Editor;
-	let mentionProps = $state<SuggestionProps | null>();
-	let mentionsListEl = $state<any>();
 
 	let { server, channel, messageId, content } = $props();
 
@@ -40,6 +40,8 @@
 	}
 
 	onMount(() => {
+		editorStore.currentInput = 'edit';
+
 		editor = new Editor({
 			element: element,
 			autofocus: 'end',
@@ -52,6 +54,14 @@
 					orderedList: false,
 					bulletList: false,
 					blockquote: false
+				}),
+				EmojisSuggestion.configure({
+					HTMLAttributes: {
+						class: 'editor-emoji'
+					},
+					renderHTML({ options, node }) {
+						return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
+					}
 				}),
 				CustomMention.configure({
 					HTMLAttributes: {
@@ -69,6 +79,9 @@
 			onTransaction: () => {
 				editor = editor;
 			},
+			onBlur: () => {
+				core.stopEditingMessage();
+			},
 			editorProps: {
 				attributes: {
 					class: 'editor-message'
@@ -77,7 +90,8 @@
 					if (
 						ev.key === 'Enter' &&
 						!ev.shiftKey &&
-						(!mentionProps || mentionProps.items.length === 0)
+						(!editorStore.mentionProps || editorStore.mentionProps.items.length === 0) &&
+						(!editorStore.emojiProps || editorStore.emojiProps.items.length === 0)
 					) {
 						ev.preventDefault();
 						editMessage(editor.getJSON());
@@ -95,17 +109,25 @@
 	});
 
 	onDestroy(() => {
+		editorStore.currentInput = 'main';
 		if (editor) {
 			editor.destroy();
 		}
 	});
 </script>
 
-{#if mentionProps}
+{#if editorStore.currentInput === 'edit' && editorStore.mentionProps}
 	<MentionsList
-		props={mentionProps}
-		bind:this={mentionsListEl}
-		class="absolute -top-[2.25rem] left-2 w-[calc(100%-1rem)]"
+		props={editorStore.mentionProps}
+		bind:this={editorStore.mentionsListEl}
+		class="absolute -top-[2.25rem] left-3.5 w-[calc(100%-1.5rem)]"
+	/>
+{/if}
+{#if editorStore.currentInput === 'edit' && editorStore.emojiProps}
+	<EmojisList
+		props={editorStore.emojiProps}
+		bind:this={editorStore.emojisListEl}
+		class="absolute -top-[2.25rem] left-3.5 w-[calc(100%-1.5rem)]"
 	/>
 {/if}
 <div class="pointer-events-auto w-full" bind:this={element}></div>

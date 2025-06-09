@@ -40,7 +40,7 @@ export const EmojisSuggestion = EmojiExtended.configure({
 							emoji.tags?.includes(lowerQuery)
 						);
 					})
-					.slice(0, 10);
+					.slice(0, 8);
 
 				return res;
 			},

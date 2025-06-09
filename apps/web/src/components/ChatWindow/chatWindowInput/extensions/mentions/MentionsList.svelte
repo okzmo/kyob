@@ -73,7 +73,7 @@
 	<div
 		bind:this={scrollableMenu}
 		class={[
-			'bg-main-900 inner-main-800 flex max-h-[20rem] flex-col gap-y-1 overflow-y-auto px-1 py-1',
+			'bg-main-900 inner-main-800 z-[99] flex max-h-[20rem] flex-col gap-y-1 overflow-y-auto px-1 py-1',
 			classes
 		]}
 	>

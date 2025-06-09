@@ -206,7 +206,7 @@ class Backend {
 						);
 
 						if (
-							message?.mentions_users.includes(userStore.user!.id) &&
+							message?.mentions_users?.includes(userStore.user!.id) &&
 							message.author.id !== userStore.user!.id
 						) {
 							sounds.playSound('notification');
