@@ -51,7 +51,3 @@
 <UserProfileNoTrigger />
 <AddFriendModal />
 <AttachmentsModal />
-
-{#if !onSettingsPage}
-	<GridDots />
-{/if}

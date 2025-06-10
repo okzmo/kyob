@@ -22,6 +22,7 @@
 	--ui-accent-select-fg: #ccd5ff;
 	--ui-accent-select-bg: #a3b3ff30;
 	--ui-main-50: #fafafa;
+	--ui-main-5010: #fafafa1a;
 	--ui-main-200: #e4e4e7;
 	--ui-main-300: #9f9fad;
 	--ui-main-400: #6a6a7c;
@@ -29,8 +30,11 @@
 	--ui-main-500: #525260;
 	--ui-main-600: #4b4b58;
 	--ui-main-700: #3b3b45;
+	--ui-main-70040: #3b3b4566;
+	--ui-main-70020: #3b3b4533;
 	--ui-main-70000: #3b3b4500;
 	--ui-main-800: #212126;
+	--ui-main-80040: #21212666;
 	--ui-main-80025: #21212640;
 	--ui-main-850: #18181b;
 	--ui-main-900: #121215;
@@ -215,17 +219,25 @@ body {
 .inner-shadow-main-800 {
 	box-shadow:
 		inset 0 0 0 1px var(--color-main-800),
-		inset 0px 0px 20px 0.5px rgba(33, 33, 38, 0.4);
+		inset 0px 0px 20px 0.5px var(--ui-main-80040);
 }
 
 .inner-main-800 {
 	box-shadow:
 		inset 0 0 0 1px var(--color-main-800),
-		inset 0px 0px 10px 0.5px rgba(33, 33, 38, 0.4);
+		inset 0px 0px 10px 0.5px var(--ui-main-80040);
+}
+
+.hocus\:inner-main-700-shadow {
+	&:hover {
+		box-shadow:
+			inset 0 0 0 1px var(--color-main-700),
+			inset 0px 0px 0px 99px var(--ui-main-70020);
+	}
 }
 
 .inner-main-50\/10 {
-	box-shadow: inset 0 0 0 1px #fafafa1a;
+	box-shadow: inset 0 0 0 1px var(--ui-main-5010);
 }
 
 .inner-main-700 {
@@ -247,6 +259,20 @@ body {
 
 	&:focus-visible {
 		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
+	}
+}
+
+.hocus\:inner-green-400\/40 {
+	&:hover {
+		box-shadow:
+			inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.4),
+			inset 0 0 0 99px oklch(79.2% 0.209 151.711 / 0.05);
+	}
+
+	&:focus-visible {
+		box-shadow:
+			inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.4),
+			inset 0 0 0 99px oklch(79.2% 0.209 151.711 / 0.05);
 	}
 }
 

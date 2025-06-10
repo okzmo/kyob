@@ -6,8 +6,6 @@ import { PluginKey } from '@tiptap/pm/state';
 import { editorStore } from 'stores/editor.svelte';
 
 const MentionExtended = Mention.extend({
-	name: 'customMention',
-
 	addPasteRules() {
 		return [
 			new PasteRule({

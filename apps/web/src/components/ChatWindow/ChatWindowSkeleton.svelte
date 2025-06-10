@@ -8,13 +8,14 @@
 
 	interface Props {
 		id: string;
+		tab: 'chat' | 'call';
 		server?: Server;
 		channel?: Channel;
 		friend?: Friend;
 		children: Snippet;
 	}
 
-	let { id, children, server, channel, friend }: Props = $props();
+	let { id, children, tab, server, channel, friend }: Props = $props();
 
 	let windowState = $state(windows.openWindows.find((w) => w.id === id)!);
 	let startPos = $state({ x: 0, y: 0 });
@@ -69,7 +70,7 @@
 		e.preventDefault();
 
 		windowState.width = Math.max(450, initialSize.width + (e.clientX - startPosResizing.x));
-		windowState.height = Math.max(250, initialSize.height + (e.clientY - startPosResizing.y));
+		windowState.height = Math.max(350, initialSize.height + (e.clientY - startPosResizing.y));
 	}
 
 	function stopResizing() {
@@ -114,7 +115,7 @@
 	]}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
-	<ChatWindowTopBar {id} {server} {channel} {friend} />
+	<ChatWindowTopBar {id} {tab} {server} {channel} {friend} />
 	<div
 		style="width: {windowState?.width}px; height: {windowState?.height}px"
 		class="bg-main-900 inner-main-800 relative mt-0.5 flex flex-col items-start overflow-hidden"

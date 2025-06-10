@@ -62,7 +62,7 @@
 		}
 	}}
 >
-	<Popover.Trigger />
+	<Popover.Trigger class="absolute" />
 	<CustomPopoverContent
 		class="gradient-user-profile relative w-[20rem] rounded-lg p-1"
 		align="start"

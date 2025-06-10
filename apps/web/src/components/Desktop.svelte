@@ -69,6 +69,7 @@
 			{#each windows.openWindows as chatWindow (chatWindow.id)}
 				<ChatWindow
 					id={chatWindow.id}
+					tab={chatWindow.tab}
 					serverId={chatWindow.serverId}
 					channelId={chatWindow.channelId}
 					friendId={chatWindow.friendId}

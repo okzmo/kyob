@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import type { Channel } from 'types/types';
 	import ChannelButton from '../ui/ChannelButton/ChannelButton.svelte';
+	import GridDots from 'components/GridDots.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });
@@ -156,3 +157,4 @@
 {/if}
 
 <CreateChannelModal />
+<GridDots {offset} />

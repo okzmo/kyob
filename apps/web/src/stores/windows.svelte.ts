@@ -10,6 +10,14 @@ class Windows {
 		this.activeWindow = window;
 	}
 
+	toggleCallTab() {
+		if (!this.activeWindow) return;
+		const activeWindow = this.openWindows.find((w) => w.id === this.activeWindow)!;
+
+		if (activeWindow.tab === 'call') activeWindow.tab = 'chat';
+		else activeWindow.tab = 'call';
+	}
+
 	reuseLastWindow() {
 		this.activeWindow = this.lastActiveWindow;
 	}
