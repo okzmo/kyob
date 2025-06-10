@@ -22,7 +22,7 @@
 
 <ContextMenu.Portal>
 	<ContextMenu.Content
-		class="bg-main-900 inner-shadow-main-800 relative flex w-[225px] flex-col gap-y-1 p-2"
+		class="bg-main-900 inner-shadow-main-800 relative flex w-[225px] flex-col gap-y-1 p-2 select-none"
 		onmousedown={contextMenuMouseDown}
 	>
 		<Corners color="border-main-700" />

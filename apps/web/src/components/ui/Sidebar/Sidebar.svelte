@@ -56,6 +56,7 @@
 			{#each section[1] as link, idx (idx)}
 				<li class="mt-2.5">
 					<a
+						data-sveltekit-replacestate
 						href={link.locked ? '#' : link.href}
 						class={[
 							'group relative block w-full px-3 py-1 transition duration-100',

@@ -11,6 +11,7 @@
 	import { windows } from 'stores/windows.svelte';
 	import { goback } from 'stores/goback.svelte';
 	import Serverbar from './Serverbar/Serverbar.svelte';
+	import { searchValidMessageParent } from 'utils/dom';
 
 	let { children } = $props();
 
@@ -22,18 +23,20 @@
 		const targetId = (e.target as HTMLElement).id;
 		const targetAuthor = (e.target as HTMLElement).dataset?.authorId;
 		const identifier = targetId.split('-')[0] as ContextMenuTarget;
+
 		if (!contextMenuTargets.includes(identifier)) {
 			const selection = window.getSelection();
-			if (selection?.type === 'Range') {
-				const targetParent = (e.target as HTMLElement).parentElement?.parentElement?.parentElement;
-				const targetId = targetParent?.id;
-				const targetAuthor = targetParent?.dataset?.authorId;
-				if (targetId?.includes('message')) {
-					contextMenuTarget = targetId;
-					contextMenuTargetAuthor = targetAuthor;
-				}
+			if (selection?.type !== 'Range') return;
+
+			const { id, author } = searchValidMessageParent(e.target as HTMLElement);
+			if (id && author) {
+				contextMenuTarget = id;
+				contextMenuTargetAuthor = author;
 			}
 		} else {
+			contextMenuTarget = targetId;
+			contextMenuTargetAuthor = targetAuthor;
+
 			switch (identifier) {
 				case 'inServer':
 					core.createChannelModal.x = e.clientX;
@@ -46,8 +49,6 @@
 					core.joinServerModal.y = e.clientY;
 					break;
 			}
-			contextMenuTarget = targetId;
-			contextMenuTargetAuthor = targetAuthor;
 		}
 	}
 </script>
