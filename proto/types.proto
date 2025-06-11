@@ -17,6 +17,11 @@ message WSMessage {
     AcceptFriendInvite accept_friend = 10;
     DeleteFriend delete_friend = 11;
     BroadcastUserInformations user_changed = 12;
+    CallInitialization call_users = 13;
+    ConnectToCall connect_to_call = 14;
+    DisconnectFromCall disconnect_from_call = 15;
+    Mute mute_user = 16;
+    Deafen deafen_user = 17;
   }
 }
 
@@ -226,8 +231,39 @@ message DeleteFriend {
 message Connect {
   string type = 1;
 }
+
+message ConnectToCall {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+}
+
+message CallInitialization {
+  repeated ConnectToCall call_users = 1;
+}
+
 message Disconnect {
   string type = 1;
+}
+
+message DisconnectFromCall {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+}
+
+message Mute {
+  string user_id = 1;
+  bool status = 2;
+  string server_id = 3;
+  string channel_id = 4;
+}
+
+message Deafen {
+  string user_id = 1;
+  bool status = 2;
+  string server_id = 3;
+  string channel_id = 4;
 }
 
 message UserInformations {

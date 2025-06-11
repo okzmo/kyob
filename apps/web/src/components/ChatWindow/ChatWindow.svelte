@@ -30,7 +30,7 @@
 		{/await}
 		<ChatWindowInput {channel} {server} {friend} />
 	{:else if tab === 'call'}
-		<ChatWindowCall />
+		<ChatWindowCall {server} {channel} />
 	{/if}
 
 	<ChatWindowErrors />

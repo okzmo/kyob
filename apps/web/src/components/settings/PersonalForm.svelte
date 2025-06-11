@@ -15,7 +15,6 @@
 		SPA: true,
 		validators: valibot(UpdateAccountSchema),
 		validationMethod: 'onsubmit',
-		multipleSubmits: 'prevent',
 		async onUpdate({ form }) {
 			if (form.valid) {
 				isSubmitting = true;

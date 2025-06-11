@@ -5,6 +5,7 @@
 	import Close from '../ui/icons/Close.svelte';
 	import Phone from 'components/ui/icons/Phone.svelte';
 	import HashChat from 'components/ui/icons/HashChat.svelte';
+	import { backend } from 'stores/backend.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
 
@@ -64,7 +65,10 @@
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
-		onclick={() => windows.toggleCallTab()}
+		onclick={() => {
+			backend.connectToCall(server.id, channel.id);
+			windows.toggleCallTab();
+		}}
 	>
 		<Corners
 			color="border-main-700"

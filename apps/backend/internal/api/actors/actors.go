@@ -32,10 +32,17 @@ func SetupServersEngine() {
 	}
 }
 
+type VoiceUser struct {
+	Id     string `json:"user_id"`
+	Deafen bool   `json:"deafen"`
+	Mute   bool   `json:"mute"`
+}
+
 type (
 	ChannelMap map[*actor.PID]bool
 	ServerMap  map[*actor.PID]bool
 	UserMap    map[*actor.PID]bool
+	CallMap    map[string]VoiceUser
 )
 
 type server struct {
@@ -92,12 +99,14 @@ func (s *server) Receive(ctx *actor.Context) {
 
 type channel struct {
 	users  UserMap
+	call   CallMap
 	logger *slog.Logger
 }
 
 func NewChannel() actor.Receiver {
 	return &channel{
 		users:  make(UserMap),
+		call:   make(CallMap),
 		logger: slog.Default(),
 	}
 }
@@ -121,6 +130,10 @@ func (c *channel) Receive(ctx *actor.Context) {
 		c.Connect(ctx)
 	case *protoTypes.Disconnect:
 		c.Disconnect(ctx)
+	case *protoTypes.ConnectToCall:
+		c.ConnectToCall(ctx, msg)
+	case *protoTypes.DisconnectFromCall:
+		c.DisconnectFromCall(ctx, msg)
 	case *protoTypes.IncomingChatMessage:
 		c.NewMessage(ctx, msg)
 	case *protoTypes.EditChatMessage:
@@ -176,6 +189,12 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.BroadcastEditMessage(ctx, msg)
 	case *protoTypes.DeleteChatMessage:
 		u.BroadcastDeleteMessage(ctx, msg)
+	case *protoTypes.CallInitialization:
+		u.SendCallInitialization(ctx, msg)
+	case *protoTypes.ConnectToCall:
+		u.BroadcastConnectToCall(ctx, msg)
+	case *protoTypes.DisconnectFromCall:
+		u.BroadcastDisconnectFromCall(ctx, msg)
 	case *protoTypes.BodyNewUserInServer:
 		u.BroadcastNewUserInServer(ctx, msg)
 	case *protoTypes.SendFriendInvite:

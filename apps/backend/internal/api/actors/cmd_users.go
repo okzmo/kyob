@@ -248,3 +248,36 @@ func (u *user) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.Bro
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
+
+func (u *user) BroadcastConnectToCall(ctx *actor.Context, msg *protoTypes.ConnectToCall) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_ConnectToCall{
+			ConnectToCall: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) BroadcastDisconnectFromCall(ctx *actor.Context, msg *protoTypes.DisconnectFromCall) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_DisconnectFromCall{
+			DisconnectFromCall: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) SendCallInitialization(ctx *actor.Context, msg *protoTypes.CallInitialization) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_CallUsers{
+			CallUsers: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}

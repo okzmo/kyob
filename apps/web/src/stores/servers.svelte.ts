@@ -1,4 +1,3 @@
-import { message } from 'sveltekit-superforms';
 import type { Channel, Message, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 
@@ -168,6 +167,24 @@ class Servers {
 
 			server.members.splice(memberIdx, 1);
 			server.member_count -= 1;
+		}
+	}
+
+	initiateCall(serverId: string, channelId: string, users: any) {
+		const channel = this.getChannel(serverId, channelId);
+		channel.voice_users = users;
+	}
+
+	connectUserToCall(serverId: string, channelId: string, userId: string) {
+		const channel = this.getChannel(serverId, channelId);
+		channel.voice_users.push({ user_id: userId, deafen: false, mute: false });
+	}
+
+	disconnectUserFromCall(serverId: string, channelId: string, userId: string) {
+		const channel = this.getChannel(serverId, channelId);
+		const userIdx = channel.voice_users.findIndex((u) => u.user_id === userId);
+		if (userIdx > -1) {
+			channel.voice_users.splice(userIdx, 1);
 		}
 	}
 }

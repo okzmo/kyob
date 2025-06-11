@@ -93,6 +93,82 @@ body {
 	background: var(--ui-accent-select-bg);
 }
 
+::-webkit-scrollbar {
+	display: none;
+}
+
+* {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+@utility inner-accent/15 {
+	@apply shadow-[inset_0_0_0_1px_var(--ui-accent-10015)];
+}
+
+@utility inner-accent-no-shadow/25 {
+	box-shadow: inset 0px 0px 0px 1px var(--ui-accent-10025);
+}
+
+@utility inner-accent/25 {
+	box-shadow:
+		inset 0px 0px 0px 1px var(--ui-accent-10025),
+		inset 0px 0px 14px 0.5px var(--ui-accent-10025);
+}
+
+@utility inner-shadow-main-800 {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 20px 0.5px var(--ui-main-80040);
+}
+
+@utility inner-main-800 {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 10px 0.5px var(--ui-main-80040);
+}
+
+@utility inner-main-700-shadow {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-700),
+		inset 0px 0px 0px 99px var(--ui-main-70020);
+}
+
+@utility inner-main-50/10 {
+	box-shadow: inset 0 0 0 1px var(--ui-main-5010);
+}
+
+@utility inner-main-700 {
+	@apply shadow-[inset_0_0_0_1px_var(--color-main-700)];
+}
+
+@utility inner-red-400/20 {
+	box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.2);
+}
+
+@utility inner-red-400/40 {
+	box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
+}
+
+@utility inner-green-400/40 {
+	box-shadow:
+		inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.4),
+		inset 0 0 0 99px oklch(79.2% 0.209 151.711 / 0.05);
+}
+
+.inner-shadow-input {
+	box-shadow:
+		inset 0 0 0 1px var(--color-main-800),
+		inset 0px 0px 20px 0.5px #21212666;
+
+	&:hover {
+		background-color: var(--ui-main-800);
+		box-shadow:
+			inset 0 0 0 1px var(--color-main-500),
+			inset 0px 0px 14px 0.5px #3b3b4566;
+	}
+}
+
 .tiptap {
 	height: 100%;
 }
@@ -109,15 +185,6 @@ body {
 	float: left;
 	height: 0;
 	pointer-events: none;
-}
-
-::-webkit-scrollbar {
-	display: none;
-}
-
-* {
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
 }
 
 .editor-mention {
@@ -168,111 +235,6 @@ body {
 
 	&:focus-visible {
 		background-color: var(--ui-mention-10025);
-	}
-}
-
-.hocus\:inner-accent\/15 {
-	@apply hocus:shadow-[inset_0_0_0_1px_var(--ui-accent-10015)];
-}
-
-.inner-accent\/15 {
-	@apply shadow-[inset_0_0_0_1px_var(--ui-accent-10015)];
-}
-
-.hocus\:inner-accent-no-shadow\/25 {
-	&:hover {
-		box-shadow: inset 0px 0px 0px 1px var(--ui-accent-10025);
-	}
-
-	&:focus-visible {
-		box-shadow: inset 0px 0px 0px 1px var(--ui-accent-10025);
-	}
-}
-
-.hocus\:inner-accent\/25 {
-	&:hover {
-		box-shadow:
-			inset 0px 0px 0px 1px var(--ui-accent-10025),
-			inset 0px 0px 14px 0.5px var(--ui-accent-10025);
-	}
-
-	&:focus-visible {
-		box-shadow:
-			inset 0px 0px 0px 1px var(--ui-accent-10025),
-			inset 0px 0px 14px 0.5px var(--ui-accent-10025);
-	}
-}
-
-.inner-shadow-input {
-	box-shadow:
-		inset 0 0 0 1px var(--color-main-800),
-		inset 0px 0px 20px 0.5px #21212666;
-
-	&:hover {
-		background-color: var(--ui-main-800);
-		box-shadow:
-			inset 0 0 0 1px var(--color-main-500),
-			inset 0px 0px 14px 0.5px #3b3b4566;
-	}
-}
-
-.inner-shadow-main-800 {
-	box-shadow:
-		inset 0 0 0 1px var(--color-main-800),
-		inset 0px 0px 20px 0.5px var(--ui-main-80040);
-}
-
-.inner-main-800 {
-	box-shadow:
-		inset 0 0 0 1px var(--color-main-800),
-		inset 0px 0px 10px 0.5px var(--ui-main-80040);
-}
-
-.hocus\:inner-main-700-shadow {
-	&:hover {
-		box-shadow:
-			inset 0 0 0 1px var(--color-main-700),
-			inset 0px 0px 0px 99px var(--ui-main-70020);
-	}
-}
-
-.inner-main-50\/10 {
-	box-shadow: inset 0 0 0 1px var(--ui-main-5010);
-}
-
-.inner-main-700 {
-	@apply shadow-[inset_0_0_0_1px_var(--color-main-700)];
-}
-
-.hocus\:inner-main-700 {
-	@apply hocus:shadow-[inset_0_0_0_1px_var(--color-main-700)];
-}
-
-.inner-red-400\/20 {
-	box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.2);
-}
-
-.hocus\:inner-red-400\/40 {
-	&:hover {
-		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
-	}
-
-	&:focus-visible {
-		box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
-	}
-}
-
-.hocus\:inner-green-400\/40 {
-	&:hover {
-		box-shadow:
-			inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.4),
-			inset 0 0 0 99px oklch(79.2% 0.209 151.711 / 0.05);
-	}
-
-	&:focus-visible {
-		box-shadow:
-			inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.4),
-			inset 0 0 0 99px oklch(79.2% 0.209 151.711 / 0.05);
 	}
 }
 

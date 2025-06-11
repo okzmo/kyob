@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -33,8 +34,8 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 		Y:           body.Y,
 	}
 
-	channelPID := actors.ServersEngine.Registry.GetPID("server", serverId)
-	actors.ServersEngine.Send(channelPID, channelMessage)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	actors.ServersEngine.Send(serverPID, channelMessage)
 
 	utils.RespondWithJSON(w, http.StatusCreated, DefaultResponse{Message: "success"})
 }
@@ -75,6 +76,40 @@ func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 	}
 	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
 	actors.ServersEngine.Send(serverPID, protoMessage)
+
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
+}
+
+func ConnectToCall(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user").(db.User)
+	channelId := chi.URLParam(r, "channel_id")
+	serverId := chi.URLParam(r, "server_id")
+
+	protoMessage := &proto.ConnectToCall{
+		UserId:    user.ID,
+		ServerId:  serverId,
+		ChannelId: channelId,
+	}
+
+	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
+	actors.ServersEngine.Send(channelPID, protoMessage)
+
+	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
+}
+
+func DisconnectFromCall(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user").(db.User)
+	channelId := chi.URLParam(r, "channel_id")
+	serverId := chi.URLParam(r, "server_id")
+
+	protoMessage := &proto.DisconnectFromCall{
+		UserId:    user.ID,
+		ServerId:  serverId,
+		ChannelId: channelId,
+	}
+
+	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
+	actors.ServersEngine.Send(channelPID, protoMessage)
 
 	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
 }

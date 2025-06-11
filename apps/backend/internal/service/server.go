@@ -272,6 +272,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		channel := ChannelsWithMembers{
 			channelRaw,
 			[]db.GetUsersByIdsRow{},
+			[]voiceUser{},
 		}
 
 		for _, userId := range channelRaw.Users {

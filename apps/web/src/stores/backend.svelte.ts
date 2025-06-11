@@ -5,6 +5,7 @@ import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	AcceptFriendErrors,
 	AddFriendErrors,
+	CallErrors,
 	CreateChannelErrors,
 	CreateInviteErrors,
 	CreateMessageErrors,
@@ -136,7 +137,8 @@ class Backend {
 								avatar: u.avatar,
 								username: u.username,
 								display_name: u.displayName
-							}))
+							})),
+							voice_users: []
 						};
 						serversStore.addChannel(value.serverId, channel);
 					}
@@ -297,6 +299,29 @@ class Backend {
 						}
 
 						core.modifyProfile(value.userId, user);
+					}
+					break;
+				case 'connectToCall':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.connectUserToCall(value.serverId, value.channelId, value.userId);
+					}
+					break;
+				case 'disconnectFromCall':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						serversStore.disconnectUserFromCall(value.serverId, value.channelId, value.userId);
+					}
+					break;
+				case 'callUsers':
+					{
+						if (!wsMess.content.value) return;
+						const value = wsMess.content.value;
+						for (const call of value.callUsers) {
+							serversStore.connectUserToCall(call.serverId, call.channelId, call.userId);
+						}
 					}
 					break;
 			}
@@ -767,7 +792,39 @@ class Backend {
 				body: JSON.stringify(body)
 			});
 
-			const data = (await res.json()) as { banner: string; avatar: string; main_color: string };
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async connectToCall(serverId: string, channelId: string): Promise<Result<void, CallErrors>> {
+		try {
+			const res = await client.post(`channels/${serverId}/${channelId}/join_call`);
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async disconnectFromCall(serverId: string, channelId: string): Promise<Result<void, CallErrors>> {
+		try {
+			const res = await client.post(`channels/${serverId}/${channelId}/quit_call`);
+
+			const data = await res.json();
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}

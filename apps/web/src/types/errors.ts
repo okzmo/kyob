@@ -115,3 +115,9 @@ export interface UpdateAvatarErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface CallErrors {
+	code: 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}

@@ -22,7 +22,6 @@
 		dataType: 'json',
 		validators: valibot(UpdateProfileSchema),
 		validationMethod: 'onsubmit',
-		multipleSubmits: 'prevent',
 		resetForm: false,
 		async onUpdate({ form }) {
 			if (form.valid) {

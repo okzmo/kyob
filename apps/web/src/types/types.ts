@@ -34,6 +34,11 @@ export interface Channel {
 	unread: boolean;
 	messages?: Message[];
 	users?: Partial<User>[];
+	voice_users: {
+		user_id: string;
+		deafen: boolean;
+		mute: boolean;
+	}[];
 }
 
 export interface Server {

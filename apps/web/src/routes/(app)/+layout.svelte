@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	import Audio from 'components/Audio.svelte';
 	import Desktop from 'components/Desktop.svelte';
-	import GridDots from 'components/GridDots.svelte';
 	import AddFriendModal from 'components/modals/AddFriendModal.svelte';
 	import AttachmentsModal from 'components/modals/AttachmentsModal.svelte';
 	import UserProfileNoTrigger from 'components/UserProfile/UserProfileNoTrigger.svelte';
@@ -13,7 +12,6 @@
 	import { userStore } from 'stores/user.svelte';
 	import { onMount } from 'svelte';
 
-	let onSettingsPage = $derived(page.url.pathname.includes('/settings'));
 	let { children } = $props();
 
 	onMount(async () => {

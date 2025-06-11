@@ -45,6 +45,8 @@ func Setup() {
 			r.Post("/channels/{server_id}", handlers.CreateChannel)
 			r.Patch("/channels/{channel_id}", handlers.EditChannel)
 			r.Delete("/channels/{server_id}/{channel_id}", handlers.DeleteChannel)
+			r.Post("/channels/{server_id}/{channel_id}/join_call", handlers.ConnectToCall)
+			r.Post("/channels/{server_id}/{channel_id}/quit_call", handlers.DisconnectFromCall)
 			r.Get("/messages/{channel_id}", handlers.GetMessages)
 			r.Post("/messages/{server_id}/{channel_id}", handlers.CreateOrEditMessage)
 			r.Patch("/messages/{server_id}/{channel_id}/{message_id}", handlers.CreateOrEditMessage)

@@ -19,9 +19,16 @@ type ServerWithChannels struct {
 	Members     []db.GetMembersFromServersRow  `json:"members"`
 }
 
+type voiceUser struct {
+	UserId []string `json:"id"`
+	Deafen bool     `json:"deafen"`
+	Mute   bool     `json:"mute"`
+}
+
 type ChannelsWithMembers struct {
 	db.Channel
-	Users []db.GetUsersByIdsRow `json:"users"`
+	Users      []db.GetUsersByIdsRow `json:"users"`
+	VoiceUsers []voiceUser           `json:"voice_users"`
 }
 
 type UserResponse struct {
@@ -176,6 +183,7 @@ func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (ma
 			channelMap[channel.ID] = ChannelsWithMembers{
 				channel,
 				channelUsers,
+				[]voiceUser{},
 			}
 		}
 

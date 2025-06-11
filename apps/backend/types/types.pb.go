@@ -38,6 +38,11 @@ type WSMessage struct {
 	//	*WSMessage_AcceptFriend
 	//	*WSMessage_DeleteFriend
 	//	*WSMessage_UserChanged
+	//	*WSMessage_CallUsers
+	//	*WSMessage_ConnectToCall
+	//	*WSMessage_DisconnectFromCall
+	//	*WSMessage_MuteUser
+	//	*WSMessage_DeafenUser
 	Content       isWSMessage_Content `protobuf_oneof:"content"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -188,6 +193,51 @@ func (x *WSMessage) GetUserChanged() *BroadcastUserInformations {
 	return nil
 }
 
+func (x *WSMessage) GetCallUsers() *CallInitialization {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_CallUsers); ok {
+			return x.CallUsers
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetConnectToCall() *ConnectToCall {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_ConnectToCall); ok {
+			return x.ConnectToCall
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetDisconnectFromCall() *DisconnectFromCall {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_DisconnectFromCall); ok {
+			return x.DisconnectFromCall
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetMuteUser() *Mute {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_MuteUser); ok {
+			return x.MuteUser
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetDeafenUser() *Deafen {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_DeafenUser); ok {
+			return x.DeafenUser
+		}
+	}
+	return nil
+}
+
 type isWSMessage_Content interface {
 	isWSMessage_Content()
 }
@@ -240,6 +290,26 @@ type WSMessage_UserChanged struct {
 	UserChanged *BroadcastUserInformations `protobuf:"bytes,12,opt,name=user_changed,json=userChanged,proto3,oneof"`
 }
 
+type WSMessage_CallUsers struct {
+	CallUsers *CallInitialization `protobuf:"bytes,13,opt,name=call_users,json=callUsers,proto3,oneof"`
+}
+
+type WSMessage_ConnectToCall struct {
+	ConnectToCall *ConnectToCall `protobuf:"bytes,14,opt,name=connect_to_call,json=connectToCall,proto3,oneof"`
+}
+
+type WSMessage_DisconnectFromCall struct {
+	DisconnectFromCall *DisconnectFromCall `protobuf:"bytes,15,opt,name=disconnect_from_call,json=disconnectFromCall,proto3,oneof"`
+}
+
+type WSMessage_MuteUser struct {
+	MuteUser *Mute `protobuf:"bytes,16,opt,name=mute_user,json=muteUser,proto3,oneof"`
+}
+
+type WSMessage_DeafenUser struct {
+	DeafenUser *Deafen `protobuf:"bytes,17,opt,name=deafen_user,json=deafenUser,proto3,oneof"`
+}
+
 func (*WSMessage_ChatMessage) isWSMessage_Content() {}
 
 func (*WSMessage_ChannelCreation) isWSMessage_Content() {}
@@ -263,6 +333,16 @@ func (*WSMessage_AcceptFriend) isWSMessage_Content() {}
 func (*WSMessage_DeleteFriend) isWSMessage_Content() {}
 
 func (*WSMessage_UserChanged) isWSMessage_Content() {}
+
+func (*WSMessage_CallUsers) isWSMessage_Content() {}
+
+func (*WSMessage_ConnectToCall) isWSMessage_Content() {}
+
+func (*WSMessage_DisconnectFromCall) isWSMessage_Content() {}
+
+func (*WSMessage_MuteUser) isWSMessage_Content() {}
+
+func (*WSMessage_DeafenUser) isWSMessage_Content() {}
 
 type UserLinksRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2256,6 +2336,110 @@ func (x *Connect) GetType() string {
 	return ""
 }
 
+type ConnectToCall struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConnectToCall) Reset() {
+	*x = ConnectToCall{}
+	mi := &file_types_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConnectToCall) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConnectToCall) ProtoMessage() {}
+
+func (x *ConnectToCall) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConnectToCall.ProtoReflect.Descriptor instead.
+func (*ConnectToCall) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ConnectToCall) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ConnectToCall) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *ConnectToCall) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+type CallInitialization struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CallUsers     []*ConnectToCall       `protobuf:"bytes,1,rep,name=call_users,json=callUsers,proto3" json:"call_users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CallInitialization) Reset() {
+	*x = CallInitialization{}
+	mi := &file_types_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CallInitialization) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CallInitialization) ProtoMessage() {}
+
+func (x *CallInitialization) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CallInitialization.ProtoReflect.Descriptor instead.
+func (*CallInitialization) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CallInitialization) GetCallUsers() []*ConnectToCall {
+	if x != nil {
+		return x.CallUsers
+	}
+	return nil
+}
+
 type Disconnect struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
@@ -2265,7 +2449,7 @@ type Disconnect struct {
 
 func (x *Disconnect) Reset() {
 	*x = Disconnect{}
-	mi := &file_types_proto_msgTypes[29]
+	mi := &file_types_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2277,7 +2461,7 @@ func (x *Disconnect) String() string {
 func (*Disconnect) ProtoMessage() {}
 
 func (x *Disconnect) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[29]
+	mi := &file_types_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2290,12 +2474,208 @@ func (x *Disconnect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Disconnect.ProtoReflect.Descriptor instead.
 func (*Disconnect) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{29}
+	return file_types_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *Disconnect) GetType() string {
 	if x != nil {
 		return x.Type
+	}
+	return ""
+}
+
+type DisconnectFromCall struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DisconnectFromCall) Reset() {
+	*x = DisconnectFromCall{}
+	mi := &file_types_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DisconnectFromCall) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DisconnectFromCall) ProtoMessage() {}
+
+func (x *DisconnectFromCall) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DisconnectFromCall.ProtoReflect.Descriptor instead.
+func (*DisconnectFromCall) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *DisconnectFromCall) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DisconnectFromCall) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *DisconnectFromCall) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+type Mute struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        bool                   `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
+	ServerId      string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Mute) Reset() {
+	*x = Mute{}
+	mi := &file_types_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Mute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Mute) ProtoMessage() {}
+
+func (x *Mute) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Mute.ProtoReflect.Descriptor instead.
+func (*Mute) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *Mute) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Mute) GetStatus() bool {
+	if x != nil {
+		return x.Status
+	}
+	return false
+}
+
+func (x *Mute) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *Mute) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+type Deafen struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        bool                   `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
+	ServerId      string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	ChannelId     string                 `protobuf:"bytes,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Deafen) Reset() {
+	*x = Deafen{}
+	mi := &file_types_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Deafen) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Deafen) ProtoMessage() {}
+
+func (x *Deafen) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Deafen.ProtoReflect.Descriptor instead.
+func (*Deafen) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *Deafen) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Deafen) GetStatus() bool {
+	if x != nil {
+		return x.Status
+	}
+	return false
+}
+
+func (x *Deafen) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *Deafen) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
 	}
 	return ""
 }
@@ -2316,7 +2696,7 @@ type UserInformations struct {
 
 func (x *UserInformations) Reset() {
 	*x = UserInformations{}
-	mi := &file_types_proto_msgTypes[30]
+	mi := &file_types_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2328,7 +2708,7 @@ func (x *UserInformations) String() string {
 func (*UserInformations) ProtoMessage() {}
 
 func (x *UserInformations) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[30]
+	mi := &file_types_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2341,7 +2721,7 @@ func (x *UserInformations) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInformations.ProtoReflect.Descriptor instead.
 func (*UserInformations) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{30}
+	return file_types_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *UserInformations) GetUsername() string {
@@ -2410,7 +2790,7 @@ type UserChangedInformations struct {
 
 func (x *UserChangedInformations) Reset() {
 	*x = UserChangedInformations{}
-	mi := &file_types_proto_msgTypes[31]
+	mi := &file_types_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2422,7 +2802,7 @@ func (x *UserChangedInformations) String() string {
 func (*UserChangedInformations) ProtoMessage() {}
 
 func (x *UserChangedInformations) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[31]
+	mi := &file_types_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2435,7 +2815,7 @@ func (x *UserChangedInformations) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserChangedInformations.ProtoReflect.Descriptor instead.
 func (*UserChangedInformations) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{31}
+	return file_types_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UserChangedInformations) GetUserId() string {
@@ -2463,7 +2843,7 @@ type BroadcastUserInformations struct {
 
 func (x *BroadcastUserInformations) Reset() {
 	*x = BroadcastUserInformations{}
-	mi := &file_types_proto_msgTypes[32]
+	mi := &file_types_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2475,7 +2855,7 @@ func (x *BroadcastUserInformations) String() string {
 func (*BroadcastUserInformations) ProtoMessage() {}
 
 func (x *BroadcastUserInformations) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[32]
+	mi := &file_types_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2488,7 +2868,7 @@ func (x *BroadcastUserInformations) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastUserInformations.ProtoReflect.Descriptor instead.
 func (*BroadcastUserInformations) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{32}
+	return file_types_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *BroadcastUserInformations) GetUserId() string {
@@ -2516,7 +2896,7 @@ var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc7\x06\n" +
+	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf0\b\n" +
 	"\tWSMessage\x12@\n" +
 	"\fchat_message\x18\x01 \x01(\v2\x1b.types.BroadcastChatMessageH\x00R\vchatMessage\x12L\n" +
 	"\x10channel_creation\x18\x02 \x01(\v2\x1f.types.BroadcastChannelCreationH\x00R\x0fchannelCreation\x12I\n" +
@@ -2530,7 +2910,14 @@ const file_types_proto_rawDesc = "" +
 	"\raccept_friend\x18\n" +
 	" \x01(\v2\x19.types.AcceptFriendInviteH\x00R\facceptFriend\x12:\n" +
 	"\rdelete_friend\x18\v \x01(\v2\x13.types.DeleteFriendH\x00R\fdeleteFriend\x12E\n" +
-	"\fuser_changed\x18\f \x01(\v2 .types.BroadcastUserInformationsH\x00R\vuserChangedB\t\n" +
+	"\fuser_changed\x18\f \x01(\v2 .types.BroadcastUserInformationsH\x00R\vuserChanged\x12:\n" +
+	"\n" +
+	"call_users\x18\r \x01(\v2\x19.types.CallInitializationH\x00R\tcallUsers\x12>\n" +
+	"\x0fconnect_to_call\x18\x0e \x01(\v2\x14.types.ConnectToCallH\x00R\rconnectToCall\x12M\n" +
+	"\x14disconnect_from_call\x18\x0f \x01(\v2\x19.types.DisconnectFromCallH\x00R\x12disconnectFromCall\x12*\n" +
+	"\tmute_user\x18\x10 \x01(\v2\v.types.MuteH\x00R\bmuteUser\x120\n" +
+	"\vdeafen_user\x18\x11 \x01(\v2\r.types.DeafenH\x00R\n" +
+	"deafenUserB\t\n" +
 	"\acontent\"F\n" +
 	"\fUserLinksRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
@@ -2712,10 +3099,35 @@ const file_types_proto_rawDesc = "" +
 	"\tinvite_id\x18\x01 \x01(\tR\binviteId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"\x1d\n" +
 	"\aConnect\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\" \n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\"d\n" +
+	"\rConnectToCall\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\"I\n" +
+	"\x12CallInitialization\x123\n" +
+	"\n" +
+	"call_users\x18\x01 \x03(\v2\x14.types.ConnectToCallR\tcallUsers\" \n" +
 	"\n" +
 	"Disconnect\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\"\xeb\x02\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\"i\n" +
+	"\x12DisconnectFromCall\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x03 \x01(\tR\tchannelId\"s\n" +
+	"\x04Mute\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\bR\x06status\x12\x1b\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x04 \x01(\tR\tchannelId\"u\n" +
+	"\x06Deafen\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\bR\x06status\x12\x1b\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x04 \x01(\tR\tchannelId\"\xeb\x02\n" +
 	"\x10UserInformations\x12\x1f\n" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12&\n" +
 	"\fdisplay_name\x18\x02 \x01(\tH\x01R\vdisplayName\x88\x01\x01\x12\x1b\n" +
@@ -2754,7 +3166,7 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
 var file_types_proto_goTypes = []any{
 	(*WSMessage)(nil),                  // 0: types.WSMessage
 	(*UserLinksRow)(nil),               // 1: types.UserLinksRow
@@ -2785,11 +3197,16 @@ var file_types_proto_goTypes = []any{
 	(*AcceptFriendInvite)(nil),         // 26: types.AcceptFriendInvite
 	(*DeleteFriend)(nil),               // 27: types.DeleteFriend
 	(*Connect)(nil),                    // 28: types.Connect
-	(*Disconnect)(nil),                 // 29: types.Disconnect
-	(*UserInformations)(nil),           // 30: types.UserInformations
-	(*UserChangedInformations)(nil),    // 31: types.UserChangedInformations
-	(*BroadcastUserInformations)(nil),  // 32: types.BroadcastUserInformations
-	(*timestamppb.Timestamp)(nil),      // 33: google.protobuf.Timestamp
+	(*ConnectToCall)(nil),              // 29: types.ConnectToCall
+	(*CallInitialization)(nil),         // 30: types.CallInitialization
+	(*Disconnect)(nil),                 // 31: types.Disconnect
+	(*DisconnectFromCall)(nil),         // 32: types.DisconnectFromCall
+	(*Mute)(nil),                       // 33: types.Mute
+	(*Deafen)(nil),                     // 34: types.Deafen
+	(*UserInformations)(nil),           // 35: types.UserInformations
+	(*UserChangedInformations)(nil),    // 36: types.UserChangedInformations
+	(*BroadcastUserInformations)(nil),  // 37: types.BroadcastUserInformations
+	(*timestamppb.Timestamp)(nil),      // 38: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
 	7,  // 0: types.WSMessage.chat_message:type_name -> types.BroadcastChatMessage
@@ -2803,26 +3220,32 @@ var file_types_proto_depIdxs = []int32{
 	25, // 8: types.WSMessage.friend_invite:type_name -> types.SendFriendInvite
 	26, // 9: types.WSMessage.accept_friend:type_name -> types.AcceptFriendInvite
 	27, // 10: types.WSMessage.delete_friend:type_name -> types.DeleteFriend
-	32, // 11: types.WSMessage.user_changed:type_name -> types.BroadcastUserInformations
-	33, // 12: types.User.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 13: types.IncomingChatMessage.author:type_name -> types.User
-	3,  // 14: types.BroadcastChatMessage.author:type_name -> types.User
-	33, // 15: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	33, // 16: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 17: types.BroadcastNewUserInServer.user:type_name -> types.User
-	3,  // 18: types.BroadcastChannelCreation.users:type_name -> types.User
-	33, // 19: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	33, // 20: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 21: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 22: types.SendFriendInvite.user:type_name -> types.User
-	3,  // 23: types.AcceptFriendInvite.user:type_name -> types.User
-	30, // 24: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
-	30, // 25: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
-	26, // [26:26] is the sub-list for method output_type
-	26, // [26:26] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	37, // 11: types.WSMessage.user_changed:type_name -> types.BroadcastUserInformations
+	30, // 12: types.WSMessage.call_users:type_name -> types.CallInitialization
+	29, // 13: types.WSMessage.connect_to_call:type_name -> types.ConnectToCall
+	32, // 14: types.WSMessage.disconnect_from_call:type_name -> types.DisconnectFromCall
+	33, // 15: types.WSMessage.mute_user:type_name -> types.Mute
+	34, // 16: types.WSMessage.deafen_user:type_name -> types.Deafen
+	38, // 17: types.User.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 18: types.IncomingChatMessage.author:type_name -> types.User
+	3,  // 19: types.BroadcastChatMessage.author:type_name -> types.User
+	38, // 20: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	38, // 21: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 22: types.BroadcastNewUserInServer.user:type_name -> types.User
+	3,  // 23: types.BroadcastChannelCreation.users:type_name -> types.User
+	38, // 24: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	38, // 25: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 26: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 27: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 28: types.AcceptFriendInvite.user:type_name -> types.User
+	29, // 29: types.CallInitialization.call_users:type_name -> types.ConnectToCall
+	35, // 30: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
+	35, // 31: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
+	32, // [32:32] is the sub-list for method output_type
+	32, // [32:32] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -2843,17 +3266,22 @@ func file_types_proto_init() {
 		(*WSMessage_AcceptFriend)(nil),
 		(*WSMessage_DeleteFriend)(nil),
 		(*WSMessage_UserChanged)(nil),
+		(*WSMessage_CallUsers)(nil),
+		(*WSMessage_ConnectToCall)(nil),
+		(*WSMessage_DisconnectFromCall)(nil),
+		(*WSMessage_MuteUser)(nil),
+		(*WSMessage_DeafenUser)(nil),
 	}
 	file_types_proto_msgTypes[3].OneofWrappers = []any{}
 	file_types_proto_msgTypes[13].OneofWrappers = []any{}
-	file_types_proto_msgTypes[30].OneofWrappers = []any{}
+	file_types_proto_msgTypes[35].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   33,
+			NumMessages:   38,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
