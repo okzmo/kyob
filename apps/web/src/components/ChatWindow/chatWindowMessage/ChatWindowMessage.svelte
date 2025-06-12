@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { core } from 'stores/core.svelte';
-	import type { Channel, Server, User } from 'types/types';
+	import type { Attachment, Channel, Server, User } from 'types/types';
 	import Corners from '../../ui/Corners/Corners.svelte';
 	import ChatWindowMessageUser from './ChatWindowMessageUser.svelte';
 	import ChatWindowMessageContent from './ChatWindowMessageContent.svelte';
@@ -16,7 +16,7 @@
 		isEdited: boolean;
 		server: Server;
 		channel: Channel;
-		attachments: string[];
+		attachments: Attachment[];
 	}
 	let {
 		id,
