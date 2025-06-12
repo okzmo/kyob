@@ -8,6 +8,7 @@
 	import { backend } from 'stores/backend.svelte';
 	import { core } from 'stores/core.svelte';
 	import { serversStore } from 'stores/servers.svelte';
+	import { userStore } from 'stores/user.svelte';
 	import Cropper from 'svelte-easy-crop';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
@@ -49,6 +50,14 @@
 						...res.value,
 						channels: {},
 						member_count: 1,
+						members: [
+							{
+								id: userStore.user?.id,
+								username: userStore.user?.username,
+								display_name: userStore.user?.display_name,
+								avatar: userStore.user?.avatar
+							}
+						],
 						active_count: [],
 						hidden: false
 					};

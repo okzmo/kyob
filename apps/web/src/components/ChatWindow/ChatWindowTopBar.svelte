@@ -7,7 +7,7 @@
 	import HashChat from 'components/ui/icons/HashChat.svelte';
 	import { backend } from 'stores/backend.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
-	import { serversStore } from 'stores/servers.svelte';
+	import { rtc } from 'stores/rtc.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
 
@@ -18,6 +18,19 @@
 			}, 500);
 		}
 	});
+
+	async function joinCall() {
+		const res = await backend.connectToCall(server.id, channel.id);
+
+		if (res.isErr()) {
+			console.error(res.error.error);
+			return;
+		}
+
+		if (res.isOk()) {
+			rtc.connectToRoom(res.value.token);
+		}
+	}
 </script>
 
 <div id={`window-top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
@@ -69,8 +82,8 @@
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
 		onclick={() => {
-			if (!serversStore.isInCall(server.id, channel.id, userStore.user!.id)) {
-				backend.connectToCall(server.id, channel.id);
+			if (!userStore.currentVoiceChannel) {
+				joinCall();
 			}
 			windows.toggleCallTab();
 		}}

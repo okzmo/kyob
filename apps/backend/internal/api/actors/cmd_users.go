@@ -154,8 +154,6 @@ func (u *user) BroadcastChatMessage(ctx *actor.Context, msg *protoTypes.Broadcas
 		},
 	}
 
-	fmt.Println(msg)
-
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }

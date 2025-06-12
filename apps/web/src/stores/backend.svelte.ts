@@ -788,16 +788,19 @@ class Backend {
 		}
 	}
 
-	async connectToCall(serverId: string, channelId: string): Promise<Result<void, CallErrors>> {
+	async connectToCall(
+		serverId: string,
+		channelId: string
+	): Promise<Result<{ token: string }, CallErrors>> {
 		try {
 			const res = await client.post(`channels/${serverId}/${channelId}/join_call`);
 
-			const data = await res.json();
+			const data = (await res.json()) as { token: string };
 			if (!res.ok) {
 				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
 			}
 
-			return ok();
+			return ok(data);
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });

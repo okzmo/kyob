@@ -26,7 +26,7 @@
 			{#if open}
 				<div {...wrapperProps}>
 					<div {...props} class="z-[999]" transition:fly={{ duration: 100, y, x }}>
-						<div class="bg-main-900 inner-main-800 px-2 py-1 text-sm">
+						<div class="bg-main-900 inner-main-800 px-2 py-1 text-sm select-none">
 							{text}
 						</div>
 					</div>

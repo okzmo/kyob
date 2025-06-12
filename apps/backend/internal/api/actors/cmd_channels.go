@@ -56,6 +56,7 @@ func (c *channel) Disconnect(ctx *actor.Context) {
 
 	if _, ok := c.call[senderId]; ok {
 		delete(c.call, senderId)
+
 		for user := range c.users {
 			UsersEngine.Send(user, &protoTypes.DisconnectFromCall{
 				UserId:    senderId,

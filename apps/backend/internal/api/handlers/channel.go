@@ -85,6 +85,12 @@ func ConnectToCall(w http.ResponseWriter, r *http.Request) {
 	channelId := chi.URLParam(r, "channel_id")
 	serverId := chi.URLParam(r, "server_id")
 
+	token, err := services.GenerateCallToken(channelId, user.ID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	protoMessage := &proto.ConnectToCall{
 		UserId:    user.ID,
 		ServerId:  serverId,
@@ -94,7 +100,7 @@ func ConnectToCall(w http.ResponseWriter, r *http.Request) {
 	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
 	actors.ServersEngine.Send(channelPID, protoMessage)
 
-	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
+	utils.RespondWithJSON(w, http.StatusOK, &services.LivekitResponse{Token: token})
 }
 
 func DisconnectFromCall(w http.ResponseWriter, r *http.Request) {

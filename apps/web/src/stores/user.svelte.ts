@@ -4,6 +4,8 @@ class UserStore {
 	user = $state<User>();
 	friends = $state<Friend[]>([]);
 	mention = $state(false);
+	mute = $state(false);
+	deafen = $state(false);
 
 	addFriend(friend: Friend) {
 		if (Array.isArray(this.friends)) {

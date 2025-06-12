@@ -54,6 +54,7 @@
 		"emojibase-data": "^16.0.3",
 		"gsap": "^3.13.0",
 		"ky": "^1.8.1",
+		"livekit-client": "^2.13.4",
 		"neverthrow": "^8.2.0",
 		"protobufjs": "^7.5.1",
 		"svelte-easy-crop": "^4.0.1"
