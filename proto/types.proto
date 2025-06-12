@@ -52,7 +52,7 @@ message User {
 }
 
 message IncomingChatMessage {
-  User author = 1;
+  string author_id = 1;
   string server_id = 2;
   string channel_id = 3;
   bytes content = 4;
@@ -80,7 +80,7 @@ message DeleteChatMessage {
 
 message BroadcastChatMessage {
   string id = 1;
-  User author = 2;
+  string author_id = 2;
   string server_id = 3;
   string channel_id = 4;
   bytes content = 5;

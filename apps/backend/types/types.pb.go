@@ -590,7 +590,7 @@ func (x *User) GetFacts() []byte {
 
 type IncomingChatMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Author           *User                  `protobuf:"bytes,1,opt,name=author,proto3" json:"author,omitempty"`
+	AuthorId         string                 `protobuf:"bytes,1,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
 	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
@@ -631,11 +631,11 @@ func (*IncomingChatMessage) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *IncomingChatMessage) GetAuthor() *User {
+func (x *IncomingChatMessage) GetAuthorId() string {
 	if x != nil {
-		return x.Author
+		return x.AuthorId
 	}
-	return nil
+	return ""
 }
 
 func (x *IncomingChatMessage) GetServerId() string {
@@ -843,7 +843,7 @@ func (x *DeleteChatMessage) GetMessageId() string {
 type BroadcastChatMessage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Author           *User                  `protobuf:"bytes,2,opt,name=author,proto3" json:"author,omitempty"`
+	AuthorId         string                 `protobuf:"bytes,2,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
 	ServerId         string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ChannelId        string                 `protobuf:"bytes,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
@@ -892,11 +892,11 @@ func (x *BroadcastChatMessage) GetId() string {
 	return ""
 }
 
-func (x *BroadcastChatMessage) GetAuthor() *User {
+func (x *BroadcastChatMessage) GetAuthorId() string {
 	if x != nil {
-		return x.Author
+		return x.AuthorId
 	}
-	return nil
+	return ""
 }
 
 func (x *BroadcastChatMessage) GetServerId() string {
@@ -2945,9 +2945,9 @@ const file_types_proto_rawDesc = "" +
 	"\a_avatarB\t\n" +
 	"\a_bannerB\r\n" +
 	"\v_main_colorB\b\n" +
-	"\x06_about\"\x86\x02\n" +
-	"\x13IncomingChatMessage\x12#\n" +
-	"\x06author\x18\x01 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
+	"\x06_about\"\xfe\x01\n" +
+	"\x13IncomingChatMessage\x12\x1b\n" +
+	"\tauthor_id\x18\x01 \x01(\tR\bauthorId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
@@ -2971,10 +2971,10 @@ const file_types_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x04 \x01(\tR\tmessageId\"\xd2\x02\n" +
+	"message_id\x18\x04 \x01(\tR\tmessageId\"\xca\x02\n" +
 	"\x14BroadcastChatMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
-	"\x06author\x18\x02 \x01(\v2\v.types.UserR\x06author\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\tauthor_id\x18\x02 \x01(\tR\bauthorId\x12\x1b\n" +
 	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x04 \x01(\tR\tchannelId\x12\x18\n" +
@@ -3227,25 +3227,23 @@ var file_types_proto_depIdxs = []int32{
 	33, // 15: types.WSMessage.mute_user:type_name -> types.Mute
 	34, // 16: types.WSMessage.deafen_user:type_name -> types.Deafen
 	38, // 17: types.User.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 18: types.IncomingChatMessage.author:type_name -> types.User
-	3,  // 19: types.BroadcastChatMessage.author:type_name -> types.User
-	38, // 20: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	38, // 21: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 22: types.BroadcastNewUserInServer.user:type_name -> types.User
-	3,  // 23: types.BroadcastChannelCreation.users:type_name -> types.User
-	38, // 24: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	38, // 25: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 26: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 27: types.SendFriendInvite.user:type_name -> types.User
-	3,  // 28: types.AcceptFriendInvite.user:type_name -> types.User
-	29, // 29: types.CallInitialization.call_users:type_name -> types.ConnectToCall
-	35, // 30: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
-	35, // 31: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
-	32, // [32:32] is the sub-list for method output_type
-	32, // [32:32] is the sub-list for method input_type
-	32, // [32:32] is the sub-list for extension type_name
-	32, // [32:32] is the sub-list for extension extendee
-	0,  // [0:32] is the sub-list for field type_name
+	38, // 18: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	38, // 19: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 20: types.BroadcastNewUserInServer.user:type_name -> types.User
+	3,  // 21: types.BroadcastChannelCreation.users:type_name -> types.User
+	38, // 22: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	38, // 23: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 24: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 25: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 26: types.AcceptFriendInvite.user:type_name -> types.User
+	29, // 27: types.CallInitialization.call_users:type_name -> types.ConnectToCall
+	35, // 28: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
+	35, // 29: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
+	30, // [30:30] is the sub-list for method output_type
+	30, // [30:30] is the sub-list for method input_type
+	30, // [30:30] is the sub-list for extension type_name
+	30, // [30:30] is the sub-list for extension extendee
+	0,  // [0:30] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }

@@ -12,7 +12,6 @@ import (
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
@@ -53,19 +52,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 	switch body.Type {
 	case "SEND":
 		mess := &proto.IncomingChatMessage{
-			Author: &proto.User{
-				Id:          user.ID,
-				Email:       user.Email,
-				Username:    user.Username,
-				DisplayName: user.DisplayName,
-				Avatar:      &user.Avatar.String,
-				Banner:      &user.Banner.String,
-				MainColor:   &user.MainColor.String,
-				About:       user.About,
-				Links:       user.Links,
-				Facts:       user.Facts,
-				CreatedAt:   timestamppb.New(user.CreatedAt),
-			},
+			AuthorId:      user.ID,
 			Content:       body.Content,
 			ServerId:      serverId,
 			ChannelId:     channelId,

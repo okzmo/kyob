@@ -1,20 +1,28 @@
 <script lang="ts">
-	import UserProfileWithTrigger from 'components/UserProfile/UserProfileWithTrigger.svelte';
+	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 	import { core } from 'stores/core.svelte';
 	import type { User } from 'types/types';
 	import { formatMessageTime } from 'utils/date';
 
-	let { author, isUserMentioned, isEdited, id, time } = $props();
+	interface Props {
+		id: string;
+		time: string;
+		author: Partial<User>;
+		isUserMentioned: boolean;
+		isEdited: boolean;
+	}
+
+	let { author, isUserMentioned, isEdited, id, time }: Props = $props();
 </script>
 
 <div class="flex items-baseline gap-x-2.5">
-	<UserProfileWithTrigger user={author as User} side="bottom" sideOffset={5} y={-10}>
+	<UserProfileWithTriggerAndFetch userId={author.id!} side="bottom" sideOffset={5} y={-10}>
 		<p
 			class="pointer-events-auto text-sm font-semibold decoration-1 hover:cursor-pointer hover:underline"
 		>
 			{author.display_name}
 		</p>
-	</UserProfileWithTrigger>
+	</UserProfileWithTriggerAndFetch>
 	<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
 		{formatMessageTime(time)}
 	</time>

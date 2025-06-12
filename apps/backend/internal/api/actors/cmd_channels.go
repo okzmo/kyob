@@ -75,7 +75,7 @@ func (c *channel) NewMessage(ctx *actor.Context, msg *protoTypes.IncomingChatMes
 		Attachments:   msg.Attachments,
 	}
 
-	message, err := services.CreateMessage(context.TODO(), msg.Author, msg.ServerId, msg.ChannelId, messageToSend)
+	message, err := services.CreateMessage(context.TODO(), msg.AuthorId, msg.ServerId, msg.ChannelId, messageToSend)
 	if err != nil {
 		slog.Error("failed to create message", "err", err)
 		return

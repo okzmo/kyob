@@ -109,7 +109,7 @@ export interface Attachment {
 
 export interface Message {
 	id: string;
-	author: Partial<User>;
+	author_id: string;
 	server_id: string;
 	channel_id: string;
 	content: any;

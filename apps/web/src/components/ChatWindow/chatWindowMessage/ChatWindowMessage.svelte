@@ -3,9 +3,9 @@
 	import { core } from 'stores/core.svelte';
 	import type { Channel, Server, User } from 'types/types';
 	import Corners from '../../ui/Corners/Corners.svelte';
-	import UserProfileWithTrigger from '../../UserProfile/UserProfileWithTrigger.svelte';
 	import ChatWindowMessageUser from './ChatWindowMessageUser.svelte';
 	import ChatWindowMessageContent from './ChatWindowMessageContent.svelte';
+	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 
 	interface Props {
 		id: string;
@@ -72,14 +72,14 @@
 	{#if isUserMentioned}
 		<Corners color="border-mention-100" />
 	{/if}
-	<UserProfileWithTrigger user={author as User} side="right" align="center" x={-10}>
+	<UserProfileWithTriggerAndFetch userId={author.id!} side="right" align="center" x={-10}>
 		<img
 			src={author.avatar}
 			alt="{author.username}'s avatar"
 			class="mt-[2.5px] h-[3rem] w-[3rem] object-cover select-none hover:cursor-pointer active:translate-y-[1px]"
 			draggable="false"
 		/>
-	</UserProfileWithTrigger>
+	</UserProfileWithTriggerAndFetch>
 	<div class="pointer-events-none w-full pt-1">
 		<ChatWindowMessageUser {id} {author} {time} {isUserMentioned} {isEdited} />
 		<ChatWindowMessageContent {id} {server} {channel} {content} {attachments} />

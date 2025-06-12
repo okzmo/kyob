@@ -1,8 +1,16 @@
 <script lang="ts">
 	import { userStore } from 'stores/user.svelte';
 	import ChatWindowMessage from './ChatWindowMessage.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import type { Channel, Message, Server } from 'types/types';
 
-	let { messages, server, channel } = $props();
+	interface Props {
+		messages: Message[];
+		server: Server;
+		channel: Channel;
+	}
+
+	let { messages, server, channel }: Props = $props();
 	let scrollContent = $state<HTMLElement | null>();
 </script>
 
@@ -12,9 +20,10 @@
 >
 	{#if messages.length > 0}
 		{#each messages as message (message.id)}
+			{@const author = serversStore.getMemberById(server.id, message.author_id)!}
 			<ChatWindowMessage
 				id={message.id}
-				author={message.author}
+				{author}
 				content={message.content}
 				time={message.created_at}
 				isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '')}

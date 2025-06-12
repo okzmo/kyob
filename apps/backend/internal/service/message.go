@@ -35,7 +35,7 @@ type EditMessageBody struct {
 
 type MessageResponse struct {
 	ID               string          `json:"id"`
-	Author           UserResponse    `json:"author"`
+	AuthorId         string          `json:"author_id"`
 	ServerId         string          `json:"server_id"`
 	ChannelId        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
@@ -46,11 +46,11 @@ type MessageResponse struct {
 	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
-func CreateMessage(ctx context.Context, user *proto.User, serverId string, channelId string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
+func CreateMessage(ctx context.Context, userId string, serverId string, channelId string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
 	if serverId != "global" {
 		res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
 			ID:     channelId,
-			UserID: user.Id,
+			UserID: userId,
 		})
 		if err != nil || res.RowsAffected() == 0 {
 			return nil, ErrUnauthorizedMessageCreation
@@ -59,7 +59,7 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId string, chann
 
 	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
 		ID:               utils.Node.Generate().String(),
-		AuthorID:         user.Id,
+		AuthorID:         userId,
 		ServerID:         serverId,
 		ChannelID:        channelId,
 		Content:          body.Content,
@@ -73,7 +73,7 @@ func CreateMessage(ctx context.Context, user *proto.User, serverId string, chann
 
 	message := &proto.BroadcastChatMessage{
 		Id:               m.ID,
-		Author:           user,
+		AuthorId:         userId,
 		ServerId:         m.ServerID,
 		ChannelId:        m.ChannelID,
 		Content:          m.Content,
@@ -154,24 +154,9 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 	}
 
 	for _, message := range m {
-		author, err := db.Query.GetUserById(ctx, message.AuthorID)
-		if err != nil {
-			return nil, err
-		}
-
 		messages = append(messages, MessageResponse{
-			ID: message.ID,
-			Author: UserResponse{
-				ID:          author.ID,
-				Username:    author.Username,
-				DisplayName: author.DisplayName,
-				Avatar:      author.Avatar,
-				Banner:      author.Banner,
-				About:       author.About,
-				Links:       author.Links,
-				Facts:       author.Facts,
-				MainColor:   author.MainColor,
-			},
+			ID:               message.ID,
+			AuthorId:         message.AuthorID,
 			ServerId:         message.ServerID,
 			ChannelId:        message.ChannelID,
 			Content:          message.Content,

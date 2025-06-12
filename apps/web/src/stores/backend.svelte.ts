@@ -78,43 +78,27 @@ class Backend {
 				case 'chatMessage':
 					{
 						if (!wsMess.content.value) return;
-						const contentStr = new TextDecoder().decode(wsMess.content.value?.content);
-						const attachments = new TextDecoder().decode(wsMess.content.value?.attachments);
-						const authorAbout = new TextDecoder().decode(wsMess.content.value?.author!.about);
-						const authorLinks = new TextDecoder().decode(wsMess.content.value?.author!.links);
-						const authorFacts = new TextDecoder().decode(wsMess.content.value?.author!.facts);
-
-						const author: Partial<User> = {
-							id: wsMess.content.value.author!.id,
-							username: wsMess.content.value.author!.username,
-							display_name: wsMess.content.value.author!.displayName,
-							avatar: wsMess.content.value.author!.avatar,
-							banner: wsMess.content.value.author!.banner,
-							email: wsMess.content.value.author!.email,
-							main_color: wsMess.content.value.author!.mainColor
-						};
-
-						if (authorLinks?.length > 0) author.links = JSON.parse(authorLinks);
-						if (authorAbout?.length > 0) author.about = JSON.parse(authorAbout);
-						if (authorFacts?.length > 0) author.facts = JSON.parse(authorFacts);
+						const value = wsMess.content.value;
+						const contentStr = new TextDecoder().decode(value?.content);
+						const attachments = new TextDecoder().decode(value?.attachments);
 
 						const message: Message = {
-							id: wsMess.content.value.id,
-							author: author,
-							server_id: wsMess.content.value.serverId,
-							channel_id: wsMess.content.value.channelId,
+							id: value.id,
+							author_id: value.authorId,
+							server_id: value.serverId,
+							channel_id: value.channelId,
 							content: JSON.parse(contentStr),
-							mentions_users: wsMess.content.value.mentionsUsers,
-							mentions_channels: wsMess.content.value.mentionsChannels,
+							mentions_users: value.mentionsUsers,
+							mentions_channels: value.mentionsChannels,
 							attachments: attachments.length > 0 ? JSON.parse(attachments) : [],
-							updated_at: timestampDate(wsMess.content.value.createdAt!).toISOString(),
-							created_at: timestampDate(wsMess.content.value.createdAt!).toISOString()
+							updated_at: timestampDate(value.createdAt!).toISOString(),
+							created_at: timestampDate(value.createdAt!).toISOString()
 						};
-						serversStore.addMessage(wsMess.content.value?.serverId, message);
+						serversStore.addMessage(value?.serverId, message);
 
 						if (
 							message.mentions_users.includes(userStore.user!.id) &&
-							message.author.id !== userStore.user!.id
+							message.author_id !== userStore.user!.id
 						) {
 							sounds.playSound('notification');
 							userStore.mention = true;
