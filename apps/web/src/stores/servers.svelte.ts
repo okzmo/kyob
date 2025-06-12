@@ -1,3 +1,4 @@
+import { message } from 'sveltekit-superforms';
 import type { Channel, Message, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 
@@ -87,7 +88,7 @@ class Servers {
 
 		if (Array.isArray(messages)) {
 			const idx = messages.findIndex((m) => m.id === messageId);
-			if (idx) {
+			if (idx > -1) {
 				messages[idx].content = content;
 				messages[idx].mentions_users = mentions_users;
 				messages[idx].mentions_channels = mentions_channels;
@@ -168,6 +169,11 @@ class Servers {
 			server.members.splice(memberIdx, 1);
 			server.member_count -= 1;
 		}
+	}
+
+	isInCall(serverId: string, channelId: string, userId: string) {
+		const channel = this.getChannel(serverId, channelId);
+		return channel.voice_users.find((u) => u.user_id === userId);
 	}
 
 	initiateCall(serverId: string, channelId: string, users: any) {

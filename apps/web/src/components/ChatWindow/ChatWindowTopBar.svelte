@@ -6,6 +6,8 @@
 	import Phone from 'components/ui/icons/Phone.svelte';
 	import HashChat from 'components/ui/icons/HashChat.svelte';
 	import { backend } from 'stores/backend.svelte';
+	import Button from 'components/ui/Button/Button.svelte';
+	import { serversStore } from 'stores/servers.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
 
@@ -58,38 +60,38 @@
 		</div>
 	</div>
 
-	<button
+	<Button
+		variants="icon"
 		class={[
-			'group inner-main-800 bg-main-900 text-main-50  relative flex h-[2.375rem] w-[2.375rem] items-center justify-center p-0.5 px-2.5 transition duration-100 hover:cursor-pointer',
+			'inner-main-800',
 			tab !== 'chat'
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
 		onclick={() => {
-			backend.connectToCall(server.id, channel.id);
+			if (!serversStore.isInCall(server.id, channel.id, userStore.user!.id)) {
+				backend.connectToCall(server.id, channel.id);
+			}
 			windows.toggleCallTab();
 		}}
+		tooltip={tab !== 'chat' ? 'Go to chat' : 'Join call'}
+		corners
+		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
 	>
-		<Corners
-			color="border-main-700"
-			class={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
-		/>
 		{#if tab === 'chat'}
 			<Phone height={14} width={14} />
 		{:else if tab === 'call'}
 			<HashChat height={14} width={14} />
 		{/if}
-	</button>
-	<button
-		class={[
-			'group inner-main-800 relative flex h-[2.375rem] w-[2.375rem] items-center justify-center p-0.5 px-2.5 transition duration-100 hover:cursor-pointer',
-			userStore.mention
-				? 'bg-accent-200'
-				: 'bg-main-900 hocus:inner-main-700-shadow hocus:bg-main-800'
-		]}
+	</Button>
+	<Button
+		class="inner-main-800 hocus:inner-main-700-shadow"
+		variants="icon"
 		onclick={() => windows.closeWindow(id)}
+		tooltip="Close chat"
+		corners
+		cornerClass="group-hocus:border-main-600"
 	>
-		<Corners color="border-main-700" class="group-hocus:border-main-600" />
 		<Close height={16} width={16} />
-	</button>
+	</Button>
 </div>

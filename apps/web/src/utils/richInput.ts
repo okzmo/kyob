@@ -1,4 +1,8 @@
 import type { JSONContent } from '@tiptap/core';
+import { generateText } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import { EmojisSuggestion } from 'components/ChatWindow/chatWindowInput/extensions/emojis/emojis';
+import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 
 export function trimEmptyNodes(content: JSONContent) {
 	if (!content.content || !Array.isArray(content.content)) {
@@ -32,4 +36,33 @@ export function extractFirstNParagraphs(htmlString: string, n = 3) {
 	const matches = htmlString.match(pattern) || [];
 
 	return { paragraphs: matches.slice(0, n).join(''), enoughMatches: matches.length > n };
+}
+
+export function generateTextWithExt(content: JSONContent) {
+	return generateText(content, [
+		StarterKit.configure({
+			gapcursor: false,
+			dropcursor: false,
+			heading: false,
+			orderedList: false,
+			bulletList: false,
+			blockquote: false
+		}),
+		EmojisSuggestion.configure({
+			HTMLAttributes: {
+				class: 'emoji'
+			},
+			renderHTML({ options, node }) {
+				return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
+			}
+		}),
+		CustomMention.configure({
+			HTMLAttributes: {
+				class: 'mention'
+			},
+			renderText({ node }) {
+				return `<@${node.attrs['user-id']}>`;
+			}
+		})
+	]);
 }

@@ -9,6 +9,7 @@
 	import { editorStore } from 'stores/editor.svelte';
 	import EmojisList from '../chatWindowInput/extensions/emojis/EmojisList.svelte';
 	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
+	import { generateTextWithExt } from 'utils/richInput';
 
 	let element: Element;
 	let editor: Editor;
@@ -17,6 +18,10 @@
 
 	async function editMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
+
+		const initialContent = generateTextWithExt(content);
+		if (initialContent === editor.getText()) return core.stopEditingMessage();
+
 		const ids =
 			editor
 				.getText()
@@ -94,6 +99,7 @@
 						(!editorStore.emojiProps || editorStore.emojiProps.items.length === 0)
 					) {
 						ev.preventDefault();
+
 						editMessage(editor.getJSON());
 						return true;
 					}

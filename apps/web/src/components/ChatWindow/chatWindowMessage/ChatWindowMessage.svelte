@@ -80,7 +80,7 @@
 			draggable="false"
 		/>
 	</UserProfileWithTrigger>
-	<div class="pointer-events-none pt-1">
+	<div class="pointer-events-none w-full pt-1">
 		<ChatWindowMessageUser {id} {author} {time} {isUserMentioned} {isEdited} />
 		<ChatWindowMessageContent {id} {server} {channel} {content} {attachments} />
 	</div>

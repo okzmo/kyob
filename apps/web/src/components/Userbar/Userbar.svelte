@@ -6,6 +6,8 @@
 	import { userStore } from 'stores/user.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../UserProfile/UserProfileWithTrigger.svelte';
+	import Button from 'components/ui/Button/Button.svelte';
+	import { goto } from '$app/navigation';
 </script>
 
 <div
@@ -32,8 +34,40 @@
 		</button>
 	</UserProfileWithTrigger>
 	<div class="flex items-center gap-x-1">
-		<IconButton Icon={Microphone} label="Microphone" />
-		<IconButton Icon={Headphone} label="Headphone" />
-		<IconButton Icon={Gear} href="/settings" label="Settings" />
+		<Button
+			variants="icon"
+			class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
+			onclick={() => {}}
+			tooltip="Mute"
+			corners
+			cornerColor="border-transparent"
+			cornerClass="group-hocus:border-accent-100"
+		>
+			<Microphone height={22} width={22} />
+		</Button>
+
+		<Button
+			variants="icon"
+			class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
+			onclick={() => {}}
+			tooltip="Deafen"
+			corners
+			cornerColor="border-transparent"
+			cornerClass="group-hocus:border-accent-100"
+		>
+			<Headphone height={22} width={22} />
+		</Button>
+
+		<Button
+			variants="icon"
+			class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
+			onclick={() => goto('/settings')}
+			tooltip="Settings"
+			corners
+			cornerColor="border-transparent"
+			cornerClass="group-hocus:border-accent-100"
+		>
+			<Gear height={22} width={22} />
+		</Button>
 	</div>
 </div>

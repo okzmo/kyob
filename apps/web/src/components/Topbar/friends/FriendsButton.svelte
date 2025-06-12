@@ -6,6 +6,7 @@
 	import AddFriend from './AddFriend.svelte';
 	import { userStore } from 'stores/user.svelte';
 	import Corners from '../../ui/Corners/Corners.svelte';
+	import Tooltip from 'components/ui/Tooltip/Tooltip.svelte';
 
 	let isOpen = $state(false);
 	let friends = $derived(userStore?.friends?.filter((f) => !f.sender || f.accepted) || []);
@@ -13,25 +14,27 @@
 </script>
 
 <Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
-	<Popover.Trigger
-		aria-label="Friends"
-		class={[
-			'group relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer',
-			friendRequests.length > 0
-				? 'top-bar-button-notif hocus:bg-red-400/20'
-				: 'top-bar-button text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
-		]}
-	>
-		<Corners
-			color={friendRequests.length > 0 ? 'border-red-400' : 'border-main-300'}
-			class={['duration-100', friendRequests.length <= 0 ? 'group-hocus:border-accent-100' : '']}
-		/>
-		{#if friendRequests.length > 0}
-			<p class="font-bold text-red-400">{friendRequests.length}</p>
-		{:else}
-			<People height={22} width={22} />
-		{/if}
-	</Popover.Trigger>
+	<Tooltip text="Friends" y={-5}>
+		<Popover.Trigger
+			aria-label="Friends"
+			class={[
+				'group relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer',
+				friendRequests.length > 0
+					? 'top-bar-button-notif hocus:bg-red-400/20'
+					: 'top-bar-button text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+			]}
+		>
+			<Corners
+				color={friendRequests.length > 0 ? 'border-red-400' : 'border-main-300'}
+				class={['duration-100', friendRequests.length <= 0 ? 'group-hocus:border-accent-100' : '']}
+			/>
+			{#if friendRequests.length > 0}
+				<p class="font-bold text-red-400">{friendRequests.length}</p>
+			{:else}
+				<People height={22} width={22} />
+			{/if}
+		</Popover.Trigger>
+	</Tooltip>
 	<CustomPopoverContent
 		class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
 		align="end"

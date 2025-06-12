@@ -25,9 +25,6 @@
 		const identifier = targetId.split('-')[0] as ContextMenuTarget;
 
 		if (!contextMenuTargets.includes(identifier)) {
-			const selection = window.getSelection();
-			if (selection?.type !== 'Range') return;
-
 			const { id, author } = searchValidMessageParent(e.target as HTMLElement);
 			if (id && author) {
 				contextMenuTarget = id;

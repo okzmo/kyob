@@ -6,7 +6,7 @@
 		class: string;
 	}
 
-	let { props, class: classes, style }: Props = $props();
+	let { props, class: classes }: Props = $props();
 
 	let selectedIndex = $state(0);
 	let scrollableMenu = $state<HTMLDivElement>();
@@ -73,7 +73,7 @@
 	<div
 		bind:this={scrollableMenu}
 		class={[
-			'bg-main-900 inner-main-800 flex max-h-[20rem] flex-col gap-y-1 overflow-y-auto px-1 py-1',
+			'bg-main-900 inner-main-800 z-[10] flex max-h-[20rem] flex-col gap-y-1 overflow-y-auto px-1 py-1',
 			classes
 		]}
 	>
