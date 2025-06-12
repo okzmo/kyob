@@ -12,6 +12,7 @@
 	import { goback } from 'stores/goback.svelte';
 	import Serverbar from './Serverbar/Serverbar.svelte';
 	import { searchValidMessageParent } from 'utils/dom';
+	import { Tooltip } from 'bits-ui';
 
 	let { children } = $props();
 
@@ -50,34 +51,36 @@
 	}
 </script>
 
-<ContextMenu.Root>
-	<ContextMenu.Trigger
-		id={page.params.server_id ? `inServer-${page.params.server_id}` : 'mainMap'}
-		class="fixed top-0 left-0 h-screen w-screen"
-		oncontextmenu={onContextMenu}
-	>
-		{#if !onSettingsPage}
-			<Topbar canGoBack={goback.active} />
-			<Userbar />
-			{#if page.params.server_id}
-				<Serverbar />
+<Tooltip.Provider>
+	<ContextMenu.Root>
+		<ContextMenu.Trigger
+			id={page.params.server_id ? `inServer-${page.params.server_id}` : 'mainMap'}
+			class="fixed top-0 left-0 h-screen w-screen"
+			oncontextmenu={onContextMenu}
+		>
+			{#if !onSettingsPage}
+				<Topbar canGoBack={goback.active} />
+				<Userbar />
+				{#if page.params.server_id}
+					<Serverbar />
+				{/if}
+				<Searchbar />
+				{#each windows.openWindows as chatWindow (chatWindow.id)}
+					<ChatWindow
+						id={chatWindow.id}
+						tab={chatWindow.tab}
+						serverId={chatWindow.serverId}
+						channelId={chatWindow.channelId}
+						friendId={chatWindow.friendId}
+					/>
+				{/each}
 			{/if}
-			<Searchbar />
-			{#each windows.openWindows as chatWindow (chatWindow.id)}
-				<ChatWindow
-					id={chatWindow.id}
-					tab={chatWindow.tab}
-					serverId={chatWindow.serverId}
-					channelId={chatWindow.channelId}
-					friendId={chatWindow.friendId}
-				/>
-			{/each}
-		{/if}
 
-		{@render children()}
-	</ContextMenu.Trigger>
-	<ContextMenuSkeleton
-		bind:target={contextMenuTarget}
-		bind:targetAuthor={contextMenuTargetAuthor}
-	/>
-</ContextMenu.Root>
+			{@render children()}
+		</ContextMenu.Trigger>
+		<ContextMenuSkeleton
+			bind:target={contextMenuTarget}
+			bind:targetAuthor={contextMenuTargetAuthor}
+		/>
+	</ContextMenu.Root>
+</Tooltip.Provider>

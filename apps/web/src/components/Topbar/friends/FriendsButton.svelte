@@ -13,8 +13,8 @@
 	let friendRequests = $derived(userStore?.friends?.filter((f) => !f.sender && !f.accepted) || []);
 </script>
 
-<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
-	<Tooltip text="Friends" y={-5}>
+<Tooltip text="Friends" y={-5}>
+	<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
 		<Popover.Trigger
 			aria-label="Friends"
 			class={[
@@ -34,16 +34,16 @@
 				<People height={22} width={22} />
 			{/if}
 		</Popover.Trigger>
-	</Tooltip>
-	<CustomPopoverContent
-		class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
-		align="end"
-		side="bottom"
-		sideOffset={10}
-		y={-10}
-	>
-		<Corners color="border-main-700" />
-		<FriendsList {friends} bind:isOpen />
-		<AddFriend bind:isOpen />
-	</CustomPopoverContent>
-</Popover.Root>
+		<CustomPopoverContent
+			class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
+			align="end"
+			side="bottom"
+			sideOffset={10}
+			y={-10}
+		>
+			<Corners color="border-main-700" />
+			<FriendsList {friends} bind:isOpen />
+			<AddFriend bind:isOpen />
+		</CustomPopoverContent>
+	</Popover.Root>
+</Tooltip>

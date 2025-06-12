@@ -13,23 +13,25 @@
 	let { children, text, y = 5, x }: Props = $props();
 </script>
 
-<Tooltip.Provider>
-	<Tooltip.Root delayDuration={200}>
-		<Tooltip.Trigger>
-			{@render children()}
-		</Tooltip.Trigger>
-		<Tooltip.Content sideOffset={8} forceMount>
-			{#snippet child({ wrapperProps, props, open })}
-				{#if open}
-					<div {...wrapperProps}>
-						<div {...props} class="z-[999]" transition:fly={{ duration: 100, y, x }}>
-							<div class="bg-main-900 inner-main-800 px-2 py-1 text-sm">
-								{text}
-							</div>
+<Tooltip.Root delayDuration={200}>
+	<Tooltip.Trigger>
+		{#snippet child({ props })}
+			<div {...props}>
+				{@render children()}
+			</div>
+		{/snippet}
+	</Tooltip.Trigger>
+	<Tooltip.Content sideOffset={8} forceMount>
+		{#snippet child({ wrapperProps, props, open })}
+			{#if open}
+				<div {...wrapperProps}>
+					<div {...props} class="z-[999]" transition:fly={{ duration: 100, y, x }}>
+						<div class="bg-main-900 inner-main-800 px-2 py-1 text-sm">
+							{text}
 						</div>
 					</div>
-				{/if}
-			{/snippet}
-		</Tooltip.Content>
-	</Tooltip.Root>
-</Tooltip.Provider>
+				</div>
+			{/if}
+		{/snippet}
+	</Tooltip.Content>
+</Tooltip.Root>
