@@ -8,7 +8,6 @@
 	import { backend } from 'stores/backend.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
 	import { rtc } from 'stores/rtc.svelte';
-	import { sounds } from 'stores/audio.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
 
@@ -30,7 +29,6 @@
 
 		if (res.isOk()) {
 			rtc.connectToRoom(res.value.token);
-			sounds.playSound('call-on');
 		}
 	}
 </script>
@@ -78,13 +76,14 @@
 	<Button
 		variants="icon"
 		class={[
-			'inner-main-800',
+			'inner-main-800 !w-auto gap-x-2',
+			channel.voice_users.length <= 0 || tab === 'call' ? 'aspect-square' : 'px-2.5',
 			tab !== 'chat'
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
 		onclick={() => {
-			if (!userStore.currentVoiceChannel) {
+			if (!rtc.currentVC) {
 				joinCall();
 			}
 			windows.toggleCallTab();
@@ -98,9 +97,13 @@
 		{:else if tab === 'call'}
 			<HashChat height={14} width={14} />
 		{/if}
+
+		{#if channel.voice_users.length > 0 && tab === 'chat'}
+			{channel.voice_users.length}
+		{/if}
 	</Button>
 	<Button
-		class="inner-main-800 hocus:inner-main-700-shadow"
+		class="inner-main-800 hocus:inner-main-700-shadow aspect-square"
 		variants="icon"
 		onclick={() => windows.closeWindow(id)}
 		tooltip="Close chat"

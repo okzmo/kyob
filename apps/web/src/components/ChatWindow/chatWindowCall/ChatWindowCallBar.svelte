@@ -55,7 +55,6 @@
 			await rtc.quitRoom();
 			backend.disconnectFromCall(server.id, channel.id);
 			windows.toggleCallTab();
-			sounds.playSound('call-off');
 		}}
 		tooltip="Disconnect"
 		corners

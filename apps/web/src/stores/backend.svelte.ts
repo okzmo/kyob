@@ -291,6 +291,10 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 						serversStore.connectUserToCall(value.serverId, value.channelId, value.userId);
+
+						if (serversStore.isInCall(value.serverId, value.channelId, userStore.user!.id)) {
+							sounds.playSound('call-on');
+						}
 					}
 					break;
 				case 'disconnectFromCall':
@@ -298,6 +302,10 @@ class Backend {
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
 						serversStore.disconnectUserFromCall(value.serverId, value.channelId, value.userId);
+
+						if (serversStore.isInCall(value.serverId, value.channelId, userStore.user!.id)) {
+							sounds.playSound('call-off');
+						}
 					}
 					break;
 				case 'callUsers':

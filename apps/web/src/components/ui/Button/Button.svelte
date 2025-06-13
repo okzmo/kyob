@@ -47,7 +47,7 @@
 		<button
 			type="button"
 			class={[
-				'group bg-main-900 text-main-50 relative flex aspect-square h-full items-center justify-center transition duration-100 hover:cursor-pointer ',
+				'group bg-main-900 text-main-50 relative flex h-full items-center justify-center transition duration-100 hover:cursor-pointer ',
 				classes
 			]}
 			{onclick}
