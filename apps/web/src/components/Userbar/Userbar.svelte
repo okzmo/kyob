@@ -2,7 +2,6 @@
 	import Gear from '../ui/icons/Gear.svelte';
 	import Headphone from '../ui/icons/Headphone.svelte';
 	import Microphone from '../ui/icons/Microphone.svelte';
-	import IconButton from '../ui/IconButton/IconButton.svelte';
 	import { userStore } from 'stores/user.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import UserProfileWithTrigger from '../UserProfile/UserProfileWithTrigger.svelte';
@@ -36,26 +35,38 @@
 	<div class="flex items-center gap-x-1">
 		<Button
 			variants="icon"
-			class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
-			onclick={() => {}}
-			tooltip="Mute"
+			class={[
+				'h-[2.25rem] w-[2.25rem]',
+				userStore.mute
+					? 'hocus:bg-red-400/25 text-red-400'
+					: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+			]}
+			onclick={() => userStore.toggleMute()}
+			tooltip={userStore.mute ? 'Unmute' : 'Mute'}
 			corners
 			cornerColor="border-transparent"
-			cornerClass="group-hocus:border-accent-100"
+			cornerClass={userStore.mute ? 'group-hocus:border-red-400' : 'group-hocus:border-accent-100'}
 		>
-			<Microphone height={22} width={22} />
+			<Microphone height={22} width={22} mute={userStore.mute} />
 		</Button>
 
 		<Button
 			variants="icon"
-			class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
-			onclick={() => {}}
-			tooltip="Deafen"
+			class={[
+				'h-[2.25rem] w-[2.25rem]',
+				userStore.deafen
+					? 'hocus:bg-red-400/25 text-red-400'
+					: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+			]}
+			onclick={() => userStore.toggleDeafen()}
+			tooltip={userStore.deafen ? 'Undeafen' : 'Deafen'}
 			corners
 			cornerColor="border-transparent"
-			cornerClass="group-hocus:border-accent-100"
+			cornerClass={userStore.deafen
+				? 'group-hocus:border-red-400'
+				: 'group-hocus:border-accent-100'}
 		>
-			<Headphone height={22} width={22} />
+			<Headphone height={22} width={22} deafen={userStore.deafen} />
 		</Button>
 
 		<Button

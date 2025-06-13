@@ -8,6 +8,7 @@
 	import UserProfileNoTrigger from 'components/UserProfile/UserProfileNoTrigger.svelte';
 	import { backend } from 'stores/backend.svelte';
 	import { goback } from 'stores/goback.svelte';
+	import { rtc } from 'stores/rtc.svelte';
 	import { serversStore } from 'stores/servers.svelte';
 	import { userStore } from 'stores/user.svelte';
 	import { onMount } from 'svelte';
@@ -31,6 +32,7 @@
 			userStore.friends = res.value.friends;
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
+			await rtc.prepareConnection();
 		}
 	});
 

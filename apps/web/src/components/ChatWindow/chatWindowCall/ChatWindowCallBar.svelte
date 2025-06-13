@@ -7,6 +7,9 @@
 	import { backend } from 'stores/backend.svelte';
 	import { windows } from 'stores/windows.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
+	import { rtc } from 'stores/rtc.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import { sounds } from 'stores/audio.svelte';
 
 	let { server, channel } = $props();
 </script>
@@ -16,11 +19,16 @@
 		<Corners color="border-main-700" />
 		<Button
 			variants="nostyle"
-			class="hocus:bg-main-800 hocus:inner-main-700-shadow text-main-400 hocus:text-main-50 px-3 py-2 transition-colors duration-100 hover:cursor-pointer"
-			onclick={() => {}}
+			class={[
+				'px-3 py-2 transition-colors duration-100 hover:cursor-pointer',
+				userStore.mute
+					? 'inner-red-400/20 hocus:bg-red-400/30 hocus:inner-red-400/40 bg-red-400/20 text-red-400'
+					: 'text-main-400 hocus:bg-main-800 hocus:inner-main-700-shadow hocus:text-main-50'
+			]}
+			onclick={() => userStore.toggleMute()}
 			tooltip="Mute"
 		>
-			<Microphone height={24} width={24} />
+			<Microphone height={24} width={24} mute={userStore.mute} />
 		</Button>
 		<Button
 			variants="nostyle"
@@ -43,9 +51,11 @@
 	<Button
 		variants="nostyle"
 		class="inner-red-400/20 hocus:inner-red-400/40 hocus:bg-red-400/30 relative h-full bg-red-400/20 px-5.5 py-2 text-red-400 backdrop-blur-lg transition hover:cursor-pointer"
-		onclick={() => {
+		onclick={async () => {
+			await rtc.quitRoom();
 			backend.disconnectFromCall(server.id, channel.id);
 			windows.toggleCallTab();
+			sounds.playSound('call-off');
 		}}
 		tooltip="Disconnect"
 		corners

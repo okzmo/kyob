@@ -8,6 +8,7 @@
 	import { backend } from 'stores/backend.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
 	import { rtc } from 'stores/rtc.svelte';
+	import { sounds } from 'stores/audio.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
 
@@ -29,6 +30,7 @@
 
 		if (res.isOk()) {
 			rtc.connectToRoom(res.value.token);
+			sounds.playSound('call-on');
 		}
 	}
 </script>

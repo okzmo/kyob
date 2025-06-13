@@ -1,11 +1,26 @@
 import type { Friend, User } from '../types/types';
+import { sounds } from './audio.svelte';
+import { rtc } from './rtc.svelte';
 
 class UserStore {
 	user = $state<User>();
 	friends = $state<Friend[]>([]);
+	callTokens = $state<Record<string, string>>({});
 	mention = $state(false);
 	mute = $state(false);
 	deafen = $state(false);
+
+	async toggleMute() {
+		this.mute = !this.mute;
+		sounds.playSound(this.mute ? 'mute-on' : 'mute-off');
+		if (rtc.currentVC) await rtc.toggleMute();
+	}
+
+	async toggleDeafen() {
+		this.deafen = !this.deafen;
+		sounds.playSound(this.deafen ? 'mute-on' : 'mute-off');
+		if (rtc.currentVC) await rtc.toggleDeafen();
+	}
 
 	addFriend(friend: Friend) {
 		if (Array.isArray(this.friends)) {
