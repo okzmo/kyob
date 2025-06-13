@@ -36,7 +36,7 @@
 
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_UNKNOWN') {
-						console.log(res.error.error);
+						console.error(res.error.error);
 					}
 					isSubmitting = false;
 					return;

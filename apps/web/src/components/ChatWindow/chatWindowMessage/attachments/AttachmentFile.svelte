@@ -5,7 +5,6 @@
 
 	function download() {
 		const anchor = document.createElement('a');
-		console.log(file.file_name);
 		anchor.href = file.url;
 		anchor.download = file.file_name;
 		document.body.appendChild(anchor);

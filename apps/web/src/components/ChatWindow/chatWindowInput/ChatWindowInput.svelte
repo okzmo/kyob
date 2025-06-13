@@ -42,7 +42,7 @@
 
 		const res = await backend.sendMessage(server.id, channel.id, payload);
 		if (res.isErr()) {
-			console.log(`${res.error.code}: ${res.error.error}`);
+			console.error(`${res.error.code}: ${res.error.error}`);
 		}
 
 		editor.commands.clearContent();

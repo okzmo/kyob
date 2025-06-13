@@ -30,7 +30,7 @@
 				const res = await backend.joinServer(form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
-						console.log(res.error.error);
+						console.error(res.error.error);
 					}
 					isSubmitting = false;
 				}

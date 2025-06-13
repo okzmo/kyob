@@ -43,6 +43,7 @@ import { windows } from './windows.svelte';
 import { sounds } from './audio.svelte';
 import { userStore } from './user.svelte';
 import { core } from './core.svelte';
+import { print } from 'utils/print';
 
 const client = ky.create({
 	prefixUrl: `${import.meta.env.VITE_API_URL}/authenticated`,
@@ -60,7 +61,7 @@ class Backend {
 
 		this.wsConn = ws;
 		ws.onopen = () => {
-			console.log('Connection established');
+			print('Connection established');
 			window.setInterval(() => {
 				ws.send('heartbeat');
 			}, 10 * 1000);
@@ -312,7 +313,7 @@ class Backend {
 		};
 
 		ws.onclose = (event) => {
-			console.log('Connection closed:', event);
+			print('Connection closed:', event);
 		};
 
 		ws.onerror = (error) => {
@@ -740,7 +741,7 @@ class Backend {
 		try {
 			await client.post('logout');
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	}
 

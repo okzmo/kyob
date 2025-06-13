@@ -9,12 +9,13 @@ import {
 	VideoPresets
 } from 'livekit-client';
 import { userStore } from './user.svelte';
+import { print } from 'utils/print';
 
 class RTC {
 	currentVC = $state<Room>();
 
 	async prepareConnection() {
-		console.log('Preparing connection...');
+		print('Preparing connection...');
 
 		const room = new Room({
 			audioCaptureDefaults: {
@@ -75,7 +76,7 @@ class RTC {
 		const startTime = Date.now();
 		try {
 			await room.connect(import.meta.env.VITE_LIVEKIT_URL, token);
-			console.log(`Connection established in ${Date.now() - startTime}ms`);
+			print(`Connection established in ${Date.now() - startTime}ms`);
 		} catch (error) {
 			console.error(`Connection failed after ${Date.now() - startTime}ms:`, error);
 		}
@@ -181,15 +182,15 @@ class RTC {
 	}
 
 	#handleReconnecting() {
-		console.log('Reconnecting...');
+		print('Reconnecting...');
 	}
 
 	#handleReconnected() {
-		console.log('Reconnected!');
+		print('Reconnected!');
 	}
 
 	#handleConnected() {
-		console.log('Connected!');
+		print('Connected!');
 	}
 }
 

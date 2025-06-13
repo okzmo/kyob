@@ -35,7 +35,7 @@
 
 		const res = await backend.editMessage(server.id, channel.id, messageId, payload);
 		if (res.isErr()) {
-			console.log(`${res.error.code}: ${res.error.error}`);
+			console.error(`${res.error.code}: ${res.error.error}`);
 			return;
 		}
 

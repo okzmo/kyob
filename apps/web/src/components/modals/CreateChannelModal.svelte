@@ -30,10 +30,10 @@
 				const res = await backend.createChannel(serverId, form.data);
 				if (res.isErr()) {
 					if (res.error.code === 'ERR_VALIDATION_FAILED') {
-						console.log(res.error.error);
+						console.error(res.error.error);
 					}
 					if (res.error.code === 'ERR_UNAUTHORIZED') {
-						console.log(res.error.error);
+						console.error(res.error.error);
 					}
 					isSubmitting = false;
 				}
