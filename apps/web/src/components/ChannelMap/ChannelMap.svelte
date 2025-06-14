@@ -145,7 +145,8 @@
 			type={channel.type}
 			x={channel.x + offset.x}
 			y={channel.y + offset.y}
-			unread={channel.unread}
+			unread={Number(channel.last_message_read) < Number(channel.last_message_sent)}
+			mention={channel.last_mentions && channel.last_mentions.length}
 		/>
 	{/each}
 {:else}

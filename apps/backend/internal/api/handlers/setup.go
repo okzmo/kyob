@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/okzmo/kyob/db"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 )
@@ -19,4 +20,25 @@ func Setup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, *all)
+}
+
+func SaveLastState(w http.ResponseWriter, r *http.Request) {
+	var body services.BodySaveState
+	user := r.Context().Value("user").(db.User)
+
+	err := utils.ParseAndValidate(r, validate, &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	body.UserID = user.ID
+
+	err = services.SaveLastState(r.Context(), body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "ok"})
 }

@@ -32,6 +32,9 @@ export interface Channel {
 	x: number;
 	y: number;
 	unread: boolean;
+	last_message_sent?: string;
+	last_message_read?: string;
+	last_mentions?: string[];
 	messages?: Message[];
 	users?: Partial<User>[];
 	voice_users: {
@@ -118,6 +121,12 @@ export interface Message {
 	attachments: Attachment[];
 	updated_at: string;
 	created_at: string;
+}
+
+export interface LastState {
+	channel_ids: string[];
+	last_message_ids: string[];
+	mentions_ids: string[][];
 }
 
 export type ActorMessageTypes = 'channel:message';

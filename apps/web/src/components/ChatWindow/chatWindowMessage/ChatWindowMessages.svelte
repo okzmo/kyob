@@ -3,6 +3,7 @@
 	import ChatWindowMessage from './ChatWindowMessage.svelte';
 	import { serversStore } from 'stores/servers.svelte';
 	import type { Channel, Message, Server } from 'types/types';
+	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
 		messages: Message[];
@@ -12,6 +13,24 @@
 
 	let { messages, server, channel }: Props = $props();
 	let scrollContent = $state<HTMLElement | null>();
+
+	onMount(() => {
+		if (!channel.last_message_sent || !channel.last_message_read) {
+			serversStore.markChannelAsRead(server.id, channel.id);
+		}
+
+		if (
+			channel.last_message_sent &&
+			channel.last_message_read &&
+			channel.last_message_sent > channel.last_message_read
+		) {
+			serversStore.markChannelAsRead(server.id, channel.id);
+		}
+	});
+
+	onDestroy(() => {
+		serversStore.markChannelAsRead(server.id, channel.id);
+	});
 </script>
 
 <div

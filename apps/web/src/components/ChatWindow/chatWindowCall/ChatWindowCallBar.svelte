@@ -54,6 +54,7 @@
 		onclick={async () => {
 			await rtc.quitRoom();
 			backend.disconnectFromCall(server.id, channel.id);
+			sounds.playSound('call-off');
 			windows.toggleCallTab();
 		}}
 		tooltip="Disconnect"

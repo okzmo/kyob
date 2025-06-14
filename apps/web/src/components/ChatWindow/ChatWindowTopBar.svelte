@@ -20,6 +20,9 @@
 	});
 
 	async function joinCall() {
+		windows.toggleCallTab();
+		if (rtc.currentVC || rtc.connecting) return;
+
 		const res = await backend.connectToCall(server.id, channel.id);
 
 		if (res.isErr()) {
@@ -28,24 +31,18 @@
 		}
 
 		if (res.isOk()) {
-			rtc.connectToRoom(res.value.token);
+			await rtc.connectToRoom(res.value.token);
 		}
 	}
 </script>
 
 <div id={`window-top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
 	<div
-		class={[
-			'inner-main-800 relative flex h-[2.375rem] w-full items-center justify-between px-2.5 transition duration-100',
-			userStore.mention ? 'bg-accent-200' : 'bg-main-900'
-		]}
+		class="inner-main-800 bg-main-900 relative flex h-[2.375rem] w-full items-center justify-between px-2.5 transition duration-100"
 	>
 		<Corners color="border-main-700" />
 		<div
-			class={[
-				'flex items-center gap-x-2 text-sm transition-colors duration-100 select-none',
-				userStore.mention ? 'text-accent-50 ' : 'text-main-400 '
-			]}
+			class="text-main-400 flex items-center gap-x-2 text-sm transition-colors duration-100 select-none"
 		>
 			{#if friend}
 				<div class="flex items-center gap-x-1.5">
@@ -77,17 +74,12 @@
 		variants="icon"
 		class={[
 			'inner-main-800 !w-auto gap-x-2',
-			channel.voice_users.length <= 0 || tab === 'call' ? 'aspect-square' : 'px-2.5',
+			channel.voice_users.length > 0 && tab === 'chat' ? '!aspect-auto px-2.5' : '',
 			tab !== 'chat'
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
-		onclick={() => {
-			if (!rtc.currentVC) {
-				joinCall();
-			}
-			windows.toggleCallTab();
-		}}
+		onclick={joinCall}
 		tooltip={tab !== 'chat' ? 'Go to chat' : 'Join call'}
 		corners
 		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}

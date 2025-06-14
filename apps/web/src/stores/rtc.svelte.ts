@@ -13,6 +13,7 @@ import { print } from 'utils/print';
 
 class RTC {
 	currentVC = $state<Room>();
+	connecting = $state(false);
 
 	async prepareConnection() {
 		print('Preparing connection...');
@@ -41,6 +42,8 @@ class RTC {
 	}
 
 	async connectToRoom(token: string) {
+		this.connecting = true;
+
 		//TODO: change to using user's settings
 		const room = new Room({
 			audioCaptureDefaults: {
@@ -186,6 +189,7 @@ class RTC {
 	}
 
 	#handleReconnected() {
+		this.connecting = false;
 		print('Reconnected!');
 	}
 

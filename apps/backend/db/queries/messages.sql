@@ -7,6 +7,12 @@ SELECT * FROM messages WHERE channel_id = $1 ORDER BY created_at DESC;
 -- name: CheckChannelMembership :execresult
 SELECT c.id FROM channels c, server_membership sm WHERE c.id = $1 and c.server_id = sm.server_id and sm.user_id = $2;
 
+-- name: GetLatestMessagesSent :many
+SELECT m.id, m.channel_id FROM messages m WHERE channel_id = ANY($1::text[]) ORDER BY created_at DESC LIMIT 1;
+
+-- name: GetLatestMessagesRead :many
+SELECT channel_id, last_read_message_id, unread_mention_ids FROM user_channel_read_state WHERE user_id = $1;
+
 -- name: CreateMessage :one
 INSERT INTO messages (
   id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments
@@ -14,6 +20,15 @@ INSERT INTO messages (
   $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING *;
+
+-- name: SaveUnreadMessagesState :exec
+INSERT INTO user_channel_read_state (user_id, channel_id, last_read_message_id, unread_mention_ids)
+SELECT $1, unnest(@channel_ids::VARCHAR[]), unnest(@last_read_message_ids::VARCHAR[]), unnest(@unread_mention_ids::JSONB[])
+ON CONFLICT (user_id, channel_id)
+DO UPDATE SET 
+    last_read_message_id = EXCLUDED.last_read_message_id,
+    unread_mention_ids = EXCLUDED.unread_mention_ids,
+    updated_at = NOW();
 
 -- name: UpdateMessage :execresult
 UPDATE messages 

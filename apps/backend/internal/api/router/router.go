@@ -32,6 +32,7 @@ func Setup() {
 			r.Use(mid.Auth)
 			r.Get("/connect/{user_id}", handlers.WS)
 			r.Get("/setup", handlers.Setup)
+			r.Post("/save_state", handlers.SaveLastState)
 			r.Get("/user/{user_id}", handlers.GetUser)
 			r.Post("/user/update_account", handlers.UpdateAccount)
 			r.Post("/user/update_avatar", handlers.UpdateAvatar)

@@ -1,6 +1,4 @@
 import type { Window } from '../types/types';
-import { backend } from './backend.svelte';
-import { userStore } from './user.svelte';
 
 class Windows {
 	openWindows = $state<Window[]>([]);

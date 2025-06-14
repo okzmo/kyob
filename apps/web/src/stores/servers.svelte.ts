@@ -1,6 +1,7 @@
-import { message } from 'sveltekit-superforms';
-import type { Channel, Message, Server, User } from '../types/types';
+import type { Channel, LastState, Message, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
+import { userStore } from './user.svelte';
+import { windows } from './windows.svelte';
 
 class Servers {
 	servers = $state<Record<string, Server>>({});
@@ -68,10 +69,32 @@ class Servers {
 		delete this.servers[serverId].channels[channelId];
 	}
 
+	markChannelAsRead(serverId: string, channelId: string) {
+		const channel = this.getChannel(serverId, channelId);
+
+		if (Array.isArray(channel.messages) && channel.messages.length > 0) {
+			channel.last_message_read = channel.messages[0].id;
+			channel.last_mentions = [];
+		}
+	}
+
 	addMessage(serverId: string, message: Message) {
 		const messages = this.servers[serverId]?.channels[message.channel_id]?.messages;
+		const channel = this.getChannel(serverId, message.channel_id);
+
 		if (Array.isArray(messages)) {
 			messages.unshift(message);
+		}
+
+		console.log(channel);
+		if (!windows.getWindow({ channelId: message.channel_id })) {
+			channel.last_message_sent = message.id;
+
+			if (message.mentions_users.find((id) => id === userStore.user!.id)) {
+				if (Array.isArray(channel.last_mentions))
+					channel.last_mentions = [...channel.last_mentions, message.id];
+				else channel.last_mentions = [message.id];
+			}
 		}
 	}
 
@@ -192,6 +215,52 @@ class Servers {
 		if (userIdx > -1) {
 			channel.voice_users.splice(userIdx, 1);
 		}
+	}
+
+	hasUnreadChannels(serverId: string) {
+		const channels = this.getChannels(serverId);
+
+		for (const channel of channels) {
+			if (
+				channel.last_message_read &&
+				channel.last_message_sent &&
+				channel.last_message_read < channel.last_message_sent
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	hasMentionsInChannels(serverId: string) {
+		const channels = this.getChannels(serverId);
+
+		for (const channel of channels) {
+			if (channel.last_mentions && channel.last_mentions.length > 0) {
+				return channel.last_mentions.length;
+			}
+		}
+
+		return false;
+	}
+
+	getLastState(): LastState {
+		const lastState: LastState = {
+			channel_ids: [],
+			last_message_ids: [],
+			mentions_ids: []
+		};
+
+		for (const server of Object.values(this.servers)) {
+			for (const channel of Object.values(server.channels)) {
+				lastState.channel_ids.push(channel.id);
+				lastState.last_message_ids.push(channel.last_message_read || '');
+				lastState.mentions_ids.push(channel.last_mentions || []);
+			}
+		}
+
+		return lastState;
 	}
 }
 

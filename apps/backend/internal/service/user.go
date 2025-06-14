@@ -356,7 +356,7 @@ func DeleteFriend(ctx context.Context, body *RemoveFriendBody) (string, error) {
 
 	channel, err := db.Query.DeactivateChannel(ctx, db.DeactivateChannelParams{
 		Column1: body.FriendID,
-		Column2: body.FriendID,
+		Column2: body.UserID,
 	})
 	if err != nil {
 		return "", err

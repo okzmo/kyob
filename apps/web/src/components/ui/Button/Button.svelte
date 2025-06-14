@@ -43,11 +43,11 @@
 {/if}
 
 {#if variants === 'icon'}
-	<Tooltip text={tooltip}>
+	<Tooltip text={tooltip || ''}>
 		<button
 			type="button"
 			class={[
-				'group bg-main-900 text-main-50 relative flex h-full items-center justify-center transition duration-100 hover:cursor-pointer ',
+				'group bg-main-900 text-main-50 relative flex aspect-square h-full items-center justify-center transition duration-100 hover:cursor-pointer',
 				classes
 			]}
 			{onclick}
@@ -61,7 +61,7 @@
 {/if}
 
 {#if variants === 'nostyle'}
-	<Tooltip text={tooltip}>
+	<Tooltip text={tooltip || ''}>
 		<button type="button" class={classes} {onclick}>
 			{#if corners}
 				<Corners color={cornerColor} class={cornerClass} />

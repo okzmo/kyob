@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const checkChannelMembership = `-- name: CheckChannelMembership :execresult
@@ -85,6 +86,65 @@ func (q *Queries) DeleteMessage(ctx context.Context, arg DeleteMessageParams) (p
 	return q.db.Exec(ctx, deleteMessage, arg.ID, arg.AuthorID)
 }
 
+const getLatestMessagesRead = `-- name: GetLatestMessagesRead :many
+SELECT channel_id, last_read_message_id, unread_mention_ids FROM user_channel_read_state WHERE user_id = $1
+`
+
+type GetLatestMessagesReadRow struct {
+	ChannelID         string      `json:"channel_id"`
+	LastReadMessageID pgtype.Text `json:"last_read_message_id"`
+	UnreadMentionIds  []byte      `json:"unread_mention_ids"`
+}
+
+func (q *Queries) GetLatestMessagesRead(ctx context.Context, userID string) ([]GetLatestMessagesReadRow, error) {
+	rows, err := q.db.Query(ctx, getLatestMessagesRead, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLatestMessagesReadRow
+	for rows.Next() {
+		var i GetLatestMessagesReadRow
+		if err := rows.Scan(&i.ChannelID, &i.LastReadMessageID, &i.UnreadMentionIds); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLatestMessagesSent = `-- name: GetLatestMessagesSent :many
+SELECT m.id, m.channel_id FROM messages m WHERE channel_id = ANY($1::text[]) ORDER BY created_at DESC LIMIT 1
+`
+
+type GetLatestMessagesSentRow struct {
+	ID        string `json:"id"`
+	ChannelID string `json:"channel_id"`
+}
+
+func (q *Queries) GetLatestMessagesSent(ctx context.Context, dollar_1 []string) ([]GetLatestMessagesSentRow, error) {
+	rows, err := q.db.Query(ctx, getLatestMessagesSent, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLatestMessagesSentRow
+	for rows.Next() {
+		var i GetLatestMessagesSentRow
+		if err := rows.Scan(&i.ID, &i.ChannelID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getMessage = `-- name: GetMessage :one
 SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE id = $1
 `
@@ -140,6 +200,33 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const saveUnreadMessagesState = `-- name: SaveUnreadMessagesState :exec
+INSERT INTO user_channel_read_state (user_id, channel_id, last_read_message_id, unread_mention_ids)
+SELECT $1, unnest($2::VARCHAR[]), unnest($3::VARCHAR[]), unnest($4::JSONB[])
+ON CONFLICT (user_id, channel_id)
+DO UPDATE SET 
+    last_read_message_id = EXCLUDED.last_read_message_id,
+    unread_mention_ids = EXCLUDED.unread_mention_ids,
+    updated_at = NOW()
+`
+
+type SaveUnreadMessagesStateParams struct {
+	UserID             string            `json:"user_id"`
+	ChannelIds         []string          `json:"channel_ids"`
+	LastReadMessageIds []string          `json:"last_read_message_ids"`
+	UnreadMentionIds   []json.RawMessage `json:"unread_mention_ids"`
+}
+
+func (q *Queries) SaveUnreadMessagesState(ctx context.Context, arg SaveUnreadMessagesStateParams) error {
+	_, err := q.db.Exec(ctx, saveUnreadMessagesState,
+		arg.UserID,
+		arg.ChannelIds,
+		arg.LastReadMessageIds,
+		arg.UnreadMentionIds,
+	)
+	return err
 }
 
 const updateMessage = `-- name: UpdateMessage :execresult

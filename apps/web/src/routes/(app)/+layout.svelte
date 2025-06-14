@@ -34,6 +34,12 @@
 			backend.setupWebsocket(res.value.user.id);
 			await rtc.prepareConnection();
 		}
+
+		window.addEventListener('beforeunload', () => {
+			const lastState = serversStore.getLastState();
+			console.log(lastState);
+			backend.saveState(lastState);
+		});
 	});
 
 	$effect(() => {

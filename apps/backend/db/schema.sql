@@ -181,6 +181,19 @@ CREATE TABLE public.tokens (
 
 
 --
+-- Name: user_channel_read_state; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_channel_read_state (
+    user_id character varying(20) NOT NULL,
+    channel_id character varying(20) NOT NULL,
+    last_read_message_id character varying(20),
+    unread_mention_ids jsonb DEFAULT '[]'::jsonb,
+    updated_at timestamp without time zone DEFAULT now()
+);
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -279,6 +292,14 @@ ALTER TABLE ONLY public.servers
 
 ALTER TABLE ONLY public.tokens
     ADD CONSTRAINT tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_pkey PRIMARY KEY (user_id, channel_id);
 
 
 --
@@ -427,6 +448,30 @@ ALTER TABLE ONLY public.servers
 
 ALTER TABLE ONLY public.tokens
     ADD CONSTRAINT tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_channel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_last_read_message_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_last_read_message_id_fkey FOREIGN KEY (last_read_message_id) REFERENCES public.messages(id) ON DELETE SET NULL;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

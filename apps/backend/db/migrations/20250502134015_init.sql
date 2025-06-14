@@ -12,8 +12,8 @@ CREATE TABLE users(
   banner VARCHAR(255),
   about JSONB,
   main_color VARCHAR(255),
-  links JSONB DEFAULT '[]',
-  facts JSONB DEFAULT '[]',
+  links JSONB DEFAULT '[]'::jsonb,
+  facts JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -105,6 +105,15 @@ CREATE TABLE invites(
   expire_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+CREATE TABLE user_channel_read_state(
+  user_id VARCHAR(20) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  channel_id VARCHAR(20) NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+  last_read_message_id VARCHAR(20) REFERENCES messages(id) ON DELETE CASCADE,
+  unread_mention_ids JSONB DEFAULT '[]'::jsonb,
+  updated_at TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (user_id, channel_id)
+);
+
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_tokens_token ON tokens(token);
@@ -118,6 +127,7 @@ INSERT INTO servers
 VALUES ('global', 'global', 'global');
 
 -- migrate:down
+DROP TABLE user_channel_read_state;
 DROP TABLE invites;
 DROP TABLE tokens;
 DROP TABLE server_membership;

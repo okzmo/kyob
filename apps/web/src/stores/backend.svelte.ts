@@ -1,6 +1,8 @@
+import { fromBinary } from '@bufbuild/protobuf';
+import { timestampDate } from '@bufbuild/protobuf/wkt';
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import type { Channel, ChannelTypes, Friend, Message, Server, Setup, User } from '../types/types';
+import { print } from 'utils/print';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	AcceptFriendErrors,
@@ -36,14 +38,21 @@ import type {
 	UpdateAvatarType,
 	UpdateProfileType
 } from '../types/schemas';
-import { fromBinary } from '@bufbuild/protobuf';
-import { serversStore } from './servers.svelte';
-import { timestampDate } from '@bufbuild/protobuf/wkt';
-import { windows } from './windows.svelte';
+import type {
+	Channel,
+	ChannelTypes,
+	Friend,
+	LastState,
+	Message,
+	Server,
+	Setup,
+	User
+} from '../types/types';
 import { sounds } from './audio.svelte';
-import { userStore } from './user.svelte';
 import { core } from './core.svelte';
-import { print } from 'utils/print';
+import { serversStore } from './servers.svelte';
+import { userStore } from './user.svelte';
+import { windows } from './windows.svelte';
 
 const client = ky.create({
 	prefixUrl: `${import.meta.env.VITE_API_URL}/authenticated`,
@@ -115,6 +124,9 @@ class Backend {
 							name: value.name,
 							type: value.type as ChannelTypes,
 							unread: false,
+							last_message_sent: '',
+							last_message_read: '',
+							last_mentions: [],
 							x: value.x,
 							y: value.y,
 							users: value.users.map((u) => ({
@@ -194,7 +206,7 @@ class Backend {
 
 						if (
 							message?.mentions_users?.includes(userStore.user!.id) &&
-							message.author.id !== userStore.user!.id
+							message.author_id !== userStore.user!.id
 						) {
 							sounds.playSound('notification');
 							userStore.mention = true;
@@ -830,6 +842,13 @@ class Backend {
 			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
 		}
+	}
+
+	async saveState(body: LastState) {
+		navigator.sendBeacon(
+			`${import.meta.env.VITE_API_URL}/authenticated/save_state`,
+			JSON.stringify(body)
+		);
 	}
 }
 

@@ -209,3 +209,11 @@ type User struct {
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
+
+type UserChannelReadState struct {
+	UserID            string           `json:"user_id"`
+	ChannelID         string           `json:"channel_id"`
+	LastReadMessageID pgtype.Text      `json:"last_read_message_id"`
+	UnreadMentionIds  []byte           `json:"unread_mention_ids"`
+	UpdatedAt         pgtype.Timestamp `json:"updated_at"`
+}

@@ -11,16 +11,19 @@
 		x: number;
 		y: number;
 		unread?: boolean;
+		mention?: number;
 	}
 
-	let { id, name, type, x, y, unread = false }: Props = $props();
+	let { id, name, type, x, y, unread = false, mention }: Props = $props();
 </script>
 
 <button
 	id="channelButton-{id}"
 	class={[
-		'group hocus:bg-accent-800 inner-shadow-main-800 hocus:text-accent-50 hocus:inner-accent/25 absolute z-20 flex items-center gap-x-2.5 px-4 py-3 font-medium transition-[color,box-shadow] duration-100 hover:cursor-pointer',
-		unread ? 'bg-main-800 text-main-50' : 'bg-main-900 text-main-400'
+		'group hocus:bg-accent-800 hocus:text-accent-50 hocus:inner-accent/25 absolute z-20 flex items-center gap-x-2.5 px-4 py-3 font-medium transition-[color,box-shadow] duration-100 hover:cursor-pointer',
+		unread
+			? 'bg-main-800 text-main-50 inner-shadow-main-500'
+			: 'bg-main-900 text-main-400 inner-shadow-main-800'
 	]}
 	style="transform: translate({x}px, {y}px);"
 	onclick={() => {
@@ -31,7 +34,15 @@
 		});
 	}}
 >
-	<Corners color="border-main-700" class="group-hocus:border-accent-100 duration-100" />
+	<Corners
+		color={unread ? 'border-main-300' : 'border-main-700'}
+		class="group-hocus:border-accent-100 duration-100"
+	/>
+	{#if mention}
+		<div class="mentions">
+			{mention}
+		</div>
+	{/if}
 	{#if type == 'textual'}
 		<HashChat height={20} width={20} />
 	{:else if type == 'voice'}

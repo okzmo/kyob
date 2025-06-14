@@ -3,11 +3,24 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
 )
+
+type channelState struct {
+	ChannelID     string `json:"channel_id"`
+	LastMessageID string `json:"last_message_id"`
+}
+
+type BodySaveState struct {
+	UserID         string            `json:"user_id"`
+	ChannelIDs     []string          `json:"channel_ids"`
+	LastMessageIDs []string          `json:"last_message_ids"`
+	MentionsIds    []json.RawMessage `json:"mentions_ids"`
+}
 
 type ServerWithChannels struct {
 	ServerResponse
@@ -27,8 +40,11 @@ type voiceUser struct {
 
 type ChannelsWithMembers struct {
 	db.Channel
-	Users      []db.GetUsersByIdsRow `json:"users"`
-	VoiceUsers []voiceUser           `json:"voice_users"`
+	LastMessageSent string                `json:"last_message_sent"`
+	LastMessageRead string                `json:"last_message_read"`
+	MentionsIds     json.RawMessage       `json:"last_mentions"`
+	Users           []db.GetUsersByIdsRow `json:"users"`
+	VoiceUsers      []voiceUser           `json:"voice_users"`
 }
 
 type UserResponse struct {
@@ -106,7 +122,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 
 	res.Servers = make(map[string]ServerWithChannels)
 	if len(servers) > 0 {
-		serversMap, err := processServers(ctx, servers)
+		serversMap, err := processServers(ctx, ctxUser.ID, servers)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +133,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	return &res, nil
 }
 
-func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
+func processServers(ctx context.Context, userId string, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
 	serverIDs := make([]string, 0, len(servers))
 	for _, server := range servers {
 		serverIDs = append(serverIDs, server.ID)
@@ -128,12 +144,38 @@ func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (ma
 		return nil, err
 	}
 
+	channelIDs := make([]string, 0, len(allChannels))
+	for _, channel := range allChannels {
+		channelIDs = append(channelIDs, channel.ID)
+	}
+
+	allMessagesSent, err := db.Query.GetLatestMessagesSent(ctx, channelIDs)
+	if err != nil {
+		return nil, err
+	}
+	allMessagesSentSet := make(map[string]string)
+	for _, mess := range allMessagesSent {
+		allMessagesSentSet[mess.ChannelID] = mess.ID
+	}
+
+	allMessagesRead, err := db.Query.GetLatestMessagesRead(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	allMessagesReadSet := make(map[string]string)
+	allMessagesMentionsSet := make(map[string]json.RawMessage)
+	for _, mess := range allMessagesRead {
+		allMessagesReadSet[mess.ChannelID] = mess.LastReadMessageID.String
+		allMessagesMentionsSet[mess.ChannelID] = mess.UnreadMentionIds
+	}
+
 	allMembers, err := db.Query.GetMembersFromServers(ctx, serverIDs)
 	if err != nil {
 		return nil, err
 	}
 
 	userIDSet := make(map[string]bool)
+
 	for _, channel := range allChannels {
 		for _, userID := range channel.Users {
 			userIDSet[userID] = true
@@ -182,6 +224,9 @@ func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (ma
 
 			channelMap[channel.ID] = ChannelsWithMembers{
 				channel,
+				allMessagesSentSet[channel.ID],
+				allMessagesReadSet[channel.ID],
+				allMessagesMentionsSet[channel.ID],
 				channelUsers,
 				[]voiceUser{},
 			}
@@ -208,4 +253,31 @@ func processServers(ctx context.Context, servers []db.GetServersFromUserRow) (ma
 	}
 
 	return result, nil
+}
+
+func SaveLastState(ctx context.Context, body BodySaveState) error {
+	var validChannelIDs []string
+	var validLastReadMessageIDs []string
+	var validUnreadMentionIDs []json.RawMessage
+
+	for i, messageID := range body.LastMessageIDs {
+		if messageID != "" && messageID != "null" {
+			validChannelIDs = append(validChannelIDs, body.ChannelIDs[i])
+			validLastReadMessageIDs = append(validLastReadMessageIDs, messageID)
+			validUnreadMentionIDs = append(validUnreadMentionIDs, body.MentionsIds[i])
+		}
+	}
+
+	err := db.Query.SaveUnreadMessagesState(ctx, db.SaveUnreadMessagesStateParams{
+		UserID:             body.UserID,
+		ChannelIds:         validChannelIDs,
+		LastReadMessageIds: validLastReadMessageIDs,
+		UnreadMentionIds:   validUnreadMentionIDs,
+	})
+	if err != nil {
+		slog.Error("failed to save last state", "err", err)
+		return err
+	}
+
+	return nil
 }
