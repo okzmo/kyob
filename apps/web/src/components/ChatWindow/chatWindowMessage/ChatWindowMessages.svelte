@@ -40,12 +40,16 @@
 	{#if messages.length > 0}
 		{#each messages as message (message.id)}
 			{@const author = serversStore.getMemberById(server.id, message.author_id)!}
+			{@const friend = userStore.getFriend(message.author_id)}
+			{@const me = userStore.user?.id === message.author_id && userStore.user}
+
 			<ChatWindowMessage
 				id={message.id}
-				{author}
+				author={author || friend || me}
 				content={message.content}
 				time={message.created_at}
-				isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '')}
+				isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '') ||
+					message.everyone}
 				isEdited={message.created_at !== message.updated_at}
 				{server}
 				{channel}

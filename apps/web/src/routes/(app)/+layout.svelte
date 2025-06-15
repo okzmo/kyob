@@ -37,7 +37,6 @@
 
 		window.addEventListener('beforeunload', () => {
 			const lastState = serversStore.getLastState();
-			console.log(lastState);
 			backend.saveState(lastState);
 		});
 	});

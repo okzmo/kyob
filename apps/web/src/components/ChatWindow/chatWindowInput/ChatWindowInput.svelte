@@ -28,6 +28,7 @@
 
 	async function prepareMessage(message: any) {
 		if (editor.getText().length <= 0 || editor.getText().length > 2500) return;
+		const everyone = editor.getText().includes('@everyone');
 		const ids =
 			editor
 				.getText()
@@ -37,6 +38,7 @@
 		const payload = {
 			content: message,
 			mentions_users: [...new Set(ids)],
+			everyone: everyone,
 			attachments
 		};
 

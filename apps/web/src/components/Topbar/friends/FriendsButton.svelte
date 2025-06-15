@@ -13,37 +13,36 @@
 	let friendRequests = $derived(userStore?.friends?.filter((f) => !f.sender && !f.accepted) || []);
 </script>
 
-<Tooltip text="Friends" y={-5}>
-	<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
-		<Popover.Trigger
-			aria-label="Friends"
-			class={[
-				'group relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer',
-				friendRequests.length > 0
-					? 'top-bar-button-notif hocus:bg-red-400/20'
-					: 'top-bar-button text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
-			]}
-		>
-			<Corners
-				color={friendRequests.length > 0 ? 'border-red-400' : 'border-main-300'}
-				class={['duration-100', friendRequests.length <= 0 ? 'group-hocus:border-accent-100' : '']}
-			/>
-			{#if friendRequests.length > 0}
-				<p class="font-bold text-red-400">{friendRequests.length}</p>
-			{:else}
-				<People height={22} width={22} />
-			{/if}
-		</Popover.Trigger>
-		<CustomPopoverContent
-			class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
-			align="end"
-			side="bottom"
-			sideOffset={10}
-			y={-10}
-		>
-			<Corners color="border-main-700" />
-			<FriendsList {friends} bind:isOpen />
-			<AddFriend bind:isOpen />
-		</CustomPopoverContent>
-	</Popover.Root>
-</Tooltip>
+<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
+	<Popover.Trigger
+		aria-label="Friends"
+		class={[
+			'group relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer',
+			friendRequests.length > 0
+				? 'top-bar-button-notif hocus:bg-red-400/20'
+				: 'top-bar-button text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+		]}
+	>
+		<Tooltip text="Friends" y={-5} />
+		<Corners
+			color={friendRequests.length > 0 ? 'border-red-400' : 'border-main-300'}
+			class={['duration-100', friendRequests.length <= 0 ? 'group-hocus:border-accent-100' : '']}
+		/>
+		{#if friendRequests.length > 0}
+			<p class="font-bold text-red-400">{friendRequests.length}</p>
+		{:else}
+			<People height={22} width={22} />
+		{/if}
+	</Popover.Trigger>
+	<CustomPopoverContent
+		class="bg-main-900 border-main-800 inner-shadow-main-800 relative z-30 w-[20rem] p-2 select-none"
+		align="end"
+		side="bottom"
+		sideOffset={10}
+		y={-10}
+	>
+		<Corners color="border-main-700" />
+		<FriendsList {friends} bind:isOpen />
+		<AddFriend bind:isOpen />
+	</CustomPopoverContent>
+</Popover.Root>

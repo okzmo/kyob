@@ -56,9 +56,10 @@ message IncomingChatMessage {
   string server_id = 2;
   string channel_id = 3;
   bytes content = 4;
-  repeated string mentions_users = 5;
-  repeated string mentions_channels = 6;
-  bytes attachments = 7;
+  bool everyone = 5;
+  repeated string mentions_users = 6;
+  repeated string mentions_channels = 7;
+  bytes attachments = 8;
 }
 
 message EditChatMessage {
@@ -67,8 +68,9 @@ message EditChatMessage {
   string channel_id = 3;
   string message_id = 4;
   bytes content = 5;
-  repeated string mentions_users = 6;
-  repeated string mentions_channels = 7;
+  bool everyone = 6;
+  repeated string mentions_users = 7;
+  repeated string mentions_channels = 8;
 }
 
 message DeleteChatMessage {
@@ -84,10 +86,11 @@ message BroadcastChatMessage {
   string server_id = 3;
   string channel_id = 4;
   bytes content = 5;
-  repeated string mentions_users = 6;
-  repeated string mentions_channels = 7;
-  bytes attachments = 8;
-  google.protobuf.Timestamp created_at = 9;
+  bool everyone = 6;
+  repeated string mentions_users = 7;
+  repeated string mentions_channels = 8;
+  bytes attachments = 9;
+  google.protobuf.Timestamp created_at = 10;
 }
 
 message BroadcastEditMessage {
@@ -95,9 +98,10 @@ message BroadcastEditMessage {
   string server_id = 2;
   string channel_id = 3;
   bytes content = 4;
-  repeated string mentions_users = 5;
-  repeated string mentions_channels = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  bool everyone = 5;
+  repeated string mentions_users = 6;
+  repeated string mentions_channels = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 message BroadcastDeleteChatMessage {

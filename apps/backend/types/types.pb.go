@@ -594,9 +594,10 @@ type IncomingChatMessage struct {
 	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	Attachments      []byte                 `protobuf:"bytes,7,opt,name=attachments,proto3" json:"attachments,omitempty"`
+	Everyone         bool                   `protobuf:"varint,5,opt,name=everyone,proto3" json:"everyone,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	Attachments      []byte                 `protobuf:"bytes,8,opt,name=attachments,proto3" json:"attachments,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -659,6 +660,13 @@ func (x *IncomingChatMessage) GetContent() []byte {
 	return nil
 }
 
+func (x *IncomingChatMessage) GetEveryone() bool {
+	if x != nil {
+		return x.Everyone
+	}
+	return false
+}
+
 func (x *IncomingChatMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
@@ -687,8 +695,9 @@ type EditChatMessage struct {
 	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	MessageId        string                 `protobuf:"bytes,4,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	Everyone         bool                   `protobuf:"varint,6,opt,name=everyone,proto3" json:"everyone,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,7,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,8,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -756,6 +765,13 @@ func (x *EditChatMessage) GetContent() []byte {
 		return x.Content
 	}
 	return nil
+}
+
+func (x *EditChatMessage) GetEveryone() bool {
+	if x != nil {
+		return x.Everyone
+	}
+	return false
 }
 
 func (x *EditChatMessage) GetMentionsUsers() []string {
@@ -847,10 +863,11 @@ type BroadcastChatMessage struct {
 	ServerId         string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ChannelId        string                 `protobuf:"bytes,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	Attachments      []byte                 `protobuf:"bytes,8,opt,name=attachments,proto3" json:"attachments,omitempty"`
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Everyone         bool                   `protobuf:"varint,6,opt,name=everyone,proto3" json:"everyone,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,7,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,8,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	Attachments      []byte                 `protobuf:"bytes,9,opt,name=attachments,proto3" json:"attachments,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -920,6 +937,13 @@ func (x *BroadcastChatMessage) GetContent() []byte {
 	return nil
 }
 
+func (x *BroadcastChatMessage) GetEveryone() bool {
+	if x != nil {
+		return x.Everyone
+	}
+	return false
+}
+
 func (x *BroadcastChatMessage) GetMentionsUsers() []string {
 	if x != nil {
 		return x.MentionsUsers
@@ -954,9 +978,10 @@ type BroadcastEditMessage struct {
 	ServerId         string                 `protobuf:"bytes,2,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
 	ChannelId        string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Content          []byte                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	MentionsUsers    []string               `protobuf:"bytes,5,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
-	MentionsChannels []string               `protobuf:"bytes,6,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
-	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Everyone         bool                   `protobuf:"varint,5,opt,name=everyone,proto3" json:"everyone,omitempty"`
+	MentionsUsers    []string               `protobuf:"bytes,6,rep,name=mentions_users,json=mentionsUsers,proto3" json:"mentions_users,omitempty"`
+	MentionsChannels []string               `protobuf:"bytes,7,rep,name=mentions_channels,json=mentionsChannels,proto3" json:"mentions_channels,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1017,6 +1042,13 @@ func (x *BroadcastEditMessage) GetContent() []byte {
 		return x.Content
 	}
 	return nil
+}
+
+func (x *BroadcastEditMessage) GetEveryone() bool {
+	if x != nil {
+		return x.Everyone
+	}
+	return false
 }
 
 func (x *BroadcastEditMessage) GetMentionsUsers() []string {
@@ -2945,16 +2977,17 @@ const file_types_proto_rawDesc = "" +
 	"\a_avatarB\t\n" +
 	"\a_bannerB\r\n" +
 	"\v_main_colorB\b\n" +
-	"\x06_about\"\xfe\x01\n" +
+	"\x06_about\"\x9a\x02\n" +
 	"\x13IncomingChatMessage\x12\x1b\n" +
 	"\tauthor_id\x18\x01 \x01(\tR\bauthorId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\x12 \n" +
-	"\vattachments\x18\a \x01(\fR\vattachments\"\xf3\x01\n" +
+	"\acontent\x18\x04 \x01(\fR\acontent\x12\x1a\n" +
+	"\beveryone\x18\x05 \x01(\bR\beveryone\x12%\n" +
+	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x12 \n" +
+	"\vattachments\x18\b \x01(\fR\vattachments\"\x8f\x02\n" +
 	"\x0fEditChatMessage\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
@@ -2962,39 +2995,43 @@ const file_types_proto_rawDesc = "" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x04 \x01(\tR\tmessageId\x12\x18\n" +
-	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\"\x87\x01\n" +
+	"\acontent\x18\x05 \x01(\fR\acontent\x12\x1a\n" +
+	"\beveryone\x18\x06 \x01(\bR\beveryone\x12%\n" +
+	"\x0ementions_users\x18\a \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\b \x03(\tR\x10mentionsChannels\"\x87\x01\n" +
 	"\x11DeleteChatMessage\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x04 \x01(\tR\tmessageId\"\xca\x02\n" +
+	"message_id\x18\x04 \x01(\tR\tmessageId\"\xe6\x02\n" +
 	"\x14BroadcastChatMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tauthor_id\x18\x02 \x01(\tR\bauthorId\x12\x1b\n" +
 	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x04 \x01(\tR\tchannelId\x12\x18\n" +
-	"\acontent\x18\x05 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x12 \n" +
-	"\vattachments\x18\b \x01(\fR\vattachments\x129\n" +
+	"\acontent\x18\x05 \x01(\fR\acontent\x12\x1a\n" +
+	"\beveryone\x18\x06 \x01(\bR\beveryone\x12%\n" +
+	"\x0ementions_users\x18\a \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\b \x03(\tR\x10mentionsChannels\x12 \n" +
+	"\vattachments\x18\t \x01(\fR\vattachments\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x02\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xb6\x02\n" +
 	"\x14BroadcastEditMessage\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1b\n" +
 	"\tserver_id\x18\x02 \x01(\tR\bserverId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\fR\acontent\x12%\n" +
-	"\x0ementions_users\x18\x05 \x03(\tR\rmentionsUsers\x12+\n" +
-	"\x11mentions_channels\x18\x06 \x03(\tR\x10mentionsChannels\x129\n" +
+	"\acontent\x18\x04 \x01(\fR\acontent\x12\x1a\n" +
+	"\beveryone\x18\x05 \x01(\bR\beveryone\x12%\n" +
+	"\x0ementions_users\x18\x06 \x03(\tR\rmentionsUsers\x12+\n" +
+	"\x11mentions_channels\x18\a \x03(\tR\x10mentionsChannels\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"w\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"w\n" +
 	"\x1aBroadcastDeleteChatMessage\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1b\n" +

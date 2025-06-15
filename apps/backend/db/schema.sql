@@ -102,6 +102,7 @@ CREATE TABLE public.messages (
     server_id character varying(20) NOT NULL,
     channel_id character varying(20) NOT NULL,
     content jsonb NOT NULL,
+    everyone boolean DEFAULT false NOT NULL,
     mentions_users character varying(20)[],
     mentions_channels character varying(20)[],
     attachments jsonb DEFAULT '[]'::jsonb,
@@ -463,7 +464,7 @@ ALTER TABLE ONLY public.user_channel_read_state
 --
 
 ALTER TABLE ONLY public.user_channel_read_state
-    ADD CONSTRAINT user_channel_read_state_last_read_message_id_fkey FOREIGN KEY (last_read_message_id) REFERENCES public.messages(id) ON DELETE SET NULL;
+    ADD CONSTRAINT user_channel_read_state_last_read_message_id_fkey FOREIGN KEY (last_read_message_id) REFERENCES public.messages(id) ON DELETE CASCADE;
 
 
 --

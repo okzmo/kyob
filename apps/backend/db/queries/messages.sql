@@ -15,9 +15,9 @@ SELECT channel_id, last_read_message_id, unread_mention_ids FROM user_channel_re
 
 -- name: CreateMessage :one
 INSERT INTO messages (
-  id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments
+  id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING *;
 
@@ -32,8 +32,8 @@ DO UPDATE SET
 
 -- name: UpdateMessage :execresult
 UPDATE messages 
-SET content = $1, mentions_users = $2, mentions_channels = $3, updated_at = now()
-WHERE id = $4 AND author_id = $5;
+SET content = $1, mentions_users = $2, mentions_channels = $3, everyone = $4, updated_at = now()
+WHERE id = $5 AND author_id = $6;
 
 -- name: UpdateMessageContent :execresult
 UPDATE messages SET content = $1 WHERE id = $2 AND author_id = $3;

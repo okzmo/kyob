@@ -8,23 +8,22 @@
 	let isOpen = $state(false);
 </script>
 
-<Tooltip text="Notifications" y={-5}>
-	<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
-		<Popover.Trigger
-			aria-label="Notifications"
-			class="top-bar-button group text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer"
-		>
-			<Corners color="border-main-300" class="group-hocus:border-accent-100 duration-100" />
-			<Bell height={22} width={22} />
-		</Popover.Trigger>
-		<CustomPopoverContent
-			class="bg-main-900 border-main-800 relative z-30 w-[20rem] rounded-2xl border p-2"
-			align="end"
-			side="bottom"
-			sideOffset={10}
-			y={-10}
-		>
-			Notifications :D
-		</CustomPopoverContent>
-	</Popover.Root>
-</Tooltip>
+<Popover.Root open={isOpen} onOpenChange={(s) => (isOpen = s)}>
+	<Popover.Trigger
+		aria-label="Notifications"
+		class="top-bar-button group text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition-colors hover:cursor-pointer"
+	>
+		<Tooltip text="Friends" y={-5} />
+		<Corners color="border-main-300" class="group-hocus:border-accent-100 duration-100" />
+		<Bell height={22} width={22} />
+	</Popover.Trigger>
+	<CustomPopoverContent
+		class="bg-main-900 border-main-800 relative z-30 w-[20rem] rounded-2xl border p-2"
+		align="end"
+		side="bottom"
+		sideOffset={10}
+		y={-10}
+	>
+		Notifications :D
+	</CustomPopoverContent>
+</Popover.Root>

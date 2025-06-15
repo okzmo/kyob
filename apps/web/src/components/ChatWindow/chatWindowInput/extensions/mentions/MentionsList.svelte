@@ -12,6 +12,11 @@
 	let scrollableMenu = $state<HTMLDivElement>();
 
 	export function handleKeyDown({ event }: { event: KeyboardEvent }) {
+		if (props.query === 'everyone') {
+			props.command({ 'user-id': 'everyone', label: 'everyone' });
+			return true;
+		}
+
 		if (event.key === 'ArrowUp') {
 			handleArrowUp();
 			return true;

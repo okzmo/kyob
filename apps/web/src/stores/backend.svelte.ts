@@ -98,6 +98,7 @@ class Backend {
 							server_id: value.serverId,
 							channel_id: value.channelId,
 							content: JSON.parse(contentStr),
+							everyone: value.everyone,
 							mentions_users: value.mentionsUsers,
 							mentions_channels: value.mentionsChannels,
 							attachments: attachments.length > 0 ? JSON.parse(attachments) : [],
@@ -107,8 +108,9 @@ class Backend {
 						serversStore.addMessage(value?.serverId, message);
 
 						if (
-							message.mentions_users.includes(userStore.user!.id) &&
-							message.author_id !== userStore.user!.id
+							(message.mentions_users.includes(userStore.user!.id) &&
+								message.author_id !== userStore.user!.id) ||
+							message.everyone
 						) {
 							sounds.playSound('notification');
 							userStore.mention = true;
@@ -179,6 +181,7 @@ class Backend {
 					{
 						if (!wsMess.content.value) return;
 						const value = wsMess.content.value;
+						if (value.userId === userStore.user!.id) return;
 						serversStore.disconnectUser(value.serverId, value.userId, value.type);
 					}
 					break;
@@ -526,6 +529,7 @@ class Backend {
 			const formData = new FormData();
 			formData.append('type', 'SEND');
 			formData.append('content', JSON.stringify(body.content));
+			formData.append('everyone', body.everyone ? 'true' : 'false');
 			body.mentions_users?.forEach((user) => formData.append('mentions_users[]', user));
 			body.attachments?.forEach((attachment) => formData.append('attachments[]', attachment));
 

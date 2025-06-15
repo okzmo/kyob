@@ -74,6 +74,7 @@ export interface CreateChannelType extends v.InferInput<typeof CreateChannelSche
 
 export const CreateMessageSchema = v.object({
 	content: v.any(),
+	everyone: v.optional(v.boolean()),
 	mentions_users: v.optional(v.array(v.string())),
 	mentions_channels: v.optional(v.array(v.string())),
 	attachments: v.optional(v.array(v.pipe(v.file('Please select a valid file.'))))

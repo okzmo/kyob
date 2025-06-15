@@ -146,6 +146,7 @@ type Message struct {
 	ServerID         string          `json:"server_id"`
 	ChannelID        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
+	Everyone         bool            `json:"everyone"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
 	Attachments      []byte          `json:"attachments"`

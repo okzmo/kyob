@@ -38,7 +38,7 @@
 
 <div id={`window-top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
 	<div
-		class="inner-main-800 bg-main-900 relative flex h-[2.375rem] w-full items-center justify-between px-2.5 transition duration-100"
+		class="inner-main-800 bg-main-900 relative flex h-[2.375rem] flex-grow items-center justify-between px-2.5 transition duration-100"
 	>
 		<Corners color="border-main-700" />
 		<div
@@ -73,8 +73,8 @@
 	<Button
 		variants="icon"
 		class={[
-			'inner-main-800 !w-auto gap-x-2',
-			channel.voice_users.length > 0 && tab === 'chat' ? '!aspect-auto px-2.5' : '',
+			'inner-main-800 !w-auto gap-x-2 px-[0.7rem]',
+			channel.voice_users.length > 0 && tab === 'chat' ? '!aspect-auto' : '',
 			tab !== 'chat'
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
@@ -85,9 +85,9 @@
 		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
 	>
 		{#if tab === 'chat'}
-			<Phone height={14} width={14} />
+			<Phone height={16} width={16} />
 		{:else if tab === 'call'}
-			<HashChat height={14} width={14} />
+			<HashChat height={16} width={16} />
 		{/if}
 
 		{#if channel.voice_users.length > 0 && tab === 'chat'}
@@ -95,7 +95,7 @@
 		{/if}
 	</Button>
 	<Button
-		class="inner-main-800 hocus:inner-main-700-shadow aspect-square"
+		class="inner-main-800 hocus:inner-main-700-shadow px-[0.7rem]"
 		variants="icon"
 		onclick={() => windows.closeWindow(id)}
 		tooltip="Close chat"

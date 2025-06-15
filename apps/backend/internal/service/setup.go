@@ -32,7 +32,7 @@ type ServerWithChannels struct {
 	Members     []db.GetMembersFromServersRow  `json:"members"`
 }
 
-type voiceUser struct {
+type VoiceUser struct {
 	UserId []string `json:"id"`
 	Deafen bool     `json:"deafen"`
 	Mute   bool     `json:"mute"`
@@ -44,7 +44,7 @@ type ChannelsWithMembers struct {
 	LastMessageRead string                `json:"last_message_read"`
 	MentionsIds     json.RawMessage       `json:"last_mentions"`
 	Users           []db.GetUsersByIdsRow `json:"users"`
-	VoiceUsers      []voiceUser           `json:"voice_users"`
+	VoiceUsers      []VoiceUser           `json:"voice_users"`
 }
 
 type UserResponse struct {
@@ -228,7 +228,7 @@ func processServers(ctx context.Context, userId string, servers []db.GetServersF
 				allMessagesReadSet[channel.ID],
 				allMessagesMentionsSet[channel.ID],
 				channelUsers,
-				[]voiceUser{},
+				[]VoiceUser{},
 			}
 		}
 

@@ -43,30 +43,28 @@
 {/if}
 
 {#if variants === 'icon'}
-	<Tooltip text={tooltip || ''}>
-		<button
-			type="button"
-			class={[
-				'group bg-main-900 text-main-50 relative flex aspect-square h-full items-center justify-center transition duration-100 hover:cursor-pointer',
-				classes
-			]}
-			{onclick}
-		>
-			{#if corners}
-				<Corners color={cornerColor} class={cornerClass} />
-			{/if}
-			{@render children()}
-		</button>
-	</Tooltip>
+	<button
+		type="button"
+		class={[
+			'group bg-main-900 text-main-50 relative flex aspect-square items-center justify-center transition duration-100 hover:cursor-pointer',
+			classes
+		]}
+		{onclick}
+	>
+		<Tooltip text={tooltip || ''}></Tooltip>
+		{#if corners}
+			<Corners color={cornerColor} class={cornerClass} />
+		{/if}
+		{@render children()}
+	</button>
 {/if}
 
 {#if variants === 'nostyle'}
-	<Tooltip text={tooltip || ''}>
-		<button type="button" class={classes} {onclick}>
-			{#if corners}
-				<Corners color={cornerColor} class={cornerClass} />
-			{/if}
-			{@render children()}
-		</button>
-	</Tooltip>
+	<button type="button" class={classes} {onclick}>
+		<Tooltip text={tooltip || ''}></Tooltip>
+		{#if corners}
+			<Corners color={cornerColor} class={cornerClass} />
+		{/if}
+		{@render children()}
+	</button>
 {/if}

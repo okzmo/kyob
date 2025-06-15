@@ -36,29 +36,55 @@ func (s *server) NewUser(ctx *actor.Context, msg *protoTypes.BodyNewUserInServer
 
 func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 	sender := ctx.Sender()
-	if _, ok := s.users[sender]; ok {
-		s.logger.Warn("user already connected to this server", "user", ctx.Sender().GetID())
-		return
-	}
-	s.users[sender] = true
-	s.logger.Info("user connected to this server", "user", ctx.Sender().GetID(), "id", ctx.PID())
-
 	userId := utils.GetEntityIdFromPID(sender)
 	serverId := utils.GetEntityIdFromPID(ctx.PID())
 
-	for user := range s.users {
-		if user == sender {
-			UsersEngine.Send(user, &protoTypes.BroadcastConnect{
-				ServerId: serverId,
-				UserId:   userId,
-				Users:    s.usersSlice,
-			})
-		} else {
-			UsersEngine.Send(user, &protoTypes.BroadcastConnect{
+	if serverId == "global" {
+		friends, err := db.Query.GetFriends(context.TODO(), userId)
+		if err != nil {
+			slog.Error("failed to get friends", "err", err)
+			return
+		}
+		friendsIds := make([]string, len(friends))
+
+		for _, user := range friends {
+			userPID := UsersEngine.Registry.GetPID("user", user.ID)
+			UsersEngine.Send(userPID, &protoTypes.BroadcastConnect{
 				ServerId: serverId,
 				UserId:   userId,
 				Type:     msg.Type,
 			})
+
+			friendsIds = append(friendsIds, user.ID)
+		}
+
+		UsersEngine.Send(sender, &protoTypes.BroadcastConnect{
+			ServerId: serverId,
+			UserId:   userId,
+			Users:    friendsIds,
+		})
+	} else {
+		if _, ok := s.users[sender]; ok {
+			s.logger.Warn("user already connected to this server", "user", ctx.Sender().GetID())
+			return
+		}
+		s.users[sender] = true
+		s.logger.Info("user connected to this server", "user", ctx.Sender().GetID(), "id", ctx.PID())
+
+		for user := range s.users {
+			if user == sender {
+				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
+					ServerId: serverId,
+					UserId:   userId,
+					Users:    s.usersSlice,
+				})
+			} else {
+				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
+					ServerId: serverId,
+					UserId:   userId,
+					Type:     msg.Type,
+				})
+			}
 		}
 	}
 

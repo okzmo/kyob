@@ -35,7 +35,7 @@ class Servers {
 	}
 
 	getMemberById(serverId: string, userId: string) {
-		return this.servers[serverId].members.find((m) => m.id === userId);
+		return this.servers?.[serverId]?.members?.find((m) => m.id === userId);
 	}
 
 	async getMessages(serverId: string, channelId: string) {
@@ -86,11 +86,10 @@ class Servers {
 			messages.unshift(message);
 		}
 
-		console.log(channel);
 		if (!windows.getWindow({ channelId: message.channel_id })) {
 			channel.last_message_sent = message.id;
 
-			if (message.mentions_users.find((id) => id === userStore.user!.id)) {
+			if (message.mentions_users.find((id) => id === userStore.user!.id) || message.everyone) {
 				if (Array.isArray(channel.last_mentions))
 					channel.last_mentions = [...channel.last_mentions, message.id];
 				else channel.last_mentions = [message.id];

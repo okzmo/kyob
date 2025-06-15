@@ -72,6 +72,7 @@ CREATE TABLE messages(
   server_id VARCHAR(20) NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
   channel_id VARCHAR(20) NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
   content JSONB NOT NULL,
+  everyone BOOLEAN NOT NULL DEFAULT FALSE,
   mentions_users VARCHAR(20) ARRAY,
   mentions_channels VARCHAR(20) ARRAY,
   attachments JSONB DEFAULT '[]',

@@ -23,6 +23,7 @@ var (
 
 type MessageBody struct {
 	Content          json.RawMessage `validate:"required" json:"content"`
+	Everyone         bool            `json:"everyone"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
 	Attachments      json.RawMessage `json:"attachments"`
@@ -39,6 +40,7 @@ type MessageResponse struct {
 	ServerId         string          `json:"server_id"`
 	ChannelId        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
+	Everyone         bool            `json:"everyone"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
 	Attachments      json.RawMessage `json:"attachments"`
@@ -63,6 +65,7 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 		ServerID:         serverId,
 		ChannelID:        channelId,
 		Content:          body.Content,
+		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
 		Attachments:      body.Attachments,
@@ -77,6 +80,7 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 		ServerId:         m.ServerID,
 		ChannelId:        m.ChannelID,
 		Content:          m.Content,
+		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
 		Attachments:      body.Attachments,
@@ -88,6 +92,7 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 func EditMessage(ctx context.Context, userId string, serverId string, channelId string, messageId string, body *MessageBody) (*proto.BroadcastEditMessage, error) {
 	res, err := db.Query.UpdateMessage(ctx, db.UpdateMessageParams{
 		ID:               messageId,
+		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
 		Content:          body.Content,
@@ -102,6 +107,7 @@ func EditMessage(ctx context.Context, userId string, serverId string, channelId 
 		ServerId:         serverId,
 		ChannelId:        channelId,
 		Content:          body.Content,
+		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
 		UpdatedAt:        timestamppb.New(time.Now()),
@@ -160,6 +166,7 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 			ServerId:         message.ServerID,
 			ChannelId:        message.ChannelID,
 			Content:          message.Content,
+			Everyone:         message.Everyone,
 			MentionsUsers:    message.MentionsUsers,
 			MentionsChannels: message.MentionsChannels,
 			Attachments:      message.Attachments,

@@ -72,6 +72,7 @@ func (c *channel) Disconnect(ctx *actor.Context) {
 func (c *channel) NewMessage(ctx *actor.Context, msg *protoTypes.IncomingChatMessage) {
 	messageToSend := &services.MessageBody{
 		Content:       msg.Content,
+		Everyone:      msg.Everyone,
 		MentionsUsers: msg.MentionsUsers,
 		Attachments:   msg.Attachments,
 	}
@@ -90,6 +91,7 @@ func (c *channel) NewMessage(ctx *actor.Context, msg *protoTypes.IncomingChatMes
 func (c *channel) EditMessage(ctx *actor.Context, msg *protoTypes.EditChatMessage) {
 	messageToEdit := &services.MessageBody{
 		Content:       msg.Content,
+		Everyone:      msg.Everyone,
 		MentionsUsers: msg.MentionsUsers,
 	}
 

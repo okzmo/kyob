@@ -116,6 +116,7 @@ export interface Message {
 	server_id: string;
 	channel_id: string;
 	content: any;
+	everyone: boolean;
 	mentions_users: string[];
 	mentions_channels: string[];
 	attachments: Attachment[];

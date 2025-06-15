@@ -28,11 +28,11 @@ func (q *Queries) CheckChannelMembership(ctx context.Context, arg CheckChannelMe
 
 const createMessage = `-- name: CreateMessage :one
 INSERT INTO messages (
-  id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments
+  id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at
+RETURNING id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments, created_at, updated_at
 `
 
 type CreateMessageParams struct {
@@ -41,6 +41,7 @@ type CreateMessageParams struct {
 	ServerID         string          `json:"server_id"`
 	ChannelID        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
+	Everyone         bool            `json:"everyone"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
 	Attachments      []byte          `json:"attachments"`
@@ -53,6 +54,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		arg.ServerID,
 		arg.ChannelID,
 		arg.Content,
+		arg.Everyone,
 		arg.MentionsUsers,
 		arg.MentionsChannels,
 		arg.Attachments,
@@ -64,6 +66,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		&i.ServerID,
 		&i.ChannelID,
 		&i.Content,
+		&i.Everyone,
 		&i.MentionsUsers,
 		&i.MentionsChannels,
 		&i.Attachments,
@@ -146,7 +149,7 @@ func (q *Queries) GetLatestMessagesSent(ctx context.Context, dollar_1 []string) 
 }
 
 const getMessage = `-- name: GetMessage :one
-SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE id = $1
+SELECT id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE id = $1
 `
 
 func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
@@ -158,6 +161,7 @@ func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
 		&i.ServerID,
 		&i.ChannelID,
 		&i.Content,
+		&i.Everyone,
 		&i.MentionsUsers,
 		&i.MentionsChannels,
 		&i.Attachments,
@@ -168,7 +172,7 @@ func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
 }
 
 const getMessagesFromChannel = `-- name: GetMessagesFromChannel :many
-SELECT id, author_id, server_id, channel_id, content, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
+SELECT id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
 `
 
 func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) ([]Message, error) {
@@ -186,6 +190,7 @@ func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) 
 			&i.ServerID,
 			&i.ChannelID,
 			&i.Content,
+			&i.Everyone,
 			&i.MentionsUsers,
 			&i.MentionsChannels,
 			&i.Attachments,
@@ -231,14 +236,15 @@ func (q *Queries) SaveUnreadMessagesState(ctx context.Context, arg SaveUnreadMes
 
 const updateMessage = `-- name: UpdateMessage :execresult
 UPDATE messages 
-SET content = $1, mentions_users = $2, mentions_channels = $3, updated_at = now()
-WHERE id = $4 AND author_id = $5
+SET content = $1, mentions_users = $2, mentions_channels = $3, everyone = $4, updated_at = now()
+WHERE id = $5 AND author_id = $6
 `
 
 type UpdateMessageParams struct {
 	Content          json.RawMessage `json:"content"`
 	MentionsUsers    []string        `json:"mentions_users"`
 	MentionsChannels []string        `json:"mentions_channels"`
+	Everyone         bool            `json:"everyone"`
 	ID               string          `json:"id"`
 	AuthorID         string          `json:"author_id"`
 }
@@ -248,6 +254,7 @@ func (q *Queries) UpdateMessage(ctx context.Context, arg UpdateMessageParams) (p
 		arg.Content,
 		arg.MentionsUsers,
 		arg.MentionsChannels,
+		arg.Everyone,
 		arg.ID,
 		arg.AuthorID,
 	)

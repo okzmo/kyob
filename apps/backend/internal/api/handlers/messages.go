@@ -22,6 +22,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 	var body services.MessageBody
 
 	body.Type = r.FormValue("type")
+	body.Everyone = r.FormValue("everyone") == "true"
 	body.MentionsUsers = r.Form["mentions_users[]"]
 	contentJSON := r.FormValue("content")
 	if err := json.Unmarshal([]byte(contentJSON), &body.Content); err != nil {
@@ -56,6 +57,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 			Content:       body.Content,
 			ServerId:      serverId,
 			ChannelId:     channelId,
+			Everyone:      body.Everyone,
 			MentionsUsers: body.MentionsUsers,
 			Attachments:   body.Attachments,
 		}
@@ -69,6 +71,7 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 			ServerId:      serverId,
 			ChannelId:     channelId,
 			MessageId:     messageId,
+			Everyone:      body.Everyone,
 			Content:       body.Content,
 			MentionsUsers: body.MentionsUsers,
 		}
