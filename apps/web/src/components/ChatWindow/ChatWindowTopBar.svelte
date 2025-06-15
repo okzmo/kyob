@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { userStore } from 'stores/user.svelte';
 	import { windows } from 'stores/windows.svelte';
 	import Corners from '../ui/Corners/Corners.svelte';
 	import Close from '../ui/icons/Close.svelte';
@@ -10,14 +9,6 @@
 	import { rtc } from 'stores/rtc.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
-
-	$effect(() => {
-		if (userStore.mention) {
-			setTimeout(() => {
-				userStore.mention = false;
-			}, 500);
-		}
-	});
 
 	async function joinCall() {
 		windows.toggleCallTab();

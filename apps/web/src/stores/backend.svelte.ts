@@ -107,13 +107,17 @@ class Backend {
 						};
 						serversStore.addMessage(value?.serverId, message);
 
+						const isAMention =
+							message.mentions_users.includes(userStore.user!.id) || message.everyone;
+						const isADM = message.server_id === 'global';
+						const windowIsActive = windows.getActiveWindow()?.channelId === message.channel_id;
+
 						if (
-							(message.mentions_users.includes(userStore.user!.id) &&
-								message.author_id !== userStore.user!.id) ||
-							message.everyone
+							(isAMention || isADM) &&
+							message.author_id !== userStore.user!.id &&
+							!windowIsActive
 						) {
 							sounds.playSound('notification');
-							userStore.mention = true;
 						}
 					}
 					break;
@@ -208,11 +212,10 @@ class Backend {
 						);
 
 						if (
-							message?.mentions_users?.includes(userStore.user!.id) &&
+							(message?.mentions_users?.includes(userStore.user!.id) || message?.everyone) &&
 							message.author_id !== userStore.user!.id
 						) {
 							sounds.playSound('notification');
-							userStore.mention = true;
 						}
 					}
 					break;
