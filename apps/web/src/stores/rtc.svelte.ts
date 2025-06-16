@@ -103,6 +103,7 @@ class RTC {
 	async quitRoom() {
 		if (!this.currentVC) return;
 		await this.currentVC.disconnect();
+		this.currentVC = undefined;
 	}
 
 	#handleTrackSubscribed(
@@ -169,6 +170,7 @@ class RTC {
 
 	#handleDisconnect() {
 		this.currentVC = undefined;
+		print('Disconnected!');
 	}
 
 	#handleLocalTrackUnpublished(publication: LocalTrackPublication) {
@@ -194,6 +196,7 @@ class RTC {
 	}
 
 	#handleConnected() {
+		this.connecting = false;
 		print('Connected!');
 	}
 }

@@ -52,6 +52,8 @@
 	}
 
 	onMount(() => {
+		editorStore.currentChannel = channel.id;
+
 		editor = new Editor({
 			element: element,
 			extensions: [
@@ -122,14 +124,14 @@
 </script>
 
 <div class="flex w-full flex-col gap-y-1 px-2 pb-2">
-	{#if editorStore.currentInput === 'main' && editorStore.mentionProps}
+	{#if editorStore.currentInput === 'main' && editorStore.currentChannel === channel.id && editorStore.mentionProps}
 		<MentionsList
 			props={editorStore.mentionProps}
 			bind:this={editorStore.mentionsListEl}
 			class="w-full"
 		/>
 	{/if}
-	{#if editorStore.currentInput === 'main' && editorStore.emojiProps}
+	{#if editorStore.currentInput === 'main' && editorStore.currentChannel === channel.id && editorStore.emojiProps}
 		<EmojisList
 			props={editorStore.emojiProps}
 			bind:this={editorStore.emojisListEl}

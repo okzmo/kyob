@@ -26,11 +26,7 @@
 			class="attachment relative aspect-[4/3] min-h-0 max-w-full @lg:max-w-[45rem]"
 			onclick={() => toggleMainParticipant()}
 		>
-			<img
-				src={participantInfos?.banner || participantInfos?.avatar}
-				alt=""
-				class="h-full w-full object-cover select-none"
-			/>
+			<img src={participantInfos?.banner} alt="" class="h-full w-full object-cover select-none" />
 		</button>
 	{:else}
 		{#each channel.voice_users as participant (participant.user_id)}
@@ -39,11 +35,7 @@
 				class="attachment relative aspect-[4/3] min-h-0 max-w-full @lg:max-w-[20rem]"
 				onclick={() => toggleMainParticipant(participant.user_id)}
 			>
-				<img
-					src={participantInfos?.banner || participantInfos?.avatar}
-					alt=""
-					class="h-full w-full object-cover select-none"
-				/>
+				<img src={participantInfos?.banner} alt="" class="h-full w-full object-cover select-none" />
 			</button>
 		{/each}
 	{/if}

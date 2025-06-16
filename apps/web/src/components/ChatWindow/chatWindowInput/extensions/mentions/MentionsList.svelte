@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SuggestionProps } from '@tiptap/suggestion';
+	import { onDestroy } from 'svelte';
 
 	interface Props {
 		props: SuggestionProps<any, any>;
@@ -72,6 +73,10 @@
 			props.command({ 'user-id': item.id, label: item.display_name });
 		}
 	}
+
+	onDestroy(() => {
+		selectedIndex = 0;
+	});
 </script>
 
 {#if props.items.length > 0}

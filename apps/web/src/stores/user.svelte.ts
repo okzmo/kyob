@@ -1,6 +1,14 @@
 import type { Friend, User } from '../types/types';
 import { sounds } from './audio.svelte';
 import { rtc } from './rtc.svelte';
+import { serversStore } from './servers.svelte';
+
+interface DM {
+	friendId: string;
+	channelId: string;
+	avatar: string;
+	username: string;
+}
 
 class UserStore {
 	user = $state<User>();
@@ -9,6 +17,28 @@ class UserStore {
 	mention = $state(false);
 	mute = $state(false);
 	deafen = $state(false);
+
+	getDms() {
+		const global = serversStore.getServer('global');
+		if (!global) return [];
+		const dms: DM[] = [];
+
+		for (const channel of Object.values(global.channels)) {
+			if (Number(channel.last_message_read) < Number(channel.last_message_sent)) {
+				const friend = channel.users?.find((u) => u.id !== this.user!.id);
+				if (!friend) continue;
+
+				dms.push({
+					friendId: friend.id!,
+					channelId: channel.id,
+					avatar: friend.avatar!,
+					username: friend.username!
+				});
+			}
+		}
+
+		return dms;
+	}
 
 	async toggleMute() {
 		this.mute = !this.mute;

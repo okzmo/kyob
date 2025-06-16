@@ -55,6 +55,7 @@
 								id: userStore.user?.id,
 								username: userStore.user?.username,
 								display_name: userStore.user?.display_name,
+								banner: userStore.user?.banner,
 								avatar: userStore.user?.avatar
 							}
 						],

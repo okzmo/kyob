@@ -12,7 +12,8 @@
 
 	async function joinCall() {
 		windows.toggleCallTab();
-		if (rtc.currentVC || rtc.connecting) return;
+		console.log(rtc.currentVC);
+		if (rtc.currentVC) return;
 
 		const res = await backend.connectToCall(server.id, channel.id);
 

@@ -50,7 +50,7 @@
 
 	<Button
 		variants="nostyle"
-		class="inner-red-400/20 hocus:inner-red-400/40 hocus:bg-red-400/30 relative h-full bg-red-400/20 px-5.5 py-2 text-red-400 backdrop-blur-lg transition hover:cursor-pointer"
+		class="inner-red-400/20 hocus:inner-red-400/40 hocus:bg-red-400/30 relative bg-red-400/20 px-6.5 py-2 text-red-400 backdrop-blur-lg transition hover:cursor-pointer"
 		onclick={async () => {
 			await rtc.quitRoom();
 			backend.disconnectFromCall(server.id, channel.id);

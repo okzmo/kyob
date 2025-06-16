@@ -82,7 +82,7 @@ func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgc
 }
 
 const getMembersFromServers = `-- name: GetMembersFromServers :many
-SELECT u.id, u.username, u.display_name, u.avatar, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id
+SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id
 `
 
 type GetMembersFromServersRow struct {
@@ -90,6 +90,7 @@ type GetMembersFromServersRow struct {
 	Username    string      `json:"username"`
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
+	Banner      pgtype.Text `json:"banner"`
 	ServerID    string      `json:"server_id"`
 }
 
@@ -107,6 +108,7 @@ func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) 
 			&i.Username,
 			&i.DisplayName,
 			&i.Avatar,
+			&i.Banner,
 			&i.ServerID,
 		); err != nil {
 			return nil, err

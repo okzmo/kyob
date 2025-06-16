@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SuggestionProps } from '@tiptap/suggestion';
+	import { onDestroy } from 'svelte';
 
 	interface Props {
 		props: SuggestionProps<any, any>;
@@ -67,6 +68,12 @@
 			props.command({ emoji: item.unicode, label: item.label });
 		}
 	}
+
+	$effect(() => {
+		if (props.items.length) {
+			selectedIndex = 0;
+		}
+	});
 </script>
 
 {#if props.items.length > 0}
