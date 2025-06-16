@@ -98,7 +98,7 @@ func (q *Queries) GetExistingChannel(ctx context.Context, arg GetExistingChannel
 }
 
 const getFriends = `-- name: GetFriends :many
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, 
+SELECT u.id, u.display_name, u.avatar, u.banner, u.about, f.accepted, f.id AS friendship_id, 
        f.user_id AS friendship_sender_id, c.id AS channel_id
 FROM users u
 INNER JOIN friends f ON u.id = f.friend_id
@@ -107,7 +107,7 @@ WHERE f.user_id = $1
 
 UNION
 
-SELECT u.id, u.display_name, u.avatar, u.about, f.accepted, f.id AS friendship_id, 
+SELECT u.id, u.display_name, u.avatar, u.banner, u.about, f.accepted, f.id AS friendship_id, 
        f.user_id AS friendship_sender_id, c.id AS channel_id
 FROM users u
 INNER JOIN friends f ON u.id = f.user_id  
@@ -119,6 +119,7 @@ type GetFriendsRow struct {
 	ID                 string      `json:"id"`
 	DisplayName        string      `json:"display_name"`
 	Avatar             pgtype.Text `json:"avatar"`
+	Banner             pgtype.Text `json:"banner"`
 	About              []byte      `json:"about"`
 	Accepted           bool        `json:"accepted"`
 	FriendshipID       string      `json:"friendship_id"`
@@ -139,6 +140,7 @@ func (q *Queries) GetFriends(ctx context.Context, dollar_1 string) ([]GetFriends
 			&i.ID,
 			&i.DisplayName,
 			&i.Avatar,
+			&i.Banner,
 			&i.About,
 			&i.Accepted,
 			&i.FriendshipID,

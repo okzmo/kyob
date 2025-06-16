@@ -67,6 +67,7 @@ type FriendResponse struct {
 	ChannelID    string          `json:"channel_id"`
 	DisplayName  string          `json:"display_name"`
 	Avatar       pgtype.Text     `json:"avatar"`
+	Banner       pgtype.Text     `json:"banner"`
 	About        json.RawMessage `json:"about"`
 	Accepted     bool            `json:"accepted"`
 	Sender       bool            `json:"sender"`
@@ -114,6 +115,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 			ChannelID:    f.ChannelID.String,
 			DisplayName:  f.DisplayName,
 			Avatar:       f.Avatar,
+			Banner:       f.Banner,
 			About:        f.About,
 			Accepted:     f.Accepted,
 			Sender:       f.FriendshipSenderID == ctxUser.ID,
