@@ -5,7 +5,7 @@
 	import { defaults, setError, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { AddFriendSchema } from 'types/schemas';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 	import CustomDialogContent from 'components/ui/CustomDialogContent/CustomDialogContent.svelte';
 	import FooterDialog from 'components/ui/CustomDialogContent/FooterDialog.svelte';
 	import FormInput from 'components/ui/FormInput/FormInput.svelte';

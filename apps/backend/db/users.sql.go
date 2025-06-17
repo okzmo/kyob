@@ -12,37 +12,11 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createEmoji = `-- name: CreateEmoji :one
-INSERT INTO emojis (
-  id, user_id, url, shortcode
-) VALUES (
-  $1, $2, $3, $4
-)
-RETURNING id, user_id, url, shortcode
-`
-
 type CreateEmojiParams struct {
 	ID        string `json:"id"`
 	UserID    string `json:"user_id"`
 	Url       string `json:"url"`
 	Shortcode string `json:"shortcode"`
-}
-
-func (q *Queries) CreateEmoji(ctx context.Context, arg CreateEmojiParams) (Emoji, error) {
-	row := q.db.QueryRow(ctx, createEmoji,
-		arg.ID,
-		arg.UserID,
-		arg.Url,
-		arg.Shortcode,
-	)
-	var i Emoji
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Url,
-		&i.Shortcode,
-	)
-	return i, err
 }
 
 const createUser = `-- name: CreateUser :one
@@ -263,6 +237,21 @@ func (q *Queries) GetUsersByIds(ctx context.Context, dollar_1 []string) ([]GetUs
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateEmoji = `-- name: UpdateEmoji :exec
+UPDATE emojis SET shortcode = $1 WHERE user_id = $2 AND id = $3
+`
+
+type UpdateEmojiParams struct {
+	Shortcode string `json:"shortcode"`
+	UserID    string `json:"user_id"`
+	ID        string `json:"id"`
+}
+
+func (q *Queries) UpdateEmoji(ctx context.Context, arg UpdateEmojiParams) error {
+	_, err := q.db.Exec(ctx, updateEmoji, arg.Shortcode, arg.UserID, arg.ID)
+	return err
 }
 
 const updateUserAbout = `-- name: UpdateUserAbout :exec

@@ -7,7 +7,7 @@
 	import { UpdateProfileSchema } from 'types/schemas';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { backend } from 'stores/backend.svelte';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 	import { generateText } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 

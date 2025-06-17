@@ -62,10 +62,12 @@
 	}
 
 	function selectItem(index: number) {
-		const item = props.items[index];
+		const emoji = props.items[index].emoji;
 
-		if (item) {
-			props.command({ emoji: item.unicode, label: item.label });
+		if (emoji.url) {
+			props.command({ url: emoji.url, label: emoji.shortcode });
+		} else {
+			props.command({ emoji: emoji.unicode, label: emoji.label });
 		}
 	}
 
@@ -85,6 +87,7 @@
 		]}
 	>
 		{#each props.items as item, idx (idx)}
+			{@const emoji = item.emoji}
 			<button
 				class={[
 					'flex w-full items-center gap-x-1.5 px-2 py-1 text-left',
@@ -92,7 +95,12 @@
 				]}
 				onclick={() => (selectedIndex = idx)}
 			>
-				{item.unicode} :{item.label.replaceAll(' ', '')}:
+				{#if emoji.url}
+					<img src={emoji.url} alt={emoji.label} class="h-[24px] w-[24px] object-contain" />
+					:{emoji.shortcode}:
+				{:else}
+					{emoji.unicode} :{emoji.label.replaceAll(' ', '')}:
+				{/if}
 			</button>
 		{/each}
 	</div>

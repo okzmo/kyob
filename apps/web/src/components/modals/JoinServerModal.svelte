@@ -11,7 +11,7 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { JoinServerSchema } from 'types/schemas';
 	import type { Server } from 'types/types';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);

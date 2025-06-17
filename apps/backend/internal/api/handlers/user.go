@@ -252,6 +252,29 @@ func UploadEmojis(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, res)
 }
 
+func UpdateEmoji(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateEmojiBody
+	emojiId := chi.URLParam(r, "emoji_id")
+
+	if err := utils.ParseAndValidate(r, validate, &body); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err := services.UpdateEmoji(r.Context(), emojiId, &body)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrUnauthorizedEmojiDeletion):
+			utils.RespondWithError(w, http.StatusForbidden, "You can't update this emoji.")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "ok"})
+}
+
 func DeleteEmoji(w http.ResponseWriter, r *http.Request) {
 	emojiId := chi.URLParam(r, "emoji_id")
 

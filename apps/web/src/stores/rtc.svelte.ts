@@ -9,7 +9,7 @@ import {
 	VideoPresets
 } from 'livekit-client';
 import { userStore } from './user.svelte';
-import { print } from 'utils/print';
+import { print } from 'utils/basics';
 
 class RTC {
 	currentVC = $state<Room>();

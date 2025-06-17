@@ -38,6 +38,7 @@ func Setup() {
 			r.Post("/user/update_avatar", handlers.UpdateAvatar)
 			r.Post("/user/update_profile", handlers.UpdateProfile)
 			r.Post("/user/upload_emojis", handlers.UploadEmojis)
+			r.Patch("/user/update_emoji/{emoji_id}", handlers.UpdateEmoji)
 			r.Delete("/user/delete_emoji/{emoji_id}", handlers.DeleteEmoji)
 			r.Post("/server", handlers.CreateServer)
 			r.Post("/server/join", handlers.JoinServer)

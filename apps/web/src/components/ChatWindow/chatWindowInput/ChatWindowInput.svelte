@@ -13,6 +13,7 @@
 	import { EmojisSuggestion } from './extensions/emojis/emojis';
 	import AttachmentButton from './AttachmentButton.svelte';
 	import Attachments from './Attachments.svelte';
+	import { createEditorConfig } from './editorConfig';
 
 	interface Props {
 		friend?: Friend;
@@ -54,66 +55,23 @@
 	onMount(() => {
 		editorStore.currentChannel = channel.id;
 
-		editor = new Editor({
-			element: element,
-			extensions: [
-				StarterKit.configure({
-					gapcursor: false,
-					dropcursor: false,
-					heading: false,
-					orderedList: false,
-					bulletList: false,
-					blockquote: false
-				}),
-				Placeholder.configure({
-					placeholder: friend
-						? `Message ${friend.display_name}`
-						: `Message #${channel?.name} in ${server?.name}`
-				}),
-				EmojisSuggestion.configure({
-					HTMLAttributes: {
-						class: 'editor-emoji'
-					},
-					renderHTML({ options, node }) {
-						return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
-					}
-				}),
-				CustomMention.configure({
-					HTMLAttributes: {
-						class: 'editor-mention'
-					},
-					renderHTML({ options, node }) {
-						return [
-							'span',
-							options.HTMLAttributes,
-							`${node.attrs.mentionSuggestionChar}${node.attrs.label}`
-						];
-					}
-				})
-			],
-			onTransaction: () => {
-				editor = editor;
-			},
-			editorProps: {
-				attributes: {
-					class: 'chat-input'
+		editor = new Editor(
+			createEditorConfig({
+				element: element,
+				placeholder: friend
+					? `Message ${friend.display_name}`
+					: `Message #${channel?.name} in ${server?.name}`,
+				onTransaction: () => {
+					editor = editor;
 				},
-				handleKeyDown: (_, ev) => {
-					if (
-						ev.key === 'Enter' &&
-						!ev.shiftKey &&
-						(!editorStore.mentionProps || editorStore.mentionProps.items.length === 0) &&
-						(!editorStore.emojiProps || editorStore.emojiProps.items.length === 0)
-					) {
-						ev.preventDefault();
-						prepareMessage(editor.getJSON());
-						return true;
+				editorProps: {
+					attributes: {
+						class: 'chat-input'
 					}
-
-					return false;
-				}
-			}
-		});
+				},
+				onEnterPress: () => prepareMessage(editor.getJSON())
+			})
+		);
 	});
 
 	onDestroy(() => {

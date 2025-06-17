@@ -5,7 +5,7 @@
 	import CustomDialogContent from '../CustomDialogContent/CustomDialogContent.svelte';
 	import FooterDialog from '../CustomDialogContent/FooterDialog.svelte';
 	import SubmitButton from '../SubmitButton/SubmitButton.svelte';
-	import { generateRandomId } from 'utils/randomId';
+	import { generateRandomId } from 'utils/basics';
 	import Button from '../Button/Button.svelte';
 
 	interface Props {

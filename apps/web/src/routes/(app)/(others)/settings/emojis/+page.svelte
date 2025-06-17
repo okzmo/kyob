@@ -1,16 +1,17 @@
 <script lang="ts">
 	import SubmitButton from 'components/ui/SubmitButton/SubmitButton.svelte';
 	import type { Emoji } from 'types/types';
-	import { generateRandomId } from 'utils/randomId';
-	import { defaults, superForm } from 'sveltekit-superforms';
+	import { generateRandomId } from 'utils/basics';
+	import { defaults, setError, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { AddEmojisSchema } from 'types/schemas';
 	import { backend } from 'stores/backend.svelte';
 	import { userStore } from 'stores/user.svelte';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 	import Warning from 'components/ui/icons/Warning.svelte';
 	import EmojiLine from 'components/settings/EmojiLine.svelte';
 	import { fly } from 'svelte/transition';
+	import { transformShortcode } from 'utils/emojis';
 
 	let emojis = $state<Emoji[]>([]);
 	let isSubmitting = $state(false);
@@ -23,7 +24,6 @@
 		dataType: 'json',
 		validators: valibot(AddEmojisSchema),
 		validationMethod: 'onsubmit',
-		resetForm: false,
 		async onUpdate({ form }) {
 			if (form.valid) {
 				isSubmitting = true;
@@ -39,12 +39,13 @@
 
 				if (res.isErr()) {
 					console.error(res.error.error);
+					setError(form, 'shortcodes' as any, res.error.error);
 					isSubmitting = false;
 				}
 
 				if (res.isOk()) {
 					const emojis = res.value;
-					userStore.emojis.push(...emojis);
+					userStore.addEmojis(emojis);
 
 					await delay(400);
 					isSubmitting = false;
@@ -59,18 +60,18 @@
 
 	function onFile(e: Event) {
 		const target = e.target as HTMLInputElement;
-		const image = target.files?.[0];
+		if (target.files) {
+			for (const image of target.files) {
+				const dataUrl = URL.createObjectURL(image);
 
-		if (image) {
-			const dataUrl = URL.createObjectURL(image);
+				emojis.push({
+					id: generateRandomId(),
+					url: dataUrl,
+					shortcode: transformShortcode(image.name)
+				});
 
-			emojis.push({
-				id: generateRandomId(),
-				url: dataUrl,
-				shortcode: ''
-			});
-
-			$form.emojis = [...$form.emojis, image];
+				$form.emojis = [...$form.emojis, image];
+			}
 		}
 	}
 
@@ -88,9 +89,12 @@
 		isDeleting = false;
 	}
 
-	function onEmojiDelete(id: string) {
+	function onEmojiDelete(id: string, idx?: number) {
 		emojis = emojis.filter((emoji) => emoji.id !== id);
+		$form.emojis = $form.emojis.filter((_, index) => index !== idx);
 	}
+
+	let isEmpty = $derived(emojis.length <= 0);
 </script>
 
 <h1 class="text-2xl font-bold select-none">Emojis</h1>
@@ -117,11 +121,12 @@
 			class="absolute h-full w-full text-transparent hover:cursor-pointer"
 			accept="image/png, image/jpeg, image/gif, image/webp, image/avif"
 			onchange={onFile}
+			multiple
 		/>
 		<p>Upload an emoji</p>
 	</label>
 	{#if isDeleting}
-		<p class="text-accent-50" transition:fly={{ duration: 100, y: 5 }}>
+		<p class="text-accent-50" transition:fly={{ duration: 50, y: 5 }}>
 			Deleting an existing emoji...
 		</p>
 	{/if}
@@ -129,26 +134,42 @@
 
 <hr class="mt-5 w-full border-none" style="height: 1px; background-color: var(--color-main-800);" />
 
-{#if emojis.length > 0 || userStore.emojis.length > 0}
+{#if emojis.length > 0 || userStore.emojis?.length > 0}
 	<form use:enhance>
 		<ul>
 			{#each userStore.emojis as emoji (emoji.id)}
-				<EmojiLine {...emoji} deleteFunction={onExistingEmojiDelete} />
+				<EmojiLine
+					{...emoji}
+					bind:shortcode={emoji.shortcode}
+					deleteFunction={onExistingEmojiDelete}
+				/>
 			{/each}
-			{#each emojis as emoji (emoji.id)}
-				<EmojiLine {...emoji} deleteFunction={onEmojiDelete} />
+			{#each emojis as emoji, idx (emoji.id)}
+				<EmojiLine
+					{...emoji}
+					{idx}
+					bind:shortcode={emoji.shortcode}
+					deleteFunction={onEmojiDelete}
+				/>
 			{/each}
 		</ul>
 
-		<SubmitButton {isSubmitted} {isSubmitting} {buttonWidth} type="submit" class="relative mt-5">
+		<SubmitButton
+			{isSubmitted}
+			{isSubmitting}
+			{buttonWidth}
+			{isEmpty}
+			type="submit"
+			class="relative mt-5"
+		>
 			Save my emojis
 		</SubmitButton>
 	</form>
+{/if}
 
-	{#if $errors.emojis || $errors.shortcodes}
-		<p class="mt-5 flex items-center gap-x-2 text-red-400">
-			<Warning height={20} width={20} />
-			{$errors.emojis?.[0] || $errors.shortcodes?.[0]}
-		</p>
-	{/if}
+{#if $errors.emojis || $errors.shortcodes}
+	<p class="mt-5 flex items-center gap-x-2 text-red-400">
+		<Warning height={20} width={20} />
+		{$errors.emojis?.[0] || $errors.shortcodes?.[0]}
+	</p>
 {/if}

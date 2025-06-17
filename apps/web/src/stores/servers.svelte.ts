@@ -49,7 +49,7 @@ class Servers {
 			}
 		}
 
-		return messages;
+		return messages || [];
 	}
 
 	addServer(server: Server) {

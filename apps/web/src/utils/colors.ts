@@ -1,4 +1,4 @@
-import { print } from './print';
+import { print } from './basics';
 
 export function isColorLight(color: string) {
 	print(color);

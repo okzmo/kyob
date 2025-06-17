@@ -4,7 +4,7 @@
 	import { defaults, setError, superForm } from 'sveltekit-superforms';
 	import { UpdateAccountSchema } from 'types/schemas';
 	import { backend } from 'stores/backend.svelte';
-	import { delay } from '../../utils/delay';
+	import { delay } from 'utils/time';
 	import SubmitButton from '../ui/SubmitButton/SubmitButton.svelte';
 
 	let isSubmitting = $state(false);

@@ -53,6 +53,14 @@ class UserStore {
 		if (rtc.currentVC) await rtc.toggleDeafen();
 	}
 
+	addEmojis(emojis: Emoji[]) {
+		if (Array.isArray(this.emojis)) {
+			this.emojis.push(...emojis);
+		} else {
+			this.emojis = [...emojis];
+		}
+	}
+
 	addFriend(friend: Friend) {
 		if (Array.isArray(this.friends)) {
 			this.friends.push(friend);

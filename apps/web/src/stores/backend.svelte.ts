@@ -2,7 +2,7 @@ import { fromBinary } from '@bufbuild/protobuf';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
 import ky from 'ky';
 import { err, ok, type Result } from 'neverthrow';
-import { print } from 'utils/print';
+import { print } from 'utils/basics';
 import { WSMessageSchema } from '../gen/types_pb';
 import type {
 	AcceptFriendErrors,
@@ -904,6 +904,30 @@ class Backend {
 	async deleteEmoji(emojiId: string): Promise<Result<void, DeleteEmojiErrors>> {
 		try {
 			const res = await client.delete(`user/delete_emoji/${emojiId}`);
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
+			switch (true) {
+				case errBody.status === 403:
+					return err({ code: 'ERR_FORBIDDEN', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+			}
+		}
+	}
+
+	async updateEmoji(emojiId: string, shortcode: string): Promise<Result<void, DeleteEmojiErrors>> {
+		try {
+			const res = await client.patch(`user/update_emoji/${emojiId}`, {
+				body: JSON.stringify({ shortcode })
+			});
 
 			const data = await res.json();
 			if (!res.ok) {

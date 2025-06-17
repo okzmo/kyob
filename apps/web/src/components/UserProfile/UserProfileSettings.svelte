@@ -10,7 +10,7 @@
 	import SubmitButton from '../ui/SubmitButton/SubmitButton.svelte';
 	import { backend } from 'stores/backend.svelte';
 	import { userStore } from 'stores/user.svelte';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 	import { UpdateAvatarSchema } from 'types/schemas';
 	import ColorThief, { type RGBColor } from 'colorthief';
 	import * as v from 'valibot';

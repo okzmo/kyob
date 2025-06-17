@@ -14,7 +14,7 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { CreateServerSchema } from 'types/schemas';
 	import type { Server } from 'types/types';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 	import { animateCoordinates } from 'utils/transition';
 
 	let avatar = $state<string | undefined>();

@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
 	import MentionsList from 'components/ChatWindow/chatWindowInput/extensions/mentions/MentionsList.svelte';
-	import { CustomMention } from 'components/ChatWindow/chatWindowInput/extensions/mentions/mentions';
 	import { core } from 'stores/core.svelte';
 	import { backend } from 'stores/backend.svelte';
 	import { editorStore } from 'stores/editor.svelte';
 	import EmojisList from '../chatWindowInput/extensions/emojis/EmojisList.svelte';
-	import { EmojisSuggestion } from '../chatWindowInput/extensions/emojis/emojis';
 	import { generateTextWithExt } from 'utils/richInput';
+	import { createEditorConfig } from '../chatWindowInput/editorConfig';
 
 	let element: Element;
 	let editor: Editor;
@@ -47,71 +45,26 @@
 	onMount(() => {
 		editorStore.currentInput = 'edit';
 
-		editor = new Editor({
-			element: element,
-			autofocus: 'end',
-			content: content,
-			extensions: [
-				StarterKit.configure({
-					gapcursor: false,
-					dropcursor: false,
-					heading: false,
-					orderedList: false,
-					bulletList: false,
-					blockquote: false
-				}),
-				EmojisSuggestion.configure({
-					HTMLAttributes: {
-						class: 'editor-emoji'
-					},
-					renderHTML({ options, node }) {
-						return ['span', options.HTMLAttributes, `${node.attrs.emoji}`];
-					}
-				}),
-				CustomMention.configure({
-					HTMLAttributes: {
-						class: 'editor-mention'
-					},
-					renderHTML({ options, node }) {
-						return [
-							'span',
-							options.HTMLAttributes,
-							`${node.attrs.mentionSuggestionChar}${node.attrs.label}`
-						];
-					}
-				})
-			],
-			onTransaction: () => {
-				editor = editor;
-			},
-			onBlur: () => {
-				core.stopEditingMessage();
-			},
-			editorProps: {
-				attributes: {
-					class: 'editor-message'
+		editor = new Editor(
+			createEditorConfig({
+				element: element,
+				autofocus: 'end',
+				content: content,
+				onTransaction: () => {
+					editor = editor;
 				},
-				handleKeyDown: (_, ev) => {
-					if (
-						ev.key === 'Enter' &&
-						!ev.shiftKey &&
-						(!editorStore.mentionProps || editorStore.mentionProps.items.length === 0) &&
-						(!editorStore.emojiProps || editorStore.emojiProps.items.length === 0)
-					) {
-						ev.preventDefault();
-
-						editMessage(editor.getJSON());
-						return true;
+				onBlur: () => {
+					core.stopEditingMessage();
+				},
+				editorProps: {
+					attributes: {
+						class: 'editor-message'
 					}
-
-					if (ev.key === 'Escape') {
-						core.stopEditingMessage();
-					}
-
-					return false;
-				}
-			}
-		});
+				},
+				onEnterPress: () => editMessage(editor.getJSON()),
+				onEscapePress: () => core.stopEditingMessage()
+			})
+		);
 	});
 
 	onDestroy(() => {

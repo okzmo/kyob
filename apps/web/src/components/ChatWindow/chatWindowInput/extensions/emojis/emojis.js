@@ -1,7 +1,7 @@
 import Mention from '@tiptap/extension-mention';
 import { PluginKey } from '@tiptap/pm/state';
 import { editorStore } from 'stores/editor.svelte';
-import emojis from 'emojibase-data/en/compact.json';
+import { searchEmoji } from 'utils/emojis';
 
 const EmojiExtended = Mention.extend({
 	name: 'emojis',
@@ -30,19 +30,9 @@ export const EmojisSuggestion = EmojiExtended.configure({
 			char: ':',
 			pluginKey: new PluginKey('emoji-suggestion'),
 			items: ({ query }) => {
-				const lowerQuery = query.toLocaleLowerCase();
+				const lowerQuery = query.toLocaleLowerCase().trim();
 
-				let res = emojis
-					.filter((emoji) => {
-						return (
-							emoji.unicode === lowerQuery ||
-							emoji.label.replaceAll(' ', '').includes(lowerQuery) ||
-							emoji.tags?.includes(lowerQuery)
-						);
-					})
-					.slice(0, 8);
-
-				return res;
+				return searchEmoji(lowerQuery, 8);
 			},
 			render: () => {
 				return {

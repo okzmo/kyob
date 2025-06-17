@@ -88,6 +88,10 @@ type UploadEmojiResponse struct {
 	Shortcode string `json:"shortcode"`
 }
 
+type UpdateEmojiBody struct {
+	Shortcode string `validate:"emoji_shortcode" json:"shortcode"`
+}
+
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
 	user, err := db.Query.GetUserById(ctx, userId)
 	if err != nil {
@@ -311,7 +315,8 @@ func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *Uplo
 	user := ctx.Value("user").(db.User)
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
-	var emojis []UploadEmojiResponse
+	var emojiData []db.CreateEmojiParams
+	var responses []UploadEmojiResponse
 
 	for i, fileHeader := range files {
 		file, err := fileHeader.Open()
@@ -340,26 +345,44 @@ func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *Uplo
 		}
 
 		emojiUrl := fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), emojiFileName)
-		// TODO: batch it
-		emoji, err := db.Query.CreateEmoji(ctx, db.CreateEmojiParams{
-			ID:        utils.Node.Generate().String(),
+		emojiID := utils.Node.Generate().String()
+
+		emojiData = append(emojiData, db.CreateEmojiParams{
+			ID:        emojiID,
 			UserID:    user.ID,
 			Url:       emojiUrl,
 			Shortcode: body.Shortcodes[i],
 		})
-		if err != nil {
-			slog.Error("failed uploading emoji", "err", err)
-			return nil, err
-		}
 
-		emojis = append(emojis, UploadEmojiResponse{
-			Id:        emoji.ID,
-			Url:       emoji.Url,
-			Shortcode: emoji.Shortcode,
+		responses = append(responses, UploadEmojiResponse{
+			Id:        emojiID,
+			Url:       emojiUrl,
+			Shortcode: body.Shortcodes[i],
 		})
 	}
 
-	return emojis, nil
+	if len(emojiData) > 0 {
+		if _, err := db.Query.CreateEmoji(ctx, emojiData); err != nil {
+			return nil, fmt.Errorf("failed to batch insert emojis: %w", err)
+		}
+	}
+
+	return responses, nil
+}
+
+func UpdateEmoji(ctx context.Context, emojiId string, body *UpdateEmojiBody) error {
+	user := ctx.Value("user").(db.User)
+
+	err := db.Query.UpdateEmoji(ctx, db.UpdateEmojiParams{
+		ID:        emojiId,
+		UserID:    user.ID,
+		Shortcode: body.Shortcode,
+	})
+	if err != nil {
+		return ErrUnauthorizedEmojiDeletion
+	}
+
+	return nil
 }
 
 func DeleteEmoji(ctx context.Context, emojiId string) error {

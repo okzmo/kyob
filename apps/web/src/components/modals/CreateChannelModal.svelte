@@ -10,7 +10,7 @@
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { CreateChannelSchema } from 'types/schemas';
-	import { delay } from 'utils/delay';
+	import { delay } from 'utils/time';
 
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);

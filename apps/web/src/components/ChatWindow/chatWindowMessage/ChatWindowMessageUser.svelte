@@ -2,7 +2,7 @@
 	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 	import { core } from 'stores/core.svelte';
 	import type { User } from 'types/types';
-	import { formatMessageTime } from 'utils/date';
+	import { formatMessageTime } from 'utils/time';
 
 	interface Props {
 		id: string;

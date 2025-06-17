@@ -59,7 +59,7 @@ func ConvertToEmoji(file multipart.File) ([]byte, error) {
 	defer image.Close()
 
 	width := image.Width()
-	height := image.Height()
+	height := image.PageHeight()
 
 	var scale float64
 	if width > height {

@@ -20,7 +20,7 @@
 	const server = $derived(serversStore.getServer(serverId));
 	const channel = $derived(serversStore.getChannel(serverId, channelId));
 	const friend = $derived(userStore.getFriend(friendId));
-	const messages = $derived(serversStore.getMessages(serverId, channelId) ?? []);
+	const messages = $derived(serversStore.getMessages(serverId, channelId));
 </script>
 
 <ChatWindowSkeleton {id} {tab} {channel} {server} {friend}>
