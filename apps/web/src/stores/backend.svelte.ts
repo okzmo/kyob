@@ -13,9 +13,11 @@ import type {
 	CreateMessageErrors,
 	CreateServerErrors,
 	DeleteChannelErrors,
+	DeleteEmojiErrors,
 	DeleteFriendErrors,
 	DeleteMessageErrors,
 	DeleteServerErrors,
+	EmojiErrors,
 	GetUserErrors,
 	JoinServerErrors,
 	LeaveServerErrors,
@@ -27,6 +29,7 @@ import type {
 } from '../types/errors';
 import type {
 	AcceptFriendType,
+	AddEmojisType,
 	AddFriendType,
 	CreateChannelType,
 	CreateMessageType,
@@ -41,6 +44,7 @@ import type {
 import type {
 	Channel,
 	ChannelTypes,
+	Emoji,
 	Friend,
 	LastState,
 	Message,
@@ -848,6 +852,74 @@ class Backend {
 		} catch (error) {
 			const errBody = await (error as StandardError).response.json();
 			return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+		}
+	}
+
+	async uploadEmojis(body: AddEmojisType): Promise<Result<Emoji[], EmojiErrors>> {
+		try {
+			const formData = new FormData();
+			for (let i = 0; i < body.emojis.length; ++i) {
+				formData.append('emojis[]', body.emojis[i]);
+				formData.append('shortcodes[]', body.shortcodes[i]);
+			}
+
+			const res = await client.post(`user/upload_emojis`, {
+				body: formData
+			});
+
+			const data = (await res.json()) as Emoji[];
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok(data);
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
+			switch (true) {
+				case errBody.status === 400 && errBody.code === 'ERR_MISSING_EMOJIS':
+					return err({ code: 'ERR_MISSING_EMOJIS', error: errBody.error });
+				case errBody.status === 400 && errBody.code === 'ERR_MISSING_SHORTCODES':
+					return err({
+						code: 'ERR_MISSING_SHORTCODES',
+						error: 'Some shortcodes are missing or empty'
+					});
+				case errBody.status === 400 && errBody.code === 'ERR_EMOJIS_INVALID':
+					return err({
+						code: 'ERR_EMOJIS_INVALID',
+						error: 'Your emojis are invalid. Please refer to the above requirements.'
+					});
+				case errBody.status === 400 && errBody.code === 'ERR_SHORTCODES_INVALID':
+					return err({
+						code: 'ERR_SHORTCODES_INVALID',
+						error:
+							'The given shortcodes are invalid. The shortcodes must be lowercase, without spaces. e.g. my_emoji_1'
+					});
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+			}
+		}
+	}
+
+	async deleteEmoji(emojiId: string): Promise<Result<void, DeleteEmojiErrors>> {
+		try {
+			const res = await client.delete(`user/delete_emoji/${emojiId}`);
+
+			const data = await res.json();
+			if (!res.ok) {
+				return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+			}
+
+			return ok();
+		} catch (error) {
+			const errBody = await (error as StandardError).response.json();
+
+			switch (true) {
+				case errBody.status === 403:
+					return err({ code: 'ERR_FORBIDDEN', error: errBody.error });
+				default:
+					return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+			}
 		}
 	}
 

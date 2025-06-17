@@ -124,6 +124,13 @@ type Channel struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
+type Emoji struct {
+	ID        string `json:"id"`
+	UserID    string `json:"user_id"`
+	Url       string `json:"url"`
+	Shortcode string `json:"shortcode"`
+}
+
 type Friend struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"user_id"`
@@ -207,6 +214,7 @@ type User struct {
 	MainColor   pgtype.Text `json:"main_color"`
 	Links       []byte      `json:"links"`
 	Facts       []byte      `json:"facts"`
+	Experience  int32       `json:"experience"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }

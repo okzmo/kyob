@@ -1,4 +1,4 @@
-import type { Friend, User } from '../types/types';
+import type { Emoji, Friend, User } from '../types/types';
 import { sounds } from './audio.svelte';
 import { rtc } from './rtc.svelte';
 import { serversStore } from './servers.svelte';
@@ -13,6 +13,7 @@ interface DM {
 class UserStore {
 	user = $state<User>();
 	friends = $state<Friend[]>([]);
+	emojis = $state<Emoji[]>([]);
 	callTokens = $state<Record<string, string>>({});
 	mention = $state(false);
 	mute = $state(false);

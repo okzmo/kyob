@@ -3,7 +3,6 @@
 	import { backend } from 'stores/backend.svelte';
 	import Corners from '../Corners/Corners.svelte';
 	import { page } from '$app/state';
-	import { windows } from 'stores/windows.svelte';
 
 	interface Props {
 		type: 'general' | 'server';
@@ -26,6 +25,7 @@
 			'Personal Settings': [
 				{ label: 'Account', href: '/settings/account', locked: false },
 				{ label: 'Profile', href: '/settings/profile', locked: false },
+				{ label: 'Emojis', href: '/settings/emojis', locked: false },
 				{ label: 'Data & Privacy', href: '/settings/privacy', locked: false }
 			],
 			'App Settings': [

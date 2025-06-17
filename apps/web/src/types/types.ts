@@ -95,6 +95,7 @@ export interface Friend extends Partial<User> {
 export interface Setup {
 	user: User;
 	friends: Friend[];
+	emojis: Emoji[];
 	servers: Record<string, Server>;
 }
 
@@ -130,4 +131,8 @@ export interface LastState {
 	mentions_ids: string[][];
 }
 
-export type ActorMessageTypes = 'channel:message';
+export interface Emoji {
+	id: string;
+	url: string;
+	shortcode: string;
+}

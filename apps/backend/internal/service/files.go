@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -42,17 +44,32 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 
 	for _, fileHeader := range files {
 		if fileHeader.Size > maxSize {
-			// we ignore big files
 			continue
 		}
+
+		if fileHeader.Size == 0 {
+			continue
+		}
+
 		file, err := fileHeader.Open()
 		if err != nil {
 			return nil, fmt.Errorf("failed to open file: %w", err)
 		}
+		defer file.Close()
+
+		buffer := make([]byte, 512)
+		n, err := file.Read(buffer)
+		if err != nil && err != io.EOF {
+			return nil, fmt.Errorf("failed to read file: %w", err)
+		}
+
+		mimeType := http.DetectContentType(buffer[:n])
+
+		if seeker, ok := file.(io.Seeker); ok {
+			seeker.Seek(0, io.SeekStart)
+		}
 
 		randomId := utils.GenerateRandomId(16)
-		mimeType := fileHeader.Header.Get("Content-Type")
-
 		var key string
 		var fileData io.Reader = file
 
@@ -65,14 +82,13 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 			}
 			fileData = bytes.NewReader(webpData)
 		} else {
-			extension := "bin"
-			if parts := strings.Split(mimeType, "/"); len(parts) == 2 {
-				extension = parts[1]
-			}
+			extension := getSecureExtension(mimeType)
 			key = fmt.Sprintf("attachment-%s.%s", randomId, extension)
 		}
 
-		as.uploadFile(key, mimeType, fileData, fileHeader.Filename)
+		if err := as.uploadFile(key, mimeType, fileData, fileHeader.Filename); err != nil {
+			return nil, fmt.Errorf("failed to upload file: %w", err)
+		}
 		defer file.Close()
 
 		attachmentUrl := fmt.Sprintf("%s/%s", as.cdnUrl, key)
@@ -81,9 +97,9 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 		attachment := Attachment{
 			Id:       randomId,
 			Url:      attachmentUrl,
-			Filename: fileHeader.Filename,
+			Filename: sanitizeFilename(fileHeader.Filename),
 			Filesize: fileSize,
-			Type:     fileHeader.Header.Get("Content-Type"),
+			Type:     mimeType,
 		}
 
 		attachments = append(attachments, attachment)
@@ -115,4 +131,34 @@ func (as *AttachmentService) uploadFile(key string, mimeType string, fileData io
 	}
 
 	return nil
+}
+
+func getSecureExtension(mimeType string) string {
+	extensions := map[string]string{
+		"application/pdf": "pdf",
+		"text/plain":      "txt",
+		"image/jpeg":      "jpg",
+		"image/png":       "png",
+	}
+
+	if ext, ok := extensions[mimeType]; ok {
+		return ext
+	}
+
+	if parts := strings.Split(mimeType, "/"); len(parts) == 2 {
+		return parts[1]
+	}
+
+	return "bin"
+}
+
+func sanitizeFilename(filename string) string {
+	filename = filepath.Base(filename)
+	filename = strings.ReplaceAll(filename, "..", "")
+
+	if len(filename) > 255 {
+		filename = filename[:255]
+	}
+
+	return filename
 }

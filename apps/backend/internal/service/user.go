@@ -20,9 +20,10 @@ import (
 )
 
 var (
-	ErrAddingItself  = errors.New("user adding itself")
-	ErrUsernameInUse = errors.New("username in use")
-	ErrEmailInUse    = errors.New("email in use")
+	ErrAddingItself              = errors.New("user adding itself")
+	ErrUsernameInUse             = errors.New("username in use")
+	ErrEmailInUse                = errors.New("email in use")
+	ErrUnauthorizedEmojiDeletion = errors.New("user cannot delete this emoji")
 )
 
 type AddFriendBody struct {
@@ -75,6 +76,16 @@ type UpdateAvatarResponse struct {
 	Avatar    string `json:"avatar"`
 	Banner    string `json:"banner"`
 	MainColor string `json:"main_color"`
+}
+
+type UploadEmojiBody struct {
+	Shortcodes []string `validate:"required,max=20,dive,emoji_shortcode" json:"shortcode"`
+}
+
+type UploadEmojiResponse struct {
+	Id        string `json:"id"`
+	Url       string `json:"url"`
+	Shortcode string `json:"shortcode"`
 }
 
 func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
@@ -294,6 +305,75 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		Avatar:    avatarUrl.String,
 		MainColor: mainColor.String,
 	}, nil
+}
+
+func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *UploadEmojiBody) ([]UploadEmojiResponse, error) {
+	user := ctx.Value("user").(db.User)
+	s3Client := s3.NewFromConfig(GetAWSConfig())
+
+	var emojis []UploadEmojiResponse
+
+	for i, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			return nil, fmt.Errorf("failed to open file: %w", err)
+		}
+		defer file.Close()
+
+		emojiImg, err := utils.ConvertToEmoji(file)
+		if err != nil {
+			slog.Error("failed converting emoji to webp", "err", err)
+			return nil, err
+		}
+
+		randomId := utils.GenerateRandomId(8)
+		emojiFileName := fmt.Sprintf("emoji-%s-%s.webp", user.ID, randomId)
+
+		_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+			Key:    &emojiFileName,
+			Bucket: aws.String("nyo-files"),
+			Body:   bytes.NewReader(emojiImg),
+		})
+		if err != nil {
+			slog.Error("failed uploading emoji", "err", err)
+			return nil, err
+		}
+
+		emojiUrl := fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), emojiFileName)
+		// TODO: batch it
+		emoji, err := db.Query.CreateEmoji(ctx, db.CreateEmojiParams{
+			ID:        utils.Node.Generate().String(),
+			UserID:    user.ID,
+			Url:       emojiUrl,
+			Shortcode: body.Shortcodes[i],
+		})
+		if err != nil {
+			slog.Error("failed uploading emoji", "err", err)
+			return nil, err
+		}
+
+		emojis = append(emojis, UploadEmojiResponse{
+			Id:        emoji.ID,
+			Url:       emoji.Url,
+			Shortcode: emoji.Shortcode,
+		})
+	}
+
+	return emojis, nil
+}
+
+func DeleteEmoji(ctx context.Context, emojiId string) error {
+	user := ctx.Value("user").(db.User)
+
+	err := db.Query.DeleteEmoji(ctx, db.DeleteEmojiParams{
+		ID:     emojiId,
+		UserID: user.ID,
+	})
+	if err != nil {
+		return ErrUnauthorizedEmojiDeletion
+	}
+
+	return nil
 }
 
 func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error) {

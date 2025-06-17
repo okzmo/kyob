@@ -30,6 +30,7 @@
 		if (res.isOk()) {
 			userStore.user = res.value.user;
 			userStore.friends = res.value.friends;
+			userStore.emojis = res.value.emojis;
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
 			await rtc.prepareConnection();

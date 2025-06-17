@@ -67,6 +67,18 @@ CREATE TABLE public.channels (
 
 
 --
+-- Name: emojis; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.emojis (
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
+    url character varying(255) NOT NULL,
+    shortcode character varying(255) NOT NULL
+);
+
+
+--
 -- Name: friends; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -210,6 +222,7 @@ CREATE TABLE public.users (
     main_color character varying(255),
     links jsonb DEFAULT '[]'::jsonb,
     facts jsonb DEFAULT '[]'::jsonb,
+    experience integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -221,6 +234,14 @@ CREATE TABLE public.users (
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: emojis emojis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.emojis
+    ADD CONSTRAINT emojis_pkey PRIMARY KEY (id);
 
 
 --
@@ -361,6 +382,14 @@ CREATE INDEX idx_users_username ON public.users USING btree (username);
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: emojis emojis_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.emojis
+    ADD CONSTRAINT emojis_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

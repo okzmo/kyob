@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import { ChannelTypes } from './types';
-import { userStore } from 'stores/user.svelte';
 
 export const SignUpSchema = v.object({
 	email: v.pipe(
@@ -42,7 +41,10 @@ export const CreateServerSchema = v.object({
 	description: v.any(),
 	avatar: v.pipe(
 		v.file('Please select an image file.'),
-		v.mimeType(['image/jpeg', 'image/png'], 'Please select a JPEG or PNG file.'),
+		v.mimeType(
+			['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
+			'Please select a JPEG, PNG, GIF, WEBP or AVIF file.'
+		),
 		v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
 	),
 	private: v.boolean(),
@@ -167,8 +169,8 @@ export const UpdateAvatarSchema = v.object({
 	avatar: v.pipe(
 		v.file('Please select an image file.'),
 		v.mimeType(
-			['image/jpeg', 'image/jpg', 'image/png', 'image/gif'],
-			'Please select a JPEG, PNG or GIF file.'
+			['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
+			'Please select a JPEG, PNG, GIF, WEBP or AVIF file.'
 		),
 		v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
 	),
@@ -201,3 +203,19 @@ export const UpdatePasswordSchema = v.object({
 });
 
 export interface UpdatePasswordType extends v.InferInput<typeof UpdatePasswordSchema> {}
+
+export const AddEmojisSchema = v.object({
+	emojis: v.array(
+		v.pipe(
+			v.file('Please select an image file.'),
+			v.mimeType(
+				['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
+				'Please select a JPEG, PNG, GIF, WEBP or AVIF file.'
+			),
+			v.maxSize(1024 * 1024 * 1, 'Please select a file smaller than 1 MB.')
+		)
+	),
+	shortcodes: v.array(v.string())
+});
+
+export interface AddEmojisType extends v.InferInput<typeof AddEmojisSchema> {}

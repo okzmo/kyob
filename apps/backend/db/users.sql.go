@@ -12,13 +12,46 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const createEmoji = `-- name: CreateEmoji :one
+INSERT INTO emojis (
+  id, user_id, url, shortcode
+) VALUES (
+  $1, $2, $3, $4
+)
+RETURNING id, user_id, url, shortcode
+`
+
+type CreateEmojiParams struct {
+	ID        string `json:"id"`
+	UserID    string `json:"user_id"`
+	Url       string `json:"url"`
+	Shortcode string `json:"shortcode"`
+}
+
+func (q *Queries) CreateEmoji(ctx context.Context, arg CreateEmojiParams) (Emoji, error) {
+	row := q.db.QueryRow(ctx, createEmoji,
+		arg.ID,
+		arg.UserID,
+		arg.Url,
+		arg.Shortcode,
+	)
+	var i Emoji
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Url,
+		&i.Shortcode,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   id, email, username, display_name, avatar, banner, main_color, password
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7, $8
 )
-RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at
+RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -56,10 +89,25 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.MainColor,
 		&i.Links,
 		&i.Facts,
+		&i.Experience,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const deleteEmoji = `-- name: DeleteEmoji :exec
+DELETE FROM emojis WHERE user_id = $1 AND id = $2
+`
+
+type DeleteEmojiParams struct {
+	UserID string `json:"user_id"`
+	ID     string `json:"id"`
+}
+
+func (q *Queries) DeleteEmoji(ctx context.Context, arg DeleteEmojiParams) error {
+	_, err := q.db.Exec(ctx, deleteEmoji, arg.UserID, arg.ID)
+	return err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
@@ -71,8 +119,38 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 	return err
 }
 
+const getEmojis = `-- name: GetEmojis :many
+SELECT id, url, shortcode FROM emojis WHERE user_id = $1
+`
+
+type GetEmojisRow struct {
+	ID        string `json:"id"`
+	Url       string `json:"url"`
+	Shortcode string `json:"shortcode"`
+}
+
+func (q *Queries) GetEmojis(ctx context.Context, userID string) ([]GetEmojisRow, error) {
+	rows, err := q.db.Query(ctx, getEmojis, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetEmojisRow
+	for rows.Next() {
+		var i GetEmojisRow
+		if err := rows.Scan(&i.ID, &i.Url, &i.Shortcode); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at FROM users WHERE email = $1 OR username = $2
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE email = $1 OR username = $2
 `
 
 type GetUserParams struct {
@@ -95,6 +173,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 		&i.MainColor,
 		&i.Links,
 		&i.Facts,
+		&i.Experience,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -102,7 +181,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at FROM users WHERE id = $1
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
@@ -120,6 +199,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.MainColor,
 		&i.Links,
 		&i.Facts,
+		&i.Experience,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

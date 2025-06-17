@@ -56,7 +56,7 @@ func (q *Queries) DeleteRememberMeToken(ctx context.Context, userID string) erro
 }
 
 const verifyToken = `-- name: VerifyToken :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, created_at, updated_at FROM users WHERE id = (SELECT user_id FROM tokens WHERE token = $1)
+SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE id = (SELECT user_id FROM tokens WHERE token = $1)
 `
 
 func (q *Queries) VerifyToken(ctx context.Context, token string) (User, error) {
@@ -74,6 +74,7 @@ func (q *Queries) VerifyToken(ctx context.Context, token string) (User, error) {
 		&i.MainColor,
 		&i.Links,
 		&i.Facts,
+		&i.Experience,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

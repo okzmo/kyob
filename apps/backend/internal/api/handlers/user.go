@@ -109,12 +109,15 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateAvatarBody
 	var cropAvatar, cropBanner services.Crop
-
-	err := r.ParseMultipartForm(15 << 20)
-	if err != nil {
-		slog.Error(err.Error())
-		utils.RespondWithError(w, http.StatusBadRequest, "Failed to parse given image.")
-		return
+	config := utils.ImageValidationConfig{
+		MaxSize: 10 << 20, // 10 MB
+		AllowedMimeTypes: []string{
+			"image/jpeg",
+			"image/png",
+			"image/gif",
+			"image/webp",
+		},
+		RequireValidHeader: true,
 	}
 
 	file, fileHeader, err := r.FormFile("avatar")
@@ -124,6 +127,12 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
+
+	if err := utils.ParseAndValidateImage(fileHeader, config); err != nil {
+		slog.Error("Avatar image validation failed", "error", err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Avatar's invalid.")
+		return
+	}
 
 	fileData, err := io.ReadAll(file)
 	if err != nil {
@@ -176,6 +185,88 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	})
 
 	utils.RespondWithJSON(w, http.StatusOK, res)
+}
+
+func UploadEmojis(w http.ResponseWriter, r *http.Request) {
+	var body services.UploadEmojiBody
+	config := utils.ImageValidationConfig{
+		MaxSize: 1 << 20, // 1 MB
+		AllowedMimeTypes: []string{
+			"image/jpeg",
+			"image/png",
+			"image/gif",
+			"image/webp",
+		},
+		RequireValidHeader: true,
+	}
+
+	err := r.ParseMultipartForm(32 << 20) // 32 MB
+	if err != nil {
+		slog.Error("Failed to parse multipart form", "error", err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid form data.", "ERR_INVALID_FORM")
+		return
+	}
+
+	if r.MultipartForm == nil {
+		slog.Error("MultipartForm is nil after parsing")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid form data.")
+		return
+	}
+
+	emojis, exists := r.MultipartForm.File["emojis[]"]
+	if !exists || len(emojis) == 0 {
+		slog.Error("No emojis sent")
+		utils.RespondWithError(w, http.StatusBadRequest, "No emojis sent.", "ERR_MISSING_EMOJIS")
+		return
+	}
+
+	for _, emoji := range emojis {
+		if err := utils.ParseAndValidateImage(emoji, config); err != nil {
+			slog.Error("Emoji image validation failed", "error", err)
+			utils.RespondWithError(w, http.StatusBadRequest, "Emoji's invalid.", "ERR_EMOJIS_INVALID")
+			return
+		}
+	}
+
+	shortcodes := r.Form["shortcodes[]"]
+	if len(shortcodes) != len(emojis) {
+		slog.Error("Missing shortcodes")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing shortcodes", "ERR_MISSING_SHORTCODES")
+		return
+	}
+
+	body.Shortcodes = shortcodes
+	err = validate.Struct(body)
+	if err != nil {
+		slog.Error("Emoji body validation failed", "error", err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Shortcode is invalid.", "ERR_SHORTCODES_INVALID")
+		return
+	}
+
+	res, err := services.UploadEmojis(r.Context(), emojis, &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, res)
+}
+
+func DeleteEmoji(w http.ResponseWriter, r *http.Request) {
+	emojiId := chi.URLParam(r, "emoji_id")
+
+	err := services.DeleteEmoji(r.Context(), emojiId)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrUnauthorizedEmojiDeletion):
+			utils.RespondWithError(w, http.StatusForbidden, "You can't delete this emoji.")
+		default:
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "ok"})
 }
 
 func AddFriend(w http.ResponseWriter, r *http.Request) {

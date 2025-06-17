@@ -121,3 +121,20 @@ export interface CallErrors {
 	error: string;
 	cause?: any;
 }
+
+export interface EmojiErrors {
+	code:
+		| 'ERR_MISSING_EMOJIS'
+		| 'ERR_SHORTCODES_INVALID'
+		| 'ERR_EMOJIS_INVALID'
+		| 'ERR_MISSING_SHORTCODES'
+		| 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}
+
+export interface DeleteEmojiErrors {
+	code: 'ERR_FORBIDDEN' | 'ERR_UNKNOWN';
+	error: string;
+	cause?: any;
+}

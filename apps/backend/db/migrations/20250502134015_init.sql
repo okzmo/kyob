@@ -14,6 +14,7 @@ CREATE TABLE users(
   main_color VARCHAR(255),
   links JSONB DEFAULT '[]'::jsonb,
   facts JSONB DEFAULT '[]'::jsonb,
+  experience INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -106,6 +107,13 @@ CREATE TABLE invites(
   expire_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+CREATE TABLE emojis(
+  id VARCHAR(20) PRIMARY KEY,
+  user_id VARCHAR(20) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  url VARCHAR(255) NOT NULL,
+  shortcode VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE user_channel_read_state(
   user_id VARCHAR(20) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   channel_id VARCHAR(20) NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
@@ -128,6 +136,7 @@ INSERT INTO servers
 VALUES ('global', 'global', 'global');
 
 -- migrate:down
+DROP TABLE emojis;
 DROP TABLE user_channel_read_state;
 DROP TABLE invites;
 DROP TABLE tokens;

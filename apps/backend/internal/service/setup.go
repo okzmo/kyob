@@ -75,6 +75,7 @@ type FriendResponse struct {
 
 type SetupResponse struct {
 	User    UserResponse                  `json:"user"`
+	Emojis  []db.GetEmojisRow             `json:"emojis"`
 	Friends []FriendResponse              `json:"friends"`
 	Servers map[string]ServerWithChannels `json:"servers"`
 }
@@ -90,6 +91,11 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	}
 
 	servers, err := db.Query.GetServersFromUser(ctx, ctxUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	emojis, err := db.Query.GetEmojis(ctx, ctxUser.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +127,8 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 			Sender:       f.FriendshipSenderID == ctxUser.ID,
 		})
 	}
+
+	res.Emojis = emojis
 
 	res.Servers = make(map[string]ServerWithChannels)
 	if len(servers) > 0 {
