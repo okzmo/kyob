@@ -84,6 +84,8 @@ class RTC {
 			console.error(`Connection failed after ${Date.now() - startTime}ms:`, error);
 		}
 
+		this.currentVC = room;
+
 		try {
 			await room.localParticipant.setMicrophoneEnabled(!userStore.mute);
 		} catch (error) {
@@ -96,8 +98,6 @@ class RTC {
 				audioTrack?.setEnabled(false);
 			});
 		}
-
-		this.currentVC = room;
 	}
 
 	async quitRoom() {

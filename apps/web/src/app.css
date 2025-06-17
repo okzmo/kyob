@@ -39,6 +39,7 @@
 	--ui-main-80025: #21212640;
 	--ui-main-850: #18181b;
 	--ui-main-900: #121215;
+	--ui-main-90010: #1212151a;
 	--ui-main-950: #0b0b0e;
 }
 
@@ -145,6 +146,10 @@ body {
 	box-shadow: inset 0 0 0 1px var(--ui-main-5010);
 }
 
+@utility inner-main-900/10 {
+	box-shadow: inset 0 0 0 1px var(--ui-main-90010);
+}
+
 @utility inner-main-700 {
 	@apply shadow-[inset_0_0_0_1px_var(--color-main-700)];
 }
@@ -155,6 +160,10 @@ body {
 
 @utility inner-red-400/40 {
 	box-shadow: inset 0 0 0 1px oklch(70.4% 0.191 22.216 / 0.4);
+}
+
+@utility inner-green-400/20 {
+	box-shadow: inset 0 0 0 1px oklch(79.2% 0.209 151.711 / 0.2);
 }
 
 @utility inner-green-400/40 {

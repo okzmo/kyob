@@ -26,7 +26,7 @@
 		{@const friendInfo = userStore.getFriend(mainParticipant)}
 
 		<button
-			class="attachment relative aspect-[4/3] min-h-0 max-w-full @lg:max-w-[45rem]"
+			class="attachment relative aspect-[16/9] w-full"
 			onclick={() => toggleMainParticipant()}
 		>
 			<img
@@ -35,7 +35,7 @@
 				class="h-full w-full object-cover select-none"
 			/>
 		</button>
-	{:else}
+	{:else if channel.voice_users.length > 0}
 		{#each channel.voice_users as participant (participant.user_id)}
 			{@const participantInfos = serversStore.getMemberById(server.id, participant.user_id)}
 			{@const friendInfo = userStore.getFriend(participant.user_id)}
@@ -52,5 +52,7 @@
 				/>
 			</button>
 		{/each}
+	{:else}
+		<p class="text-main-500 text-lg font-bold">Nobody is in this channel</p>
 	{/if}
 </div>

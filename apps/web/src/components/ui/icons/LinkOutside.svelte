@@ -2,7 +2,7 @@
 	interface Props {
 		height: number;
 		width: number;
-		class?: string;
+		class?: string | string[];
 	}
 
 	let { class: classes, height = 24, width = 24 }: Props = $props();

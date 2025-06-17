@@ -51,7 +51,9 @@
 		]}
 		{onclick}
 	>
-		<Tooltip text={tooltip || ''}></Tooltip>
+		{#if tooltip}
+			<Tooltip text={tooltip}></Tooltip>
+		{/if}
 		{#if corners}
 			<Corners color={cornerColor} class={cornerClass} />
 		{/if}
@@ -61,7 +63,9 @@
 
 {#if variants === 'nostyle'}
 	<button type="button" class={classes} {onclick}>
-		<Tooltip text={tooltip || ''}></Tooltip>
+		{#if tooltip}
+			<Tooltip text={tooltip}></Tooltip>
+		{/if}
 		{#if corners}
 			<Corners color={cornerColor} class={cornerClass} />
 		{/if}

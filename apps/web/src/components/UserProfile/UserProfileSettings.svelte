@@ -18,6 +18,7 @@
 	import StarterKit from '@tiptap/starter-kit';
 	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
 	import Button from 'components/ui/Button/Button.svelte';
+	import { isColorLight } from 'utils/colors';
 
 	interface Props {
 		user: User;
@@ -67,6 +68,7 @@
 	let image = $state<File | undefined>();
 	let colors = $state<RGBColor[]>([]);
 	let mainColor = $state<RGBColor | null>();
+	let needDarkFontColor = $derived(isColorLight(`rgb(${userStore.user?.main_color})`));
 
 	let cropBanner = $state({ x: 0, y: 0 });
 	let cropAvatar = $state({ x: 0, y: 0 });
@@ -292,10 +294,17 @@
 
 	<div class="inner-main-50/10 relative z-[4] flex flex-col px-4 pt-[10.25rem] pb-4">
 		<Corners color="border-main-50/35" />
-		<h3 class="text-xl font-semibold">{displayName}</h3>
-		<p class="text-main-50/65 text-sm leading-none">{user.username}</p>
+		<h3 class={['text-xl font-semibold', needDarkFontColor && 'text-main-900']}>{displayName}</h3>
+		<p class={['text-sm leading-none', needDarkFontColor ? 'text-main-900/65' : 'text-main-50/65']}>
+			{user.username}
+		</p>
 		{#if aboutText}
-			<div class="text-main-50/80 mt-2 [&>p]:min-h-[24px]">
+			<div
+				class={[
+					'mt-2 [&>p]:min-h-[24px]',
+					needDarkFontColor ? 'text-main-900/80' : 'text-main-50/80'
+				]}
+			>
 				{@html aboutText.content}
 			</div>
 			{#if aboutText.enoughMatches}
@@ -303,7 +312,10 @@
 					<span>...</span>
 				{/if}
 				<button
-					class="hocus:text-main-50/75 w-fit text-left text-sm transition-colors hover:cursor-pointer"
+					class={[
+						'w-fit text-left text-sm transition-colors hover:cursor-pointer',
+						needDarkFontColor ? 'hocus:text-main-900/75 ' : 'hocus:text-main-50/75'
+					]}
 					onclick={() => (toggleAbout = !toggleAbout)}
 				>
 					{toggleAbout ? 'Hide' : 'Show more'}
@@ -311,30 +323,63 @@
 			{/if}
 		{/if}
 		{#if facts.length > 0 || links.length > 0}
-			<Separator.Root class="bg-main-50/25 my-5 h-[1px] w-full" />
+			<Separator.Root
+				class={['my-5 h-[1px] w-full', needDarkFontColor ? 'bg-main-900/25' : 'bg-main-50/25']}
+			/>
 			{#if links.length > 0}
-				<p class="text-main-50/65 mb-2 text-sm font-semibold">Links</p>
+				<p
+					class={[
+						'mb-2 text-sm font-semibold',
+						needDarkFontColor ? 'text-main-900/65' : 'text-main-50/65'
+					]}
+				>
+					Links
+				</p>
 				{#each links as link, idx (idx)}
 					<a
 						href={link.url}
-						class="hocus:bg-main-50/20 bg-main-50/10 inner-main-50/10 relative flex w-full flex-col px-4 py-2.5 transition-colors duration-100"
+						class={[
+							'relative flex w-full flex-col px-4 py-2.5 transition-colors duration-100',
+							needDarkFontColor
+								? 'hocus:bg-main-900/20 bg-main-900/10 inner-main-900/10'
+								: 'hocus:bg-main-50/20 bg-main-50/10 inner-main-50/10'
+						]}
 						target="_blank"
 						rel="noreferrer noopener"
 					>
-						<span class="font-medium">{link.label}</span>
-						<span class="text-main-50/65 text-sm">{link.url}</span>
-						<LinkOutside height={20} width={20} class="absolute top-1/2 right-4 -translate-y-1/2" />
+						<span class={['font-medium', needDarkFontColor && 'text-main-900']}>{link.label}</span>
+						<span class={['text-sm', needDarkFontColor ? 'text-main-900/65' : 'text-main-50/65']}
+							>{link.url}</span
+						>
+						<LinkOutside
+							height={20}
+							width={20}
+							class={[
+								'absolute top-1/2 right-4 -translate-y-1/2',
+								needDarkFontColor ? 'text-main-900' : ''
+							]}
+						/>
 					</a>
 				{/each}
 			{/if}
 			{#if facts.length > 0}
-				<p class={['text-main-50/65 mb-2 text-sm font-semibold', links.length > 0 && 'mt-5 ']}>
+				<p
+					class={[
+						'mb-2 text-sm font-semibold',
+						links.length > 0 && 'mt-5 ',
+						needDarkFontColor ? 'text-main-900/65' : 'text-main-50/65'
+					]}
+				>
 					Facts
 				</p>
 				{#each facts as link, idx (idx)}
-					<div class="flex items-center gap-x-2">
-						<span class="text-main-50/50">{link.label}</span>
-						<span class="text-main-50 font-semibold">{link.value}</span>
+					<div class="flex items-center gap-x-1">
+						<span class={needDarkFontColor ? 'text-main-900/50' : 'text-main-50/50'}>
+							{link.label}
+						</span>
+						<span class={['font-semibold', needDarkFontColor ? 'text-main-900' : 'text-main-50']}>
+							{link.value}
+						</span>
 					</div>
 				{/each}
 			{/if}

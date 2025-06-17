@@ -2,7 +2,7 @@
 	import { userStore } from 'stores/user.svelte';
 	import ChatWindowMessage from './ChatWindowMessage.svelte';
 	import { serversStore } from 'stores/servers.svelte';
-	import type { Channel, Message, Server } from 'types/types';
+	import type { Channel, Message, Server, User } from 'types/types';
 	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
@@ -10,6 +10,13 @@
 		server: Server;
 		channel: Channel;
 	}
+
+	const DEFAULT_AUTHOR: Partial<User> = {
+		id: 'unknown',
+		avatar: 'https://i.pinimg.com/736x/c3/7b/e8/c37be8f2419d84e7d38addf481eba9e6.jpg',
+		display_name: 'Unknown user',
+		username: 'Unknown user'
+	};
 
 	let { messages, server, channel }: Props = $props();
 	let scrollContent = $state<HTMLElement | null>();
@@ -41,11 +48,10 @@
 		{#each messages as message (message.id)}
 			{@const author = serversStore.getMemberById(server.id, message.author_id)!}
 			{@const friend = userStore.getFriend(message.author_id)}
-			{@const me = userStore.user?.id === message.author_id && userStore.user}
 
 			<ChatWindowMessage
 				id={message.id}
-				author={author || friend || me}
+				author={server.id === 'global' ? friend || userStore.user! : author || DEFAULT_AUTHOR}
 				content={message.content}
 				time={message.created_at}
 				isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '') ||

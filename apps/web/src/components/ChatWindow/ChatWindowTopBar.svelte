@@ -4,28 +4,9 @@
 	import Close from '../ui/icons/Close.svelte';
 	import Phone from 'components/ui/icons/Phone.svelte';
 	import HashChat from 'components/ui/icons/HashChat.svelte';
-	import { backend } from 'stores/backend.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
-	import { rtc } from 'stores/rtc.svelte';
 
 	let { id, tab, server, channel, friend } = $props();
-
-	async function joinCall() {
-		windows.toggleCallTab();
-		console.log(rtc.currentVC);
-		if (rtc.currentVC) return;
-
-		const res = await backend.connectToCall(server.id, channel.id);
-
-		if (res.isErr()) {
-			console.error(res.error.error);
-			return;
-		}
-
-		if (res.isOk()) {
-			await rtc.connectToRoom(res.value.token);
-		}
-	}
 </script>
 
 <div id={`window-top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
@@ -71,8 +52,8 @@
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
-		onclick={joinCall}
-		tooltip={tab !== 'chat' ? 'Go to chat' : 'Join call'}
+		onclick={() => windows.toggleCallTab()}
+		tooltip={tab !== 'chat' ? 'Go to chat' : 'Go to voice chat'}
 		corners
 		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
 	>

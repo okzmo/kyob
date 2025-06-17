@@ -9,18 +9,6 @@
 		if (core.profileOpen.status) {
 			const existingProfile = core.profiles.find((p) => p.id === core.profileOpen.userId);
 			if (existingProfile) {
-				document.documentElement.style.setProperty(
-					'--user-color-85',
-					`rgba(${existingProfile.main_color}, 0.85)`
-				);
-				document.documentElement.style.setProperty(
-					'--user-color-95',
-					`rgba(${existingProfile.main_color}, 0.95)`
-				);
-				document.documentElement.style.setProperty(
-					'--user-color',
-					`rgba(${existingProfile.main_color}, 1)`
-				);
 				return existingProfile;
 			}
 
@@ -33,18 +21,6 @@
 			}
 
 			if (res.isOk()) {
-				document.documentElement.style.setProperty(
-					'--user-color-85',
-					`rgba(${res.value.main_color}, 0.85)`
-				);
-				document.documentElement.style.setProperty(
-					'--user-color-95',
-					`rgba(${res.value.main_color}, 0.95)`
-				);
-				document.documentElement.style.setProperty(
-					'--user-color',
-					`rgba(${res.value.main_color}, 1)`
-				);
 				core.profiles.push(res.value);
 				return res.value;
 			}
