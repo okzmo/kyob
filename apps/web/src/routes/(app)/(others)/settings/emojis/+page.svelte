@@ -67,7 +67,7 @@
 				emojis.push({
 					id: generateRandomId(),
 					url: dataUrl,
-					shortcode: transformShortcode(image.name)
+					shortcode: transformShortcode(image.name.split('.')[0])
 				});
 
 				$form.emojis = [...$form.emojis, image];
@@ -76,7 +76,10 @@
 	}
 
 	async function onExistingEmojiDelete(id: string) {
-		isDeleting = true;
+		let deleteTimeout = setTimeout(() => {
+			isDeleting = true;
+		}, 200);
+
 		const res = await backend.deleteEmoji(id);
 
 		if (res.isErr()) {
@@ -86,6 +89,8 @@
 		if (res.isOk()) {
 			userStore.emojis = userStore.emojis.filter((emoji) => emoji.id !== id);
 		}
+
+		clearTimeout(deleteTimeout);
 		isDeleting = false;
 	}
 
