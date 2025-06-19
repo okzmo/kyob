@@ -1,5 +1,3 @@
-import { print } from './basics';
-
 export function isColorLight(color: string) {
   let r, g, b;
 

@@ -19,6 +19,15 @@
 	function handleDelete(messageId: string) {
 		const window = windows.getActiveWindow();
 		if (!window?.serverId || !window.channelId) return;
+		const channel = serversStore.getChannel(window.serverId, window.channelId);
+		if (channel.messages?.[0].id === messageId && channel.messages.length > 1) {
+			channel.last_message_read = channel.messages?.[1].id;
+			channel.last_message_sent = channel.messages?.[1].id;
+		} else {
+			channel.last_message_read = '';
+			channel.last_message_sent = '';
+		}
+
 		backend.deleteMessage(window.serverId, window.channelId, messageId);
 	}
 

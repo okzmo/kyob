@@ -46,6 +46,7 @@
 		"@threlte/core": "^8.0.5",
 		"@threlte/extras": "^9.4.0",
 		"@tiptap/core": "3.0.0-beta.5",
+		"@tiptap/extension-link": "3.0.0-beta.8",
 		"@tiptap/extension-mention": "3.0.0-beta.5",
 		"@tiptap/extensions": "3.0.0-beta.5",
 		"@tiptap/pm": "3.0.0-beta.5",

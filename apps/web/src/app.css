@@ -357,3 +357,7 @@ body {
 	right: -4px;
 	z-index: 10;
 }
+
+.rich-link {
+  color: var(--color-sky-400);
+}
