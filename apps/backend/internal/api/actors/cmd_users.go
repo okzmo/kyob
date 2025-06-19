@@ -15,11 +15,11 @@ import (
 
 func (u *user) InitializeUser(ctx *actor.Context) {
 	strSplit := strings.Split(ctx.PID().GetID(), "/")
-	userId := strSplit[len(strSplit)-1]
+	userID := strSplit[len(strSplit)-1]
 
-	servers, err := db.Query.GetServersFromUser(context.TODO(), userId)
+	servers, err := db.Query.GetServersFromUser(context.TODO(), userID)
 	if err != nil {
-		u.logger.Error("no servers found for the user with id", "id", userId, "err", err)
+		u.logger.Error("no servers found for the user with id", "id", userID, "err", err)
 	}
 
 	for _, server := range servers {
@@ -30,7 +30,7 @@ func (u *user) InitializeUser(ctx *actor.Context) {
 		var channels []db.Channel
 
 		if server.ID == "global" {
-			channels, _ = db.Query.GetFriendChannels(context.TODO(), userId)
+			channels, _ = db.Query.GetFriendChannels(context.TODO(), userID)
 		} else {
 			channels, _ = db.Query.GetChannelsFromServer(context.TODO(), server.ID)
 		}

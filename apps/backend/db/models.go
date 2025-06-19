@@ -217,6 +217,8 @@ type User struct {
 	Links       []byte      `json:"links"`
 	Facts       []byte      `json:"facts"`
 	Experience  int32       `json:"experience"`
+	RpmID       pgtype.Text `json:"rpm_id"`
+	RpmToken    pgtype.Text `json:"rpm_token"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }

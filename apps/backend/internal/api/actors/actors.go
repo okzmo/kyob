@@ -33,7 +33,7 @@ func SetupServersEngine() {
 }
 
 type VoiceUser struct {
-	Id     string `json:"user_id"`
+	ID     string `json:"user_id"`
 	Deafen bool   `json:"deafen"`
 	Mute   bool   `json:"mute"`
 }

@@ -11,10 +11,10 @@ import (
 
 func GetAWSConfig() aws.Config {
 	region := os.Getenv("AWS_REGION")
-	keyId := os.Getenv("AWS_ACCESS_KEY_ID")
+	keyID := os.Getenv("AWS_ACCESS_KEY_ID")
 	secretKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
 
-	creds := credentials.NewStaticCredentialsProvider(keyId, secretKey, "")
+	creds := credentials.NewStaticCredentialsProvider(keyID, secretKey, "")
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region), config.WithCredentialsProvider(creds))
 	if err != nil {
 		panic(err)

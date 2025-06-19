@@ -80,11 +80,12 @@ export interface User {
   display_name: string;
   avatar: string;
   banner: string;
-  body: string;
   main_color?: string;
   about?: any;
   facts: Fact[];
   links: Link[];
+  rpm_avatar_id: string;
+  rpm_token: string;
 }
 
 export interface Friend extends Partial<User> {

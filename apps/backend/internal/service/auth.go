@@ -63,14 +63,14 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*stri
 	return &b64Token, nil
 }
 
-func SignUp(ctx context.Context, email string, username string, displayName string, password string, bodyUrl string) (*string, error) {
+func SignUp(ctx context.Context, email, username, displayName, password, bodyURL, rpmID, rpmToken string) (*string, error) {
 	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
 		return nil, err
 	}
 
 	avatarFileName := fmt.Sprintf("avatar_%d.webp", rand.Intn(4)+1)
-	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
+	avatarURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
 	mainColor := pgtype.Text{String: "12,12,16", Valid: true}
 	dbUser, err := db.Query.CreateUser(ctx, db.CreateUserParams{
 		ID:          utils.Node.Generate().String(),
@@ -78,10 +78,12 @@ func SignUp(ctx context.Context, email string, username string, displayName stri
 		DisplayName: displayName,
 		Username:    username,
 		Password:    hashedPassword,
-		Avatar:      avatarUrl,
-		Banner:      avatarUrl,
+		Avatar:      avatarURL,
+		Banner:      avatarURL,
 		MainColor:   mainColor,
-		Body:        pgtype.Text{String: bodyUrl, Valid: true},
+		Body:        pgtype.Text{String: bodyURL, Valid: true},
+		RpmID:       pgtype.Text{String: rpmID, Valid: true},
+		RpmToken:    pgtype.Text{String: rpmToken, Valid: true},
 	})
 	if err != nil {
 		return nil, err

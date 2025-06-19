@@ -54,7 +54,7 @@
 <aside class="mt-20 flex h-screen w-[20rem] flex-col gap-y-6 overflow-auto select-none">
 	<button
 		class={[
-			'group text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 relative block w-full px-3 py-1 text-left transition duration-100'
+			'group text-main-300 hocus:bg-main-800 hocus:text-main-50 hocus:inner-main-700 relative block w-full px-3 py-1 text-left transition duration-100 hover:cursor-pointer'
 		]}
 		onclick={() => history.back()}
 	>

@@ -12,7 +12,9 @@
 
 <ul class="flex flex-col gap-y-2">
 	{#if friends.length <= 0}
-		<p class="text-main-500 flex w-full items-center justify-center py-2">No friends yet ;(</p>
+		<p class="text-main-500 flex w-full items-center justify-center py-2 select-none">
+			No friends yet ;(
+		</p>
 	{:else}
 		{#each friends as friend (friend.id)}
 			<li class="relative">

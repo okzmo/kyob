@@ -14,7 +14,10 @@
 	let { server, channel } = $props();
 
 	async function joinCall() {
-		if (rtc.currentVC) return;
+		if (rtc.currentVC) {
+			await backend.disconnectFromCall(rtc.currentVC.serverId, rtc.currentVC.channelId);
+			await rtc.quitRoom();
+		}
 
 		const res = await backend.connectToCall(server.id, channel.id);
 
@@ -24,7 +27,7 @@
 		}
 
 		if (res.isOk()) {
-			await rtc.connectToRoom(res.value.token);
+			await rtc.connectToRoom(res.value.token, server.id, channel.id);
 		}
 	}
 
@@ -32,12 +35,12 @@
 		await rtc.quitRoom();
 		backend.disconnectFromCall(server.id, channel.id);
 		sounds.playSound('call-off');
-		windows.toggleCallTab();
+		windows.toggleCallTab(channel.id);
 	}
 </script>
 
 <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-x-2">
-	{#if !rtc.currentVC}
+	{#if rtc.currentVC?.channelId !== channel.id}
 		<Button
 			variants="nostyle"
 			class="inner-green-400/20 hocus:inner-green-400/40 hocus:bg-green-400/30 relative bg-green-400/20 px-6.5 py-2 text-green-400 backdrop-blur-lg transition hover:cursor-pointer"

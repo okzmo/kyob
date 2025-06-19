@@ -4,7 +4,7 @@
 	import Tooltip from '../Tooltip/Tooltip.svelte';
 
 	interface Props {
-		variants: 'danger' | 'icon' | 'nostyle';
+		variants: 'danger' | 'green' | 'icon' | 'nostyle';
 		onclick: () => void;
 		class?: string | string[];
 		cornerColor?: string;
@@ -25,6 +25,22 @@
 		children
 	}: Props = $props();
 </script>
+
+{#if variants === 'green'}
+	<button
+		type="button"
+		class={[
+			'group inner-green-400/20 hocus:inner-green-400/40 hocus:bg-green-400/25 relative bg-green-400/15 px-2 py-1 text-green-400 transition duration-100 hover:cursor-pointer',
+			classes
+		]}
+		{onclick}
+	>
+		{#if corners}
+			<Corners color="bg-green-400" />
+		{/if}
+		{@render children()}
+	</button>
+{/if}
 
 {#if variants === 'danger'}
 	<button

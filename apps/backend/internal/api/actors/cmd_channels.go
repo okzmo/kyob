@@ -2,6 +2,7 @@ package actors
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/anthdm/hollywood/actor"
@@ -14,8 +15,8 @@ import (
 
 func (c *channel) Connect(ctx *actor.Context) {
 	sender := ctx.Sender()
-	channelId := utils.GetEntityIdFromPID(ctx.PID())
-	serverId := utils.GetEntityIdFromPID(ctx.Parent())
+	channelID := utils.GetEntityIdFromPID(ctx.PID())
+	serverID := utils.GetEntityIdFromPID(ctx.Parent())
 
 	if _, ok := c.users[sender]; ok {
 		c.logger.Warn("user already connected", "user", ctx.Sender().GetID())
@@ -28,9 +29,9 @@ func (c *channel) Connect(ctx *actor.Context) {
 		var callUsers []*protoTypes.ConnectToCall
 		for _, v := range c.call {
 			callUsers = append(callUsers, &protoTypes.ConnectToCall{
-				UserId:    v.Id,
-				ServerId:  serverId,
-				ChannelId: channelId,
+				UserId:    v.ID,
+				ServerId:  serverID,
+				ChannelId: channelID,
 			})
 		}
 
@@ -42,9 +43,9 @@ func (c *channel) Connect(ctx *actor.Context) {
 
 func (c *channel) Disconnect(ctx *actor.Context) {
 	sender := ctx.Sender()
-	senderId := utils.GetEntityIdFromPID(sender)
-	channelId := utils.GetEntityIdFromPID(ctx.PID())
-	serverId := utils.GetEntityIdFromPID(ctx.Parent())
+	senderID := utils.GetEntityIdFromPID(sender)
+	channelID := utils.GetEntityIdFromPID(ctx.PID())
+	serverID := utils.GetEntityIdFromPID(ctx.Parent())
 
 	_, ok := c.users[sender]
 	if !ok {
@@ -54,14 +55,14 @@ func (c *channel) Disconnect(ctx *actor.Context) {
 	c.logger.Info("user disconnected", "sender", ctx.Sender(), "id", ctx.PID())
 	delete(c.users, sender)
 
-	if _, ok := c.call[senderId]; ok {
-		delete(c.call, senderId)
+	if _, ok := c.call[senderID]; ok {
+		delete(c.call, senderID)
 
 		for user := range c.users {
 			UsersEngine.Send(user, &protoTypes.DisconnectFromCall{
-				UserId:    senderId,
-				ChannelId: channelId,
-				ServerId:  serverId,
+				UserId:    senderID,
+				ChannelId: channelID,
+				ServerId:  serverID,
 			})
 		}
 	}
@@ -127,8 +128,9 @@ func (c *channel) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.
 // CALL
 
 func (c *channel) ConnectToCall(ctx *actor.Context, msg *protoTypes.ConnectToCall) {
+	fmt.Println(msg.UserId)
 	c.call[msg.UserId] = VoiceUser{
-		Id:     msg.UserId,
+		ID:     msg.UserId,
 		Deafen: false,
 		Mute:   false,
 	}

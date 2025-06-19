@@ -73,13 +73,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rpmService := services.NewRPMService()
-	bodyUrl, err := rpmService.CreateDefaultBody(r.Context())
+	bodyURL, rpmUser, err := rpmService.CreateDefaultBody(r.Context())
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	token, err := services.SignUp(r.Context(), body.Email, body.Username, body.DisplayName, body.Password, bodyUrl)
+	token, err := services.SignUp(r.Context(), body.Email, body.Username, body.DisplayName, body.Password, bodyURL, rpmUser.ID, rpmUser.AccessToken)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

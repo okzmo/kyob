@@ -42,11 +42,11 @@ func (s *server) NewUser(ctx *actor.Context, msg *protoTypes.BodyNewUserInServer
 
 func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 	sender := ctx.Sender()
-	userId := utils.GetEntityIdFromPID(sender)
-	serverId := utils.GetEntityIdFromPID(ctx.PID())
+	userID := utils.GetEntityIdFromPID(sender)
+	serverID := utils.GetEntityIdFromPID(ctx.PID())
 
-	if serverId == "global" {
-		friends, err := db.Query.GetFriends(context.TODO(), userId)
+	if serverID == "global" {
+		friends, err := db.Query.GetFriends(context.TODO(), userID)
 		if err != nil {
 			slog.Error("failed to get friends", "err", err)
 			return
@@ -56,8 +56,8 @@ func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 		for _, user := range friends {
 			userPID := UsersEngine.Registry.GetPID("user", user.ID)
 			UsersEngine.Send(userPID, &protoTypes.BroadcastConnect{
-				ServerId: serverId,
-				UserId:   userId,
+				ServerId: serverID,
+				UserId:   userID,
 				Type:     msg.Type,
 			})
 
@@ -65,8 +65,8 @@ func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 		}
 
 		UsersEngine.Send(sender, &protoTypes.BroadcastConnect{
-			ServerId: serverId,
-			UserId:   userId,
+			ServerId: serverID,
+			UserId:   userID,
 			Users:    friendsIds,
 		})
 	} else {
@@ -80,21 +80,21 @@ func (s *server) Connect(ctx *actor.Context, msg *protoTypes.Connect) {
 		for user := range s.users {
 			if user == sender {
 				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
-					ServerId: serverId,
-					UserId:   userId,
+					ServerId: serverID,
+					UserId:   userID,
 					Users:    s.usersSlice,
 				})
 			} else {
 				UsersEngine.Send(user, &protoTypes.BroadcastConnect{
-					ServerId: serverId,
-					UserId:   userId,
+					ServerId: serverID,
+					UserId:   userID,
 					Type:     msg.Type,
 				})
 			}
 		}
 	}
 
-	s.usersSlice = append(s.usersSlice, userId)
+	s.usersSlice = append(s.usersSlice, userID)
 
 	if msg.Type == "JOIN_SERVER" {
 		for _, channel := range ctx.Children() {
@@ -112,17 +112,17 @@ func (s *server) Disconnect(ctx *actor.Context, msg *protoTypes.Disconnect) {
 	}
 	s.logger.Info("user disconnected", "sender", ctx.Sender(), "id", ctx.PID())
 
-	userId := utils.GetEntityIdFromPID(sender)
-	serverId := utils.GetEntityIdFromPID(ctx.PID())
+	userID := utils.GetEntityIdFromPID(sender)
+	serverID := utils.GetEntityIdFromPID(ctx.PID())
 
-	idx := slices.Index(s.usersSlice, userId)
+	idx := slices.Index(s.usersSlice, userID)
 	s.usersSlice = slices.Delete(s.usersSlice, idx, idx+1)
 	delete(s.users, sender)
 
 	for user := range s.users {
 		UsersEngine.Send(user, &protoTypes.BroadcastDisconnect{
-			ServerId: serverId,
-			UserId:   userId,
+			ServerId: serverID,
+			UserId:   userID,
 			Type:     msg.Type,
 		})
 	}
@@ -136,8 +136,8 @@ func (s *server) Disconnect(ctx *actor.Context, msg *protoTypes.Disconnect) {
 
 // CHANNELS
 
-func (s *server) InitializeChannels(serverId string, ctx *actor.Context) {
-	strSplit := strings.Split(serverId, "/")
+func (s *server) InitializeChannels(serverID string, ctx *actor.Context) {
+	strSplit := strings.Split(serverID, "/")
 	id := strSplit[len(strSplit)-1]
 
 	channels, err := db.Query.GetChannelsFromServer(context.TODO(), id)
@@ -199,7 +199,7 @@ func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCr
 	}
 
 	if msg.Id != "" {
-		channelToCreate.Id = &msg.Id
+		channelToCreate.ID = &msg.Id
 	}
 
 	channel, err := services.CreateChannel(context.TODO(), msg.CreatorId, msg.ServerId, channelToCreate)
@@ -232,8 +232,8 @@ func (s *server) RemoveChannel(ctx *actor.Context, msg *protoTypes.BodyChannelRe
 		return
 	}
 
-	channelId := fmt.Sprintf("channel/%s", msg.ChannelId)
-	channelPID := ctx.PID().Child(channelId)
+	channelID := fmt.Sprintf("channel/%s", msg.ChannelId)
+	channelPID := ctx.PID().Child(channelID)
 	ctx.Engine().Poison(channelPID)
 	delete(s.channels, channelPID)
 
@@ -248,8 +248,8 @@ func (s *server) RemoveChannel(ctx *actor.Context, msg *protoTypes.BodyChannelRe
 }
 
 func (s *server) KillChannel(ctx *actor.Context, msg *protoTypes.KillChannel) {
-	channelId := fmt.Sprintf("channel/%s", msg.ChannelId)
-	channelPID := ctx.PID().Child(channelId)
+	channelID := fmt.Sprintf("channel/%s", msg.ChannelId)
+	channelPID := ctx.PID().Child(channelID)
 	ctx.Engine().Poison(channelPID)
 	delete(s.channels, channelPID)
 

@@ -225,6 +225,8 @@ CREATE TABLE public.users (
     links jsonb DEFAULT '[]'::jsonb,
     facts jsonb DEFAULT '[]'::jsonb,
     experience integer DEFAULT 0 NOT NULL,
+    rpm_id character varying(255),
+    rpm_token text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

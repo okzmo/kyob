@@ -20,12 +20,12 @@ import (
 type AttachmentService struct {
 	s3Client *s3.Client
 	bucket   string
-	cdnUrl   string
+	cdnURL   string
 }
 
 type Attachment struct {
-	Id       string `json:"id"`
-	Url      string `json:"url"`
+	ID       string `json:"id"`
+	URL      string `json:"url"`
 	Filename string `json:"file_name"`
 	Filesize string `json:"file_size"`
 	Type     string `json:"type"`
@@ -35,7 +35,7 @@ func NewAttachmentService() *AttachmentService {
 	return &AttachmentService{
 		s3Client: s3.NewFromConfig(GetAWSConfig()),
 		bucket:   "nyo-files",
-		cdnUrl:   os.Getenv("CDN_URL"),
+		cdnURL:   os.Getenv("CDN_URL"),
 	}
 }
 
@@ -69,12 +69,12 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 			seeker.Seek(0, io.SeekStart)
 		}
 
-		randomId := utils.GenerateRandomId(16)
+		randomID := utils.GenerateRandomId(16)
 		var key string
 		var fileData io.Reader = file
 
 		if strings.Contains(mimeType, "image") {
-			key = fmt.Sprintf("attachment-%s.webp", randomId)
+			key = fmt.Sprintf("attachment-%s.webp", randomID)
 
 			webpData, err := utils.ConvertToWebp(file)
 			if err != nil {
@@ -83,7 +83,7 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 			fileData = bytes.NewReader(webpData)
 		} else {
 			extension := getSecureExtension(mimeType)
-			key = fmt.Sprintf("attachment-%s.%s", randomId, extension)
+			key = fmt.Sprintf("attachment-%s.%s", randomID, extension)
 		}
 
 		if err := as.uploadFile(key, mimeType, fileData, fileHeader.Filename); err != nil {
@@ -91,12 +91,12 @@ func (as *AttachmentService) ProcessAttachments(files []*multipart.FileHeader, m
 		}
 		defer file.Close()
 
-		attachmentUrl := fmt.Sprintf("%s/%s", as.cdnUrl, key)
+		attachmentURL := fmt.Sprintf("%s/%s", as.cdnURL, key)
 		fileSize := utils.BytesToHuman(fileHeader.Size)
 
 		attachment := Attachment{
-			Id:       randomId,
-			Url:      attachmentUrl,
+			ID:       randomID,
+			URL:      attachmentURL,
 			Filename: sanitizeFilename(fileHeader.Filename),
 			Filesize: fileSize,
 			Type:     mimeType,

@@ -94,6 +94,8 @@ class Servers {
           channel.last_mentions = [...channel.last_mentions, message.id];
         else channel.last_mentions = [message.id];
       }
+    } else {
+      channel.last_message_read = message.id;
     }
   }
 

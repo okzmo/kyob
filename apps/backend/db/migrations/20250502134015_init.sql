@@ -16,6 +16,8 @@ CREATE TABLE users(
   links JSONB DEFAULT '[]'::jsonb,
   facts JSONB DEFAULT '[]'::jsonb,
   experience INTEGER NOT NULL DEFAULT 0,
+  rpm_id VARCHAR(255),
+  rpm_token TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );

@@ -16,8 +16,8 @@ import (
 
 func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
-	channelId := chi.URLParam(r, "channel_id")
-	serverId := chi.URLParam(r, "server_id")
+	channelID := chi.URLParam(r, "channel_id")
+	serverID := chi.URLParam(r, "server_id")
 
 	var body services.MessageBody
 
@@ -48,15 +48,15 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
+	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverID), channelID)
 
 	switch body.Type {
 	case "SEND":
 		mess := &proto.IncomingChatMessage{
 			AuthorId:      user.ID,
 			Content:       body.Content,
-			ServerId:      serverId,
-			ChannelId:     channelId,
+			ServerId:      serverID,
+			ChannelId:     channelID,
 			Everyone:      body.Everyone,
 			MentionsUsers: body.MentionsUsers,
 			Attachments:   body.Attachments,
@@ -64,13 +64,13 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 
 		actors.ServersEngine.Send(channelPID, mess)
 	case "EDIT":
-		messageId := chi.URLParam(r, "message_id")
+		messageID := chi.URLParam(r, "message_id")
 
 		mess := &proto.EditChatMessage{
 			UserId:        user.ID,
-			ServerId:      serverId,
-			ChannelId:     channelId,
-			MessageId:     messageId,
+			ServerId:      serverID,
+			ChannelId:     channelID,
+			MessageId:     messageID,
 			Everyone:      body.Everyone,
 			Content:       body.Content,
 			MentionsUsers: body.MentionsUsers,
@@ -82,17 +82,17 @@ func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	serverId := chi.URLParam(r, "server_id")
-	channelId := chi.URLParam(r, "channel_id")
-	messageId := chi.URLParam(r, "message_id")
+	serverID := chi.URLParam(r, "server_id")
+	channelID := chi.URLParam(r, "channel_id")
+	messageID := chi.URLParam(r, "message_id")
 	user := r.Context().Value("user").(db.User)
 
-	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverId), channelId)
+	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverID), channelID)
 	mess := &proto.DeleteChatMessage{
 		UserId:    user.ID,
-		ServerId:  serverId,
-		ChannelId: channelId,
-		MessageId: messageId,
+		ServerId:  serverID,
+		ChannelId: channelID,
+		MessageId: messageID,
 	}
 
 	actors.ServersEngine.Send(channelPID, mess)
@@ -101,9 +101,9 @@ func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMessages(w http.ResponseWriter, r *http.Request) {
-	channelId := chi.URLParam(r, "channel_id")
+	channelID := chi.URLParam(r, "channel_id")
 
-	messages, err := services.GetMessages(r.Context(), channelId)
+	messages, err := services.GetMessages(r.Context(), channelID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

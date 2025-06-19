@@ -12,7 +12,7 @@ type LivekitResponse struct {
 	Token string `json:"token"`
 }
 
-func GenerateCallToken(roomName string, userId string) (string, error) {
+func GenerateCallToken(roomName string, userID string) (string, error) {
 	apiKey := os.Getenv("LIVEKIT_API_KEY")
 	apiSecret := os.Getenv("LIVEKIT_API_SECRET")
 
@@ -24,7 +24,7 @@ func GenerateCallToken(roomName string, userId string) (string, error) {
 		CanSubscribe: aws.Bool(true),
 	}
 
-	at.SetVideoGrant(grant).SetIdentity(userId).SetValidFor(time.Hour)
+	at.SetVideoGrant(grant).SetIdentity(userID).SetValidFor(time.Hour)
 
 	return at.ToJWT()
 }

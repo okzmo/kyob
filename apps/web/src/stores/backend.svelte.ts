@@ -18,6 +18,7 @@ import type {
   DeleteMessageErrors,
   DeleteServerErrors,
   EmojiErrors,
+  GetAssetsErrors,
   GetUserErrors,
   JoinServerErrors,
   LeaveServerErrors,
@@ -49,6 +50,7 @@ import type {
   Friend,
   LastState,
   Message,
+  RPMAsset,
   Server,
   Setup,
   User
@@ -332,9 +334,16 @@ class Backend {
             if (!wsMess.content.value) return;
             const value = wsMess.content.value;
             serversStore.connectUserToCall(value.serverId, value.channelId, value.userId);
+            const isInCall = serversStore.isInCall(value.serverId, value.channelId, userStore.user!.id)
 
-            if (serversStore.isInCall(value.serverId, value.channelId, userStore.user!.id)) {
+            if (isInCall) {
               sounds.playSound('call-on');
+              if (value.serverId === "global") core.callTimeout?.clear()
+            }
+
+            if (value.serverId === "global" && value.userId !== userStore.user?.id && !isInCall) {
+              core.friendCalling = { channelId: value.channelId, friendId: value.userId }
+              sounds.playSound('ring-tone')
             }
           }
           break;
@@ -346,6 +355,23 @@ class Backend {
 
             if (serversStore.isInCall(value.serverId, value.channelId, userStore.user!.id)) {
               sounds.playSound('call-off');
+            }
+
+            if (value.serverId === "global") {
+              if (value.userId === userStore.user?.id) {
+                if (core.callTimeout) core.callTimeout.clear()
+                return
+              }
+
+              // when the call timeout
+              if (core.friendCalling && core.friendCalling.friendId === value.userId) {
+                core.friendCalling = undefined
+              }
+
+              // friend refuse the call
+              if ((!core.friendCalling || core.friendCalling.friendId !== value.userId) && core.callTimeout) {
+                core.callTimeout.executeNow()
+              }
             }
           }
           break;

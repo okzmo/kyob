@@ -39,28 +39,28 @@
 	});
 </script>
 
-<div
-	class="relative flex h-[calc(100%-3.5rem)] min-h-0 w-full flex-col-reverse gap-y-2 overflow-y-auto pt-2 pb-4"
->
-	{#if messages.length > 0}
-		{#each messages as message (message.id)}
-			{@const author = serversStore.getMemberById(server.id, message.author_id)!}
-			{@const friend = userStore.getFriend(message.author_id)}
+{#if messages.length > 0}
+	{#each messages as message (message.id)}
+		{@const author = serversStore.getMemberById(server.id, message.author_id)!}
+		{@const friend = userStore.getFriend(message.author_id)}
 
-			<ChatWindowMessage
-				id={message.id}
-				author={server.id === 'global' ? friend || userStore.user! : author || DEFAULT_AUTHOR}
-				content={message.content}
-				time={message.created_at}
-				isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '') ||
-					message.everyone}
-				isEdited={message.created_at !== message.updated_at}
-				{server}
-				{channel}
-				attachments={message.attachments || []}
-			/>
-		{/each}
-	{:else}
-		no messages
-	{/if}
-</div>
+		<ChatWindowMessage
+			id={message.id}
+			author={server.id === 'global' ? friend || userStore.user! : author || DEFAULT_AUTHOR}
+			content={message.content}
+			time={message.created_at}
+			isUserMentioned={message.mentions_users?.includes(userStore.user?.id || '') ||
+				message.everyone}
+			isEdited={message.created_at !== message.updated_at}
+			{server}
+			{channel}
+			attachments={message.attachments || []}
+		/>
+	{/each}
+{:else}
+	<div class="flex h-full w-full items-center justify-center">
+		<p class="text-main-400 max-w-[20rem] text-center font-semibold">
+			It seems nobody sent a message here yet, be the first one!
+		</p>
+	</div>
+{/if}

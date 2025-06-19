@@ -102,7 +102,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 
 func UpdateServerProfile(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateServerProfileBody
-	serverId := chi.URLParam(r, "id")
+	serverID := chi.URLParam(r, "id")
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
@@ -110,15 +110,15 @@ func UpdateServerProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.UpdateServerProfile(r.Context(), serverId, &body)
+	err = services.UpdateServerProfile(r.Context(), serverID, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverID)
 	messageToSend := &proto.ServerChangedInformations{
-		ServerId: serverId,
+		ServerId: serverID,
 		ServerInformations: &proto.ServerInformations{
 			Name:        &body.Name,
 			Description: body.Description,
@@ -133,7 +133,7 @@ func UpdateServerProfile(w http.ResponseWriter, r *http.Request) {
 func UpdateServerAvatar(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateAvatarBody
 	var cropAvatar, cropBanner services.Crop
-	serverId := chi.URLParam(r, "id")
+	serverID := chi.URLParam(r, "id")
 
 	config := utils.ImageValidationConfig{
 		MaxSize: 10 << 20, // 10 MB
@@ -193,15 +193,15 @@ func UpdateServerAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := services.UpdateServerAvatar(r.Context(), serverId, fileData, fileHeader, &body)
+	res, err := services.UpdateServerAvatar(r.Context(), serverID, fileData, fileHeader, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverID)
 	actors.ServersEngine.Send(serverPID, &proto.ServerChangedInformations{
-		ServerId: serverId,
+		ServerId: serverID,
 		ServerInformations: &proto.ServerInformations{
 			Avatar:    &res.Avatar,
 			Banner:    &res.Banner,
@@ -229,13 +229,13 @@ func DeleteServer(w http.ResponseWriter, r *http.Request) {
 func CreateServerInvite(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	inviteId, err := services.CreateServerInvite(r.Context(), id)
+	inviteID, err := services.CreateServerInvite(r.Context(), id)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteId)})
+	utils.RespondWithJSON(w, http.StatusOK, &services.ServerInviteResponse{InviteLink: fmt.Sprintf("http://localhost:5173/invite/%s", *inviteID)})
 }
 
 func JoinServer(w http.ResponseWriter, r *http.Request) {
@@ -250,7 +250,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 	server, err := services.JoinServer(r.Context(), body)
 	if err != nil {
 		switch {
-		case errors.Is(err, services.ErrNoIdInInvite):
+		case errors.Is(err, services.ErrNoIDInInvite):
 			utils.RespondWithError(w, http.StatusBadRequest, "The invite url is invalid.", "ERR_INVITE_MISSING_ID")
 		case errors.Is(err, services.ErrServerNotFound):
 			utils.RespondWithError(w, http.StatusNotFound, "The given url doesn't match any existing realm.")
@@ -280,16 +280,16 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 
 func LeaveServer(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(db.User)
-	serverId := chi.URLParam(r, "id")
+	serverID := chi.URLParam(r, "id")
 
-	err := services.LeaveServer(r.Context(), serverId, user.ID)
+	err := services.LeaveServer(r.Context(), serverID, user.ID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
-	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverID)
 	actors.ServersEngine.SendWithSender(serverPID, &proto.Disconnect{
 		Type: "LEAVE_SERVER",
 	}, userPID)

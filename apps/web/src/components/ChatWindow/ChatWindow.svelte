@@ -25,9 +25,13 @@
 
 <ChatWindowSkeleton {id} {tab} {channel} {server} {friend}>
 	{#if tab === 'chat'}
-		{#await messages then allMessages}
-			<ChatWindowMessages {channel} {server} messages={allMessages} />
-		{/await}
+		<div
+			class="relative flex min-h-0 w-full flex-grow flex-col-reverse gap-y-2 overflow-y-auto pt-2 pb-4"
+		>
+			{#await messages then allMessages}
+				<ChatWindowMessages {channel} {server} messages={allMessages} />
+			{/await}
+		</div>
 		<ChatWindowInput {channel} {server} {friend} />
 	{:else if tab === 'call'}
 		<ChatWindowCall {server} {channel} />

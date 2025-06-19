@@ -19,7 +19,7 @@ type BodySaveState struct {
 	UserID         string            `json:"user_id"`
 	ChannelIDs     []string          `json:"channel_ids"`
 	LastMessageIDs []string          `json:"last_message_ids"`
-	MentionsIds    []json.RawMessage `json:"mentions_ids"`
+	MentionsIDs    []json.RawMessage `json:"mentions_ids"`
 }
 
 type ServerWithChannels struct {
@@ -33,7 +33,7 @@ type ServerWithChannels struct {
 }
 
 type VoiceUser struct {
-	UserId []string `json:"id"`
+	UserID []string `json:"id"`
 	Deafen bool     `json:"deafen"`
 	Mute   bool     `json:"mute"`
 }
@@ -54,7 +54,8 @@ type UserResponse struct {
 	DisplayName string          `json:"display_name"`
 	Avatar      pgtype.Text     `json:"avatar"`
 	Banner      pgtype.Text     `json:"banner"`
-	Body        pgtype.Text     `json:"body"`
+	Body        pgtype.Text     `json:"rpm_avatar_id"`
+	RPMToken    pgtype.Text     `json:"rpm_token"`
 	MainColor   pgtype.Text     `json:"main_color"`
 	About       json.RawMessage `json:"about"`
 	Links       json.RawMessage `json:"links"`
@@ -109,6 +110,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		Avatar:      ctxUser.Avatar,
 		Banner:      ctxUser.Banner,
 		Body:        ctxUser.Body,
+		RPMToken:    ctxUser.RpmToken,
 		MainColor:   ctxUser.MainColor,
 		About:       ctxUser.About,
 		CreatedAt:   ctxUser.CreatedAt,
@@ -145,7 +147,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	return &res, nil
 }
 
-func processServers(ctx context.Context, userId string, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
+func processServers(ctx context.Context, userID string, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
 	serverIDs := make([]string, 0, len(servers))
 	for _, server := range servers {
 		serverIDs = append(serverIDs, server.ID)
@@ -170,7 +172,7 @@ func processServers(ctx context.Context, userId string, servers []db.GetServersF
 		allMessagesSentSet[mess.ChannelID] = mess.ID
 	}
 
-	allMessagesRead, err := db.Query.GetLatestMessagesRead(ctx, userId)
+	allMessagesRead, err := db.Query.GetLatestMessagesRead(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -195,8 +197,8 @@ func processServers(ctx context.Context, userId string, servers []db.GetServersF
 	}
 
 	userIDs := make([]string, 0, len(userIDSet))
-	for userId := range userIDSet {
-		userIDs = append(userIDs, userId)
+	for userID := range userIDSet {
+		userIDs = append(userIDs, userID)
 	}
 
 	var allUsers []db.GetUsersByIdsRow
@@ -277,7 +279,7 @@ func SaveLastState(ctx context.Context, body BodySaveState) error {
 		if messageID != "" && messageID != "null" {
 			validChannelIDs = append(validChannelIDs, body.ChannelIDs[i])
 			validLastReadMessageIDs = append(validLastReadMessageIDs, messageID)
-			validUnreadMentionIDs = append(validUnreadMentionIDs, body.MentionsIds[i])
+			validUnreadMentionIDs = append(validUnreadMentionIDs, body.MentionsIDs[i])
 		}
 	}
 

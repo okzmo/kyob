@@ -24,7 +24,7 @@ var (
 	ErrUnauthorizedServerEdition  = errors.New("cannot edit server")
 	ErrUnauthorizedServerDeletion = errors.New("cannot delete this server")
 	ErrServerNotFound             = errors.New("server not found")
-	ErrNoIdInInvite               = errors.New("failed to find id in invite url")
+	ErrNoIDInInvite               = errors.New("failed to find id in invite url")
 	ErrTooManyServers             = errors.New("servers limit")
 )
 
@@ -50,7 +50,7 @@ type UpdateServerProfileBody struct {
 }
 
 type JoinServerBody struct {
-	InviteUrl string `validate:"required" json:"invite_url"`
+	InviteURL string `validate:"required" json:"invite_url"`
 	X         int    `validate:"required" json:"x"`
 	Y         int    `validate:"required" json:"y"`
 }
@@ -180,19 +180,19 @@ func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfi
 	return nil
 }
 
-func UpdateServerAvatar(ctx context.Context, serverId string, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
+func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
 	user := ctx.Value("user").(db.User)
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      serverId,
+		ID:      serverID,
 		OwnerID: user.ID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, ErrUnauthorizedServerEdition
 	}
 
-	server, err := db.Query.GetServer(ctx, serverId)
+	server, err := db.Query.GetServer(ctx, serverID)
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, err
 	}
@@ -209,9 +209,9 @@ func UpdateServerAvatar(ctx context.Context, serverId string, file []byte, fileH
 		return nil, err
 	}
 
-	randomId := utils.GenerateRandomId(8)
-	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", serverId, randomId)
-	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", serverId, randomId)
+	randomID := utils.GenerateRandomId(8)
+	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", serverID, randomID)
+	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", serverID, randomID)
 	oldAvatarSplit := strings.Split(server.Avatar.String, "/")
 	oldBannerSplit := strings.Split(server.Banner.String, "/")
 
@@ -261,14 +261,14 @@ func UpdateServerAvatar(ctx context.Context, serverId string, file []byte, fileH
 		}
 	}
 
-	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
-	bannerUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
+	avatarURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
+	bannerURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
 	mainColor := pgtype.Text{String: body.MainColor, Valid: true}
 	err = db.Query.UpdateServerAvatarNBanner(ctx, db.UpdateServerAvatarNBannerParams{
-		ID:        serverId,
+		ID:        serverID,
 		OwnerID:   user.ID,
-		Avatar:    avatarUrl,
-		Banner:    bannerUrl,
+		Avatar:    avatarURL,
+		Banner:    bannerURL,
 		MainColor: mainColor,
 	})
 	if err != nil {
@@ -276,16 +276,16 @@ func UpdateServerAvatar(ctx context.Context, serverId string, file []byte, fileH
 	}
 
 	return &UpdateAvatarResponse{
-		Banner:    bannerUrl.String,
-		Avatar:    avatarUrl.String,
+		Banner:    bannerURL.String,
+		Avatar:    avatarURL.String,
 		MainColor: mainColor.String,
 	}, nil
 }
 
-func DeleteServer(ctx context.Context, id string, userId string) error {
+func DeleteServer(ctx context.Context, id string, userID string) error {
 	res, err := db.Query.DeleteServer(ctx, db.DeleteServerParams{
 		ID:      id,
-		OwnerID: userId,
+		OwnerID: userID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedServerDeletion
@@ -294,13 +294,13 @@ func DeleteServer(ctx context.Context, id string, userId string) error {
 	return nil
 }
 
-func CreateServerInvite(ctx context.Context, serverId string) (*string, error) {
-	inviteId := utils.GenerateRandomId(10)
+func CreateServerInvite(ctx context.Context, serverID string) (*string, error) {
+	inviteID := utils.GenerateRandomId(10)
 
 	res, err := db.Query.CreateInvite(ctx, db.CreateInviteParams{
 		ID:       utils.Node.Generate().String(),
-		ServerID: serverId,
-		InviteID: inviteId,
+		ServerID: serverID,
+		InviteID: inviteID,
 		ExpireAt: time.Now().Add(time.Minute * 15),
 	})
 	if err != nil {
@@ -314,12 +314,12 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	user := ctx.Value("user").(db.User)
 
 	pattern := regexp.MustCompile(`^(?:https:\/\/kyob\.app\/invite\/|)([a-zA-Z0-9]{10})$`)
-	matches := pattern.FindStringSubmatch(body.InviteUrl)
+	matches := pattern.FindStringSubmatch(body.InviteURL)
 	if matches == nil {
-		return nil, ErrNoIdInInvite
+		return nil, ErrNoIDInInvite
 	}
 
-	serverId, err := db.Query.CheckInvite(ctx, matches[1])
+	serverID, err := db.Query.CheckInvite(ctx, matches[1])
 	if err != nil {
 		return nil, ErrServerNotFound
 	}
@@ -327,7 +327,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	err = db.Query.JoinServer(ctx, db.JoinServerParams{
 		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
-		ServerID: serverId,
+		ServerID: serverID,
 		X:        int32(body.X),
 		Y:        int32(body.Y),
 	})
@@ -336,13 +336,13 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	}
 
 	channelMap := make(map[string]ChannelsWithMembers)
-	channels, err := db.Query.GetChannelsFromServer(ctx, serverId)
+	channels, err := db.Query.GetChannelsFromServer(ctx, serverID)
 	if err != nil {
 		return nil, err
 	}
 
 	membersMap := make(map[string]db.GetMembersFromServersRow)
-	allMembers, err := db.Query.GetMembersFromServers(ctx, []string{serverId})
+	allMembers, err := db.Query.GetMembersFromServers(ctx, []string{serverID})
 	if err != nil {
 		return nil, err
 	}
@@ -360,8 +360,8 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 			[]VoiceUser{},
 		}
 
-		for _, userId := range channelRaw.Users {
-			user := membersMap[userId]
+		for _, userID := range channelRaw.Users {
+			user := membersMap[userID]
 			channel.Users = append(channel.Users, db.GetUsersByIdsRow{
 				ID:          user.ID,
 				Username:    user.Username,
@@ -374,7 +374,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	}
 
 	server, err := db.Query.GetServerWithChannels(ctx, db.GetServerWithChannelsParams{
-		ServerID: serverId,
+		ServerID: serverID,
 		UserID:   user.ID,
 	})
 	if err != nil {
@@ -403,10 +403,10 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 	return &s, nil
 }
 
-func LeaveServer(ctx context.Context, serverId string, userId string) error {
+func LeaveServer(ctx context.Context, serverID, userID string) error {
 	err := db.Query.LeaveServer(ctx, db.LeaveServerParams{
-		UserID:   userId,
-		ServerID: serverId,
+		UserID:   userID,
+		ServerID: serverID,
 	})
 	if err != nil {
 		return err

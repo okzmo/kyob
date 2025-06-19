@@ -92,8 +92,8 @@ type UpdateEmojiBody struct {
 	Shortcode string `validate:"emoji_shortcode" json:"shortcode"`
 }
 
-func GetUser(ctx context.Context, userId string) (*UserResponse, error) {
-	user, err := db.Query.GetUserById(ctx, userId)
+func GetUser(ctx context.Context, userID string) (*UserResponse, error) {
+	user, err := db.Query.GetUserById(ctx, userID)
 	if err != nil {
 		return nil, ErrUserNotFound
 	}
@@ -370,11 +370,11 @@ func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *Uplo
 	return responses, nil
 }
 
-func UpdateEmoji(ctx context.Context, emojiId string, body *UpdateEmojiBody) error {
+func UpdateEmoji(ctx context.Context, emojiID string, body *UpdateEmojiBody) error {
 	user := ctx.Value("user").(db.User)
 
 	err := db.Query.UpdateEmoji(ctx, db.UpdateEmojiParams{
-		ID:        emojiId,
+		ID:        emojiID,
 		UserID:    user.ID,
 		Shortcode: body.Shortcode,
 	})
@@ -385,11 +385,11 @@ func UpdateEmoji(ctx context.Context, emojiId string, body *UpdateEmojiBody) err
 	return nil
 }
 
-func DeleteEmoji(ctx context.Context, emojiId string) error {
+func DeleteEmoji(ctx context.Context, emojiID string) error {
 	user := ctx.Value("user").(db.User)
 
 	err := db.Query.DeleteEmoji(ctx, db.DeleteEmojiParams{
-		ID:     emojiId,
+		ID:     emojiID,
 		UserID: user.ID,
 	})
 	if err != nil {

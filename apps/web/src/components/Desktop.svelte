@@ -13,6 +13,8 @@
 	import Serverbar from './Serverbar/Serverbar.svelte';
 	import { searchValidMessageParent } from 'utils/dom';
 	import { Tooltip } from 'bits-ui';
+	import { backend } from 'stores/backend.svelte';
+	import { rtc } from 'stores/rtc.svelte';
 
 	let { children } = $props();
 

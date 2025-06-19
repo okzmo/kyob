@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { windows } from 'stores/windows.svelte';
+	import { flyBlur } from 'utils/transition';
 
 	interface Props {
 		channelId: string;
@@ -12,6 +13,8 @@
 </script>
 
 <button
+	in:flyBlur={{ duration: 125, y: 5 }}
+	out:flyBlur={{ duration: 50, y: 5 }}
 	onclick={() => {
 		windows.createWindow({
 			id: `window-${friendId}`,

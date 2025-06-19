@@ -16,9 +16,9 @@ import (
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	userId := chi.URLParam(r, "user_id")
+	userID := chi.URLParam(r, "user_id")
 
-	user, err := services.GetUser(r.Context(), userId)
+	user, err := services.GetUser(r.Context(), userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
@@ -254,14 +254,14 @@ func UploadEmojis(w http.ResponseWriter, r *http.Request) {
 
 func UpdateEmoji(w http.ResponseWriter, r *http.Request) {
 	var body services.UpdateEmojiBody
-	emojiId := chi.URLParam(r, "emoji_id")
+	emojiID := chi.URLParam(r, "emoji_id")
 
 	if err := utils.ParseAndValidate(r, validate, &body); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err := services.UpdateEmoji(r.Context(), emojiId, &body)
+	err := services.UpdateEmoji(r.Context(), emojiID, &body)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUnauthorizedEmojiDeletion):
@@ -276,9 +276,9 @@ func UpdateEmoji(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteEmoji(w http.ResponseWriter, r *http.Request) {
-	emojiId := chi.URLParam(r, "emoji_id")
+	emojiID := chi.URLParam(r, "emoji_id")
 
-	err := services.DeleteEmoji(r.Context(), emojiId)
+	err := services.DeleteEmoji(r.Context(), emojiID)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUnauthorizedEmojiDeletion):
@@ -302,7 +302,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := r.Context().Value("user").(db.User)
-	inviteId, friendId, err := services.AddFriend(r.Context(), &body)
+	inviteID, friendID, err := services.AddFriend(r.Context(), &body)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
@@ -316,7 +316,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	inviteMessage := &proto.SendFriendInvite{
-		InviteId: inviteId,
+		InviteId: inviteID,
 		User: &proto.User{
 			Id:          user.ID,
 			DisplayName: user.DisplayName,
@@ -325,7 +325,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	friendPid := actors.UsersEngine.Registry.GetPID("user", friendId)
+	friendPid := actors.UsersEngine.Registry.GetPID("user", friendID)
 	actors.UsersEngine.Send(friendPid, inviteMessage)
 
 	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
@@ -346,20 +346,20 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var channelId string
+	var channelID string
 
 	friendPid := actors.UsersEngine.Registry.GetPID("user", body.FriendID)
 	userPid := actors.UsersEngine.Registry.GetPID("user", body.UserID)
 	globalServerPid := actors.ServersEngine.Registry.GetPID("server", "global")
 
 	if existingChannel != nil {
-		channelId = existingChannel.ID
+		channelID = existingChannel.ID
 		actors.ServersEngine.Send(globalServerPid, &proto.StartChannel{
-			ChannelId: channelId,
+			ChannelId: channelID,
 			Users:     []string{body.FriendID, body.UserID},
 		})
 	} else {
-		channelId = utils.Node.Generate().String()
+		channelID = utils.Node.Generate().String()
 		newChannelMessage := &proto.BodyChannelCreation{
 			ServerId:  "global",
 			CreatorId: "global",
@@ -368,7 +368,7 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 			Users:     []string{body.FriendID, body.UserID},
 			X:         0,
 			Y:         0,
-			Id:        channelId,
+			Id:        channelID,
 		}
 
 		actors.ServersEngine.Send(globalServerPid, newChannelMessage)
@@ -376,7 +376,7 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendMessage := &proto.AcceptFriendInvite{
 		InviteId:  body.FriendshipID,
-		ChannelId: channelId,
+		ChannelId: channelID,
 		User: &proto.User{
 			Id:          friend.ID,
 			DisplayName: friend.DisplayName,
@@ -389,7 +389,7 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 
 	receiverMessage := &proto.AcceptFriendInvite{
 		InviteId:  body.FriendshipID,
-		ChannelId: channelId,
+		ChannelId: channelID,
 		Sender:    false,
 	}
 	actors.UsersEngine.Send(userPid, receiverMessage)
@@ -406,7 +406,7 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	channelId, err := services.DeleteFriend(r.Context(), &body)
+	channelID, err := services.DeleteFriend(r.Context(), &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -422,7 +422,7 @@ func DeleteFriend(w http.ResponseWriter, r *http.Request) {
 
 	actors.UsersEngine.Send(friendPid, deleteFriendMessage)
 	actors.ServersEngine.Send(globalServerPid, &proto.KillChannel{
-		ChannelId: channelId,
+		ChannelId: channelID,
 		Users:     []string{body.FriendID, body.UserID},
 	})
 

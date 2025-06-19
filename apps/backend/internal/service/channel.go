@@ -25,7 +25,7 @@ type CreateChannelBody struct {
 	Roles       []string       `json:"roles"`
 	X           int32          `json:"x"`
 	Y           int32          `json:"y"`
-	Id          *string        `json:"id"`
+	ID          *string        `json:"id"`
 }
 
 type EditChannelBody struct {
@@ -38,11 +38,11 @@ type DeleteChannelBody struct {
 	ServerID int `validate:"required" json:"server_id"`
 }
 
-func CreateChannel(ctx context.Context, creatorId string, serverId string, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
-	if creatorId != "global" {
+func CreateChannel(ctx context.Context, creatorID, serverID string, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
+	if creatorID != "global" {
 		res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-			ID:      serverId,
-			OwnerID: creatorId,
+			ID:      serverID,
+			OwnerID: creatorID,
 		})
 		if err != nil || res.RowsAffected() == 0 {
 			return nil, ErrUnauthorizedChannelCreation
@@ -50,7 +50,7 @@ func CreateChannel(ctx context.Context, creatorId string, serverId string, chann
 	}
 
 	channelParams := db.CreateChannelParams{
-		ServerID:    serverId,
+		ServerID:    serverID,
 		Name:        channel.Name,
 		Type:        channel.Type,
 		Description: pgtype.Text{String: channel.Description, Valid: true},
@@ -60,8 +60,8 @@ func CreateChannel(ctx context.Context, creatorId string, serverId string, chann
 		Y:           channel.Y,
 	}
 
-	if channel.Id != nil {
-		channelParams.ID = *channel.Id
+	if channel.ID != nil {
+		channelParams.ID = *channel.ID
 	} else {
 		channelParams.ID = utils.Node.Generate().String()
 	}
@@ -73,7 +73,7 @@ func CreateChannel(ctx context.Context, creatorId string, serverId string, chann
 
 	newChannel := &proto.BroadcastChannelCreation{
 		Id:          c.ID,
-		ServerId:    serverId,
+		ServerId:    serverID,
 		Name:        c.Name,
 		Description: &c.Description.String,
 		Type:        string(c.Type),
@@ -119,16 +119,16 @@ func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
 	return nil
 }
 
-func DeleteChannel(ctx context.Context, serverId string, channelId string, userId string) error {
+func DeleteChannel(ctx context.Context, serverID, channelID, userID string) error {
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
-		ID:      serverId,
-		OwnerID: userId,
+		ID:      serverID,
+		OwnerID: userID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedChannelDeletion
 	}
 
-	err = db.Query.DeleteChannel(ctx, channelId)
+	err = db.Query.DeleteChannel(ctx, channelID)
 	if err != nil {
 		return err
 	}

@@ -12,9 +12,9 @@ SELECT id, username, display_name, avatar FROM users WHERE id = $1;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  id, email, username, display_name, avatar, banner, body, main_color, password
+  id, email, username, display_name, avatar, banner, body, main_color, password, rpm_id, rpm_token
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8, $9
+  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 )
 RETURNING *;
 

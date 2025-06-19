@@ -36,9 +36,9 @@ type EditMessageBody struct {
 
 type MessageResponse struct {
 	ID               string          `json:"id"`
-	AuthorId         string          `json:"author_id"`
-	ServerId         string          `json:"server_id"`
-	ChannelId        string          `json:"channel_id"`
+	AuthorID         string          `json:"author_id"`
+	ServerID         string          `json:"server_id"`
+	ChannelID        string          `json:"channel_id"`
 	Content          json.RawMessage `json:"content"`
 	Everyone         bool            `json:"everyone"`
 	MentionsUsers    []string        `json:"mentions_users"`
@@ -48,11 +48,11 @@ type MessageResponse struct {
 	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
-func CreateMessage(ctx context.Context, userId string, serverId string, channelId string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
-	if serverId != "global" {
+func CreateMessage(ctx context.Context, userID, serverID, channelID string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
+	if serverID != "global" {
 		res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
-			ID:     channelId,
-			UserID: userId,
+			ID:     channelID,
+			UserID: userID,
 		})
 		if err != nil || res.RowsAffected() == 0 {
 			return nil, ErrUnauthorizedMessageCreation
@@ -61,9 +61,9 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 
 	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
 		ID:               utils.Node.Generate().String(),
-		AuthorID:         userId,
-		ServerID:         serverId,
-		ChannelID:        channelId,
+		AuthorID:         userID,
+		ServerID:         serverID,
+		ChannelID:        channelID,
 		Content:          body.Content,
 		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
@@ -76,7 +76,7 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 
 	message := &proto.BroadcastChatMessage{
 		Id:               m.ID,
-		AuthorId:         userId,
+		AuthorId:         userID,
 		ServerId:         m.ServerID,
 		ChannelId:        m.ChannelID,
 		Content:          m.Content,
@@ -89,23 +89,23 @@ func CreateMessage(ctx context.Context, userId string, serverId string, channelI
 	return message, nil
 }
 
-func EditMessage(ctx context.Context, userId string, serverId string, channelId string, messageId string, body *MessageBody) (*proto.BroadcastEditMessage, error) {
+func EditMessage(ctx context.Context, userID, serverID, channelID, messageID string, body *MessageBody) (*proto.BroadcastEditMessage, error) {
 	res, err := db.Query.UpdateMessage(ctx, db.UpdateMessageParams{
-		ID:               messageId,
+		ID:               messageID,
 		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
 		MentionsChannels: body.MentionsChannels,
 		Content:          body.Content,
-		AuthorID:         userId,
+		AuthorID:         userID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return nil, ErrUnauthorizedMessageEdition
 	}
 
 	message := &proto.BroadcastEditMessage{
-		MessageId:        messageId,
-		ServerId:         serverId,
-		ChannelId:        channelId,
+		MessageId:        messageID,
+		ServerId:         serverID,
+		ChannelId:        channelID,
 		Content:          body.Content,
 		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
@@ -116,10 +116,10 @@ func EditMessage(ctx context.Context, userId string, serverId string, channelId 
 	return message, nil
 }
 
-func DeleteMessage(ctx context.Context, messageId string, userId string) error {
+func DeleteMessage(ctx context.Context, messageID, userID string) error {
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
-	mess, err := db.Query.GetMessage(ctx, messageId)
+	mess, err := db.Query.GetMessage(ctx, messageID)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func DeleteMessage(ctx context.Context, messageId string, userId string) error {
 		}
 
 		for _, attachment := range attachments {
-			attachmentSplit := strings.Split(attachment.Url, "/")
+			attachmentSplit := strings.Split(attachment.URL, "/")
 			s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 				Key:    aws.String(attachmentSplit[len(attachmentSplit)-1]),
 				Bucket: aws.String("nyo-files"),
@@ -141,8 +141,8 @@ func DeleteMessage(ctx context.Context, messageId string, userId string) error {
 	}
 
 	res, err := db.Query.DeleteMessage(ctx, db.DeleteMessageParams{
-		ID:       messageId,
-		AuthorID: userId,
+		ID:       messageID,
+		AuthorID: userID,
 	})
 	if err != nil || res.RowsAffected() == 0 {
 		return ErrUnauthorizedMessageDeletion
@@ -151,10 +151,10 @@ func DeleteMessage(ctx context.Context, messageId string, userId string) error {
 	return nil
 }
 
-func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, error) {
+func GetMessages(ctx context.Context, channelID string) ([]MessageResponse, error) {
 	var messages []MessageResponse
 
-	m, err := db.Query.GetMessagesFromChannel(ctx, channelId)
+	m, err := db.Query.GetMessagesFromChannel(ctx, channelID)
 	if err != nil {
 		return nil, err
 	}
@@ -162,9 +162,9 @@ func GetMessages(ctx context.Context, channelId string) ([]MessageResponse, erro
 	for _, message := range m {
 		messages = append(messages, MessageResponse{
 			ID:               message.ID,
-			AuthorId:         message.AuthorID,
-			ServerId:         message.ServerID,
-			ChannelId:        message.ChannelID,
+			AuthorID:         message.AuthorID,
+			ServerID:         message.ServerID,
+			ChannelID:        message.ChannelID,
 			Content:          message.Content,
 			Everyone:         message.Everyone,
 			MentionsUsers:    message.MentionsUsers,

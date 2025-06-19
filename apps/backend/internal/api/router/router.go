@@ -60,6 +60,8 @@ func Setup() {
 			r.Post("/friends/accept", handlers.AcceptFriend)
 			r.Post("/friends/delete", handlers.DeleteFriend)
 			r.Post("/logout", handlers.Logout)
+			r.Get("/rpm/assets", handlers.GetRPMAssets)
+			r.Patch("/rpm/avatar", handlers.UpdateRPMAvatar)
 		})
 	})
 

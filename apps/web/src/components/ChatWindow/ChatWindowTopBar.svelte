@@ -5,8 +5,55 @@
 	import Phone from 'components/ui/icons/Phone.svelte';
 	import HashChat from 'components/ui/icons/HashChat.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
+	import { rtc } from 'stores/rtc.svelte';
+	import { backend } from 'stores/backend.svelte';
+	import { sounds } from 'stores/audio.svelte';
+	import { core } from 'stores/core.svelte';
+	import { setControllableTimeout } from 'utils/timeout';
+	import type { Channel, Friend, Server } from 'types/types';
 
-	let { id, tab, server, channel, friend } = $props();
+	interface Props {
+		id: string;
+		tab: 'chat' | 'call';
+		server: Server;
+		channel: Channel;
+		friend: Friend;
+	}
+
+	let { id, tab, server, channel, friend }: Props = $props();
+
+	let isFriendChannel = $derived(server.id === 'global' && friend);
+	let isFriendCallActive = $derived(channel.voice_users.length > 0);
+
+	async function handleCallTab() {
+		if (isFriendChannel && !isFriendCallActive) {
+			if (rtc.currentVC) {
+				await backend.disconnectFromCall(rtc.currentVC.serverId, rtc.currentVC.channelId);
+				await rtc.quitRoom();
+			}
+
+			const res = await backend.connectToCall(server.id, channel.id);
+
+			if (res.isErr()) {
+				console.error(res.error.error);
+				return;
+			}
+
+			if (res.isOk()) {
+				await rtc.connectToRoom(res.value.token, server.id, channel.id);
+				windows.toggleCallTab(channel.id);
+
+				core.callTimeout = setControllableTimeout(() => {
+					backend.disconnectFromCall(server.id, channel.id);
+					rtc.quitRoom();
+					sounds.playSound('call-off');
+					windows.goToChatTab(channel.id);
+				}, 10000);
+			}
+		} else {
+			windows.toggleCallTab(channel.id);
+		}
+	}
 </script>
 
 <div id={`top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
@@ -52,8 +99,12 @@
 				? 'hocus:inner-main-700-shadow'
 				: 'hocus:inner-green-400/40 hocus:text-green-400'
 		]}
-		onclick={() => windows.toggleCallTab()}
-		tooltip={tab !== 'chat' ? 'Go to chat' : 'Go to voice chat'}
+		onclick={handleCallTab}
+		tooltip={tab !== 'chat'
+			? 'Go to chat'
+			: isFriendChannel && !isFriendCallActive
+				? 'Start call'
+				: 'Go to voice chat'}
 		corners
 		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
 	>
@@ -63,7 +114,7 @@
 			<HashChat height={16} width={16} />
 		{/if}
 
-		{#if channel.voice_users.length > 0 && tab === 'chat'}
+		{#if channel.voice_users.length > 0 && tab === 'chat' && server.id !== 'global'}
 			{channel.voice_users.length}
 		{/if}
 	</Button>
