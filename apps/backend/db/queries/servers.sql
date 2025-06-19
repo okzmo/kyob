@@ -34,9 +34,9 @@ SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id FROM s
 
 -- name: CreateServer :one
 INSERT INTO servers (
-  id, owner_id, name, avatar, description, private
+  id, owner_id, name, avatar, description, main_color, private
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
 
@@ -53,11 +53,8 @@ DELETE FROM server_membership WHERE user_id = $1 AND server_id = $2;
 -- name: UpdateServerName :exec
 UPDATE servers SET name = $1 WHERE id = $2 AND owner_id = $3;
 
--- name: UpdateServerAvatar :exec
-UPDATE servers SET avatar = $1 WHERE id = $2 AND owner_id = $3;
-
--- name: UpdateServerBanner :exec
-UPDATE servers SET banner = $1 WHERE id = $2 AND owner_id = $3;
+-- name: UpdateServerAvatarNBanner :exec
+UPDATE servers SET avatar = $1, banner = $2, main_color = $3 WHERE id = $4 AND owner_id = $5;
 
 -- name: UpdateServerDescription :exec
 UPDATE servers SET description = $1 WHERE id = $2 AND owner_id = $3;

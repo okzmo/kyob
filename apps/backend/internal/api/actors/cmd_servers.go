@@ -16,6 +16,12 @@ import (
 
 // SERVER
 
+func (s *server) UpdateServer(ctx *actor.Context, msg *protoTypes.ServerChangedInformations) {
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}
+
 func (s *server) RemoveServer(ctx *actor.Context, msg *protoTypes.BodyServerRemoved) {
 	err := services.DeleteServer(context.TODO(), msg.ServerId, msg.UserId)
 	if err != nil {

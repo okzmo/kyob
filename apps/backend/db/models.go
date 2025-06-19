@@ -179,6 +179,7 @@ type Server struct {
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
 	Description []byte      `json:"description"`
+	MainColor   pgtype.Text `json:"main_color"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`

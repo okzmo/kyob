@@ -3,12 +3,14 @@
 	import { backend } from 'stores/backend.svelte';
 	import Corners from '../Corners/Corners.svelte';
 	import { page } from '$app/state';
+	import { serversStore } from 'stores/servers.svelte';
 
 	interface Props {
 		type: 'general' | 'server';
 	}
 
 	let { type = 'general' }: Props = $props();
+	let currentServer = $derived(serversStore.getServer(page.params.serverId) || 'Server');
 
 	interface Sections {
 		[type: string]: {
@@ -20,7 +22,7 @@
 		};
 	}
 
-	const SECTIONS: Sections = {
+	const SECTIONS: Sections = $derived({
 		general: {
 			'Personal Settings': [
 				{ label: 'Account', href: '/settings/account', locked: false },
@@ -37,8 +39,16 @@
 			],
 			Other: [{ label: 'Changelog', href: '/settings/changelog', locked: true }]
 		},
-		server: {}
-	};
+		server: {
+			[`${currentServer.name}`]: [
+				{
+					label: 'Server Profile',
+					href: `/server-settings/${page.params.serverId}/profile`,
+					locked: false
+				}
+			]
+		}
+	});
 </script>
 
 <aside class="mt-20 flex h-screen w-[20rem] flex-col gap-y-6 overflow-auto select-none">

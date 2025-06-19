@@ -92,6 +92,8 @@ func (s *server) Receive(ctx *actor.Context) {
 		s.RemoveServer(ctx, msg)
 	case *protoTypes.BodyNewUserInServer:
 		s.NewUser(ctx, msg)
+	case *protoTypes.ServerChangedInformations:
+		s.UpdateServer(ctx, msg)
 	case *protoTypes.BroadcastUserInformations:
 		s.BroadcastUserInformations(ctx, msg)
 	}
@@ -209,6 +211,8 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.ChangingUserInformations(ctx, msg)
 	case *protoTypes.BroadcastUserInformations:
 		u.BroadcastUserInformations(ctx, msg)
+	case *protoTypes.ServerChangedInformations:
+		u.ServerInformationsChanged(ctx, msg)
 	}
 }
 

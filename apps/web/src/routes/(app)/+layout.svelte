@@ -31,6 +31,7 @@
 			userStore.user = res.value.user;
 			userStore.friends = res.value.friends;
 			userStore.emojis = res.value.emojis;
+			console.log(res.value.servers);
 			serversStore.setupServers(res.value.servers);
 			backend.setupWebsocket(res.value.user.id);
 			await rtc.prepareConnection();

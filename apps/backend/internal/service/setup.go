@@ -252,6 +252,7 @@ func processServers(ctx context.Context, userId string, servers []db.GetServersF
 				Avatar:      server.Avatar,
 				Banner:      server.Banner,
 				Description: json.RawMessage(server.Description),
+				MainColor:   server.MainColor.String,
 				Private:     server.Private,
 				CreatedAt:   server.CreatedAt,
 				UpdatedAt:   server.UpdatedAt,

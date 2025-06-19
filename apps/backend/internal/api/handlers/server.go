@@ -100,9 +100,9 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, server)
 }
 
-func EditServer(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	var body services.EditServerBody
+func UpdateServerProfile(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateServerProfileBody
+	serverId := chi.URLParam(r, "id")
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
@@ -110,18 +110,106 @@ func EditServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.EditServer(r.Context(), id, &body)
+	err = services.UpdateServerProfile(r.Context(), serverId, &body)
 	if err != nil {
-		switch {
-		case errors.Is(err, services.ErrUnauthorizedServerEdition):
-			utils.RespondWithError(w, http.StatusUnauthorized, "You cannot edit this server.")
-		default:
-			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		}
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, &DefaultResponse{Message: "success"})
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	messageToSend := &proto.ServerChangedInformations{
+		ServerId: serverId,
+		ServerInformations: &proto.ServerInformations{
+			Name:        &body.Name,
+			Description: body.Description,
+		},
+	}
+
+	actors.ServersEngine.Send(serverPID, messageToSend)
+
+	utils.RespondWithJSON(w, http.StatusOK, DefaultResponse{Message: "success"})
+}
+
+func UpdateServerAvatar(w http.ResponseWriter, r *http.Request) {
+	var body services.UpdateAvatarBody
+	var cropAvatar, cropBanner services.Crop
+	serverId := chi.URLParam(r, "id")
+
+	config := utils.ImageValidationConfig{
+		MaxSize: 10 << 20, // 10 MB
+		AllowedMimeTypes: []string{
+			"image/jpeg",
+			"image/png",
+			"image/gif",
+			"image/webp",
+		},
+		RequireValidHeader: true,
+	}
+
+	file, fileHeader, err := r.FormFile("avatar")
+	if err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Failed to get image.")
+		return
+	}
+	defer file.Close()
+
+	if err := utils.ParseAndValidateImage(fileHeader, config); err != nil {
+		slog.Error("Avatar image validation failed", "error", err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Avatar's invalid.")
+		return
+	}
+
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		slog.Error("Failed to read file", "err", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to process file.")
+		return
+	}
+
+	cropAvatarJSON := r.FormValue("crop_avatar")
+	cropBannerJSON := r.FormValue("crop_banner")
+	mainColor := r.FormValue("main_color")
+
+	if err := json.Unmarshal([]byte(cropAvatarJSON), &cropAvatar); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid crop data.")
+		return
+	}
+
+	if err := json.Unmarshal([]byte(cropBannerJSON), &cropBanner); err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid crop data.")
+		return
+	}
+
+	body.CropAvatar = cropAvatar
+	body.CropBanner = cropBanner
+	body.MainColor = mainColor
+
+	err = validate.Struct(body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	res, err := services.UpdateServerAvatar(r.Context(), serverId, fileData, fileHeader, &body)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	serverPID := actors.ServersEngine.Registry.GetPID("server", serverId)
+	actors.ServersEngine.Send(serverPID, &proto.ServerChangedInformations{
+		ServerId: serverId,
+		ServerInformations: &proto.ServerInformations{
+			Avatar:    &res.Avatar,
+			Banner:    &res.Banner,
+			MainColor: &body.MainColor,
+		},
+	})
+
+	utils.RespondWithJSON(w, http.StatusOK, res)
 }
 
 func DeleteServer(w http.ResponseWriter, r *http.Request) {

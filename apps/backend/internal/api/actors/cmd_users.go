@@ -281,3 +281,14 @@ func (u *user) SendCallInitialization(ctx *actor.Context, msg *protoTypes.CallIn
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
+
+func (u *user) ServerInformationsChanged(ctx *actor.Context, msg *protoTypes.ServerChangedInformations) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_ServerChanged{
+			ServerChanged: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}

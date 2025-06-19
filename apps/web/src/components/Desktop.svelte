@@ -19,6 +19,7 @@
 	let contextMenuTarget: string | undefined = $state();
 	let contextMenuTargetAuthor: string | undefined = $state();
 	let onSettingsPage = $derived(page.url.pathname.includes('/settings'));
+	let onServerSettingsPage = $derived(page.url.pathname.includes('/server-settings'));
 
 	function onContextMenu(e: MouseEvent) {
 		const targetId = (e.target as HTMLElement).id;
@@ -58,7 +59,7 @@
 			class="fixed top-0 left-0 h-screen w-screen"
 			oncontextmenu={onContextMenu}
 		>
-			{#if !onSettingsPage}
+			{#if !onSettingsPage && !onServerSettingsPage}
 				<Topbar canGoBack={goback.active} />
 				<Userbar />
 				{#if page.params.server_id}

@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -43,10 +44,8 @@ type CreateServerBody struct {
 	Y           int             `validate:"required" json:"y"`
 }
 
-type EditServerBody struct {
+type UpdateServerProfileBody struct {
 	Name        string          `validate:"max=50" json:"name"`
-	Avatar      string          `json:"avatar"`
-	Banner      string          `json:"banner"`
 	Description json.RawMessage `json:"description"`
 }
 
@@ -63,6 +62,7 @@ type ServerResponse struct {
 	Avatar      pgtype.Text     `json:"avatar"`
 	Banner      pgtype.Text     `json:"banner"`
 	Description json.RawMessage `json:"description"`
+	MainColor   string          `json:"main_color"`
 	Private     bool            `json:"private"`
 	CreatedAt   time.Time       `json:"created_at"`
 	UpdatedAt   time.Time       `json:"updated_at"`
@@ -105,12 +105,14 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		return nil, ErrTooManyServers
 	}
 
+	mainColor := pgtype.Text{String: "12,12,16", Valid: true}
 	newServer, err := db.Query.CreateServer(ctx, db.CreateServerParams{
 		ID:          utils.Node.Generate().String(),
 		OwnerID:     user.ID,
 		Name:        server.Name,
 		Avatar:      pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), imgFileName), Valid: true},
 		Description: server.Description,
+		MainColor:   mainColor,
 		Private:     server.Private,
 	})
 	if err != nil {
@@ -143,7 +145,7 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	}, nil
 }
 
-func EditServer(ctx context.Context, id string, body *EditServerBody) error {
+func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfileBody) error {
 	user := ctx.Value("user").(db.User)
 	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
 		ID:      id,
@@ -175,29 +177,109 @@ func EditServer(ctx context.Context, id string, body *EditServerBody) error {
 		}
 	}
 
-	if body.Avatar != "" {
-		err := db.Query.UpdateServerAvatar(ctx, db.UpdateServerAvatarParams{
-			ID:      id,
-			Avatar:  pgtype.Text{String: body.Avatar, Valid: true},
-			OwnerID: user.ID,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	if body.Banner != "" {
-		err := db.Query.UpdateServerBanner(ctx, db.UpdateServerBannerParams{
-			ID:      id,
-			Banner:  pgtype.Text{String: body.Banner, Valid: true},
-			OwnerID: user.ID,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
+}
+
+func UpdateServerAvatar(ctx context.Context, serverId string, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
+	user := ctx.Value("user").(db.User)
+	s3Client := s3.NewFromConfig(GetAWSConfig())
+
+	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+		ID:      serverId,
+		OwnerID: user.ID,
+	})
+	if err != nil || res.RowsAffected() == 0 {
+		return nil, ErrUnauthorizedServerEdition
+	}
+
+	server, err := db.Query.GetServer(ctx, serverId)
+	if err != nil || res.RowsAffected() == 0 {
+		return nil, err
+	}
+
+	avatar, err := utils.CropImage(file, body.CropAvatar.X, body.CropAvatar.Y, body.CropAvatar.Width, body.CropAvatar.Height)
+	if err != nil {
+		slog.Error("avatar cropping error", "err", err)
+		return nil, err
+	}
+
+	banner, err := utils.CropImage(file, body.CropBanner.X, body.CropBanner.Y, body.CropBanner.Width, body.CropBanner.Height)
+	if err != nil {
+		slog.Error("banner cropping error", "err", err)
+		return nil, err
+	}
+
+	randomId := utils.GenerateRandomId(8)
+	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", serverId, randomId)
+	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", serverId, randomId)
+	oldAvatarSplit := strings.Split(server.Avatar.String, "/")
+	oldBannerSplit := strings.Split(server.Banner.String, "/")
+
+	// upload new avatar
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Key:    &avatarFileName,
+		Bucket: aws.String("nyo-files"),
+		Body:   bytes.NewReader(avatar),
+	})
+	if err != nil {
+		slog.Error("failed uploading server avatar", "err", err)
+		return nil, err
+	}
+
+	// upload new banner
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Key:    &bannerFileName,
+		Bucket: aws.String("nyo-files"),
+		Body:   bytes.NewReader(banner),
+	})
+	if err != nil {
+		slog.Error("failed uploading server banner", "err", err)
+		return nil, err
+	}
+
+	// delete old avatar
+	if server.Avatar.String != "" {
+		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Key:    aws.String(oldAvatarSplit[len(oldAvatarSplit)-1]),
+			Bucket: aws.String("nyo-files"),
+		})
+		if err != nil {
+			slog.Error("failed deleting user avatar", "err", err)
+			return nil, err
+		}
+	}
+
+	// delete old banner
+	if server.Banner.String != "" {
+		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Key:    aws.String(oldBannerSplit[len(oldBannerSplit)-1]),
+			Bucket: aws.String("nyo-files"),
+		})
+		if err != nil {
+			slog.Error("failed deleting user banner", "err", err)
+			return nil, err
+		}
+	}
+
+	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
+	bannerUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
+	mainColor := pgtype.Text{String: body.MainColor, Valid: true}
+	err = db.Query.UpdateServerAvatarNBanner(ctx, db.UpdateServerAvatarNBannerParams{
+		ID:        serverId,
+		OwnerID:   user.ID,
+		Avatar:    avatarUrl,
+		Banner:    bannerUrl,
+		MainColor: mainColor,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &UpdateAvatarResponse{
+		Banner:    bannerUrl.String,
+		Avatar:    avatarUrl.String,
+		MainColor: mainColor.String,
+	}, nil
 }
 
 func DeleteServer(ctx context.Context, id string, userId string) error {

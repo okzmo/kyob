@@ -5,6 +5,9 @@
 	import StarterKit from '@tiptap/starter-kit';
 	import { extractFirstNParagraphs, trimEmptyNodes } from 'utils/richInput';
 	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
+	import { goto } from '$app/navigation';
+	import Gear from 'components/ui/icons/Gear.svelte';
+	import { isColorLight } from 'utils/colors';
 
 	interface Props {
 		server: Server;
@@ -12,8 +15,9 @@
 
 	let { server }: Props = $props();
 
-	let toggleAbout = $state(false);
-	let aboutText = $derived.by(() => {
+	let needDarkFontColor = $state(isColorLight(`rgb(${server?.main_color})`));
+	let toggleDescription = $state(false);
+	let descriptionText = $derived.by(() => {
 		if (!server.description) return;
 
 		const html = generateHTML(trimEmptyNodes(server.description), [
@@ -29,7 +33,7 @@
 
 		const { paragraphs, enoughMatches } = extractFirstNParagraphs(html, 2);
 
-		if (!toggleAbout && enoughMatches) {
+		if (!toggleDescription && enoughMatches) {
 			return { content: paragraphs, enoughMatches };
 		}
 
@@ -57,29 +61,52 @@
 		<div class="bg-main-700 h-[10rem] w-full"></div>
 	{/if}
 
+	<button
+		class="bg-main-900/50 absolute top-2 right-2 z-10 flex h-[2rem] w-[2rem] items-center justify-center backdrop-blur-lg hover:cursor-pointer"
+		aria-label="Server settings"
+		onclick={() => goto(`/server-settings/${server.id}/profile`)}
+	>
+		<Gear height={20} width={20} />
+	</button>
+
 	<div class="inner-main-50/10 relative z-[4] flex flex-col px-4 pt-[10.25rem]">
 		<Corners color="border-main-50/35" />
-		<h3 class="text-xl font-semibold">{server.name}</h3>
-		{#if aboutText}
-			<div class="text-main-50/80 mt-2 [&>p]:min-h-[24px]">
-				{@html aboutText.content}
+		<h3 class={['text-xl font-semibold', needDarkFontColor && 'text-main-900']}>
+			{server.name}
+		</h3>
+		{#if descriptionText}
+			<div
+				class={[
+					'mt-2 [&>p]:min-h-[24px]',
+					needDarkFontColor ? 'text-main-900/80' : 'text-main-50/80'
+				]}
+			>
+				{@html descriptionText.content}
 			</div>
-			{#if aboutText.enoughMatches}
-				{#if !toggleAbout}
+			{#if descriptionText.enoughMatches}
+				{#if !toggleDescription}
 					<span>...</span>
 				{/if}
 				<button
-					class="hocus:text-main-50/75 w-fit text-left text-sm transition-colors hover:cursor-pointer"
-					onclick={() => (toggleAbout = !toggleAbout)}
+					class={[
+						'w-fit text-left text-sm transition-colors hover:cursor-pointer',
+						needDarkFontColor ? 'hocus:text-main-900/75 ' : 'hocus:text-main-50/75'
+					]}
+					onclick={() => (toggleDescription = !toggleDescription)}
 				>
-					{toggleAbout ? 'Hide' : 'Show more'}
+					{toggleDescription ? 'Hide' : 'Show more'}
 				</button>
 			{/if}
 		{/if}
 		<div class="mt-4 flex flex-col">
 			<div class="mb-1 flex w-full items-center gap-x-2">
-				<p class="text-main-50/50 text-sm">Members</p>
-				<span class="bg-main-50/35 block h-[1px] w-full"></span>
+				<p class={['text-sm', needDarkFontColor ? 'text-main-900/50' : 'text-main-50/50']}>
+					Members
+				</p>
+				<span
+					class={['block h-[1px] w-full', needDarkFontColor ? 'bg-main-900/35' : 'bg-main-50/35']}
+				>
+				</span>
 			</div>
 			<div class="flex max-h-[20rem] flex-col gap-y-0.5 overflow-auto pb-3">
 				{#each server.members as member (member.id)}
@@ -91,14 +118,21 @@
 						x={5}
 					>
 						<div
-							class="hocus:bg-main-50/10 border-main-50/0 hocus:border-main-50/20 relative flex w-full items-center gap-x-3 border py-2 pr-4 pl-2 transition-colors duration-100 hover:cursor-pointer"
+							class={[
+								'border-main-50/0 relative flex w-full items-center gap-x-3 border py-2 pr-4 pl-2 transition-colors duration-100 hover:cursor-pointer',
+								needDarkFontColor
+									? 'hocus:bg-main-900/10 hocus:border-main-900/20'
+									: 'hocus:bg-main-50/10 hocus:border-main-50/20'
+							]}
 						>
 							<img
 								src={member.avatar}
 								alt="{member.username}'s avatar"
 								class="h-8 w-8 transform-gpu object-cover"
 							/>
-							<p>{member.display_name}</p>
+							<p class={needDarkFontColor ? 'text-main-900' : 'text-main-50'}>
+								{member.display_name}
+							</p>
 						</div>
 					</UserProfileWithTriggerAndFetch>
 				{/each}

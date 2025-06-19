@@ -17,11 +17,12 @@ message WSMessage {
     AcceptFriendInvite accept_friend = 10;
     DeleteFriend delete_friend = 11;
     BroadcastUserInformations user_changed = 12;
-    CallInitialization call_users = 13;
-    ConnectToCall connect_to_call = 14;
-    DisconnectFromCall disconnect_from_call = 15;
-    Mute mute_user = 16;
-    Deafen deafen_user = 17;
+    ServerChangedInformations server_changed = 13;
+    CallInitialization call_users = 14;
+    ConnectToCall connect_to_call = 15;
+    DisconnectFromCall disconnect_from_call = 16;
+    Mute mute_user = 17;
+    Deafen deafen_user = 18;
   }
 }
 
@@ -290,4 +291,17 @@ message BroadcastUserInformations {
   string user_id = 1;
   string server_id = 2;
   UserInformations user_informations = 3;
+}
+
+message ServerInformations {
+  optional string name = 1;
+  optional string avatar = 2;
+  optional string banner = 3;
+  optional bytes description = 4;
+  optional string main_color= 5;
+}
+
+message ServerChangedInformations {
+  string server_id = 1;
+  ServerInformations server_informations = 2;
 }

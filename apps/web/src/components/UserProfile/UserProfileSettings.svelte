@@ -314,7 +314,9 @@
 				<button
 					class={[
 						'w-fit text-left text-sm transition-colors hover:cursor-pointer',
-						needDarkFontColor ? 'hocus:text-main-900/75 ' : 'hocus:text-main-50/75'
+						needDarkFontColor
+							? 'hocus:text-main-900/75 text-main-900/50'
+							: 'hocus:text-main-50/75 text-main-50/50'
 					]}
 					onclick={() => (toggleAbout = !toggleAbout)}
 				>

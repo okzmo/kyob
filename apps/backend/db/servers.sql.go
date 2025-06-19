@@ -28,11 +28,11 @@ func (q *Queries) CheckServerPosition(ctx context.Context, arg CheckServerPositi
 
 const createServer = `-- name: CreateServer :one
 INSERT INTO servers (
-  id, owner_id, name, avatar, description, private
+  id, owner_id, name, avatar, description, main_color, private
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, owner_id, name, avatar, banner, description, private, created_at, updated_at
+RETURNING id, owner_id, name, avatar, banner, description, main_color, private, created_at, updated_at
 `
 
 type CreateServerParams struct {
@@ -41,6 +41,7 @@ type CreateServerParams struct {
 	Name        string      `json:"name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Description []byte      `json:"description"`
+	MainColor   pgtype.Text `json:"main_color"`
 	Private     bool        `json:"private"`
 }
 
@@ -51,6 +52,7 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 		arg.Name,
 		arg.Avatar,
 		arg.Description,
+		arg.MainColor,
 		arg.Private,
 	)
 	var i Server
@@ -61,6 +63,7 @@ func (q *Queries) CreateServer(ctx context.Context, arg CreateServerParams) (Ser
 		&i.Avatar,
 		&i.Banner,
 		&i.Description,
+		&i.MainColor,
 		&i.Private,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -122,7 +125,7 @@ func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) 
 }
 
 const getServer = `-- name: GetServer :one
-SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers WHERE id = $1
+SELECT id, owner_id, name, avatar, banner, description, main_color, private, created_at, updated_at FROM servers WHERE id = $1
 `
 
 func (q *Queries) GetServer(ctx context.Context, id string) (Server, error) {
@@ -135,6 +138,7 @@ func (q *Queries) GetServer(ctx context.Context, id string) (Server, error) {
 		&i.Avatar,
 		&i.Banner,
 		&i.Description,
+		&i.MainColor,
 		&i.Private,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -179,7 +183,7 @@ func (q *Queries) GetServerMembers(ctx context.Context, serverID string) ([]GetS
 }
 
 const getServerWithChannels = `-- name: GetServerWithChannels :one
-SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=$1) AS member_count
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.main_color, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=$1) AS member_count
 FROM servers s, server_membership sm
 WHERE s.id = $1 AND sm.server_id = s.id AND sm.user_id = $2
 `
@@ -196,6 +200,7 @@ type GetServerWithChannelsRow struct {
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
 	Description []byte      `json:"description"`
+	MainColor   pgtype.Text `json:"main_color"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
@@ -214,6 +219,7 @@ func (q *Queries) GetServerWithChannels(ctx context.Context, arg GetServerWithCh
 		&i.Avatar,
 		&i.Banner,
 		&i.Description,
+		&i.MainColor,
 		&i.Private,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -225,7 +231,7 @@ func (q *Queries) GetServerWithChannels(ctx context.Context, arg GetServerWithCh
 }
 
 const getServers = `-- name: GetServers :many
-SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers
+SELECT id, owner_id, name, avatar, banner, description, main_color, private, created_at, updated_at FROM servers
 `
 
 func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
@@ -244,6 +250,7 @@ func (q *Queries) GetServers(ctx context.Context) ([]Server, error) {
 			&i.Avatar,
 			&i.Banner,
 			&i.Description,
+			&i.MainColor,
 			&i.Private,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -272,7 +279,7 @@ func (q *Queries) GetServersCountFromUser(ctx context.Context, userID string) (i
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.main_color, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s
 LEFT JOIN server_membership sm ON sm.server_id = s.id AND sm.user_id = $1
 WHERE s.id = 'global' OR sm.user_id IS NOT NULL
@@ -285,6 +292,7 @@ type GetServersFromUserRow struct {
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
 	Description []byte      `json:"description"`
+	MainColor   pgtype.Text `json:"main_color"`
 	Private     bool        `json:"private"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
@@ -309,6 +317,7 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID string) ([]GetS
 			&i.Avatar,
 			&i.Banner,
 			&i.Description,
+			&i.MainColor,
 			&i.Private,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -381,7 +390,7 @@ func (q *Queries) LeaveServer(ctx context.Context, arg LeaveServerParams) error 
 }
 
 const ownServer = `-- name: OwnServer :execresult
-SELECT id, owner_id, name, avatar, banner, description, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
+SELECT id, owner_id, name, avatar, banner, description, main_color, private, created_at, updated_at FROM servers WHERE id = $1 AND owner_id = $2
 `
 
 type OwnServerParams struct {
@@ -393,33 +402,26 @@ func (q *Queries) OwnServer(ctx context.Context, arg OwnServerParams) (pgconn.Co
 	return q.db.Exec(ctx, ownServer, arg.ID, arg.OwnerID)
 }
 
-const updateServerAvatar = `-- name: UpdateServerAvatar :exec
-UPDATE servers SET avatar = $1 WHERE id = $2 AND owner_id = $3
+const updateServerAvatarNBanner = `-- name: UpdateServerAvatarNBanner :exec
+UPDATE servers SET avatar = $1, banner = $2, main_color = $3 WHERE id = $4 AND owner_id = $5
 `
 
-type UpdateServerAvatarParams struct {
-	Avatar  pgtype.Text `json:"avatar"`
-	ID      string      `json:"id"`
-	OwnerID string      `json:"owner_id"`
+type UpdateServerAvatarNBannerParams struct {
+	Avatar    pgtype.Text `json:"avatar"`
+	Banner    pgtype.Text `json:"banner"`
+	MainColor pgtype.Text `json:"main_color"`
+	ID        string      `json:"id"`
+	OwnerID   string      `json:"owner_id"`
 }
 
-func (q *Queries) UpdateServerAvatar(ctx context.Context, arg UpdateServerAvatarParams) error {
-	_, err := q.db.Exec(ctx, updateServerAvatar, arg.Avatar, arg.ID, arg.OwnerID)
-	return err
-}
-
-const updateServerBanner = `-- name: UpdateServerBanner :exec
-UPDATE servers SET banner = $1 WHERE id = $2 AND owner_id = $3
-`
-
-type UpdateServerBannerParams struct {
-	Banner  pgtype.Text `json:"banner"`
-	ID      string      `json:"id"`
-	OwnerID string      `json:"owner_id"`
-}
-
-func (q *Queries) UpdateServerBanner(ctx context.Context, arg UpdateServerBannerParams) error {
-	_, err := q.db.Exec(ctx, updateServerBanner, arg.Banner, arg.ID, arg.OwnerID)
+func (q *Queries) UpdateServerAvatarNBanner(ctx context.Context, arg UpdateServerAvatarNBannerParams) error {
+	_, err := q.db.Exec(ctx, updateServerAvatarNBanner,
+		arg.Avatar,
+		arg.Banner,
+		arg.MainColor,
+		arg.ID,
+		arg.OwnerID,
+	)
 	return err
 }
 
