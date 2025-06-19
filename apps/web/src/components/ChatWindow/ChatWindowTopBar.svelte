@@ -9,7 +9,7 @@
 	let { id, tab, server, channel, friend } = $props();
 </script>
 
-<div id={`window-top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
+<div id={`top-bar-${id}`} class="flex gap-x-0.5 hover:cursor-grab active:cursor-grabbing">
 	<div
 		class="inner-main-800 bg-main-900 relative flex h-[2.375rem] flex-grow items-center justify-between px-2.5 transition duration-100"
 	>

@@ -157,16 +157,16 @@
 	}
 
 	onMount(() => {
-		const fullWindow = document.getElementById(`window-${id}`);
-		const windowBar = document.getElementById(`window-top-bar-${id}`);
-		const windowResizeBR = document.getElementById(`window-resize-br-${id}`);
-		const windowResizeBL = document.getElementById(`window-resize-bl-${id}`);
-		const windowResizeTL = document.getElementById(`window-resize-tl-${id}`);
-		const windowResizeTR = document.getElementById(`window-resize-tr-${id}`);
-		const windowResizeT = document.getElementById(`window-resize-t-${id}`);
-		const windowResizeB = document.getElementById(`window-resize-b-${id}`);
-		const windowResizeL = document.getElementById(`window-resize-l-${id}`);
-		const windowResizeR = document.getElementById(`window-resize-r-${id}`);
+		const fullWindow = document.getElementById(id);
+		const windowBar = document.getElementById(`top-bar-${id}`);
+		const windowResizeBR = document.getElementById(`resize-br-${id}`);
+		const windowResizeBL = document.getElementById(`resize-bl-${id}`);
+		const windowResizeTL = document.getElementById(`resize-tl-${id}`);
+		const windowResizeTR = document.getElementById(`resize-tr-${id}`);
+		const windowResizeT = document.getElementById(`resize-t-${id}`);
+		const windowResizeB = document.getElementById(`resize-b-${id}`);
+		const windowResizeL = document.getElementById(`resize-l-${id}`);
+		const windowResizeR = document.getElementById(`resize-r-${id}`);
 
 		if (!windowBar || !fullWindow) return;
 		if (!windowResizeT || !windowResizeB || !windowResizeL || !windowResizeR) return;
@@ -200,10 +200,11 @@
 <div
 	in:fly={{ duration: 300, y: 20 }}
 	out:fly={{ duration: 150, y: 20 }}
-	id={`window-${id}`}
+	{id}
 	class={[
 		'absolute flex flex-col transition-opacity duration-75',
-		windows.activeWindow === id ? 'z-[52]' : 'z-[40] opacity-40'
+		windows.activeWindow === id ? 'z-[52]' : 'z-[40] opacity-40',
+		resizing && 'select-none'
 	]}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
@@ -216,36 +217,36 @@
 		{@render children()}
 	</div>
 	<div
-		id={`window-resize-br-${id}`}
+		id={`resize-br-${id}`}
 		class="absolute right-0 bottom-0 h-[0.75rem] w-[0.75rem] hover:cursor-se-resize"
 	></div>
 	<div
-		id={`window-resize-bl-${id}`}
+		id={`resize-bl-${id}`}
 		class="absolute bottom-0 left-0 h-[0.75rem] w-[0.75rem] hover:cursor-sw-resize"
 	></div>
 	<div
-		id={`window-resize-tl-${id}`}
+		id={`resize-tl-${id}`}
 		class="absolute top-0 left-0 h-[0.75rem] w-[0.75rem] hover:cursor-nw-resize"
 	></div>
 	<div
-		id={`window-resize-tr-${id}`}
+		id={`resize-tr-${id}`}
 		class="absolute top-0 right-0 h-[0.5rem] w-[0.5rem] hover:cursor-ne-resize"
 	></div>
 
 	<div
-		id={`window-resize-t-${id}`}
+		id={`resize-t-${id}`}
 		class="absolute top-0 left-[1rem] h-[0.25rem] w-[calc(100%-6.25rem)] hover:cursor-n-resize"
 	></div>
 	<div
-		id={`window-resize-b-${id}`}
+		id={`resize-b-${id}`}
 		class="absolute bottom-0 left-[1rem] h-[0.25rem] w-[calc(100%-2rem)] hover:cursor-s-resize"
 	></div>
 	<div
-		id={`window-resize-l-${id}`}
+		id={`resize-l-${id}`}
 		class="absolute top-[1rem] left-0 h-[calc(100%-2rem)] w-[0.25rem] hover:cursor-w-resize"
 	></div>
 	<div
-		id={`window-resize-r-${id}`}
+		id={`resize-r-${id}`}
 		class="absolute top-[2.5rem] right-0 h-[calc(100%-3.5rem)] w-[0.25rem] hover:cursor-e-resize"
 	></div>
 </div>
