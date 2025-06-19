@@ -54,6 +54,7 @@ type UserResponse struct {
 	DisplayName string          `json:"display_name"`
 	Avatar      pgtype.Text     `json:"avatar"`
 	Banner      pgtype.Text     `json:"banner"`
+	Body        pgtype.Text     `json:"body"`
 	MainColor   pgtype.Text     `json:"main_color"`
 	About       json.RawMessage `json:"about"`
 	Links       json.RawMessage `json:"links"`
@@ -107,6 +108,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 		DisplayName: ctxUser.DisplayName,
 		Avatar:      ctxUser.Avatar,
 		Banner:      ctxUser.Banner,
+		Body:        ctxUser.Body,
 		MainColor:   ctxUser.MainColor,
 		About:       ctxUser.About,
 		CreatedAt:   ctxUser.CreatedAt,

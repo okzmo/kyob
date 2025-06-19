@@ -25,6 +25,7 @@
 			'Personal Settings': [
 				{ label: 'Account', href: '/settings/account', locked: false },
 				{ label: 'Profile', href: '/settings/profile', locked: false },
+				{ label: 'Avatar', href: '/settings/avatar', locked: false },
 				{ label: 'Emojis', href: '/settings/emojis', locked: false },
 				{ label: 'Data & Privacy', href: '/settings/privacy', locked: false }
 			],

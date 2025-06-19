@@ -210,6 +210,7 @@ type User struct {
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
+	Body        pgtype.Text `json:"body"`
 	About       []byte      `json:"about"`
 	MainColor   pgtype.Text `json:"main_color"`
 	Links       []byte      `json:"links"`

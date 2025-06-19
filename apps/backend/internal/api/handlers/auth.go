@@ -66,19 +66,20 @@ type signUpParams struct {
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	var body signUpParams
 
-	err := json.NewDecoder(r.Body).Decode(&body)
+	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err = validate.Struct(body)
+	rpmService := services.NewRPMService()
+	bodyUrl, err := rpmService.CreateDefaultBody(r.Context())
 	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	token, err := services.SignUp(r.Context(), body.Email, body.Username, body.DisplayName, body.Password)
+	token, err := services.SignUp(r.Context(), body.Email, body.Username, body.DisplayName, body.Password, bodyUrl)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

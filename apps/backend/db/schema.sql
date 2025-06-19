@@ -218,6 +218,7 @@ CREATE TABLE public.users (
     display_name character varying(255) NOT NULL,
     avatar character varying(255),
     banner character varying(255),
+    body character varying(255),
     about jsonb,
     main_color character varying(255),
     links jsonb DEFAULT '[]'::jsonb,

@@ -15,12 +15,15 @@
 		children: Snippet;
 	}
 
+	type Positions = 'br' | 'bl' | 'tl' | 'tr' | 'l' | 'r' | 'b' | 't' | '';
+
 	let { id, children, tab, server, channel, friend }: Props = $props();
 
 	let windowState = $state(windows.openWindows.find((w) => w.id === id)!);
 	let startPos = $state({ x: 0, y: 0 });
 	let offset = $state({ x: windowState.x, y: windowState.y });
 	let dragging = $state(false);
+	let resizingPos = $state<Positions>('');
 
 	let resizing = $state(false);
 	let startPosResizing = $state({ x: 0, y: 0 });
@@ -56,10 +59,11 @@
 		};
 	}
 
-	function chatResizeMouseDown(e: MouseEvent) {
+	function chatResizeMouseDown(e: MouseEvent, pos: Positions) {
 		resizing = true;
 		startPosResizing = { x: e.clientX, y: e.clientY };
 		initialSize = { height: windowState?.height, width: windowState?.width };
+		resizingPos = pos;
 
 		document.addEventListener('mouseup', stopResizing);
 		document.addEventListener('mousemove', chatResizing);
@@ -69,14 +73,79 @@
 		if (!resizing) return;
 		e.preventDefault();
 
-		windowState.width = Math.max(450, initialSize.width + (e.clientX - startPosResizing.x));
-		windowState.height = Math.max(350, initialSize.height + (e.clientY - startPosResizing.y));
+		const dx = e.clientX - startPosResizing.x;
+		const dy = e.clientY - startPosResizing.y;
+
+		switch (resizingPos) {
+			case 'br':
+				windowState.width = Math.max(450, initialSize.width + dx);
+				windowState.height = Math.max(350, initialSize.height + dy);
+				break;
+			case 'bl':
+				{
+					const newWidth = Math.max(450, initialSize.width - dx);
+					const diffWidth = newWidth - windowState.width;
+
+					windowState.width = newWidth;
+					windowState.height = Math.max(350, initialSize.height + dy);
+					offset.x = offset.x - diffWidth;
+				}
+				break;
+			case 'tl':
+				{
+					const newWidth = Math.max(450, initialSize.width - dx);
+					const diffWidth = newWidth - windowState.width;
+					const newHeight = Math.max(350, initialSize.height - dy);
+					const diffHeight = newHeight - windowState.height;
+
+					windowState.width = newWidth;
+					windowState.height = newHeight;
+					offset.x = offset.x - diffWidth;
+					offset.y = offset.y - diffHeight;
+				}
+				break;
+			case 'tr':
+				{
+					const newHeight = Math.max(350, initialSize.height - dy);
+					const diffHeight = newHeight - windowState.height;
+
+					windowState.width = Math.max(450, initialSize.width + dx);
+					windowState.height = newHeight;
+					offset.y = offset.y - diffHeight;
+				}
+				break;
+			case 't':
+				{
+					const newHeight = Math.max(350, initialSize.height - dy);
+					const diffHeight = newHeight - windowState.height;
+
+					windowState.height = newHeight;
+					offset.y = offset.y - diffHeight;
+				}
+				break;
+			case 'b':
+				windowState.height = Math.max(350, initialSize.height + dy);
+				break;
+			case 'r':
+				windowState.width = Math.max(450, initialSize.width + dx);
+				break;
+			case 'l':
+				{
+					const newWidth = Math.max(450, initialSize.width - dx);
+					const diffWidth = newWidth - windowState.width;
+
+					windowState.width = newWidth;
+					offset.x = offset.x - diffWidth;
+				}
+				break;
+		}
 	}
 
 	function stopResizing() {
 		resizing = false;
 		windowState.x = offset.x;
 		windowState.y = offset.y;
+		resizingPos = '';
 
 		document.removeEventListener('mouseup', stopResizing);
 		document.removeEventListener('mousemove', chatResizing);
@@ -90,17 +159,40 @@
 	onMount(() => {
 		const fullWindow = document.getElementById(`window-${id}`);
 		const windowBar = document.getElementById(`window-top-bar-${id}`);
-		const windowResize = document.getElementById(`window-resize-${id}`);
+		const windowResizeBR = document.getElementById(`window-resize-br-${id}`);
+		const windowResizeBL = document.getElementById(`window-resize-bl-${id}`);
+		const windowResizeTL = document.getElementById(`window-resize-tl-${id}`);
+		const windowResizeTR = document.getElementById(`window-resize-tr-${id}`);
+		const windowResizeT = document.getElementById(`window-resize-t-${id}`);
+		const windowResizeB = document.getElementById(`window-resize-b-${id}`);
+		const windowResizeL = document.getElementById(`window-resize-l-${id}`);
+		const windowResizeR = document.getElementById(`window-resize-r-${id}`);
 
-		if (!windowBar || !windowResize || !fullWindow) return;
+		if (!windowBar || !fullWindow) return;
+		if (!windowResizeT || !windowResizeB || !windowResizeL || !windowResizeR) return;
+		if (!windowResizeTL || !windowResizeTR || !windowResizeBL || !windowResizeBR) return;
 
 		fullWindow?.addEventListener('mousedown', windowMouseDown);
 		windowBar.addEventListener('mousedown', chatTopBarMouseDown);
-		windowResize.addEventListener('mousedown', chatResizeMouseDown);
+		windowResizeBR.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'br'));
+		windowResizeBL.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'bl'));
+		windowResizeTL.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'tl'));
+		windowResizeTR.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'tr'));
+		windowResizeT.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 't'));
+		windowResizeB.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'b'));
+		windowResizeL.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'l'));
+		windowResizeR.addEventListener('mousedown', (e) => chatResizeMouseDown(e, 'r'));
 
 		return () => {
 			windowBar.removeEventListener('mousedown', chatTopBarMouseDown);
-			windowResize.removeEventListener('mousedown', chatResizeMouseDown);
+			windowResizeBR.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'br'));
+			windowResizeBL.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'bl'));
+			windowResizeTL.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'tl'));
+			windowResizeTR.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'tr'));
+			windowResizeT.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 't'));
+			windowResizeB.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'b'));
+			windowResizeL.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'l'));
+			windowResizeR.removeEventListener('mousedown', (e) => chatResizeMouseDown(e, 'r'));
 		};
 	});
 </script>
@@ -122,9 +214,38 @@
 	>
 		<Corners color="border-main-700" />
 		{@render children()}
-		<div
-			id={`window-resize-${id}`}
-			class="absolute right-0 bottom-0 h-[1rem] w-[1rem] hover:cursor-se-resize"
-		></div>
 	</div>
+	<div
+		id={`window-resize-br-${id}`}
+		class="absolute right-0 bottom-0 h-[0.75rem] w-[0.75rem] hover:cursor-se-resize"
+	></div>
+	<div
+		id={`window-resize-bl-${id}`}
+		class="absolute bottom-0 left-0 h-[0.75rem] w-[0.75rem] hover:cursor-sw-resize"
+	></div>
+	<div
+		id={`window-resize-tl-${id}`}
+		class="absolute top-0 left-0 h-[0.75rem] w-[0.75rem] hover:cursor-nw-resize"
+	></div>
+	<div
+		id={`window-resize-tr-${id}`}
+		class="absolute top-0 right-0 h-[0.5rem] w-[0.5rem] hover:cursor-ne-resize"
+	></div>
+
+	<div
+		id={`window-resize-t-${id}`}
+		class="absolute top-0 left-[1rem] h-[0.25rem] w-[calc(100%-6.25rem)] hover:cursor-n-resize"
+	></div>
+	<div
+		id={`window-resize-b-${id}`}
+		class="absolute bottom-0 left-[1rem] h-[0.25rem] w-[calc(100%-2rem)] hover:cursor-s-resize"
+	></div>
+	<div
+		id={`window-resize-l-${id}`}
+		class="absolute top-[1rem] left-0 h-[calc(100%-2rem)] w-[0.25rem] hover:cursor-w-resize"
+	></div>
+	<div
+		id={`window-resize-r-${id}`}
+		class="absolute top-[2.5rem] right-0 h-[calc(100%-3.5rem)] w-[0.25rem] hover:cursor-e-resize"
+	></div>
 </div>

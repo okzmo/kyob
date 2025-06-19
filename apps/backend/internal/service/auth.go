@@ -63,7 +63,7 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*stri
 	return &b64Token, nil
 }
 
-func SignUp(ctx context.Context, email string, username string, displayName string, password string) (*string, error) {
+func SignUp(ctx context.Context, email string, username string, displayName string, password string, bodyUrl string) (*string, error) {
 	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
 		return nil, err
@@ -81,6 +81,7 @@ func SignUp(ctx context.Context, email string, username string, displayName stri
 		Avatar:      avatarUrl,
 		Banner:      avatarUrl,
 		MainColor:   mainColor,
+		Body:        pgtype.Text{String: bodyUrl, Valid: true},
 	})
 	if err != nil {
 		return nil, err

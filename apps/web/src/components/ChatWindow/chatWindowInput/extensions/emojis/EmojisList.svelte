@@ -99,7 +99,7 @@
 					<img src={emoji.url} alt={emoji.label} class="h-[24px] w-[24px] object-contain" />
 					:{emoji.shortcode}:
 				{:else}
-					{emoji.unicode} :{emoji.label.replaceAll(' ', '')}:
+					{emoji.unicode} :{emoji.label.replaceAll(' ', '_')}:
 				{/if}
 			</button>
 		{/each}

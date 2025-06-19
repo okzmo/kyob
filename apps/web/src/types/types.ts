@@ -79,6 +79,7 @@ export interface User {
 	display_name: string;
 	avatar: string;
 	banner: string;
+	body: string;
 	main_color?: string;
 	about?: any;
 	facts: Fact[];

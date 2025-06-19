@@ -21,11 +21,11 @@ type CreateEmojiParams struct {
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  id, email, username, display_name, avatar, banner, main_color, password
+  id, email, username, display_name, avatar, banner, body, main_color, password
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at
+RETURNING id, email, username, password, display_name, avatar, banner, body, about, main_color, links, facts, experience, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -35,6 +35,7 @@ type CreateUserParams struct {
 	DisplayName string      `json:"display_name"`
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
+	Body        pgtype.Text `json:"body"`
 	MainColor   pgtype.Text `json:"main_color"`
 	Password    string      `json:"password"`
 }
@@ -47,6 +48,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.DisplayName,
 		arg.Avatar,
 		arg.Banner,
+		arg.Body,
 		arg.MainColor,
 		arg.Password,
 	)
@@ -59,6 +61,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.DisplayName,
 		&i.Avatar,
 		&i.Banner,
+		&i.Body,
 		&i.About,
 		&i.MainColor,
 		&i.Links,
@@ -124,7 +127,7 @@ func (q *Queries) GetEmojis(ctx context.Context, userID string) ([]GetEmojisRow,
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE email = $1 OR username = $2
+SELECT id, email, username, password, display_name, avatar, banner, body, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE email = $1 OR username = $2
 `
 
 type GetUserParams struct {
@@ -143,6 +146,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 		&i.DisplayName,
 		&i.Avatar,
 		&i.Banner,
+		&i.Body,
 		&i.About,
 		&i.MainColor,
 		&i.Links,
@@ -155,7 +159,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) 
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, password, display_name, avatar, banner, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE id = $1
+SELECT id, email, username, password, display_name, avatar, banner, body, about, main_color, links, facts, experience, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
@@ -169,6 +173,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.DisplayName,
 		&i.Avatar,
 		&i.Banner,
+		&i.Body,
 		&i.About,
 		&i.MainColor,
 		&i.Links,
