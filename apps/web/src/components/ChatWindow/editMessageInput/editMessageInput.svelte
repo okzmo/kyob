@@ -62,7 +62,10 @@
 					}
 				},
 				onEnterPress: () => editMessage(editor.getJSON()),
-				onEscapePress: () => core.stopEditingMessage()
+				onEscapePress: () => core.stopEditingMessage(),
+				onFocus: () => {
+					editorStore.currentChannel = channel.id;
+				}
 			})
 		);
 	});

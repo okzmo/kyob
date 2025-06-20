@@ -52,7 +52,7 @@
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>
+	<Popover.Trigger class="shrink-0">
 		{@render children()}
 	</Popover.Trigger>
 	<CustomPopoverContent

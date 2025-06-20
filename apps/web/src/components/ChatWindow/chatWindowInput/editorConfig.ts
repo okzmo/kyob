@@ -5,7 +5,6 @@ import { Placeholder } from '@tiptap/extensions';
 import type { Content, EditorOptions, Extension, FocusPosition } from '@tiptap/core';
 import type { EditorProps } from '@tiptap/pm/view';
 import { editorStore } from 'stores/editor.svelte';
-import { Link } from "@tiptap/extension-link"
 
 interface EditorConfigOptions {
   element: Element;
@@ -18,6 +17,7 @@ interface EditorConfigOptions {
   onEnterPress?: () => void;
   onEscapePress?: () => void;
   onBlur?: () => void;
+  onFocus?: () => void;
 }
 
 export function getMessageExtensions() {
@@ -78,6 +78,7 @@ export function createEditorConfig({
   onTransaction,
   onEnterPress,
   onBlur,
+  onFocus,
   onEscapePress
 }: EditorConfigOptions): Partial<EditorOptions> {
   const base = [
@@ -141,6 +142,7 @@ export function createEditorConfig({
     extensions: extensions,
     onTransaction,
     onBlur: onBlur ? onBlur : () => { },
+    onFocus: onFocus ? onFocus : () => { },
     editorProps: editorProps
       ? {
         ...editorProps,

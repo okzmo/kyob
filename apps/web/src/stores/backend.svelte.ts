@@ -18,7 +18,6 @@ import type {
   DeleteMessageErrors,
   DeleteServerErrors,
   EmojiErrors,
-  GetAssetsErrors,
   GetUserErrors,
   JoinServerErrors,
   LeaveServerErrors,
@@ -50,7 +49,6 @@ import type {
   Friend,
   LastState,
   Message,
-  RPMAsset,
   Server,
   Setup,
   User
@@ -235,7 +233,9 @@ class Backend {
             const newFriend: Friend = {
               id: value.user?.id,
               display_name: value.user?.displayName,
+              username: value.user?.username,
               avatar: value.user?.avatar,
+              banner: value.user?.banner,
               friendship_id: value.inviteId,
               accepted: false,
               sender: false
@@ -255,7 +255,9 @@ class Backend {
               const newFriend: Friend = {
                 id: value.user?.id,
                 display_name: value.user?.displayName,
+                username: value.user?.username,
                 avatar: value.user?.avatar,
+                banner: value.user?.banner,
                 friendship_id: value.inviteId,
                 channel_id: value.channelId,
                 accepted: true,

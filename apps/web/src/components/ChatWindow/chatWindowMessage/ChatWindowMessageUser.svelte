@@ -23,6 +23,11 @@
 			{author.display_name}
 		</p>
 	</UserProfileWithTriggerAndFetch>
+	<!-- <div -->
+	<!-- 	class="inner-red-400/40 mb-[3px] bg-red-400/15 px-2 py-0.5 text-xs font-semibold text-red-400 uppercase select-none" -->
+	<!-- > -->
+	<!-- 	Admin -->
+	<!-- </div> -->
 	<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
 		{formatMessageTime(time)}
 	</time>

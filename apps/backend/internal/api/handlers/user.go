@@ -320,7 +320,9 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 		User: &proto.User{
 			Id:          user.ID,
 			DisplayName: user.DisplayName,
+			Username:    user.Username,
 			Avatar:      &user.Avatar.String,
+			Banner:      &user.Banner.String,
 			About:       user.About,
 		},
 	}
@@ -380,7 +382,9 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 		User: &proto.User{
 			Id:          friend.ID,
 			DisplayName: friend.DisplayName,
+			Username:    friend.Username,
 			Avatar:      &friend.Avatar.String,
+			Banner:      &friend.Banner.String,
 			About:       friend.About,
 		},
 		Sender: true,

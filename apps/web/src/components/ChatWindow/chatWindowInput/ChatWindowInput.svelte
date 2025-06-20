@@ -2,15 +2,11 @@
 	import { onDestroy, onMount } from 'svelte';
 	import EmojiIcon from 'components/ui/icons/EmojiIcon.svelte';
 	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import { Placeholder } from '@tiptap/extensions';
 	import { backend } from 'stores/backend.svelte';
 	import type { Channel, Friend, Server } from 'types/types';
 	import MentionsList from './extensions/mentions/MentionsList.svelte';
-	import { CustomMention } from './extensions/mentions/mentions';
 	import EmojisList from './extensions/emojis/EmojisList.svelte';
 	import { editorStore } from 'stores/editor.svelte';
-	import { EmojisSuggestion } from './extensions/emojis/emojis';
 	import AttachmentButton from './AttachmentButton.svelte';
 	import Attachments from './Attachments.svelte';
 	import { createEditorConfig } from './editorConfig';
@@ -53,8 +49,6 @@
 	}
 
 	onMount(() => {
-		editorStore.currentChannel = channel.id;
-
 		editor = new Editor(
 			createEditorConfig({
 				element: element,
@@ -69,7 +63,10 @@
 						class: 'chat-input'
 					}
 				},
-				onEnterPress: () => prepareMessage(editor.getJSON())
+				onEnterPress: () => prepareMessage(editor.getJSON()),
+				onFocus: () => {
+					editorStore.currentChannel = channel.id;
+				}
 			})
 		);
 	});

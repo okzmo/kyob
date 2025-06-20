@@ -70,7 +70,8 @@ class UserStore {
   }
 
   getFriend(id: string) {
-    return this.friends?.find((f) => f.id === id);
+    if (!this.friends || !Array.isArray(this.friends)) return undefined
+    return this.friends.find((f) => f.id === id);
   }
 
   modifyFriend(friendId: string, informations: Partial<User>) {

@@ -16,6 +16,18 @@
 		if (channel.voice_users.length <= 1) return;
 		mainParticipant = participantId;
 	}
+
+	function getParticipant(id: string) {
+		if (userStore.user?.id === id) return userStore.user;
+
+		const friend = userStore.getFriend(id);
+		if (friend) return friend;
+
+		const member = serversStore.getMemberById(server.id, id);
+		if (member) return member;
+
+		return undefined;
+	}
 </script>
 
 <div
@@ -37,17 +49,15 @@
 		</button>
 	{:else if channel.voice_users.length > 0}
 		{#each channel.voice_users as participant (participant.user_id)}
-			{@const participantInfos = serversStore.getMemberById(server.id, participant.user_id)}
-			{@const friendInfo = userStore.getFriend(participant.user_id)}
+			{@const participantInfos = getParticipant(participant.user_id)}
 
 			<button
 				class="attachment relative aspect-[4/3] min-h-0 max-w-full @lg:max-w-[20rem]"
 				onclick={() => toggleMainParticipant(participant.user_id)}
 			>
-				{friendInfo?.username}
 				<img
-					src={participantInfos?.banner || friendInfo?.banner || userStore.user?.banner}
-					alt={participantInfos?.username || friendInfo?.username || userStore.user?.username}
+					src={participantInfos?.banner}
+					alt={participantInfos?.username}
 					class="h-full w-full object-cover select-none"
 				/>
 			</button>
