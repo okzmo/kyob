@@ -140,12 +140,7 @@ class Backend {
               last_mentions: [],
               x: value.x,
               y: value.y,
-              users: value.users.map((u) => ({
-                id: u.id,
-                avatar: u.avatar,
-                username: u.username,
-                display_name: u.displayName
-              })),
+              users: value.users,
               voice_users: []
             };
             serversStore.addChannel(value.serverId, channel);
@@ -279,7 +274,9 @@ class Backend {
           {
             if (!wsMess.content.value) return;
             const value = wsMess.content.value;
-            userStore.deleteFriend(value.inviteId);
+            const channelId = userStore.deleteFriend(value.inviteId);
+            if (channelId) serversStore.removeChannel('global', channelId)
+
             const friendChatWindow = windows.getWindow({ friendId: value.userId });
             if (friendChatWindow) windows.closeDeadWindow(friendChatWindow.id);
           }

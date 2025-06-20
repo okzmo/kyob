@@ -25,8 +25,9 @@ class UserStore {
     const dms: DM[] = [];
 
     for (const channel of Object.values(global.channels)) {
-      if (Number(channel.last_message_read) < Number(channel.last_message_sent)) {
-        const friend = channel.users?.find((u) => u.id !== this.user!.id);
+      if ((Number(channel.last_message_read) < Number(channel.last_message_sent)) || (channel.last_message_read === "" && channel.last_message_sent !== "")) {
+        const friendId = channel.users?.find((userId) => userId !== this.user!.id);
+        const friend = this.getFriend(friendId || '')
         if (!friend) continue;
 
         dms.push({
@@ -111,7 +112,9 @@ class UserStore {
 
   deleteFriend(friendshipId: string) {
     const friendIdx = this.friends.findIndex((f) => f.friendship_id === friendshipId);
+    const channelId = this.friends[friendIdx].channel_id
     if (friendIdx > -1) this.friends.splice(friendIdx, 1);
+    return channelId
   }
 }
 

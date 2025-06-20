@@ -36,7 +36,7 @@ export interface Channel {
   last_message_read?: string;
   last_mentions?: string[];
   messages?: Message[];
-  users?: Partial<User>[];
+  users?: string[];
   voice_users: {
     user_id: string;
     deafen: boolean;

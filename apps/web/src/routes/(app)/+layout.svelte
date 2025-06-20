@@ -50,6 +50,8 @@
 			goback.on();
 		}
 	});
+
+	$inspect(serversStore.servers);
 </script>
 
 <Desktop>{@render children()}</Desktop>

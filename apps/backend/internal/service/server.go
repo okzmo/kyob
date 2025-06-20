@@ -356,18 +356,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 			"",
 			"",
 			json.RawMessage(`[]`),
-			[]db.GetUsersByIdsRow{},
 			[]VoiceUser{},
-		}
-
-		for _, userID := range channelRaw.Users {
-			user := membersMap[userID]
-			channel.Users = append(channel.Users, db.GetUsersByIdsRow{
-				ID:          user.ID,
-				Username:    user.Username,
-				DisplayName: user.DisplayName,
-				Avatar:      user.Avatar,
-			})
 		}
 
 		channelMap[channel.ID] = channel

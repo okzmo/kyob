@@ -9,6 +9,7 @@
 	import Bin from '../../ui/icons/Bin.svelte';
 	import { windows } from 'stores/windows.svelte';
 	import Corners from 'components/ui/Corners/Corners.svelte';
+	import { serversStore } from 'stores/servers.svelte';
 
 	let {
 		id,
@@ -49,6 +50,7 @@
 
 		if (res.isOk()) {
 			userStore.deleteFriend(friendshipId);
+			serversStore.removeChannel('global', channelId);
 		}
 	}
 </script>
@@ -56,6 +58,7 @@
 <button
 	class="group hocus:bg-main-800 hocus:inner-main-700 relative flex w-full items-center gap-x-2.5 py-1.5 pr-4 pl-1.5 text-left transition hover:cursor-pointer"
 	onclick={() => {
+		if (!accepted) return null;
 		windows.createWindow({
 			id: `window-${id}`,
 			serverId: 'global',

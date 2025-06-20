@@ -40,11 +40,10 @@ type VoiceUser struct {
 
 type ChannelsWithMembers struct {
 	db.Channel
-	LastMessageSent string                `json:"last_message_sent"`
-	LastMessageRead string                `json:"last_message_read"`
-	MentionsIds     json.RawMessage       `json:"last_mentions"`
-	Users           []db.GetUsersByIdsRow `json:"users"`
-	VoiceUsers      []VoiceUser           `json:"voice_users"`
+	LastMessageSent string          `json:"last_message_sent"`
+	LastMessageRead string          `json:"last_message_read"`
+	MentionsIds     json.RawMessage `json:"last_mentions"`
+	VoiceUsers      []VoiceUser     `json:"voice_users"`
 }
 
 type UserResponse struct {
@@ -229,19 +228,11 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 		channelMap := make(map[string]ChannelsWithMembers)
 
 		for _, channel := range channelsByServer[server.ID] {
-			channelUsers := make([]db.GetUsersByIdsRow, 0, len(channel.Users))
-			for _, userID := range channel.Users {
-				if user, exists := userMap[userID]; exists {
-					channelUsers = append(channelUsers, user)
-				}
-			}
-
 			channelMap[channel.ID] = ChannelsWithMembers{
 				channel,
 				allMessagesSentSet[channel.ID],
 				allMessagesReadSet[channel.ID],
 				allMessagesMentionsSet[channel.ID],
-				channelUsers,
 				[]VoiceUser{},
 			}
 		}

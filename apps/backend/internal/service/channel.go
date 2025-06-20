@@ -79,6 +79,7 @@ func CreateChannel(ctx context.Context, creatorID, serverID string, channel *Cre
 		Type:        string(c.Type),
 		X:           c.X,
 		Y:           c.Y,
+		Users:       channel.Users,
 		CreatedAt:   timestamppb.New(c.CreatedAt),
 		UpdatedAt:   timestamppb.New(c.UpdatedAt),
 	}

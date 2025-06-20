@@ -135,7 +135,7 @@ message BroadcastChannelCreation {
   string name = 3;
   string type = 4;
   optional string description = 5;
-  repeated User users = 6;
+  repeated string users = 6;
   repeated string roles = 7;
   int32 x = 8;
   int32 y = 9;
