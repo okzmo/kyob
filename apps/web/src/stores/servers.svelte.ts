@@ -1,4 +1,4 @@
-import type { Channel, LastState, Message, Server, User } from '../types/types';
+import type { Channel, LastState, Message, Role, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 import { userStore } from './user.svelte';
 import { windows } from './windows.svelte';
@@ -244,6 +244,11 @@ class Servers {
     }
 
     return false;
+  }
+
+  getFirstRole(serverId: string) {
+    const server = this.getServer(serverId)
+    return server.roles?.[0]
   }
 
   getLastState(): LastState {

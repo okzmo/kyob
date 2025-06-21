@@ -4,6 +4,9 @@ export const ChannelTypes = {
 } as const;
 export type ChannelTypes = (typeof ChannelTypes)[keyof typeof ChannelTypes];
 
+export const ABILITIES = ['ADMIN', 'MANAGE_CHANNELS', 'MANAGE_ROLES', 'MANAGE_SERVER', 'MANAGE_EXPRESSIONS', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES', 'BAN', 'KICK', 'MUTE', 'ATTACH_FILES', 'MANAGE_MESSAGES'] as const
+export type AbilitiesType = typeof ABILITIES[number]
+
 export const contextMenuTargets = [
   'serverButton',
   'channelButton',
@@ -59,6 +62,15 @@ export interface Server {
   member_count: number;
   members: Partial<User>[];
   hidden: boolean;
+  roles?: Role[];
+}
+
+export interface Role {
+  id: string;
+  idx: number;
+  name: string
+  color: string
+  abilities: string[]
 }
 
 export interface Fact {

@@ -24,9 +24,9 @@ type BodySaveState struct {
 
 type ServerWithChannels struct {
 	ServerResponse
-	X int32 `json:"x"`
-	Y int32 `json:"y"`
-	// Roles    []db.Role         `json:"roles"`
+	X           int32                          `json:"x"`
+	Y           int32                          `json:"y"`
+	Roles       []db.GetRolesFromServersRow    `json:"roles"`
 	Channels    map[string]ChannelsWithMembers `json:"channels"`
 	MemberCount int                            `json:"member_count"`
 	Members     []db.GetMembersFromServersRow  `json:"members"`
@@ -157,6 +157,11 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 		return nil, err
 	}
 
+	allRoles, err := db.Query.GetRolesFromServers(ctx, serverIDs)
+	if err != nil {
+		return nil, err
+	}
+
 	channelIDs := make([]string, 0, len(allChannels))
 	for _, channel := range allChannels {
 		channelIDs = append(channelIDs, channel.ID)
@@ -223,6 +228,11 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 		membersByServer[member.ServerID] = append(membersByServer[member.ServerID], member)
 	}
 
+	rolesByServer := make(map[string][]db.GetRolesFromServersRow)
+	for _, role := range allRoles {
+		rolesByServer[role.ServerID] = append(rolesByServer[role.ServerID], role)
+	}
+
 	result := make(map[string]ServerWithChannels)
 	for _, server := range servers {
 		channelMap := make(map[string]ChannelsWithMembers)
@@ -252,6 +262,7 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 			},
 			server.X.Int32,
 			server.Y.Int32,
+			rolesByServer[server.ID],
 			channelMap,
 			int(server.MemberCount),
 			membersByServer[server.ID],

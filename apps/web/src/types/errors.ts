@@ -139,8 +139,8 @@ export interface DeleteEmojiErrors {
   cause?: any;
 }
 
-export interface GetAssetsErrors {
-  code: 'ERR_UNKNOWN';
+export interface RoleErrors {
+  code: 'ERR_FORBIDDEN' | 'ERR_UNKNOWN';
   error: string;
   cause?: any;
 }

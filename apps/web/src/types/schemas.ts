@@ -233,3 +233,19 @@ export const UpdateServerProfileSchema = v.object({
 });
 
 export interface UpdateServerProfileType extends v.InferInput<typeof UpdateServerProfileSchema> { }
+
+export const CreateOrUpdateRoleSchema = v.object({
+  name: v.optional(
+    v.pipe(
+      v.string(),
+      v.minLength(1, 'Minimum 1 character.'),
+      v.maxLength(20, 'Maximum 20 characters.')
+    ),
+    ''
+  ),
+  color: v.string(),
+  abilities: v.array(v.string()),
+  index: v.number()
+});
+
+export interface CreateOrUpdateRoleType extends v.InferInput<typeof CreateOrUpdateRoleSchema> { }

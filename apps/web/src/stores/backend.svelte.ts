@@ -22,6 +22,7 @@ import type {
   JoinServerErrors,
   LeaveServerErrors,
   MessagesErrors,
+  RoleErrors,
   SetupErrors,
   StandardError,
   UpdateAccountErrors,
@@ -33,6 +34,7 @@ import type {
   AddFriendType,
   CreateChannelType,
   CreateMessageType,
+  CreateOrUpdateRoleType,
   CreateServerType,
   DeleteFriendType,
   EditMessageType,
@@ -49,6 +51,7 @@ import type {
   Friend,
   LastState,
   Message,
+  Role,
   Server,
   Setup,
   User
@@ -1033,6 +1036,74 @@ class Backend {
         default:
           return err({ code: 'ERR_UNKNOWN', error: errBody.error });
       }
+    }
+  }
+
+  async createRole(serverId: string, body: CreateOrUpdateRoleType): Promise<Result<Role, RoleErrors>> {
+    try {
+      const res = await client.post(`server/create_role/${serverId}`, {
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json() as Role;
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok(data);
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+    }
+  }
+
+  async getRoles(serverId: string): Promise<Result<Role[], RoleErrors>> {
+    try {
+      const res = await client.get(`server/get_roles/${serverId}`);
+
+      const data = await res.json() as Role[];
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok(data);
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+    }
+  }
+
+  async moveRole(serverId: string, roleId: string, from: number, to: number): Promise<Result<void, RoleErrors>> {
+    try {
+      const res = await client.patch(`server/move_role/${serverId}`, {
+        body: JSON.stringify({ role_id: roleId, from, to })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok();
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+    }
+  }
+
+  async deleteRole(serverId: string, roleId: string): Promise<Result<void, RoleErrors>> {
+    try {
+      const res = await client.delete(`server/delete_role/${serverId}/${roleId}`);
+
+      const data = await res.json();
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok();
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
     }
   }
 

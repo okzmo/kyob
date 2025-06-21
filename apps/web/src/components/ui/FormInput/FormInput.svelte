@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ColorPicker from 'components/settings/roles/ColorPicker.svelte';
 	import AboutInput from '../../settings/AboutInput.svelte';
 
 	interface Props {
@@ -7,7 +8,7 @@
 		error: any;
 		placeholder: string;
 		title: string;
-		type: 'text' | 'password' | 'textarea' | 'rich';
+		type: 'text' | 'password' | 'textarea' | 'rich' | 'color-picker';
 		class?: string;
 		inputClass?: string;
 	}
@@ -31,18 +32,7 @@
 			<p class="text-sm text-red-400">- {error}</p>
 		{/if}
 	</div>
-	{#if type !== 'textarea' && type !== 'rich'}
-		<input
-			{id}
-			{type}
-			bind:value={inputValue}
-			{placeholder}
-			class={[
-				'bg-main-900 placeholder:text-main-400 hocus:bg-main-800/50 mt-1.5 transition-colors duration-100 focus:ring-0',
-				error ? 'border-red-400' : 'border-main-800 hocus:border-main-700'
-			]}
-		/>
-	{:else if type === 'textarea'}
+	{#if type === 'textarea'}
 		<textarea
 			{id}
 			bind:value={inputValue}
@@ -54,5 +44,19 @@
 		></textarea>
 	{:else if type === 'rich'}
 		<AboutInput bind:content={inputValue} {placeholder} class={inputClass} />
+	{:else if type === 'color-picker'}
+		<ColorPicker bind:color={inputValue} />
+	{:else}
+		<input
+			{id}
+			{type}
+			bind:value={inputValue}
+			{placeholder}
+			class={[
+				'bg-main-900 placeholder:text-main-400 hocus:bg-main-800/50 mt-1.5 transition-colors duration-100 focus:ring-0',
+				error ? 'border-red-400' : 'border-main-800 hocus:border-main-700',
+				inputClass
+			]}
+		/>
 	{/if}
 </div>

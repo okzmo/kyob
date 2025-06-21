@@ -3,14 +3,81 @@
 	import { page } from '$app/state';
 	import RoleSidebar from 'components/settings/roles/RoleSidebar.svelte';
 	import RoleTabBar from 'components/settings/roles/RoleTabBar.svelte';
-	import FormEditRole from 'components/settings/roles/FormEditRole.svelte';
 	import FormNewRole from 'components/settings/roles/FormNewRole.svelte';
+	import type { AbilitiesType, Role } from 'types/types';
+	import { onMount } from 'svelte';
+	import { backend } from 'stores/backend.svelte';
 
 	const server = $derived(serversStore.getServer(page.params.serverId));
 
 	let activeTab = $state('display');
-	let activeRole = $state<number | undefined>();
+	let activeRole = $state<Role | undefined>();
 	let creatingRole = $state(false);
+	let roles = $state<Role[]>([]);
+
+	const PERMISSIONS: { label: string; description: string; ability: AbilitiesType }[] = [
+		{
+			label: 'Manage Server',
+			description: "Allow role to change the server's name and banner.",
+			ability: 'MANAGE_SERVER'
+		},
+		{
+			label: 'Manage Channels',
+			description: 'Allow role to create, edit or delete channels.',
+			ability: 'MANAGE_CHANNELS'
+		},
+		{
+			label: 'Manage Roles',
+			description: 'Allow role to create, edit or delete roles.',
+			ability: 'MANAGE_ROLES'
+		},
+		{
+			label: 'Manage Expressions',
+			description: 'Allow role to create, edit or delete emojis.',
+			ability: 'MANAGE_EXPRESSIONS'
+		},
+		{
+			label: 'Manage messages',
+			description: 'Allow role to delete other members messages.',
+			ability: 'MANAGE_MESSAGES'
+		},
+		{
+			label: 'Ban members',
+			description: 'Allow role to ban other members.',
+			ability: 'BAN'
+		},
+		{
+			label: 'Kick members',
+			description: 'Allow role to kick other members.',
+			ability: 'KICK'
+		},
+		{
+			label: 'Mute members',
+			description: 'Allow role to mute other members.',
+			ability: 'MUTE'
+		},
+		{
+			label: 'Attach files',
+			description: 'Allow role to attach files in text channels.',
+			ability: 'ATTACH_FILES'
+		},
+		{
+			label: 'Administrator',
+			description: 'Allow role to do anything.',
+			ability: 'ADMIN'
+		}
+	];
+
+	onMount(async () => {
+		roles = [];
+		const res = await backend.getRoles(page.params.serverId);
+
+		if (res.isOk() && res.value) {
+			for (const role of res.value) {
+				roles[role.idx] = role;
+			}
+		}
+	});
 </script>
 
 <h1 class="text-2xl font-bold select-none">Roles</h1>
@@ -20,18 +87,35 @@
 
 <hr class="mt-5 w-full border-none" style="height: 1px; background-color: var(--color-main-800);" />
 
-<div class="mt-5 flex h-[calc(100%-8rem)]">
-	<RoleSidebar bind:activeRole bind:creatingRole />
-	<div class="bg-main-800 mx-4 h-full w-[1px]"></div>
-	<div class="flex flex-col">
+<div class="mt-5 flex h-[calc(100%-8rem)] gap-x-4">
+	<RoleSidebar serverId={server.id} bind:activeRole bind:creatingRole {roles} />
+	<div class="border-l-main-800 flex h-full w-full flex-col border-l pl-4">
 		{#if creatingRole || activeRole}
 			<RoleTabBar bind:activeTab />
 		{/if}
 
-		{#if activeRole}
-			<FormEditRole {activeTab} />
-		{:else if creatingRole}
-			<FormNewRole {activeTab} />
+		{#if activeRole || creatingRole}
+			{#if activeTab === 'display' || activeTab === 'permissions'}
+				<FormNewRole
+					bind:roles
+					bind:creatingRole
+					serverId={server.id}
+					{activeTab}
+					{PERMISSIONS}
+					{activeRole}
+				/>
+			{:else if activeTab === 'members'}
+				<ul class="mt-4 flex flex-col">
+					{#each server.members as member (member.id)}
+						<li
+							class="border-b-main-800 flex items-center gap-x-2 border-b px-2 py-4 first:pt-0 last:border-b-transparent"
+						>
+							<img src={member.avatar} alt="" class="h-8 w-8" />
+							{member.display_name}
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		{:else}
 			No role selected, either create one or select one.
 		{/if}

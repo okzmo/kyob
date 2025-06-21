@@ -6,7 +6,7 @@
 
 <div class="mx-auto flex max-w-7xl gap-x-10">
 	<Sidebar type="general" />
-	<main class="h-screen w-full overflow-auto pt-20">
+	<main class="h-screen w-full pt-20">
 		{@render children()}
 	</main>
 </div>

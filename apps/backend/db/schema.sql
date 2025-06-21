@@ -11,26 +11,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: abilities; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.abilities AS ENUM (
-    'ADMIN',
-    'MANAGE_CHANNELS',
-    'MANAGE_ROLES',
-    'MANAGE_SERVER',
-    'MANAGE_EXPRESSIONS',
-    'CHANGE_NICKNAME',
-    'MANAGE_NICKNAMES',
-    'BAN',
-    'KICK',
-    'MUTE',
-    'ATTACH_FILES',
-    'MANAGE_MESSAGES'
-);
-
-
---
 -- Name: channel_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -129,11 +109,11 @@ CREATE TABLE public.messages (
 
 CREATE TABLE public.roles (
     id character varying(20) NOT NULL,
+    idx integer DEFAULT 0 NOT NULL,
     server_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     color character varying(255) NOT NULL,
-    description text,
-    abilities text[],
+    abilities character varying(255)[],
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

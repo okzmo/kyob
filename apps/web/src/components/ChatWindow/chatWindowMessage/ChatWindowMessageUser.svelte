@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 	import { core } from 'stores/core.svelte';
+	import { serversStore } from 'stores/servers.svelte';
 	import type { User } from 'types/types';
 	import { formatMessageTime } from 'utils/time';
 
@@ -13,6 +15,8 @@
 	}
 
 	let { author, isUserMentioned, isEdited, id, time }: Props = $props();
+
+	let role = $derived(serversStore.getFirstRole(page.params.server_id));
 </script>
 
 <div class="flex items-baseline gap-x-2.5">
@@ -23,11 +27,14 @@
 			{author.display_name}
 		</p>
 	</UserProfileWithTriggerAndFetch>
-	<!-- <div -->
-	<!-- 	class="inner-red-400/40 mb-[3px] bg-red-400/15 px-2 py-0.5 text-xs font-semibold text-red-400 uppercase select-none" -->
-	<!-- > -->
-	<!-- 	Admin -->
-	<!-- </div> -->
+	{#if role}
+		<div
+			class="mb-[4px] px-2 py-0.5 text-xs font-semibold uppercase select-none"
+			style="color: rgb({role.color}); background-color: rgba({role.color}, 0.15);"
+		>
+			{role.name}
+		</div>
+	{/if}
 	<time class={['text-xs', isUserMentioned ? 'text-main-300' : 'text-main-600']}>
 		{formatMessageTime(time)}
 	</time>

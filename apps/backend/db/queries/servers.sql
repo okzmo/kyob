@@ -21,7 +21,7 @@ FROM server_membership
 WHERE user_id = $1;
 
 -- name: GetServersFromUser :many
-SELECT DISTINCT s.*, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
+SELECT DISTINCT s.*, sm.x, sm.y, sm.roles, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s
 LEFT JOIN server_membership sm ON sm.server_id = s.id AND sm.user_id = $1
 WHERE s.id = 'global' OR sm.user_id IS NOT NULL;
@@ -31,6 +31,9 @@ SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, use
 
 -- name: GetMembersFromServers :many
 SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id;
+
+-- name: GetRolesFromServers :many
+SELECT r.id, r.idx, r.name, r.color, r.abilities, sm.server_id FROM roles r, server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id AND r.id = ANY(sm.roles) AND r.server_id = sm.server_id order by r.idx;
 
 -- name: CreateServer :one
 INSERT INTO servers (

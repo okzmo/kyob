@@ -124,6 +124,46 @@ func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) 
 	return items, nil
 }
 
+const getRolesFromServers = `-- name: GetRolesFromServers :many
+SELECT r.id, r.idx, r.name, r.color, r.abilities, sm.server_id FROM roles r, server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id AND r.id = ANY(sm.roles) AND r.server_id = sm.server_id order by r.idx
+`
+
+type GetRolesFromServersRow struct {
+	ID        string   `json:"id"`
+	Idx       int32    `json:"idx"`
+	Name      string   `json:"name"`
+	Color     string   `json:"color"`
+	Abilities []string `json:"abilities"`
+	ServerID  string   `json:"server_id"`
+}
+
+func (q *Queries) GetRolesFromServers(ctx context.Context, dollar_1 []string) ([]GetRolesFromServersRow, error) {
+	rows, err := q.db.Query(ctx, getRolesFromServers, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetRolesFromServersRow
+	for rows.Next() {
+		var i GetRolesFromServersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Idx,
+			&i.Name,
+			&i.Color,
+			&i.Abilities,
+			&i.ServerID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getServer = `-- name: GetServer :one
 SELECT id, owner_id, name, avatar, banner, description, main_color, private, created_at, updated_at FROM servers WHERE id = $1
 `
@@ -279,7 +319,7 @@ func (q *Queries) GetServersCountFromUser(ctx context.Context, userID string) (i
 }
 
 const getServersFromUser = `-- name: GetServersFromUser :many
-SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.main_color, s.private, s.created_at, s.updated_at, sm.x, sm.y, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
+SELECT DISTINCT s.id, s.owner_id, s.name, s.avatar, s.banner, s.description, s.main_color, s.private, s.created_at, s.updated_at, sm.x, sm.y, sm.roles, (SELECT count(id) FROM server_membership smc WHERE smc.server_id=s.id) AS member_count
 FROM servers s
 LEFT JOIN server_membership sm ON sm.server_id = s.id AND sm.user_id = $1
 WHERE s.id = 'global' OR sm.user_id IS NOT NULL
@@ -298,6 +338,7 @@ type GetServersFromUserRow struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 	X           pgtype.Int4 `json:"x"`
 	Y           pgtype.Int4 `json:"y"`
+	Roles       []string    `json:"roles"`
 	MemberCount int64       `json:"member_count"`
 }
 
@@ -323,6 +364,7 @@ func (q *Queries) GetServersFromUser(ctx context.Context, userID string) ([]GetS
 			&i.UpdatedAt,
 			&i.X,
 			&i.Y,
+			&i.Roles,
 			&i.MemberCount,
 		); err != nil {
 			return nil, err

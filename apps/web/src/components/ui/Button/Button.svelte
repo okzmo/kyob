@@ -36,7 +36,7 @@
 		{onclick}
 	>
 		{#if corners}
-			<Corners color="bg-green-400" />
+			<Corners color="border-green-400" />
 		{/if}
 		{@render children()}
 	</button>
@@ -52,7 +52,7 @@
 		{onclick}
 	>
 		{#if corners}
-			<Corners color="bg-red-400" />
+			<Corners color="border-red-400" />
 		{/if}
 		{@render children()}
 	</button>

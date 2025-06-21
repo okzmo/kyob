@@ -7,35 +7,148 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createRole = `-- name: CreateRole :exec
+const createRole = `-- name: CreateRole :one
 INSERT INTO roles (
-  id, server_id, name, color, description, abilities
+  id, idx, server_id, name, color, abilities
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
+RETURNING id, idx, server_id, name, color, abilities, created_at, updated_at
 `
 
 type CreateRoleParams struct {
-	ID          string      `json:"id"`
-	ServerID    string      `json:"server_id"`
-	Name        string      `json:"name"`
-	Color       string      `json:"color"`
-	Description pgtype.Text `json:"description"`
-	Abilities   []string    `json:"abilities"`
+	ID        string   `json:"id"`
+	Idx       int32    `json:"idx"`
+	ServerID  string   `json:"server_id"`
+	Name      string   `json:"name"`
+	Color     string   `json:"color"`
+	Abilities []string `json:"abilities"`
 }
 
-func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) error {
-	_, err := q.db.Exec(ctx, createRole,
+func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error) {
+	row := q.db.QueryRow(ctx, createRole,
 		arg.ID,
+		arg.Idx,
 		arg.ServerID,
 		arg.Name,
 		arg.Color,
-		arg.Description,
 		arg.Abilities,
 	)
+	var i Role
+	err := row.Scan(
+		&i.ID,
+		&i.Idx,
+		&i.ServerID,
+		&i.Name,
+		&i.Color,
+		&i.Abilities,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const deleteRole = `-- name: DeleteRole :exec
+DELETE FROM roles WHERE id = $1
+`
+
+func (q *Queries) DeleteRole(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteRole, id)
+	return err
+}
+
+const getRoles = `-- name: GetRoles :many
+SELECT r.id, r.idx, r.server_id, r.name, r.color, r.abilities, r.created_at, r.updated_at
+FROM roles r
+WHERE r.server_id = $1
+`
+
+func (q *Queries) GetRoles(ctx context.Context, serverID string) ([]Role, error) {
+	rows, err := q.db.Query(ctx, getRoles, serverID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Role
+	for rows.Next() {
+		var i Role
+		if err := rows.Scan(
+			&i.ID,
+			&i.Idx,
+			&i.ServerID,
+			&i.Name,
+			&i.Color,
+			&i.Abilities,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserAbilities = `-- name: GetUserAbilities :many
+SELECT r.abilities 
+FROM roles r, server_membership sm 
+WHERE sm.server_id = $1 AND sm.user_id = $2 AND r.id = ANY(sm.roles)
+`
+
+type GetUserAbilitiesParams struct {
+	ServerID string `json:"server_id"`
+	UserID   string `json:"user_id"`
+}
+
+func (q *Queries) GetUserAbilities(ctx context.Context, arg GetUserAbilitiesParams) ([][]string, error) {
+	rows, err := q.db.Query(ctx, getUserAbilities, arg.ServerID, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items [][]string
+	for rows.Next() {
+		var abilities []string
+		if err := rows.Scan(&abilities); err != nil {
+			return nil, err
+		}
+		items = append(items, abilities)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const moveRole = `-- name: MoveRole :exec
+UPDATE roles SET idx = $1 WHERE id = $2
+`
+
+type MoveRoleParams struct {
+	Idx int32  `json:"idx"`
+	ID  string `json:"id"`
+}
+
+func (q *Queries) MoveRole(ctx context.Context, arg MoveRoleParams) error {
+	_, err := q.db.Exec(ctx, moveRole, arg.Idx, arg.ID)
+	return err
+}
+
+const updateRolePositions = `-- name: UpdateRolePositions :exec
+UPDATE roles SET idx = idx + 1 WHERE idx >= $1 AND idx < $2
+`
+
+type UpdateRolePositionsParams struct {
+	Idx   int32 `json:"idx"`
+	Idx_2 int32 `json:"idx_2"`
+}
+
+func (q *Queries) UpdateRolePositions(ctx context.Context, arg UpdateRolePositionsParams) error {
+	_, err := q.db.Exec(ctx, updateRolePositions, arg.Idx, arg.Idx_2)
 	return err
 }

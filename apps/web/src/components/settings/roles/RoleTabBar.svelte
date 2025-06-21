@@ -1,5 +1,5 @@
 <script lang="ts">
-	const TABS = ['display', 'permissions'];
+	const TABS = ['display', 'permissions', 'members'];
 
 	let { activeTab = $bindable() } = $props();
 </script>

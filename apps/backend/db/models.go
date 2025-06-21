@@ -13,58 +13,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Abilities string
-
-const (
-	AbilitiesADMIN             Abilities = "ADMIN"
-	AbilitiesMANAGECHANNELS    Abilities = "MANAGE_CHANNELS"
-	AbilitiesMANAGEROLES       Abilities = "MANAGE_ROLES"
-	AbilitiesMANAGESERVER      Abilities = "MANAGE_SERVER"
-	AbilitiesMANAGEEXPRESSIONS Abilities = "MANAGE_EXPRESSIONS"
-	AbilitiesCHANGENICKNAME    Abilities = "CHANGE_NICKNAME"
-	AbilitiesMANAGENICKNAMES   Abilities = "MANAGE_NICKNAMES"
-	AbilitiesBAN               Abilities = "BAN"
-	AbilitiesKICK              Abilities = "KICK"
-	AbilitiesMUTE              Abilities = "MUTE"
-	AbilitiesATTACHFILES       Abilities = "ATTACH_FILES"
-	AbilitiesMANAGEMESSAGES    Abilities = "MANAGE_MESSAGES"
-)
-
-func (e *Abilities) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = Abilities(s)
-	case string:
-		*e = Abilities(s)
-	default:
-		return fmt.Errorf("unsupported scan type for Abilities: %T", src)
-	}
-	return nil
-}
-
-type NullAbilities struct {
-	Abilities Abilities `json:"abilities"`
-	Valid     bool      `json:"valid"` // Valid is true if Abilities is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullAbilities) Scan(value interface{}) error {
-	if value == nil {
-		ns.Abilities, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.Abilities.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullAbilities) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.Abilities), nil
-}
-
 type ChannelType string
 
 const (
@@ -162,14 +110,14 @@ type Message struct {
 }
 
 type Role struct {
-	ID          string      `json:"id"`
-	ServerID    string      `json:"server_id"`
-	Name        string      `json:"name"`
-	Color       string      `json:"color"`
-	Description pgtype.Text `json:"description"`
-	Abilities   []string    `json:"abilities"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdatedAt   time.Time   `json:"updated_at"`
+	ID        string    `json:"id"`
+	Idx       int32     `json:"idx"`
+	ServerID  string    `json:"server_id"`
+	Name      string    `json:"name"`
+	Color     string    `json:"color"`
+	Abilities []string  `json:"abilities"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type Server struct {
