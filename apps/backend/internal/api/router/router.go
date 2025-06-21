@@ -50,6 +50,8 @@ func Setup() {
 			r.Get("/server/get_roles/{id}", handlers.GetRoles)
 			r.Patch("/server/move_role/{id}", handlers.MoveRole)
 			r.Delete("/server/delete_role/{id}/{role_id}", handlers.DeleteRole)
+			r.Patch("/server/add_role_member/{id}", handlers.AddRoleMember)
+			r.Patch("/server/remove_role_member/{id}", handlers.RemoveRoleMember)
 			r.Delete("/servers/{id}", handlers.DeleteServer)
 			r.Post("/channels/{server_id}", handlers.CreateChannel)
 			r.Patch("/channels/{channel_id}", handlers.EditChannel)

@@ -44,6 +44,10 @@ type WSMessage struct {
 	//	*WSMessage_DisconnectFromCall
 	//	*WSMessage_MuteUser
 	//	*WSMessage_DeafenUser
+	//	*WSMessage_AddRoleMember
+	//	*WSMessage_RemoveRoleMember
+	//	*WSMessage_CreateRole
+	//	*WSMessage_MoveRole
 	Content       isWSMessage_Content `protobuf_oneof:"content"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -248,6 +252,42 @@ func (x *WSMessage) GetDeafenUser() *Deafen {
 	return nil
 }
 
+func (x *WSMessage) GetAddRoleMember() *AddRoleMember {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_AddRoleMember); ok {
+			return x.AddRoleMember
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetRemoveRoleMember() *RemoveRoleMember {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_RemoveRoleMember); ok {
+			return x.RemoveRoleMember
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetCreateRole() *CreateRole {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_CreateRole); ok {
+			return x.CreateRole
+		}
+	}
+	return nil
+}
+
+func (x *WSMessage) GetMoveRole() *ChangeRoleRanking {
+	if x != nil {
+		if x, ok := x.Content.(*WSMessage_MoveRole); ok {
+			return x.MoveRole
+		}
+	}
+	return nil
+}
+
 type isWSMessage_Content interface {
 	isWSMessage_Content()
 }
@@ -324,6 +364,22 @@ type WSMessage_DeafenUser struct {
 	DeafenUser *Deafen `protobuf:"bytes,18,opt,name=deafen_user,json=deafenUser,proto3,oneof"`
 }
 
+type WSMessage_AddRoleMember struct {
+	AddRoleMember *AddRoleMember `protobuf:"bytes,19,opt,name=add_role_member,json=addRoleMember,proto3,oneof"`
+}
+
+type WSMessage_RemoveRoleMember struct {
+	RemoveRoleMember *RemoveRoleMember `protobuf:"bytes,20,opt,name=remove_role_member,json=removeRoleMember,proto3,oneof"`
+}
+
+type WSMessage_CreateRole struct {
+	CreateRole *CreateRole `protobuf:"bytes,21,opt,name=create_role,json=createRole,proto3,oneof"`
+}
+
+type WSMessage_MoveRole struct {
+	MoveRole *ChangeRoleRanking `protobuf:"bytes,22,opt,name=move_role,json=moveRole,proto3,oneof"`
+}
+
 func (*WSMessage_ChatMessage) isWSMessage_Content() {}
 
 func (*WSMessage_ChannelCreation) isWSMessage_Content() {}
@@ -359,6 +415,14 @@ func (*WSMessage_DisconnectFromCall) isWSMessage_Content() {}
 func (*WSMessage_MuteUser) isWSMessage_Content() {}
 
 func (*WSMessage_DeafenUser) isWSMessage_Content() {}
+
+func (*WSMessage_AddRoleMember) isWSMessage_Content() {}
+
+func (*WSMessage_RemoveRoleMember) isWSMessage_Content() {}
+
+func (*WSMessage_CreateRole) isWSMessage_Content() {}
+
+func (*WSMessage_MoveRole) isWSMessage_Content() {}
 
 type UserLinksRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -3068,11 +3132,283 @@ func (x *ServerChangedInformations) GetServerInformations() *ServerInformations 
 	return nil
 }
 
+type CreateRole struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Idx           int32                  `protobuf:"varint,2,opt,name=idx,proto3" json:"idx,omitempty"`
+	ServerId      string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Color         string                 `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
+	Abilities     []string               `protobuf:"bytes,6,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRole) Reset() {
+	*x = CreateRole{}
+	mi := &file_types_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRole) ProtoMessage() {}
+
+func (x *CreateRole) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRole.ProtoReflect.Descriptor instead.
+func (*CreateRole) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *CreateRole) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CreateRole) GetIdx() int32 {
+	if x != nil {
+		return x.Idx
+	}
+	return 0
+}
+
+func (x *CreateRole) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *CreateRole) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateRole) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+func (x *CreateRole) GetAbilities() []string {
+	if x != nil {
+		return x.Abilities
+	}
+	return nil
+}
+
+type AddRoleMember struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AddRoleMember) Reset() {
+	*x = AddRoleMember{}
+	mi := &file_types_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddRoleMember) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddRoleMember) ProtoMessage() {}
+
+func (x *AddRoleMember) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddRoleMember.ProtoReflect.Descriptor instead.
+func (*AddRoleMember) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *AddRoleMember) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *AddRoleMember) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AddRoleMember) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+type RemoveRoleMember struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	ServerId      string                 `protobuf:"bytes,3,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveRoleMember) Reset() {
+	*x = RemoveRoleMember{}
+	mi := &file_types_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveRoleMember) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveRoleMember) ProtoMessage() {}
+
+func (x *RemoveRoleMember) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveRoleMember.ProtoReflect.Descriptor instead.
+func (*RemoveRoleMember) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *RemoveRoleMember) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RemoveRoleMember) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveRoleMember) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+type ChangeRoleRanking struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	From          int32                  `protobuf:"varint,2,opt,name=from,proto3" json:"from,omitempty"`
+	To            int32                  `protobuf:"varint,3,opt,name=to,proto3" json:"to,omitempty"`
+	ServerId      string                 `protobuf:"bytes,4,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangeRoleRanking) Reset() {
+	*x = ChangeRoleRanking{}
+	mi := &file_types_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangeRoleRanking) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeRoleRanking) ProtoMessage() {}
+
+func (x *ChangeRoleRanking) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeRoleRanking.ProtoReflect.Descriptor instead.
+func (*ChangeRoleRanking) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *ChangeRoleRanking) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ChangeRoleRanking) GetFrom() int32 {
+	if x != nil {
+		return x.From
+	}
+	return 0
+}
+
+func (x *ChangeRoleRanking) GetTo() int32 {
+	if x != nil {
+		return x.To
+	}
+	return 0
+}
+
+func (x *ChangeRoleRanking) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbb\t\n" +
+	"\vtypes.proto\x12\x05types\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb3\v\n" +
 	"\tWSMessage\x12@\n" +
 	"\fchat_message\x18\x01 \x01(\v2\x1b.types.BroadcastChatMessageH\x00R\vchatMessage\x12L\n" +
 	"\x10channel_creation\x18\x02 \x01(\v2\x1f.types.BroadcastChannelCreationH\x00R\x0fchannelCreation\x12I\n" +
@@ -3094,7 +3430,12 @@ const file_types_proto_rawDesc = "" +
 	"\x14disconnect_from_call\x18\x10 \x01(\v2\x19.types.DisconnectFromCallH\x00R\x12disconnectFromCall\x12*\n" +
 	"\tmute_user\x18\x11 \x01(\v2\v.types.MuteH\x00R\bmuteUser\x120\n" +
 	"\vdeafen_user\x18\x12 \x01(\v2\r.types.DeafenH\x00R\n" +
-	"deafenUserB\t\n" +
+	"deafenUser\x12>\n" +
+	"\x0fadd_role_member\x18\x13 \x01(\v2\x14.types.AddRoleMemberH\x00R\raddRoleMember\x12G\n" +
+	"\x12remove_role_member\x18\x14 \x01(\v2\x17.types.RemoveRoleMemberH\x00R\x10removeRoleMember\x124\n" +
+	"\vcreate_role\x18\x15 \x01(\v2\x11.types.CreateRoleH\x00R\n" +
+	"createRole\x127\n" +
+	"\tmove_role\x18\x16 \x01(\v2\x18.types.ChangeRoleRankingH\x00R\bmoveRoleB\t\n" +
 	"\acontent\"F\n" +
 	"\fUserLinksRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
@@ -3349,7 +3690,28 @@ const file_types_proto_rawDesc = "" +
 	"\v_main_color\"\x84\x01\n" +
 	"\x19ServerChangedInformations\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12J\n" +
-	"\x13server_informations\x18\x02 \x01(\v2\x19.types.ServerInformationsR\x12serverInformationsB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
+	"\x13server_informations\x18\x02 \x01(\v2\x19.types.ServerInformationsR\x12serverInformations\"\x93\x01\n" +
+	"\n" +
+	"CreateRole\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
+	"\x03idx\x18\x02 \x01(\x05R\x03idx\x12\x1b\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
+	"\x05color\x18\x05 \x01(\tR\x05color\x12\x1c\n" +
+	"\tabilities\x18\x06 \x03(\tR\tabilities\"U\n" +
+	"\rAddRoleMember\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\x12\x1b\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\"X\n" +
+	"\x10RemoveRoleMember\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\x12\x1b\n" +
+	"\tserver_id\x18\x03 \x01(\tR\bserverId\"d\n" +
+	"\x11ChangeRoleRanking\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04from\x18\x02 \x01(\x05R\x04from\x12\x0e\n" +
+	"\x02to\x18\x03 \x01(\x05R\x02to\x12\x1b\n" +
+	"\tserver_id\x18\x04 \x01(\tR\bserverIdB\x1cZ\x1agithub.com/okzmo/nyo/protob\x06proto3"
 
 var (
 	file_types_proto_rawDescOnce sync.Once
@@ -3363,7 +3725,7 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
 var file_types_proto_goTypes = []any{
 	(*WSMessage)(nil),                  // 0: types.WSMessage
 	(*UserLinksRow)(nil),               // 1: types.UserLinksRow
@@ -3405,7 +3767,11 @@ var file_types_proto_goTypes = []any{
 	(*BroadcastUserInformations)(nil),  // 37: types.BroadcastUserInformations
 	(*ServerInformations)(nil),         // 38: types.ServerInformations
 	(*ServerChangedInformations)(nil),  // 39: types.ServerChangedInformations
-	(*timestamppb.Timestamp)(nil),      // 40: google.protobuf.Timestamp
+	(*CreateRole)(nil),                 // 40: types.CreateRole
+	(*AddRoleMember)(nil),              // 41: types.AddRoleMember
+	(*RemoveRoleMember)(nil),           // 42: types.RemoveRoleMember
+	(*ChangeRoleRanking)(nil),          // 43: types.ChangeRoleRanking
+	(*timestamppb.Timestamp)(nil),      // 44: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
 	7,  // 0: types.WSMessage.chat_message:type_name -> types.BroadcastChatMessage
@@ -3426,24 +3792,28 @@ var file_types_proto_depIdxs = []int32{
 	32, // 15: types.WSMessage.disconnect_from_call:type_name -> types.DisconnectFromCall
 	33, // 16: types.WSMessage.mute_user:type_name -> types.Mute
 	34, // 17: types.WSMessage.deafen_user:type_name -> types.Deafen
-	40, // 18: types.User.created_at:type_name -> google.protobuf.Timestamp
-	40, // 19: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
-	40, // 20: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 21: types.BroadcastNewUserInServer.user:type_name -> types.User
-	40, // 22: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
-	40, // 23: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 24: types.BodyNewUserInServer.user:type_name -> types.User
-	3,  // 25: types.SendFriendInvite.user:type_name -> types.User
-	3,  // 26: types.AcceptFriendInvite.user:type_name -> types.User
-	29, // 27: types.CallInitialization.call_users:type_name -> types.ConnectToCall
-	35, // 28: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
-	35, // 29: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
-	38, // 30: types.ServerChangedInformations.server_informations:type_name -> types.ServerInformations
-	31, // [31:31] is the sub-list for method output_type
-	31, // [31:31] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	41, // 18: types.WSMessage.add_role_member:type_name -> types.AddRoleMember
+	42, // 19: types.WSMessage.remove_role_member:type_name -> types.RemoveRoleMember
+	40, // 20: types.WSMessage.create_role:type_name -> types.CreateRole
+	43, // 21: types.WSMessage.move_role:type_name -> types.ChangeRoleRanking
+	44, // 22: types.User.created_at:type_name -> google.protobuf.Timestamp
+	44, // 23: types.BroadcastChatMessage.created_at:type_name -> google.protobuf.Timestamp
+	44, // 24: types.BroadcastEditMessage.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 25: types.BroadcastNewUserInServer.user:type_name -> types.User
+	44, // 26: types.BroadcastChannelCreation.created_at:type_name -> google.protobuf.Timestamp
+	44, // 27: types.BroadcastChannelCreation.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 28: types.BodyNewUserInServer.user:type_name -> types.User
+	3,  // 29: types.SendFriendInvite.user:type_name -> types.User
+	3,  // 30: types.AcceptFriendInvite.user:type_name -> types.User
+	29, // 31: types.CallInitialization.call_users:type_name -> types.ConnectToCall
+	35, // 32: types.UserChangedInformations.user_informations:type_name -> types.UserInformations
+	35, // 33: types.BroadcastUserInformations.user_informations:type_name -> types.UserInformations
+	38, // 34: types.ServerChangedInformations.server_informations:type_name -> types.ServerInformations
+	35, // [35:35] is the sub-list for method output_type
+	35, // [35:35] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -3470,6 +3840,10 @@ func file_types_proto_init() {
 		(*WSMessage_DisconnectFromCall)(nil),
 		(*WSMessage_MuteUser)(nil),
 		(*WSMessage_DeafenUser)(nil),
+		(*WSMessage_AddRoleMember)(nil),
+		(*WSMessage_RemoveRoleMember)(nil),
+		(*WSMessage_CreateRole)(nil),
+		(*WSMessage_MoveRole)(nil),
 	}
 	file_types_proto_msgTypes[3].OneofWrappers = []any{}
 	file_types_proto_msgTypes[13].OneofWrappers = []any{}
@@ -3481,7 +3855,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   40,
+			NumMessages:   44,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

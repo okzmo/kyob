@@ -9,6 +9,23 @@ import (
 	"context"
 )
 
+const addRoleMember = `-- name: AddRoleMember :exec
+UPDATE server_membership 
+SET roles = array_append(roles, $1) -- role_name
+WHERE server_id = $2 AND user_id = $3
+`
+
+type AddRoleMemberParams struct {
+	ArrayAppend interface{} `json:"array_append"`
+	ServerID    string      `json:"server_id"`
+	UserID      string      `json:"user_id"`
+}
+
+func (q *Queries) AddRoleMember(ctx context.Context, arg AddRoleMemberParams) error {
+	_, err := q.db.Exec(ctx, addRoleMember, arg.ArrayAppend, arg.ServerID, arg.UserID)
+	return err
+}
+
 const createRole = `-- name: CreateRole :one
 INSERT INTO roles (
   id, idx, server_id, name, color, abilities
@@ -59,30 +76,68 @@ func (q *Queries) DeleteRole(ctx context.Context, id string) error {
 	return err
 }
 
-const getRoles = `-- name: GetRoles :many
-SELECT r.id, r.idx, r.server_id, r.name, r.color, r.abilities, r.created_at, r.updated_at
+const getRole = `-- name: GetRole :one
+SELECT r.id, r.idx, r.name, r.color, r.abilities, r.server_id
 FROM roles r
-WHERE r.server_id = $1
+WHERE r.id = $1
 `
 
-func (q *Queries) GetRoles(ctx context.Context, serverID string) ([]Role, error) {
+type GetRoleRow struct {
+	ID        string   `json:"id"`
+	Idx       int32    `json:"idx"`
+	Name      string   `json:"name"`
+	Color     string   `json:"color"`
+	Abilities []string `json:"abilities"`
+	ServerID  string   `json:"server_id"`
+}
+
+func (q *Queries) GetRole(ctx context.Context, id string) (GetRoleRow, error) {
+	row := q.db.QueryRow(ctx, getRole, id)
+	var i GetRoleRow
+	err := row.Scan(
+		&i.ID,
+		&i.Idx,
+		&i.Name,
+		&i.Color,
+		&i.Abilities,
+		&i.ServerID,
+	)
+	return i, err
+}
+
+const getRoles = `-- name: GetRoles :many
+SELECT r.id, r.idx, r.name, r.color, r.abilities, array_agg(sm.user_id) FILTER (WHERE sm.user_id IS NOT NULL) AS members
+FROM roles r
+LEFT JOIN server_membership sm on r.id = ANY(sm.roles)
+WHERE r.server_id = $1
+GROUP BY r.id
+`
+
+type GetRolesRow struct {
+	ID        string      `json:"id"`
+	Idx       int32       `json:"idx"`
+	Name      string      `json:"name"`
+	Color     string      `json:"color"`
+	Abilities []string    `json:"abilities"`
+	Members   interface{} `json:"members"`
+}
+
+func (q *Queries) GetRoles(ctx context.Context, serverID string) ([]GetRolesRow, error) {
 	rows, err := q.db.Query(ctx, getRoles, serverID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Role
+	var items []GetRolesRow
 	for rows.Next() {
-		var i Role
+		var i GetRolesRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Idx,
-			&i.ServerID,
 			&i.Name,
 			&i.Color,
 			&i.Abilities,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.Members,
 		); err != nil {
 			return nil, err
 		}
@@ -136,6 +191,30 @@ type MoveRoleParams struct {
 
 func (q *Queries) MoveRole(ctx context.Context, arg MoveRoleParams) error {
 	_, err := q.db.Exec(ctx, moveRole, arg.Idx, arg.ID)
+	return err
+}
+
+const removeRoleFromAllMembers = `-- name: RemoveRoleFromAllMembers :exec
+UPDATE server_membership SET roles = array_remove(roles, $1) WHERE $1 = ANY(roles)
+`
+
+func (q *Queries) RemoveRoleFromAllMembers(ctx context.Context, arrayRemove interface{}) error {
+	_, err := q.db.Exec(ctx, removeRoleFromAllMembers, arrayRemove)
+	return err
+}
+
+const removeRoleMember = `-- name: RemoveRoleMember :exec
+UPDATE server_membership SET roles = array_remove(roles, $1) WHERE server_id = $2 AND user_id = $3
+`
+
+type RemoveRoleMemberParams struct {
+	ArrayRemove interface{} `json:"array_remove"`
+	ServerID    string      `json:"server_id"`
+	UserID      string      `json:"user_id"`
+}
+
+func (q *Queries) RemoveRoleMember(ctx context.Context, arg RemoveRoleMemberParams) error {
+	_, err := q.db.Exec(ctx, removeRoleMember, arg.ArrayRemove, arg.ServerID, arg.UserID)
 	return err
 }
 

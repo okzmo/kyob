@@ -292,3 +292,47 @@ func (u *user) ServerInformationsChanged(ctx *actor.Context, msg *protoTypes.Ser
 	m, _ := proto.Marshal(msgToSend)
 	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
 }
+
+func (u *user) NewRoleCreated(ctx *actor.Context, msg *protoTypes.CreateRole) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_CreateRole{
+			CreateRole: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) AddRoleMember(ctx *actor.Context, msg *protoTypes.AddRoleMember) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_AddRoleMember{
+			AddRoleMember: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) RemoveRoleMember(ctx *actor.Context, msg *protoTypes.RemoveRoleMember) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_RemoveRoleMember{
+			RemoveRoleMember: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}
+
+func (u *user) MoveRole(ctx *actor.Context, msg *protoTypes.ChangeRoleRanking) {
+	msgToSend := &protoTypes.WSMessage{
+		Content: &protoTypes.WSMessage_MoveRole{
+			MoveRole: msg,
+		},
+	}
+
+	m, _ := proto.Marshal(msgToSend)
+	u.wsConn.WriteMessage(gws.OpcodeBinary, m)
+}

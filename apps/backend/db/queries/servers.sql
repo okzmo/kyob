@@ -30,10 +30,15 @@ WHERE s.id = 'global' OR sm.user_id IS NOT NULL;
 SELECT u.id, u.username, u.display_name, u.avatar FROM server_membership sm, users u WHERE sm.server_id = $1 AND sm.user_id = u.id;
 
 -- name: GetMembersFromServers :many
-SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id;
+SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id, sm.roles
+FROM server_membership sm, users u 
+WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id;
 
 -- name: GetRolesFromServers :many
-SELECT r.id, r.idx, r.name, r.color, r.abilities, sm.server_id FROM roles r, server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id AND r.id = ANY(sm.roles) AND r.server_id = sm.server_id order by r.idx;
+SELECT r.id, r.idx, r.name, r.color, r.abilities, r.server_id
+FROM roles r
+WHERE r.server_id = ANY($1::text[])
+ORDER BY r.idx;
 
 -- name: CreateServer :one
 INSERT INTO servers (

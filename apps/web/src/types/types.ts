@@ -60,7 +60,7 @@ export interface Server {
   channels: Record<string, Channel>;
   active_count: string[];
   member_count: number;
-  members: Partial<User>[];
+  members: (Partial<User> & { roles: string[] })[];
   hidden: boolean;
   roles?: Role[];
 }
@@ -71,6 +71,7 @@ export interface Role {
   name: string
   color: string
   abilities: string[]
+  members: string[]
 }
 
 export interface Fact {
@@ -98,6 +99,10 @@ export interface User {
   links: Link[];
   rpm_avatar_id: string;
   rpm_token: string;
+}
+
+export interface Member extends Partial<User> {
+  roles: string[];
 }
 
 export interface Friend extends Partial<User> {

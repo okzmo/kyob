@@ -341,13 +341,14 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		return nil, err
 	}
 
-	membersMap := make(map[string]db.GetMembersFromServersRow)
-	allMembers, err := db.Query.GetMembersFromServers(ctx, []string{serverID})
+	allRoles, err := db.Query.GetRolesFromServers(ctx, []string{serverID})
 	if err != nil {
 		return nil, err
 	}
-	for _, member := range allMembers {
-		membersMap[member.ID] = member
+
+	allMembers, err := db.Query.GetMembersFromServers(ctx, []string{serverID})
+	if err != nil {
+		return nil, err
 	}
 
 	for _, channelRaw := range channels {
@@ -384,7 +385,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		},
 		server.X,
 		server.Y,
-		[]db.GetRolesFromServersRow{},
+		allRoles,
 		channelMap,
 		int(server.MemberCount),
 		allMembers,

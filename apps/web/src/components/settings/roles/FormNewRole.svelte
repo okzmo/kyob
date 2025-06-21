@@ -12,10 +12,10 @@
 
 	let {
 		roles = $bindable(),
-		serverId,
-		activeTab,
-		PERMISSIONS,
 		creatingRole = $bindable(),
+		activeTab,
+		serverId,
+		PERMISSIONS,
 		activeRole
 	} = $props();
 
@@ -54,8 +54,6 @@
 						isSubmitting = false;
 						isSubmitted = true;
 						await delay(800);
-
-						roles = roles ? [...roles, res.value] : [res.value];
 
 						creatingRole = false;
 					}

@@ -16,7 +16,9 @@
 
 	let { author, isUserMentioned, isEdited, id, time }: Props = $props();
 
-	let role = $derived(serversStore.getFirstRole(page.params.server_id));
+	let role = $derived(
+		author.id ? serversStore.getFirstRole(page.params.server_id, author.id) : undefined
+	);
 </script>
 
 <div class="flex items-baseline gap-x-2.5">

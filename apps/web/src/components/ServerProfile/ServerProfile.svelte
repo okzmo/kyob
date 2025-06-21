@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import Gear from 'components/ui/icons/Gear.svelte';
 	import { isColorLight } from 'utils/colors';
+	import { userStore } from 'stores/user.svelte';
 
 	interface Props {
 		server: Server;
@@ -15,6 +16,7 @@
 
 	let { server }: Props = $props();
 
+	let isOwner = $derived(server.owner_id === userStore.user?.id);
 	let needDarkFontColor = $state(isColorLight(`rgb(${server?.main_color})`));
 	let toggleDescription = $state(false);
 	let descriptionText = $derived.by(() => {
@@ -61,13 +63,15 @@
 		<div class="bg-main-700 h-[10rem] w-full"></div>
 	{/if}
 
-	<button
-		class="bg-main-900/50 absolute top-2 right-2 z-10 flex h-[2rem] w-[2rem] items-center justify-center backdrop-blur-lg hover:cursor-pointer"
-		aria-label="Server settings"
-		onclick={() => goto(`/server-settings/${server.id}/profile`)}
-	>
-		<Gear height={20} width={20} />
-	</button>
+	{#if isOwner}
+		<button
+			class="bg-main-900/50 absolute top-2 right-2 z-10 flex h-[2rem] w-[2rem] items-center justify-center backdrop-blur-lg hover:cursor-pointer"
+			aria-label="Server settings"
+			onclick={() => goto(`/server-settings/${server.id}/profile`)}
+		>
+			<Gear height={20} width={20} />
+		</button>
+	{/if}
 
 	<div class="inner-main-50/10 relative z-[4] flex flex-col px-4 pt-[10.25rem]">
 		<Corners color="border-main-50/35" />

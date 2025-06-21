@@ -85,7 +85,9 @@ func (q *Queries) DeleteServer(ctx context.Context, arg DeleteServerParams) (pgc
 }
 
 const getMembersFromServers = `-- name: GetMembersFromServers :many
-SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id FROM server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id
+SELECT u.id, u.username, u.display_name, u.avatar, u.banner, sm.server_id, sm.roles
+FROM server_membership sm, users u 
+WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id
 `
 
 type GetMembersFromServersRow struct {
@@ -95,6 +97,7 @@ type GetMembersFromServersRow struct {
 	Avatar      pgtype.Text `json:"avatar"`
 	Banner      pgtype.Text `json:"banner"`
 	ServerID    string      `json:"server_id"`
+	Roles       []string    `json:"roles"`
 }
 
 func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) ([]GetMembersFromServersRow, error) {
@@ -113,6 +116,7 @@ func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) 
 			&i.Avatar,
 			&i.Banner,
 			&i.ServerID,
+			&i.Roles,
 		); err != nil {
 			return nil, err
 		}
@@ -125,7 +129,10 @@ func (q *Queries) GetMembersFromServers(ctx context.Context, dollar_1 []string) 
 }
 
 const getRolesFromServers = `-- name: GetRolesFromServers :many
-SELECT r.id, r.idx, r.name, r.color, r.abilities, sm.server_id FROM roles r, server_membership sm, users u WHERE sm.server_id = ANY($1::text[]) AND sm.user_id = u.id AND r.id = ANY(sm.roles) AND r.server_id = sm.server_id order by r.idx
+SELECT r.id, r.idx, r.name, r.color, r.abilities, r.server_id
+FROM roles r
+WHERE r.server_id = ANY($1::text[])
+ORDER BY r.idx
 `
 
 type GetRolesFromServersRow struct {

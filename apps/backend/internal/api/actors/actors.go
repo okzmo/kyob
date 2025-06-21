@@ -96,6 +96,14 @@ func (s *server) Receive(ctx *actor.Context) {
 		s.UpdateServer(ctx, msg)
 	case *protoTypes.BroadcastUserInformations:
 		s.BroadcastUserInformations(ctx, msg)
+	case *protoTypes.CreateRole:
+		s.CreateRole(ctx, msg)
+	case *protoTypes.AddRoleMember:
+		s.AddRoleMember(ctx, msg)
+	case *protoTypes.RemoveRoleMember:
+		s.RemoveRoleMember(ctx, msg)
+	case *protoTypes.ChangeRoleRanking:
+		s.ChangeRoleRanking(ctx, msg)
 	}
 }
 
@@ -213,6 +221,14 @@ func (u *user) Receive(ctx *actor.Context) {
 		u.BroadcastUserInformations(ctx, msg)
 	case *protoTypes.ServerChangedInformations:
 		u.ServerInformationsChanged(ctx, msg)
+	case *protoTypes.CreateRole:
+		u.NewRoleCreated(ctx, msg)
+	case *protoTypes.AddRoleMember:
+		u.AddRoleMember(ctx, msg)
+	case *protoTypes.RemoveRoleMember:
+		u.RemoveRoleMember(ctx, msg)
+	case *protoTypes.ChangeRoleRanking:
+		u.MoveRole(ctx, msg)
 	}
 }
 

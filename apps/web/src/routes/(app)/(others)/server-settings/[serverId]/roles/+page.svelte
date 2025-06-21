@@ -5,15 +5,13 @@
 	import RoleTabBar from 'components/settings/roles/RoleTabBar.svelte';
 	import FormNewRole from 'components/settings/roles/FormNewRole.svelte';
 	import type { AbilitiesType, Role } from 'types/types';
-	import { onMount } from 'svelte';
-	import { backend } from 'stores/backend.svelte';
+	import RoleMembers from 'components/settings/roles/RoleMembers.svelte';
 
 	const server = $derived(serversStore.getServer(page.params.serverId));
 
 	let activeTab = $state('display');
 	let activeRole = $state<Role | undefined>();
 	let creatingRole = $state(false);
-	let roles = $state<Role[]>([]);
 
 	const PERMISSIONS: { label: string; description: string; ability: AbilitiesType }[] = [
 		{
@@ -68,15 +66,8 @@
 		}
 	];
 
-	onMount(async () => {
-		roles = [];
-		const res = await backend.getRoles(page.params.serverId);
-
-		if (res.isOk() && res.value) {
-			for (const role of res.value) {
-				roles[role.idx] = role;
-			}
-		}
+	$effect(() => {
+		if (activeRole) activeTab = 'display';
 	});
 </script>
 
@@ -88,33 +79,24 @@
 <hr class="mt-5 w-full border-none" style="height: 1px; background-color: var(--color-main-800);" />
 
 <div class="mt-5 flex h-[calc(100%-8rem)] gap-x-4">
-	<RoleSidebar serverId={server.id} bind:activeRole bind:creatingRole {roles} />
+	<RoleSidebar serverId={server.id} bind:activeRole bind:creatingRole roles={server?.roles || []} />
 	<div class="border-l-main-800 flex h-full w-full flex-col border-l pl-4">
 		{#if creatingRole || activeRole}
-			<RoleTabBar bind:activeTab />
+			<RoleTabBar bind:activeTab {activeRole} />
 		{/if}
 
 		{#if activeRole || creatingRole}
 			{#if activeTab === 'display' || activeTab === 'permissions'}
 				<FormNewRole
-					bind:roles
+					bind:roles={server.roles}
 					bind:creatingRole
 					serverId={server.id}
 					{activeTab}
 					{PERMISSIONS}
 					{activeRole}
 				/>
-			{:else if activeTab === 'members'}
-				<ul class="mt-4 flex flex-col">
-					{#each server.members as member (member.id)}
-						<li
-							class="border-b-main-800 flex items-center gap-x-2 border-b px-2 py-4 first:pt-0 last:border-b-transparent"
-						>
-							<img src={member.avatar} alt="" class="h-8 w-8" />
-							{member.display_name}
-						</li>
-					{/each}
-				</ul>
+			{:else if activeTab === 'members' && activeRole}
+				<RoleMembers roleId={activeRole.id} bind:members={activeRole.members} {server} />
 			{/if}
 		{:else}
 			No role selected, either create one or select one.

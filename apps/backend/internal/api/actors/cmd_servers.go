@@ -252,3 +252,76 @@ func (s *server) BroadcastUserInformations(ctx *actor.Context, msg *protoTypes.B
 		UsersEngine.Send(user, msg)
 	}
 }
+
+func (s *server) CreateRole(ctx *actor.Context, msg *protoTypes.CreateRole) {
+	body := &services.BodyRoleCreation{
+		Name:      msg.Name,
+		Color:     msg.Color,
+		Abilities: msg.Abilities,
+		Index:     int(msg.Idx),
+	}
+
+	role, err := services.CreateRole(context.TODO(), msg.ServerId, body)
+	if err != nil {
+		slog.Error("failed to create role", "err", err)
+		return
+	}
+
+	msg.Id = role.ID
+
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}
+
+func (s *server) AddRoleMember(ctx *actor.Context, msg *protoTypes.AddRoleMember) {
+	body := &services.BodyAddOrRemoveRole{
+		UserID: msg.UserId,
+		RoleID: msg.Id,
+	}
+
+	err := services.AddRoleMember(context.TODO(), msg.ServerId, body)
+	if err != nil {
+		slog.Error("failed to add role member", "err", err)
+		return
+	}
+
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}
+
+func (s *server) RemoveRoleMember(ctx *actor.Context, msg *protoTypes.RemoveRoleMember) {
+	body := &services.BodyAddOrRemoveRole{
+		UserID: msg.UserId,
+		RoleID: msg.Id,
+	}
+
+	err := services.RemoveRoleMember(context.TODO(), msg.ServerId, body)
+	if err != nil {
+		slog.Error("failed to remove role member", "err", err)
+		return
+	}
+
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}
+
+func (s *server) ChangeRoleRanking(ctx *actor.Context, msg *protoTypes.ChangeRoleRanking) {
+	body := &services.BodyMoveRole{
+		RoleID: msg.Id,
+		From:   int(msg.From),
+		To:     int(msg.To),
+	}
+
+	err := services.MoveRole(context.TODO(), body)
+	if err != nil {
+		slog.Error("failed to remove role member", "err", err)
+		return
+	}
+
+	for user := range s.users {
+		UsersEngine.Send(user, msg)
+	}
+}

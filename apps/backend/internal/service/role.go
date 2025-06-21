@@ -20,6 +20,11 @@ type BodyMoveRole struct {
 	To     int    `json:"to"`
 }
 
+type BodyAddOrRemoveRole struct {
+	RoleID string `json:"role_id"`
+	UserID string `json:"user_id"`
+}
+
 func CreateRole(ctx context.Context, serverID string, body *BodyRoleCreation) (*db.Role, error) {
 	role, err := db.Query.CreateRole(ctx, db.CreateRoleParams{
 		ID:        utils.Node.Generate().String(),
@@ -36,13 +41,39 @@ func CreateRole(ctx context.Context, serverID string, body *BodyRoleCreation) (*
 	return &role, nil
 }
 
-func GetRoles(ctx context.Context, serverID string) ([]db.Role, error) {
+func GetRoles(ctx context.Context, serverID string) ([]db.GetRolesRow, error) {
 	roles, err := db.Query.GetRoles(ctx, serverID)
 	if err != nil {
 		return nil, err
 	}
 
 	return roles, nil
+}
+
+func AddRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemoveRole) error {
+	err := db.Query.AddRoleMember(ctx, db.AddRoleMemberParams{
+		ArrayAppend: body.RoleID,
+		ServerID:    serverID,
+		UserID:      body.UserID,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RemoveRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemoveRole) error {
+	err := db.Query.RemoveRoleMember(ctx, db.RemoveRoleMemberParams{
+		ArrayRemove: body.RoleID,
+		ServerID:    serverID,
+		UserID:      body.UserID,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func MoveRole(ctx context.Context, body *BodyMoveRole) error {
@@ -66,7 +97,12 @@ func MoveRole(ctx context.Context, body *BodyMoveRole) error {
 }
 
 func DeleteRole(ctx context.Context, roleID string) error {
-	err := db.Query.DeleteRole(ctx, roleID)
+	err := db.Query.RemoveRoleFromAllMembers(ctx, roleID)
+	if err != nil {
+		return err
+	}
+
+	err = db.Query.DeleteRole(ctx, roleID)
 	if err != nil {
 		return err
 	}

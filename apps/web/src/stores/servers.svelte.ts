@@ -1,4 +1,4 @@
-import type { Channel, LastState, Message, Role, Server, User } from '../types/types';
+import type { Channel, LastState, Member, Message, Role, Server, User } from '../types/types';
 import { backend } from './backend.svelte';
 import { userStore } from './user.svelte';
 import { windows } from './windows.svelte';
@@ -160,7 +160,7 @@ class Servers {
     }
   }
 
-  addMember(serverId: string, user: Partial<User>) {
+  addMember(serverId: string, user: Member) {
     if (serverId === 'global') return;
 
     const server = this.getServer(serverId);
@@ -246,9 +246,70 @@ class Servers {
     return false;
   }
 
-  getFirstRole(serverId: string) {
+  addRole(serverId: string, role: Role) {
     const server = this.getServer(serverId)
-    return server.roles?.[0]
+
+    if (Array.isArray(server.roles)) {
+      server.roles.push(role)
+    } else {
+      server.roles = [role]
+    }
+  }
+
+  addRoleToMember(serverId: string, roleId: string, memberId: string) {
+    const member = this.getMemberById(serverId, memberId)
+    if (!member) return
+
+    if (Array.isArray(member.roles)) {
+      member.roles.push(roleId)
+    } else {
+      member.roles = [roleId]
+    }
+  }
+
+  removeRoleFromMember(serverId: string, roleId: string, memberId: string) {
+    const member = this.getMemberById(serverId, memberId)
+    if (!member) return
+
+    member.roles = member.roles.filter(r => r !== roleId)
+  }
+
+  removeRoleFromMembers(serverId: string, roleId: string) {
+    const server = this.getServer(serverId)
+
+    for (const member of server.members) {
+      if (member.roles?.includes(roleId)) {
+        member.roles = member.roles.filter(r => r !== roleId)
+      }
+    }
+  }
+
+  moveRole(serverId: string, roleId: string, fromIndex: number, toIndex: number) {
+    const server = this.getServer(serverId)
+    if (!server?.roles) return
+
+    for (const role of server.roles) {
+      if (role.id === roleId) {
+        role.idx = toIndex
+      } else if (role.idx <= fromIndex) {
+        role.idx += 1
+      }
+    }
+
+    server.roles = server.roles.sort((a, b) => a.idx - b.idx)
+  }
+
+  getFirstRole(serverId: string, userId: string) {
+    const allRoles = this.servers[serverId].roles
+    if (!allRoles) return
+
+    const member = this.getMemberById(serverId, userId)
+
+    for (const role of allRoles) {
+      if (member?.roles?.includes(role.id)) {
+        return role
+      }
+    }
   }
 
   getLastState(): LastState {

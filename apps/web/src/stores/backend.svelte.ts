@@ -50,6 +50,7 @@ import type {
   Emoji,
   Friend,
   LastState,
+  Member,
   Message,
   Role,
   Server,
@@ -113,6 +114,7 @@ class Backend {
               updated_at: timestampDate(value.createdAt!).toISOString(),
               created_at: timestampDate(value.createdAt!).toISOString()
             };
+
             serversStore.addMessage(value?.serverId, message);
 
             const isAMention =
@@ -164,11 +166,12 @@ class Backend {
             const value = wsMess.content.value;
             const about = new TextDecoder().decode(value.user?.about);
 
-            const newUser: Partial<User> = {
+            const newUser: Member = {
               id: value.user?.id,
               username: value.user?.username,
               display_name: value.user?.displayName,
-              avatar: value.user?.avatar
+              avatar: value.user?.avatar,
+              roles: []
             };
 
             if (about.length > 0) newUser.about = JSON.parse(about);
@@ -385,6 +388,46 @@ class Backend {
               serversStore.connectUserToCall(call.serverId, call.channelId, call.userId);
             }
           }
+          break;
+        case 'createRole': {
+          if (!wsMess.content.value) return;
+          const value = wsMess.content.value;
+          const newRole: Role = {
+            id: value.id,
+            name: value.name,
+            idx: value.idx,
+            color: value.color,
+            abilities: value.abilities,
+            members: []
+          }
+
+          serversStore.addRole(value.serverId, newRole)
+        }
+          break;
+        case 'addRoleMember': {
+          if (!wsMess.content.value) return;
+          const value = wsMess.content.value;
+
+          serversStore.addRoleToMember(value.serverId, value.id, value.userId)
+        }
+          break;
+        case 'removeRoleMember': {
+          if (!wsMess.content.value) return;
+          const value = wsMess.content.value;
+
+          if (value.userId !== "") {
+            serversStore.removeRoleFromMember(value.serverId, value.id, value.userId)
+          } else {
+            serversStore.removeRoleFromMembers(value.serverId, value.id)
+          }
+        }
+          break;
+        case 'moveRole': {
+          if (!wsMess.content.value) return;
+          const value = wsMess.content.value;
+
+          serversStore.moveRole(value.serverId, value.id, value.from, value.to)
+        }
           break;
       }
     };
@@ -1094,6 +1137,42 @@ class Backend {
   async deleteRole(serverId: string, roleId: string): Promise<Result<void, RoleErrors>> {
     try {
       const res = await client.delete(`server/delete_role/${serverId}/${roleId}`);
+
+      const data = await res.json();
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok();
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+    }
+  }
+
+  async addRoleMember(serverId: string, roleId: string, memberId: string): Promise<Result<void, RoleErrors>> {
+    try {
+      const res = await client.patch(`server/add_role_member/${serverId}`, {
+        body: JSON.stringify({ role_id: roleId, user_id: memberId })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return err({ code: 'ERR_UNKNOWN', error: '', cause: data });
+      }
+
+      return ok();
+    } catch (error) {
+      const errBody = await (error as StandardError).response.json();
+      return err({ code: 'ERR_UNKNOWN', error: errBody.error });
+    }
+  }
+
+  async removeRoleMember(serverId: string, roleId: string, memberId: string): Promise<Result<void, RoleErrors>> {
+    try {
+      const res = await client.patch(`server/remove_role_member/${serverId}`, {
+        body: JSON.stringify({ role_id: roleId, user_id: memberId })
+      });
 
       const data = await res.json();
       if (!res.ok) {
