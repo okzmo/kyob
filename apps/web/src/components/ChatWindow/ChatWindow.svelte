@@ -21,15 +21,17 @@
 	const channel = $derived(serversStore.getChannel(serverId, channelId));
 	const friend = $derived(userStore.getFriend(friendId));
 	const messages = $derived(serversStore.getMessages(serverId, channelId));
+	let scrollContainer = $state<HTMLDivElement>();
 </script>
 
 <ChatWindowSkeleton {id} {tab} {channel} {server} {friend}>
 	{#if tab === 'chat'}
 		<div
-			class="relative flex min-h-0 w-full flex-grow flex-col-reverse gap-y-2 overflow-y-auto pt-2 pb-4"
+			class="relative flex min-h-0 w-full flex-grow flex-col gap-y-2 overflow-y-auto pt-2 pb-4"
+			bind:this={scrollContainer}
 		>
 			{#await messages then allMessages}
-				<ChatWindowMessages {channel} {server} messages={allMessages} />
+				<ChatWindowMessages {channel} {server} messages={allMessages} {scrollContainer} />
 			{/await}
 		</div>
 		<ChatWindowInput {channel} {server} {friend} />

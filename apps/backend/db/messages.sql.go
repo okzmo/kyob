@@ -172,7 +172,7 @@ func (q *Queries) GetMessage(ctx context.Context, id string) (Message, error) {
 }
 
 const getMessagesFromChannel = `-- name: GetMessagesFromChannel :many
-SELECT id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE channel_id = $1 ORDER BY created_at DESC
+SELECT id, author_id, server_id, channel_id, content, everyone, mentions_users, mentions_channels, attachments, created_at, updated_at FROM messages WHERE channel_id = $1
 `
 
 func (q *Queries) GetMessagesFromChannel(ctx context.Context, channelID string) ([]Message, error) {

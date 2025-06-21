@@ -34,16 +34,15 @@
 	class="@container relative my-auto flex w-full flex-wrap items-center justify-center gap-2 px-4 pt-4 pb-20"
 >
 	{#if mainParticipant}
-		{@const participantInfos = serversStore.getMemberById(server.id, mainParticipant)}
-		{@const friendInfo = userStore.getFriend(mainParticipant)}
+		{@const participantInfos = getParticipant(mainParticipant)}
 
 		<button
 			class="attachment relative aspect-[16/9] w-full"
 			onclick={() => toggleMainParticipant()}
 		>
 			<img
-				src={participantInfos?.banner || friendInfo?.banner || userStore.user?.banner}
-				alt={participantInfos?.username || friendInfo?.username || userStore.user?.username}
+				src={participantInfos?.banner}
+				alt={participantInfos?.username}
 				class="h-full w-full object-cover select-none"
 			/>
 		</button>
@@ -52,7 +51,7 @@
 			{@const participantInfos = getParticipant(participant.user_id)}
 
 			<button
-				class="attachment relative aspect-[4/3] min-h-0 max-w-full @lg:max-w-[20rem]"
+				class="attachment relative h-[15rem] w-[20rem]"
 				onclick={() => toggleMainParticipant(participant.user_id)}
 			>
 				<img

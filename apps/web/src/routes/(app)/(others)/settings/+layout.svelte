@@ -4,7 +4,7 @@
 	let { children } = $props();
 </script>
 
-<div class="mx-auto flex max-w-7xl gap-x-10">
+<div class="mx-auto flex max-w-5xl gap-x-10">
 	<Sidebar type="general" />
 	<main class="h-screen w-full pt-20">
 		{@render children()}

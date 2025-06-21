@@ -2,7 +2,7 @@
 SELECT * FROM messages WHERE id = $1;
 
 -- name: GetMessagesFromChannel :many
-SELECT * FROM messages WHERE channel_id = $1 ORDER BY created_at DESC;
+SELECT * FROM messages WHERE channel_id = $1;
 
 -- name: CheckChannelMembership :execresult
 SELECT c.id FROM channels c, server_membership sm WHERE c.id = $1 and c.server_id = sm.server_id and sm.user_id = $2;

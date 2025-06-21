@@ -9,6 +9,7 @@
 		messages: Message[];
 		server: Server;
 		channel: Channel;
+		scrollContainer: HTMLDivElement;
 	}
 
 	const DEFAULT_AUTHOR: Partial<User> = {
@@ -18,7 +19,7 @@
 		username: 'Unknown user'
 	};
 
-	let { messages, server, channel }: Props = $props();
+	let { messages, server, channel, scrollContainer }: Props = $props();
 
 	onMount(() => {
 		if (!channel.last_message_sent || !channel.last_message_read) {
@@ -36,6 +37,12 @@
 
 	onDestroy(() => {
 		serversStore.markChannelAsRead(server.id, channel.id);
+	});
+
+	$effect(() => {
+		if (messages.length && scrollContainer) {
+			scrollContainer.scrollTop = scrollContainer.scrollHeight;
+		}
 	});
 </script>
 

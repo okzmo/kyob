@@ -73,7 +73,7 @@ class Servers {
     const channel = this.getChannel(serverId, channelId);
 
     if (Array.isArray(channel.messages) && channel.messages.length > 0) {
-      channel.last_message_read = channel.messages[0].id;
+      channel.last_message_read = channel.messages[channel.messages.length - 1].id;
       channel.last_mentions = [];
     }
   }
@@ -83,7 +83,7 @@ class Servers {
     const channel = this.getChannel(serverId, message.channel_id);
 
     if (Array.isArray(messages)) {
-      messages.unshift(message);
+      messages.push(message);
     }
 
     if (!windows.getWindow({ channelId: message.channel_id })) {
@@ -172,6 +172,7 @@ class Servers {
     if (!member) return;
 
     if (user.avatar) member.avatar = user.avatar;
+    if (user.banner) member.banner = user.banner;
     if (user.display_name) member.display_name = user.display_name;
     if (user.username) member.username = user.username;
   }
