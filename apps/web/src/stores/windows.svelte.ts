@@ -51,13 +51,15 @@ class Windows {
     serverId,
     channelId,
     friendId,
-    tab = 'chat'
+    tab = 'chat',
+    type = 'default'
   }: {
     id: string;
     serverId?: string;
     channelId?: string;
     friendId?: string;
-    tab?: 'chat' | 'call'
+    tab?: 'chat' | 'call';
+    type?: 'default' | 'world'
   }) {
     const exist = Boolean(this.openWindows.find((w) => w.id === id));
     if (exist) {
@@ -74,7 +76,8 @@ class Windows {
       height: 400,
       x: 100,
       y: 150,
-      tab: tab
+      tab: tab,
+      type: type
     });
     this.activeWindow = id;
   }

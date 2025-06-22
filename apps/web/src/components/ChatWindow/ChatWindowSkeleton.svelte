@@ -9,15 +9,16 @@
 	interface Props {
 		id: string;
 		tab: 'chat' | 'call';
-		server?: Server;
-		channel?: Channel;
+		type: 'default' | 'world';
+		server: Server;
+		channel: Channel;
 		friend?: Friend;
 		children: Snippet;
 	}
 
 	type Positions = 'br' | 'bl' | 'tl' | 'tr' | 'l' | 'r' | 'b' | 't' | '';
 
-	let { id, children, tab, server, channel, friend }: Props = $props();
+	let { id, children, tab, type, server, channel, friend }: Props = $props();
 
 	let windowState = $state(windows.openWindows.find((w) => w.id === id)!);
 	let startPos = $state({ x: 0, y: 0 });
@@ -208,7 +209,7 @@
 	]}
 	style="transform: translate({offset.x}px, {offset.y}px);"
 >
-	<ChatWindowTopBar {id} {tab} {server} {channel} {friend} />
+	<ChatWindowTopBar {id} {tab} {type} {server} {channel} {friend} />
 	<div
 		style="width: {windowState?.width}px; height: {windowState?.height}px"
 		class="bg-main-900 inner-main-800 relative mt-0.5 flex flex-col items-start overflow-hidden"

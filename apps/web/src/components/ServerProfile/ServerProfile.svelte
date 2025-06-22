@@ -9,6 +9,7 @@
 	import Gear from 'components/ui/icons/Gear.svelte';
 	import { isColorLight } from 'utils/colors';
 	import { userStore } from 'stores/user.svelte';
+	import Button from 'components/ui/Button/Button.svelte';
 
 	interface Props {
 		server: Server;
