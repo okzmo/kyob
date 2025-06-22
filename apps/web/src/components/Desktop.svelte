@@ -72,6 +72,7 @@
 					<ChatWindow
 						id={chatWindow.id}
 						tab={chatWindow.tab}
+						type={chatWindow.type}
 						serverId={chatWindow.serverId}
 						channelId={chatWindow.channelId}
 						friendId={chatWindow.friendId}

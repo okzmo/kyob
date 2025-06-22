@@ -26,6 +26,7 @@ export interface Window {
   x: number;
   y: number;
   tab: 'chat' | 'call';
+  type: 'default' | 'world';
 }
 
 export interface Channel {

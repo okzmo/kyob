@@ -15,17 +15,20 @@
 	interface Props {
 		id: string;
 		tab: 'chat' | 'call';
+		type: 'default' | 'world';
 		server: Server;
-		channel: Channel;
-		friend: Friend;
+		channel?: Channel;
+		friend?: Friend;
 	}
 
-	let { id, tab, server, channel, friend }: Props = $props();
+	let { id, tab, type, server, channel, friend }: Props = $props();
 
 	let isFriendChannel = $derived(server.id === 'global' && friend);
-	let isFriendCallActive = $derived(channel.voice_users.length > 0);
+	let isFriendCallActive = $derived(channel && channel.voice_users.length > 0);
 
 	async function handleCallTab() {
+		if (!channel) return;
+
 		if (isFriendChannel && !isFriendCallActive) {
 			if (rtc.currentVC) {
 				await backend.disconnectFromCall(rtc.currentVC.serverId, rtc.currentVC.channelId);
@@ -90,34 +93,36 @@
 		</div>
 	</div>
 
-	<Button
-		variants="icon"
-		class={[
-			'inner-main-800 !w-auto gap-x-2 px-[0.7rem]',
-			channel.voice_users.length > 0 && tab === 'chat' ? '!aspect-auto' : '',
-			tab !== 'chat'
-				? 'hocus:inner-main-700-shadow'
-				: 'hocus:inner-green-400/40 hocus:text-green-400'
-		]}
-		onclick={handleCallTab}
-		tooltip={tab !== 'chat'
-			? 'Go to chat'
-			: isFriendChannel && !isFriendCallActive
-				? 'Start call'
-				: 'Go to voice chat'}
-		corners
-		cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
-	>
-		{#if tab === 'chat'}
-			<Phone height={16} width={16} />
-		{:else if tab === 'call'}
-			<HashChat height={16} width={16} />
-		{/if}
+	{#if type === 'default' && channel}
+		<Button
+			variants="icon"
+			class={[
+				'inner-main-800 !w-auto gap-x-2 px-[0.7rem]',
+				channel.voice_users.length > 0 && tab === 'chat' ? '!aspect-auto' : '',
+				tab !== 'chat'
+					? 'hocus:inner-main-700-shadow'
+					: 'hocus:inner-green-400/40 hocus:text-green-400'
+			]}
+			onclick={handleCallTab}
+			tooltip={tab !== 'chat'
+				? 'Go to chat'
+				: isFriendChannel && !isFriendCallActive
+					? 'Start call'
+					: 'Go to voice chat'}
+			corners
+			cornerClass={tab !== 'chat' ? 'group-hocus:border-main-600' : 'group-hocus:border-green-400'}
+		>
+			{#if tab === 'chat'}
+				<Phone height={16} width={16} />
+			{:else if tab === 'call'}
+				<HashChat height={16} width={16} />
+			{/if}
 
-		{#if channel.voice_users.length > 0 && tab === 'chat' && server.id !== 'global'}
-			{channel.voice_users.length}
-		{/if}
-	</Button>
+			{#if channel.voice_users.length > 0 && tab === 'chat' && server.id !== 'global'}
+				{channel.voice_users.length}
+			{/if}
+		</Button>
+	{/if}
 	<Button
 		class="inner-main-800 hocus:inner-main-700-shadow px-[0.7rem]"
 		variants="icon"
