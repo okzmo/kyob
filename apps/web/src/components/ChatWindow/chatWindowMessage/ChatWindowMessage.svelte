@@ -81,7 +81,15 @@
 		/>
 	</UserProfileWithTriggerAndFetch>
 	<div class="pointer-events-none w-full pt-1">
-		<ChatWindowMessageUser {id} {author} {time} {isUserMentioned} {isEdited} />
+		<ChatWindowMessageUser
+			{id}
+			{author}
+			{time}
+			{isUserMentioned}
+			{isEdited}
+			serverId={server.id}
+			inDm={channel.type === 'dm'}
+		/>
 		<ChatWindowMessageContent {id} {server} {channel} {content} {attachments} />
 	</div>
 </div>

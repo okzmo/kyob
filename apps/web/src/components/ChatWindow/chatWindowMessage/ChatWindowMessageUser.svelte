@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import UserProfileWithTriggerAndFetch from 'components/UserProfile/UserProfileWithTriggerAndFetch.svelte';
 	import { core } from 'stores/core.svelte';
 	import { serversStore } from 'stores/servers.svelte';
@@ -8,16 +7,18 @@
 
 	interface Props {
 		id: string;
+		serverId: string;
 		time: string;
 		author: Partial<User>;
 		isUserMentioned: boolean;
 		isEdited: boolean;
+		inDm: boolean;
 	}
 
-	let { author, isUserMentioned, isEdited, id, time }: Props = $props();
+	let { author, isUserMentioned, isEdited, id, serverId, time, inDm = false }: Props = $props();
 
 	let role = $derived(
-		author.id ? serversStore.getFirstRole(page.params.server_id, author.id) : undefined
+		author.id && !inDm ? serversStore.getFirstRole(serverId, author.id) : undefined
 	);
 </script>
 
@@ -29,7 +30,7 @@
 			{author.display_name}
 		</p>
 	</UserProfileWithTriggerAndFetch>
-	{#if role}
+	{#if role && !inDm}
 		<div
 			class="mb-[4px] px-2 py-0.5 text-xs font-semibold uppercase select-none"
 			style="color: rgb({role.color}); background-color: rgba({role.color}, 0.15);"

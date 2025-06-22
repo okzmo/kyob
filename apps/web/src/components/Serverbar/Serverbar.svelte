@@ -7,6 +7,7 @@
 	import ServerProfileWithTrigger from 'components/ServerProfile/ServerProfileWithTrigger.svelte';
 	import Button from 'components/ui/Button/Button.svelte';
 	import { windows } from 'stores/windows.svelte';
+	import Planet from 'components/ui/icons/Planet.svelte';
 
 	let server = $derived<Server>(serversStore.getServer(page.params.server_id));
 	let activeMembers = $derived(serversStore.getActiveMembers(page.params.server_id));
@@ -22,11 +23,11 @@
 				type: 'world'
 			});
 		}}
-		class="group bg-main-900/80 inner-shadow-main-800 hocus:bg-main-800/80 hocus:inner-shadow-main-500 relative aspect-square h-[3.75rem] transition hover:cursor-pointer"
+		class="group bg-main-900/80 inner-shadow-main-800 hocus:bg-main-800/80 hocus:inner-shadow-main-500 text-main-500 hocus:text-main-300 relative flex aspect-square h-[3.75rem] items-center justify-center transition hover:cursor-pointer"
 		tooltip="Join world"
 	>
 		<Corners color="border-main-700" class="group-hocus:border-main-300" />
-		W
+		<Planet height={32} width={32} />
 	</Button>
 	<div
 		class="bg-main-900/80 inner-shadow-main-800 z-50 flex items-center gap-x-6 p-1 backdrop-blur-2xl transition-colors duration-100 select-none"

@@ -1,6 +1,7 @@
 export const ChannelTypes = {
   Textual: 'textual',
-  Voice: 'voice'
+  Voice: 'voice',
+  Dm: 'dm'
 } as const;
 export type ChannelTypes = (typeof ChannelTypes)[keyof typeof ChannelTypes];
 
