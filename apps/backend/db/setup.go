@@ -5,27 +5,28 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	db "github.com/okzmo/kyob/db/gen_queries"
 )
 
-type DbManager struct {
-	conn *pgx.Conn
+type DBManager struct {
+	conn *pgxpool.Pool
 }
 
-var Query *Queries
+var Query *db.Queries
 
-func Setup() *DbManager {
+func Setup() *DBManager {
 	dsn := os.Getenv("DATABASE_URL")
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, dsn)
+	conn, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	Query = New(conn)
-	return &DbManager{conn: conn}
+	Query = db.New(conn)
+	return &DBManager{conn: conn}
 }
 
-func (db *DbManager) Close() error {
-	return db.conn.Close(context.Background())
+func (db *DBManager) Close() {
+	db.conn.Close()
 }

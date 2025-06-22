@@ -1,8 +1,11 @@
 <script lang="ts">
+	import CreateChannelModal from 'components/modals/CreateChannelModal.svelte';
+	import { core } from 'stores/core.svelte';
+	import { windows } from 'stores/windows.svelte';
 	import { onMount } from 'svelte';
-	import type { Channel } from '../../types/types';
+	import type { Channel } from 'types/types';
 	import ChannelButton from '../ui/ChannelButton/ChannelButton.svelte';
-	import { windows } from '../../stores/windows.svelte';
+	import GridDots from 'components/GridDots.svelte';
 
 	let dragging = $state(false);
 	let startPos = $state({ x: 0, y: 0 });
@@ -16,8 +19,9 @@
 	let dragStartTime = $state(0);
 
 	function handleMouseDown(e: MouseEvent) {
+		if (e.buttons !== 1 || !core.canDragMap) return;
 		dragging = true;
-		windows.activeWindow = null;
+		windows.setActiveWindow(null);
 		startPos = { x: e.clientX, y: e.clientY };
 		lastMousePos = { x: e.clientX, y: e.clientY };
 		lastTimestamp = Date.now();
@@ -133,13 +137,25 @@
 	let { channels }: Props = $props();
 </script>
 
-{#each channels as channel (channel.id)}
-	<ChannelButton
-		id={channel.id}
-		name={channel.name}
-		type={channel.type}
-		x={channel.x + offset.x}
-		y={channel.y + offset.y}
-		unread={channel.unread}
-	/>
-{/each}
+{#if channels.length > 0}
+	{#each channels as channel (channel.id)}
+		<ChannelButton
+			id={channel.id}
+			name={channel.name}
+			type={channel.type}
+			x={channel.x + offset.x}
+			y={channel.y + offset.y}
+			unread={Number(channel.last_message_read) < Number(channel.last_message_sent)}
+			mention={channel.last_mentions && channel.last_mentions.length}
+		/>
+	{/each}
+{:else}
+	<h3
+		class="font-outfit text-main-600 fixed top-1/2 left-1/2 -translate-1/2 text-5xl font-bold uppercase select-none"
+	>
+		No channels yet
+	</h3>
+{/if}
+
+<CreateChannelModal />
+<GridDots {offset} />

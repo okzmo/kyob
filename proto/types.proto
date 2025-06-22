@@ -1,7 +1,339 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 package types;
 option go_package = "github.com/okzmo/nyo/proto";
 
-message Setup {
-  uint32 id;
+message WSMessage {
+  oneof content {
+    BroadcastChatMessage chat_message = 1;
+    BroadcastChannelCreation channel_creation = 2;
+    BroadcastChannelRemoved channel_removed = 3;
+    BroadcastNewUserInServer new_user = 4;
+    BroadcastConnect user_connect = 5;
+    BroadcastDisconnect user_disconnect = 6;
+    BroadcastDeleteChatMessage delete_message = 7;
+    BroadcastEditMessage edit_message = 8;
+    SendFriendInvite friend_invite = 9;
+    AcceptFriendInvite accept_friend = 10;
+    DeleteFriend delete_friend = 11;
+    BroadcastUserInformations user_changed = 12;
+    ServerChangedInformations server_changed = 13;
+    CallInitialization call_users = 14;
+    ConnectToCall connect_to_call = 15;
+    DisconnectFromCall disconnect_from_call = 16;
+    Mute mute_user = 17;
+    Deafen deafen_user = 18;
+    AddRoleMember add_role_member = 19;
+    RemoveRoleMember remove_role_member = 20;
+    CreateRole create_role = 21;
+    ChangeRoleRanking move_role = 22;
+  }
+}
+
+message UserLinksRow {
+  string id = 1;
+  string label = 2;
+  string url = 3;
+}
+
+message UserFactsRow {
+  string id = 1;
+  string label = 2;
+  string value = 3;
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string username = 3;
+  string display_name = 4;
+  optional string avatar = 5;
+  optional string banner = 6;
+  optional string main_color = 7;
+  optional bytes about = 8;
+  google.protobuf.Timestamp created_at = 9;
+  bytes links = 10; 
+  bytes facts = 11;
+}
+
+message IncomingChatMessage {
+  string author_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+  bytes content = 4;
+  bool everyone = 5;
+  repeated string mentions_users = 6;
+  repeated string mentions_channels = 7;
+  bytes attachments = 8;
+}
+
+message EditChatMessage {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+  string message_id = 4;
+  bytes content = 5;
+  bool everyone = 6;
+  repeated string mentions_users = 7;
+  repeated string mentions_channels = 8;
+}
+
+message DeleteChatMessage {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+  string message_id = 4;
+}
+
+message BroadcastChatMessage {
+  string id = 1;
+  string author_id = 2;
+  string server_id = 3;
+  string channel_id = 4;
+  bytes content = 5;
+  bool everyone = 6;
+  repeated string mentions_users = 7;
+  repeated string mentions_channels = 8;
+  bytes attachments = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message BroadcastEditMessage {
+  string message_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+  bytes content = 4;
+  bool everyone = 5;
+  repeated string mentions_users = 6;
+  repeated string mentions_channels = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message BroadcastDeleteChatMessage {
+  string message_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+}
+
+message BroadcastChannelRemoved {
+  string server_id = 1;
+  string channel_id = 2;
+  string actor_id = 3;
+  string actor_address = 4;
+}
+
+message BroadcastNewUserInServer {
+  string server_id = 1;
+  User user = 2;
+}
+
+message BroadcastServerRemoved {
+  string server_id = 1;
+  string actor_id = 2;
+  string actor_address = 3;
+}
+
+message BroadcastChannelCreation {
+  string id = 1;
+  string server_id = 2;
+  string name = 3;
+  string type = 4;
+  optional string description = 5;
+  repeated string users = 6;
+  repeated string roles = 7;
+  int32 x = 8;
+  int32 y = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  string actor_id = 12;
+  string actor_address = 13;
+}
+
+message ChannelStarting {
+  string actor_id = 1;
+  string actor_address = 2;
+}
+
+message BroadcastConnect {
+  string server_id = 1;
+  string user_id = 2;
+  repeated string users = 3;
+  string type = 4;
+}
+
+message BroadcastDisconnect {
+  string server_id = 1;
+  string user_id = 2;
+  string type = 3;
+}
+
+message BodyChannelCreation {
+  string server_id = 1;
+  string creator_id = 2;
+  string name = 3;
+  string type = 4;
+  string description = 5;
+  repeated string users = 6;
+  repeated string roles = 7;
+  int32 x = 8;
+  int32 y = 9;
+  string id = 10;
+}
+
+message StartChannel {
+  string server_id = 1;
+  string channel_id = 2;
+  repeated string users = 3;
+}
+
+message KillChannel {
+  string server_id = 1;
+  string channel_id = 2;
+  repeated string users = 3;
+  string actor_id = 4;
+  string actor_address = 5;
+}
+
+message BodyChannelRemoved {
+  string server_id = 1;
+  string channel_id = 2;
+  string user_id = 3;
+}
+
+message BodyServerRemoved {
+  string server_id = 1;
+  string user_id = 2;
+}
+
+message BodyNewUserInServer {
+  string server_id = 1;
+  User user = 2;
+}
+
+message NewServerCreated {
+  string actor_id = 1;
+  string actor_address = 2;
+}
+
+message BroadcastAcceptFriend {
+  string user_id = 1;
+  string friend_id = 2;
+}
+
+message SendFriendInvite {
+  string invite_id = 1;
+  User user = 2;
+}
+
+message AcceptFriendInvite {
+  string invite_id = 1;
+  string channel_id = 2;
+  User user = 3;
+  bool sender = 4;
+}
+
+message DeleteFriend {
+  string invite_id = 1;
+  string user_id = 2;
+}
+
+message Connect {
+  string type = 1;
+}
+
+message ConnectToCall {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+}
+
+message CallInitialization {
+  repeated ConnectToCall call_users = 1;
+}
+
+message Disconnect {
+  string type = 1;
+}
+
+message DisconnectFromCall {
+  string user_id = 1;
+  string server_id = 2;
+  string channel_id = 3;
+}
+
+message Mute {
+  string user_id = 1;
+  bool status = 2;
+  string server_id = 3;
+  string channel_id = 4;
+}
+
+message Deafen {
+  string user_id = 1;
+  bool status = 2;
+  string server_id = 3;
+  string channel_id = 4;
+}
+
+message UserInformations {
+  optional string username = 1;
+  optional string display_name = 2;
+  optional string avatar = 3;
+  optional string banner = 4;
+  optional bytes facts = 5;
+  optional bytes links = 6;
+  optional bytes about = 7;
+  optional string main_color= 8;
+}
+
+message UserChangedInformations {
+  string user_id = 1;
+  UserInformations user_informations = 2;
+}
+
+message BroadcastUserInformations {
+  string user_id = 1;
+  string server_id = 2;
+  UserInformations user_informations = 3;
+}
+
+message ServerInformations {
+  optional string name = 1;
+  optional string avatar = 2;
+  optional string banner = 3;
+  optional bytes description = 4;
+  optional string main_color= 5;
+}
+
+message ServerChangedInformations {
+  string server_id = 1;
+  ServerInformations server_informations = 2;
+}
+
+message CreateRole {
+  string id = 1;
+  int32 idx = 2;
+  string server_id = 3;
+  string name = 4;
+  string color = 5;
+  repeated string abilities = 6;
+}
+
+message AddRoleMember {
+  string user_id = 1;
+  string id = 2;
+  string server_id = 3;
+}
+
+message RemoveRoleMember {
+  string user_id = 1;
+  string id = 2;
+  string server_id = 3;
+}
+
+message ChangeRoleRanking {
+  string id = 1;
+  int32 from = 2;
+  int32 to = 3;
+  string server_id = 4;
 }

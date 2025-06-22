@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
+	import Corners from '../Corners/Corners.svelte';
 
 	interface IconProps {
 		height: number;
@@ -11,24 +12,30 @@
 		Icon: Component<IconProps>;
 		href?: string;
 		label: string;
+		class?: string;
 	}
 
-	let { Icon, href, label }: Props = $props();
+	let { Icon, href, label, class: classes }: Props = $props();
 </script>
 
 {#if href}
 	<a
 		{href}
 		aria-label={label}
-		class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 flex h-[2.25rem] w-[2.25rem] items-center justify-center rounded-lg transition-colors hover:cursor-pointer"
+		class="text-main-400 group hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition hover:cursor-pointer"
 	>
+		<Corners color="border-accent-100" hide />
 		<Icon height={22} width={22} />
 	</a>
 {:else}
 	<button
 		aria-label={label}
-		class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 flex h-[2.25rem] w-[2.25rem] items-center justify-center rounded-lg transition-colors hover:cursor-pointer"
+		class={[
+			'text-main-400 group hocus:text-accent-50 hocus:bg-accent-100/15 relative flex h-[2.25rem] w-[2.25rem] items-center justify-center transition hover:cursor-pointer',
+			classes
+		]}
 	>
+		<Corners color="border-accent-100" hide />
 		<Icon height={22} width={22} />
 	</button>
 {/if}

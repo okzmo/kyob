@@ -1,0 +1,180 @@
+<script lang="ts">
+	import SubmitButton from 'components/ui/SubmitButton/SubmitButton.svelte';
+	import type { Emoji } from 'types/types';
+	import { generateRandomId } from 'utils/basics';
+	import { defaults, setError, superForm } from 'sveltekit-superforms';
+	import { valibot } from 'sveltekit-superforms/adapters';
+	import { AddEmojisSchema } from 'types/schemas';
+	import { backend } from 'stores/backend.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import { delay } from 'utils/time';
+	import Warning from 'components/ui/icons/Warning.svelte';
+	import EmojiLine from 'components/settings/EmojiLine.svelte';
+	import { fly } from 'svelte/transition';
+	import { transformShortcode } from 'utils/emojis';
+
+	let emojis = $state<Emoji[]>([]);
+	let isSubmitting = $state(false);
+	let isSubmitted = $state(false);
+	let isDeleting = $state(false);
+	let buttonWidth = $derived(isSubmitted || isSubmitting ? 40 : 135);
+
+	const { form, errors, enhance } = superForm(defaults(valibot(AddEmojisSchema)), {
+		SPA: true,
+		dataType: 'json',
+		validators: valibot(AddEmojisSchema),
+		validationMethod: 'onsubmit',
+		async onUpdate({ form }) {
+			if (form.valid) {
+				isSubmitting = true;
+				emojis.forEach((e) => form.data.shortcodes.push(e.shortcode));
+
+				const res = await backend.uploadEmojis(form.data);
+
+				for (const emoji of emojis) {
+					URL.revokeObjectURL(emoji.url);
+				}
+
+				emojis = [];
+
+				if (res.isErr()) {
+					console.error(res.error.error);
+					setError(form, 'shortcodes' as any, res.error.error);
+					isSubmitting = false;
+				}
+
+				if (res.isOk()) {
+					const emojis = res.value;
+					userStore.addEmojis(emojis);
+
+					await delay(400);
+					isSubmitting = false;
+					isSubmitted = true;
+					await delay(800);
+
+					isSubmitted = false;
+				}
+			}
+		}
+	});
+
+	function onFile(e: Event) {
+		const target = e.target as HTMLInputElement;
+		if (target.files) {
+			for (const image of target.files) {
+				const dataUrl = URL.createObjectURL(image);
+
+				emojis.push({
+					id: generateRandomId(),
+					url: dataUrl,
+					shortcode: transformShortcode(image.name.split('.')[0])
+				});
+
+				$form.emojis = [...$form.emojis, image];
+			}
+		}
+	}
+
+	async function onExistingEmojiDelete(id: string) {
+		let deleteTimeout = setTimeout(() => {
+			isDeleting = true;
+		}, 200);
+
+		const res = await backend.deleteEmoji(id);
+
+		if (res.isErr()) {
+			console.error(res.error.error);
+		}
+
+		if (res.isOk()) {
+			userStore.emojis = userStore.emojis.filter((emoji) => emoji.id !== id);
+		}
+
+		clearTimeout(deleteTimeout);
+		isDeleting = false;
+	}
+
+	function onEmojiDelete(id: string, idx?: number) {
+		emojis = emojis.filter((emoji) => emoji.id !== id);
+		$form.emojis = $form.emojis.filter((_, index) => index !== idx);
+	}
+
+	let isEmpty = $derived(emojis.length <= 0);
+</script>
+
+<h1 class="text-2xl font-bold select-none">Emojis</h1>
+<p class="text-main-400 mt-3">
+	Add emojis to express yourself! The limit increase as your level increases.
+</p>
+
+<h2 class="text-main-400 mt-4 text-sm uppercase">Requirements</h2>
+<ul class="text-main-400 mt-1 flex flex-col">
+	<li>- File type: JPEG, PNG, GIF, WEBP, AVIF</li>
+	<li>- Recommended emoji dimensions: 128x128</li>
+</ul>
+
+<div class="mt-4 flex items-end gap-x-3">
+	<label
+		for="avatar-profile"
+		class="group inner-accent/15 hocus:inner-accent-no-shadow/25 bg-accent-100/15 hover:bg-accent-100/25 text-accent-50 relative flex w-fit items-center justify-center overflow-hidden px-2 py-1 whitespace-nowrap transition duration-100"
+	>
+		<input
+			type="file"
+			id="avatar-profile"
+			name="avatar-profile"
+			aria-label="Profile avatar and banner"
+			class="absolute h-full w-full text-transparent hover:cursor-pointer"
+			accept="image/png, image/jpeg, image/gif, image/webp, image/avif"
+			onchange={onFile}
+			multiple
+		/>
+		<p>Upload an emoji</p>
+	</label>
+	{#if isDeleting}
+		<p class="text-accent-50" transition:fly={{ duration: 50, y: 5 }}>
+			Deleting an existing emoji...
+		</p>
+	{/if}
+</div>
+
+<hr class="mt-5 w-full border-none" style="height: 1px; background-color: var(--color-main-800);" />
+
+{#if emojis.length > 0 || userStore.emojis?.length > 0}
+	<form use:enhance>
+		<ul>
+			{#each userStore.emojis as emoji (emoji.id)}
+				<EmojiLine
+					{...emoji}
+					bind:shortcode={emoji.shortcode}
+					deleteFunction={onExistingEmojiDelete}
+				/>
+			{/each}
+			{#each emojis as emoji, idx (emoji.id)}
+				<EmojiLine
+					{...emoji}
+					{idx}
+					bind:shortcode={emoji.shortcode}
+					deleteFunction={onEmojiDelete}
+				/>
+			{/each}
+		</ul>
+
+		<SubmitButton
+			{isSubmitted}
+			{isSubmitting}
+			{buttonWidth}
+			{isEmpty}
+			type="submit"
+			class="relative mt-5"
+		>
+			Save my emojis
+		</SubmitButton>
+	</form>
+{/if}
+
+{#if $errors.emojis || $errors.shortcodes}
+	<p class="mt-5 flex items-center gap-x-2 text-red-400">
+		<Warning height={20} width={20} />
+		{$errors.emojis?.[0] || $errors.shortcodes?.[0]}
+	</p>
+{/if}

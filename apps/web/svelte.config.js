@@ -13,7 +13,14 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter({
 			fallback: 'index.html' // may differ from host to host
-		})
+		}),
+
+		alias: {
+			components: 'src/components',
+			types: 'src/types',
+			stores: 'src/stores',
+			utils: 'src/utils'
+		}
 	}
 };
 

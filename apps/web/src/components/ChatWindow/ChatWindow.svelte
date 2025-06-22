@@ -1,27 +1,43 @@
 <script lang="ts">
-	import { channelsStore } from '../../stores/channels.svelte';
-	import { serversStore } from '../../stores/servers.svelte';
-	import ChatWindowInput from './ChatWindowInput.svelte';
-	import ChatWindowMessage from './ChatWindowMessage.svelte';
+	import { serversStore } from 'stores/servers.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import ChatWindowInput from './chatWindowInput/ChatWindowInput.svelte';
 	import ChatWindowSkeleton from './ChatWindowSkeleton.svelte';
+	import ChatWindowMessages from './chatWindowMessage/ChatWindowMessages.svelte';
+	import ChatWindowErrors from './ChatWindowErrors.svelte';
+	import ChatWindowCall from './chatWindowCall/ChatWindowCall.svelte';
 
 	interface Props {
 		id: string;
-		channelId: number;
-		serverId: number;
+		tab: 'chat' | 'call';
+		channelId?: string;
+		serverId?: string;
+		friendId?: string;
 	}
 
-	let { id, channelId, serverId }: Props = $props();
+	let { id, tab, channelId = '', serverId = '', friendId = '' }: Props = $props();
 
-	const channel = $state(channelsStore.getChannel(channelId));
-	const server = $state(serversStore.getServer(serverId));
+	const server = $derived(serversStore.getServer(serverId));
+	const channel = $derived(serversStore.getChannel(serverId, channelId));
+	const friend = $derived(userStore.getFriend(friendId));
+	const messages = $derived(serversStore.getMessages(serverId, channelId));
+	let scrollContainer = $state<HTMLDivElement>();
 </script>
 
-<ChatWindowSkeleton {id} {channel} {server}>
-	<div class="flex h-[calc(100%-3.75rem)] w-full flex-col-reverse gap-y-2 overflow-auto py-3">
-		{#each { length: 8 }}
-			<ChatWindowMessage displayName="Okzmo" username="okzmo" time="Today at 2:30am" />
-		{/each}
-	</div>
-	<ChatWindowInput {channel} {server} />
+<ChatWindowSkeleton {id} {tab} {channel} {server} {friend}>
+	{#if tab === 'chat'}
+		<div
+			class="relative flex min-h-0 w-full flex-grow flex-col gap-y-2 overflow-y-auto pt-2 pb-4"
+			bind:this={scrollContainer}
+		>
+			{#await messages then allMessages}
+				<ChatWindowMessages {channel} {server} messages={allMessages} {scrollContainer} />
+			{/await}
+		</div>
+		<ChatWindowInput {channel} {server} {friend} />
+	{:else if tab === 'call'}
+		<ChatWindowCall {server} {channel} />
+	{/if}
+
+	<ChatWindowErrors />
 </ChatWindowSkeleton>

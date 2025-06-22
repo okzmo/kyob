@@ -16,7 +16,9 @@ SET row_security = off;
 
 CREATE TYPE public.channel_type AS ENUM (
     'voice',
-    'textual'
+    'textual',
+    'dm',
+    'groups'
 );
 
 
@@ -25,70 +27,61 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: channel_membership; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.channel_membership (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
-    joined_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: channel_membership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.channel_membership_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: channel_membership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.channel_membership_id_seq OWNED BY public.channel_membership.id;
-
-
---
 -- Name: channels; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.channels (
-    id bigint NOT NULL,
-    server_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     type public.channel_type NOT NULL,
     description text,
+    users character varying(20)[],
+    roles character varying(20)[],
     x integer NOT NULL,
     y integer NOT NULL,
+    active boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- Name: channels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: emojis; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.channels_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+CREATE TABLE public.emojis (
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
+    url character varying(255) NOT NULL,
+    shortcode character varying(255) NOT NULL
+);
 
 
 --
--- Name: channels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: friends; Type: TABLE; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.channels_id_seq OWNED BY public.channels.id;
+CREATE TABLE public.friends (
+    id character varying(20) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    friend_id character varying(255) NOT NULL,
+    accepted boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: invites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.invites (
+    id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
+    invite_id character varying(255) NOT NULL,
+    expire_at timestamp with time zone DEFAULT now() NOT NULL
+);
 
 
 --
@@ -96,35 +89,18 @@ ALTER SEQUENCE public.channels_id_seq OWNED BY public.channels.id;
 --
 
 CREATE TABLE public.messages (
-    id bigint NOT NULL,
-    author_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    author_id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
+    channel_id character varying(20) NOT NULL,
     content jsonb NOT NULL,
-    mentions_users bigint[],
-    mentions_channels bigint[],
-    attached text[],
+    everyone boolean DEFAULT false NOT NULL,
+    mentions_users character varying(20)[],
+    mentions_channels character varying(20)[],
+    attachments jsonb DEFAULT '[]'::jsonb,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.messages_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
 
 
 --
@@ -132,34 +108,15 @@ ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
 --
 
 CREATE TABLE public.roles (
-    id bigint NOT NULL,
-    server_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    idx integer DEFAULT 0 NOT NULL,
+    server_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
     color character varying(255) NOT NULL,
-    description text,
-    abilities text[],
+    abilities character varying(255)[],
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
@@ -176,31 +133,14 @@ CREATE TABLE public.schema_migrations (
 --
 
 CREATE TABLE public.server_membership (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    server_id bigint NOT NULL,
-    roles bigint[],
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
+    server_id character varying(20) NOT NULL,
+    roles character varying(20)[],
+    x integer NOT NULL,
+    y integer NOT NULL,
     joined_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: server_membership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.server_membership_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: server_membership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.server_membership_id_seq OWNED BY public.server_membership.id;
 
 
 --
@@ -208,35 +148,17 @@ ALTER SEQUENCE public.server_membership_id_seq OWNED BY public.server_membership
 --
 
 CREATE TABLE public.servers (
-    id bigint NOT NULL,
-    owner_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    owner_id character varying(20) NOT NULL,
     name character varying(255) NOT NULL,
-    background character varying(255) NOT NULL,
-    description text,
-    x integer NOT NULL,
-    y integer NOT NULL,
+    avatar character varying(255),
+    banner character varying(255),
+    description jsonb,
+    main_color character varying(255),
+    private boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: servers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.servers_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: servers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.servers_id_seq OWNED BY public.servers.id;
 
 
 --
@@ -244,8 +166,8 @@ ALTER SEQUENCE public.servers_id_seq OWNED BY public.servers.id;
 --
 
 CREATE TABLE public.tokens (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    id character varying(20) NOT NULL,
+    user_id character varying(20) NOT NULL,
     token text NOT NULL,
     type character varying(255) NOT NULL,
     expire_at timestamp with time zone DEFAULT now() NOT NULL
@@ -253,22 +175,16 @@ CREATE TABLE public.tokens (
 
 
 --
--- Name: tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: user_channel_read_state; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.tokens_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.tokens_id_seq OWNED BY public.tokens.id;
+CREATE TABLE public.user_channel_read_state (
+    user_id character varying(20) NOT NULL,
+    channel_id character varying(20) NOT NULL,
+    last_read_message_id character varying(20),
+    unread_mention_ids jsonb DEFAULT '[]'::jsonb,
+    updated_at timestamp without time zone DEFAULT now()
+);
 
 
 --
@@ -276,107 +192,24 @@ ALTER SEQUENCE public.tokens_id_seq OWNED BY public.tokens.id;
 --
 
 CREATE TABLE public.users (
-    id bigint NOT NULL,
+    id character varying(20) NOT NULL,
     email character varying(255) NOT NULL,
     username character varying(255) NOT NULL,
     password character varying(255) NOT NULL,
     display_name character varying(255) NOT NULL,
     avatar character varying(255),
-    about text,
+    banner character varying(255),
+    body character varying(255),
+    about jsonb,
+    main_color character varying(255),
+    links jsonb DEFAULT '[]'::jsonb,
+    facts jsonb DEFAULT '[]'::jsonb,
+    experience integer DEFAULT 0 NOT NULL,
+    rpm_id character varying(255),
+    rpm_token text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: channel_membership id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership ALTER COLUMN id SET DEFAULT nextval('public.channel_membership_id_seq'::regclass);
-
-
---
--- Name: channels id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channels ALTER COLUMN id SET DEFAULT nextval('public.channels_id_seq'::regclass);
-
-
---
--- Name: messages id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
-
-
---
--- Name: roles id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
-
-
---
--- Name: server_membership id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.server_membership ALTER COLUMN id SET DEFAULT nextval('public.server_membership_id_seq'::regclass);
-
-
---
--- Name: servers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.servers ALTER COLUMN id SET DEFAULT nextval('public.servers_id_seq'::regclass);
-
-
---
--- Name: tokens id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.tokens_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Name: channel_membership channel_membership_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_pkey PRIMARY KEY (id);
-
-
---
--- Name: channel_membership channel_membership_user_id_channel_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_user_id_channel_id_key UNIQUE (user_id, channel_id);
 
 
 --
@@ -385,6 +218,30 @@ ALTER TABLE ONLY public.channel_membership
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: emojis emojis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.emojis
+    ADD CONSTRAINT emojis_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: friends friends_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: invites invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invites
+    ADD CONSTRAINT invites_pkey PRIMARY KEY (id);
 
 
 --
@@ -444,6 +301,14 @@ ALTER TABLE ONLY public.tokens
 
 
 --
+-- Name: user_channel_read_state user_channel_read_state_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_pkey PRIMARY KEY (user_id, channel_id);
+
+
+--
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -468,6 +333,13 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: idx_invites_invite_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_invites_invite_id ON public.invites USING btree (invite_id);
+
+
+--
 -- Name: idx_tokens_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -489,27 +361,43 @@ CREATE INDEX idx_users_username ON public.users USING btree (username);
 
 
 --
--- Name: channel_membership channel_membership_channel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
-
-
---
--- Name: channel_membership channel_membership_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_membership
-    ADD CONSTRAINT channel_membership_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
 -- Name: channels channels_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.channels
     ADD CONSTRAINT channels_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: emojis emojis_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.emojis
+    ADD CONSTRAINT emojis_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: friends friends_friend_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_friend_id_fkey FOREIGN KEY (friend_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: friends friends_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: invites invites_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invites
+    ADD CONSTRAINT invites_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
 
 
 --
@@ -526,6 +414,14 @@ ALTER TABLE ONLY public.messages
 
 ALTER TABLE ONLY public.messages
     ADD CONSTRAINT messages_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
+
+
+--
+-- Name: messages messages_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.messages
+    ADD CONSTRAINT messages_server_id_fkey FOREIGN KEY (server_id) REFERENCES public.servers(id) ON DELETE CASCADE;
 
 
 --
@@ -566,6 +462,30 @@ ALTER TABLE ONLY public.servers
 
 ALTER TABLE ONLY public.tokens
     ADD CONSTRAINT tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_channel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_channel_id_fkey FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_last_read_message_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_last_read_message_id_fkey FOREIGN KEY (last_read_message_id) REFERENCES public.messages(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_channel_read_state user_channel_read_state_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_channel_read_state
+    ADD CONSTRAINT user_channel_read_state_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --

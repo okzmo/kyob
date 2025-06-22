@@ -2,34 +2,97 @@
 	import Gear from '../ui/icons/Gear.svelte';
 	import Headphone from '../ui/icons/Headphone.svelte';
 	import Microphone from '../ui/icons/Microphone.svelte';
-	import IconButton from '../ui/IconButton/IconButton.svelte';
+	import { userStore } from 'stores/user.svelte';
+	import Corners from '../ui/Corners/Corners.svelte';
+	import UserProfileWithTrigger from '../UserProfile/UserProfileWithTrigger.svelte';
+	import Button from 'components/ui/Button/Button.svelte';
+	import { goto } from '$app/navigation';
+	import { core } from 'stores/core.svelte';
+	import UserbarCall from './UserbarCall.svelte';
 </script>
 
 <div
-	class="bg-main-900 border-main-800 fixed bottom-5 left-5 z-50 flex items-center gap-x-6 rounded-2xl border py-1 pr-2 pl-1 transition-colors duration-100 hover:cursor-pointer"
+	class={[
+		'bg-main-900/80 inner-shadow-main-800 fixed bottom-5 left-5 z-50 flex flex-col justify-end py-1 pr-2 pl-1 backdrop-blur-2xl transition-[height] duration-300',
+		core.friendCalling ? 'h-[9.75rem] overflow-hidden' : 'h-[3.75rem]'
+	]}
 >
-	<button
-		class="group hocus:bg-accent-100/15 flex items-center gap-x-2.5 rounded-xl py-1 pr-4 pl-2 text-left transition-colors hover:cursor-pointer"
-	>
-		<img
-			src="/images/cool-avatar-guy.jpg"
-			alt="avatar"
-			class="h-[2.75rem] w-[2.75rem] rounded-full"
-		/>
-		<div class="flex flex-col">
-			<p class="group-hocus:text-accent-50 text-sm leading-[1.15rem] font-medium transition-colors">
-				Okzmo
-			</p>
-			<p
-				class="text-main-400 group-hocus:text-accent-200 text-sm leading-[1.15rem] transition-colors"
+	<UserbarCall />
+	<div class="flex items-center gap-x-6">
+		<Corners color="border-main-700" />
+		<UserProfileWithTrigger user={userStore.user!} y={10} alignOffset={-4}>
+			<button
+				class="group hocus:bg-accent-100/15 hocus:inner-accent/15 relative flex items-center gap-x-2.5 py-1 pr-4 pl-1 text-left transition select-none hover:cursor-pointer"
 			>
-				Connected
-			</p>
+				<img
+					src={userStore.user?.avatar}
+					alt="avatar"
+					class="h-[2.75rem] w-[2.75rem] object-cover"
+				/>
+				<div class="flex flex-col">
+					<p
+						class="group-hocus:text-accent-50 text-sm leading-[1.15rem] font-medium transition-colors"
+					>
+						{userStore.user?.display_name}
+					</p>
+					<p
+						class="text-main-400 group-hocus:text-accent-200 text-sm leading-[1.15rem] transition-colors"
+					>
+						Connected
+					</p>
+				</div>
+			</button>
+		</UserProfileWithTrigger>
+		<div class="flex items-center gap-x-1">
+			<Button
+				variants="icon"
+				class={[
+					'h-[2.25rem] w-[2.25rem] bg-transparent',
+					userStore.mute
+						? 'hocus:bg-red-400/25 text-red-400'
+						: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+				]}
+				onclick={() => userStore.toggleMute()}
+				tooltip={userStore.mute ? 'Unmute' : 'Mute'}
+				corners
+				cornerColor="border-transparent"
+				cornerClass={userStore.mute
+					? 'group-hocus:border-red-400'
+					: 'group-hocus:border-accent-100'}
+			>
+				<Microphone height={22} width={22} mute={userStore.mute} />
+			</Button>
+
+			<Button
+				variants="icon"
+				class={[
+					'h-[2.25rem] w-[2.25rem] bg-transparent',
+					userStore.deafen
+						? 'hocus:bg-red-400/25 text-red-400'
+						: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
+				]}
+				onclick={() => userStore.toggleDeafen()}
+				tooltip={userStore.deafen ? 'Undeafen' : 'Deafen'}
+				corners
+				cornerColor="border-transparent"
+				cornerClass={userStore.deafen
+					? 'group-hocus:border-red-400'
+					: 'group-hocus:border-accent-100'}
+			>
+				<Headphone height={22} width={22} deafen={userStore.deafen} />
+			</Button>
+
+			<Button
+				variants="icon"
+				class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] bg-transparent !p-0"
+				onclick={() => goto('/settings')}
+				tooltip="Settings"
+				corners
+				cornerColor="border-transparent"
+				cornerClass="group-hocus:border-accent-100"
+			>
+				<Gear height={22} width={22} />
+			</Button>
 		</div>
-	</button>
-	<div class="flex items-center gap-x-1">
-		<IconButton Icon={Headphone} label="Headphone" />
-		<IconButton Icon={Microphone} label="Microphone" />
-		<IconButton Icon={Gear} href="/settings" label="Settings" />
 	</div>
 </div>
