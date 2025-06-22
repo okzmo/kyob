@@ -112,7 +112,7 @@
 				>
 				</span>
 			</div>
-			<div class="flex max-h-[20rem] flex-col gap-y-0.5 overflow-auto pb-3">
+			<div class="mb-[2px] flex max-h-[20rem] flex-col gap-y-0.5 overflow-auto pb-3">
 				{#each server.members as member (member.id)}
 					<UserProfileWithTriggerAndFetch
 						userId={member.id!}

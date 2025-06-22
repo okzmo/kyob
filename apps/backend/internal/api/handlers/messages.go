@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
@@ -15,7 +15,7 @@ import (
 )
 
 func CreateOrEditMessage(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	channelID := chi.URLParam(r, "channel_id")
 	serverID := chi.URLParam(r, "server_id")
 
@@ -85,7 +85,7 @@ func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	serverID := chi.URLParam(r, "server_id")
 	channelID := chi.URLParam(r, "channel_id")
 	messageID := chi.URLParam(r, "message_id")
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 
 	channelPID := actors.ServersEngine.Registry.GetPID(fmt.Sprintf("server/%s/channel", serverID), channelID)
 	mess := &proto.DeleteChatMessage{

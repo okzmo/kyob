@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 )
@@ -98,7 +99,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	err := db.Query.DeleteRememberMeToken(r.Context(), user.ID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())

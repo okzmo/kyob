@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 )
@@ -24,7 +24,7 @@ func Setup(w http.ResponseWriter, r *http.Request) {
 
 func SaveLastState(w http.ResponseWriter, r *http.Request) {
 	var body services.BodySaveState
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {

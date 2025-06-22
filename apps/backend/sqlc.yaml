@@ -7,7 +7,7 @@ sql:
       go:
         emit_json_tags: true
         package: "db"
-        out: "./db"
+        out: "./db/gen_queries"
         sql_package: "pgx/v5"
         overrides:
           - db_type: "pg_catalog.timestamptz"

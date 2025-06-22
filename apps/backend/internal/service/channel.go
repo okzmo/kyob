@@ -6,6 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -18,14 +19,14 @@ var (
 )
 
 type CreateChannelBody struct {
-	Name        string         `validate:"required,max=50" json:"name"`
-	Type        db.ChannelType `validate:"required,oneof=textual voice" json:"type"`
-	Description string         `validate:"max=280" json:"description"`
-	Users       []string       `json:"users"`
-	Roles       []string       `json:"roles"`
-	X           int32          `json:"x"`
-	Y           int32          `json:"y"`
-	ID          *string        `json:"id"`
+	Name        string              `validate:"required,max=50" json:"name"`
+	Type        queries.ChannelType `validate:"required,oneof=textual voice" json:"type"`
+	Description string              `validate:"max=280" json:"description"`
+	Users       []string            `json:"users"`
+	Roles       []string            `json:"roles"`
+	X           int32               `json:"x"`
+	Y           int32               `json:"y"`
+	ID          *string             `json:"id"`
 }
 
 type EditChannelBody struct {
@@ -40,7 +41,7 @@ type DeleteChannelBody struct {
 
 func CreateChannel(ctx context.Context, creatorID, serverID string, channel *CreateChannelBody) (*proto.BroadcastChannelCreation, error) {
 	if creatorID != "global" {
-		res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+		res, err := db.Query.OwnServer(ctx, queries.OwnServerParams{
 			ID:      serverID,
 			OwnerID: creatorID,
 		})
@@ -49,7 +50,7 @@ func CreateChannel(ctx context.Context, creatorID, serverID string, channel *Cre
 		}
 	}
 
-	channelParams := db.CreateChannelParams{
+	channelParams := queries.CreateChannelParams{
 		ServerID:    serverID,
 		Name:        channel.Name,
 		Type:        channel.Type,
@@ -88,8 +89,8 @@ func CreateChannel(ctx context.Context, creatorID, serverID string, channel *Cre
 }
 
 func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
-	user := ctx.Value("user").(db.User)
-	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+	user := ctx.Value("user").(queries.User)
+	res, err := db.Query.OwnServer(ctx, queries.OwnServerParams{
 		ID:      body.ServerID,
 		OwnerID: user.ID,
 	})
@@ -98,7 +99,7 @@ func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
 	}
 
 	if body.Name != "" {
-		err := db.Query.UpdateChannelName(ctx, db.UpdateChannelNameParams{
+		err := db.Query.UpdateChannelName(ctx, queries.UpdateChannelNameParams{
 			ID:   id,
 			Name: body.Name,
 		})
@@ -108,7 +109,7 @@ func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
 	}
 
 	if body.Description != "" {
-		err := db.Query.UpdateChannelDescription(ctx, db.UpdateChannelDescriptionParams{
+		err := db.Query.UpdateChannelDescription(ctx, queries.UpdateChannelDescriptionParams{
 			ID:          id,
 			Description: pgtype.Text{String: body.Description, Valid: true},
 		})
@@ -121,7 +122,7 @@ func EditChannel(ctx context.Context, id string, body *EditChannelBody) error {
 }
 
 func DeleteChannel(ctx context.Context, serverID, channelID, userID string) error {
-	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+	res, err := db.Query.OwnServer(ctx, queries.OwnServerParams{
 		ID:      serverID,
 		OwnerID: userID,
 	})

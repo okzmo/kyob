@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
@@ -25,8 +26,8 @@ type BodyAddOrRemoveRole struct {
 	UserID string `json:"user_id"`
 }
 
-func CreateRole(ctx context.Context, serverID string, body *BodyRoleCreation) (*db.Role, error) {
-	role, err := db.Query.CreateRole(ctx, db.CreateRoleParams{
+func CreateRole(ctx context.Context, serverID string, body *BodyRoleCreation) (*queries.Role, error) {
+	role, err := db.Query.CreateRole(ctx, queries.CreateRoleParams{
 		ID:        utils.Node.Generate().String(),
 		ServerID:  serverID,
 		Name:      body.Name,
@@ -41,7 +42,7 @@ func CreateRole(ctx context.Context, serverID string, body *BodyRoleCreation) (*
 	return &role, nil
 }
 
-func GetRoles(ctx context.Context, serverID string) ([]db.GetRolesRow, error) {
+func GetRoles(ctx context.Context, serverID string) ([]queries.GetRolesRow, error) {
 	roles, err := db.Query.GetRoles(ctx, serverID)
 	if err != nil {
 		return nil, err
@@ -51,7 +52,7 @@ func GetRoles(ctx context.Context, serverID string) ([]db.GetRolesRow, error) {
 }
 
 func AddRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemoveRole) error {
-	err := db.Query.AddRoleMember(ctx, db.AddRoleMemberParams{
+	err := db.Query.AddRoleMember(ctx, queries.AddRoleMemberParams{
 		ArrayAppend: body.RoleID,
 		ServerID:    serverID,
 		UserID:      body.UserID,
@@ -64,7 +65,7 @@ func AddRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemoveRo
 }
 
 func RemoveRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemoveRole) error {
-	err := db.Query.RemoveRoleMember(ctx, db.RemoveRoleMemberParams{
+	err := db.Query.RemoveRoleMember(ctx, queries.RemoveRoleMemberParams{
 		ArrayRemove: body.RoleID,
 		ServerID:    serverID,
 		UserID:      body.UserID,
@@ -77,7 +78,7 @@ func RemoveRoleMember(ctx context.Context, serverID string, body *BodyAddOrRemov
 }
 
 func MoveRole(ctx context.Context, body *BodyMoveRole) error {
-	err := db.Query.UpdateRolePositions(ctx, db.UpdateRolePositionsParams{
+	err := db.Query.UpdateRolePositions(ctx, queries.UpdateRolePositionsParams{
 		Idx:   int32(body.To),
 		Idx_2: int32(body.From),
 	})
@@ -85,7 +86,7 @@ func MoveRole(ctx context.Context, body *BodyMoveRole) error {
 		return err
 	}
 
-	err = db.Query.MoveRole(ctx, db.MoveRoleParams{
+	err = db.Query.MoveRole(ctx, queries.MoveRoleParams{
 		ID:  body.RoleID,
 		Idx: int32(body.To),
 	})

@@ -8,6 +8,7 @@ import (
 	"github.com/anthdm/hollywood/actor"
 	"github.com/lxzan/gws"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 	protoTypes "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/proto"
@@ -27,7 +28,7 @@ func (u *user) InitializeUser(ctx *actor.Context) {
 		u.servers[serverPID] = true
 
 		ServersEngine.SendWithSender(serverPID, &protoTypes.Connect{Type: "CONNECTING"}, ctx.PID())
-		var channels []db.Channel
+		var channels []queries.Channel
 
 		if server.ID == "global" {
 			channels, _ = db.Query.GetFriendChannels(context.TODO(), userID)

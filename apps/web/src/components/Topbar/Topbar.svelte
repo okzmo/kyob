@@ -16,7 +16,7 @@
 
 <div
 	class={[
-		'fixed top-5 z-50 flex w-screen items-start px-5',
+		'fixed top-5 z-[35] flex w-screen items-start px-5',
 		canGoBack ? 'justify-between' : 'justify-end'
 	]}
 >

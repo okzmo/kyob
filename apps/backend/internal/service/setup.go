@@ -8,6 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 )
 
 type channelState struct {
@@ -24,12 +25,12 @@ type BodySaveState struct {
 
 type ServerWithChannels struct {
 	ServerResponse
-	X           int32                          `json:"x"`
-	Y           int32                          `json:"y"`
-	Roles       []db.GetRolesFromServersRow    `json:"roles"`
-	Channels    map[string]ChannelsWithMembers `json:"channels"`
-	MemberCount int                            `json:"member_count"`
-	Members     []db.GetMembersFromServersRow  `json:"members"`
+	X           int32                              `json:"x"`
+	Y           int32                              `json:"y"`
+	Roles       []queries.GetRolesFromServersRow   `json:"roles"`
+	Channels    map[string]ChannelsWithMembers     `json:"channels"`
+	MemberCount int                                `json:"member_count"`
+	Members     []queries.GetMembersFromServersRow `json:"members"`
 }
 
 type VoiceUser struct {
@@ -39,7 +40,7 @@ type VoiceUser struct {
 }
 
 type ChannelsWithMembers struct {
-	db.Channel
+	queries.Channel
 	LastMessageSent string          `json:"last_message_sent"`
 	LastMessageRead string          `json:"last_message_read"`
 	MentionsIds     json.RawMessage `json:"last_mentions"`
@@ -76,7 +77,7 @@ type FriendResponse struct {
 
 type SetupResponse struct {
 	User    UserResponse                  `json:"user"`
-	Emojis  []db.GetEmojisRow             `json:"emojis"`
+	Emojis  []queries.GetEmojisRow        `json:"emojis"`
 	Friends []FriendResponse              `json:"friends"`
 	Servers map[string]ServerWithChannels `json:"servers"`
 }
@@ -84,7 +85,7 @@ type SetupResponse struct {
 func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	var res SetupResponse
 
-	ctxUser := ctx.Value("user").(db.User)
+	ctxUser := ctx.Value("user").(queries.User)
 
 	friends, err := db.Query.GetFriends(ctx, ctxUser.ID)
 	if err != nil {
@@ -146,7 +147,7 @@ func GetSetup(ctx context.Context) (*SetupResponse, error) {
 	return &res, nil
 }
 
-func processServers(ctx context.Context, userID string, servers []db.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
+func processServers(ctx context.Context, userID string, servers []queries.GetServersFromUserRow) (map[string]ServerWithChannels, error) {
 	serverIDs := make([]string, 0, len(servers))
 	for _, server := range servers {
 		serverIDs = append(serverIDs, server.ID)
@@ -205,7 +206,7 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 		userIDs = append(userIDs, userID)
 	}
 
-	var allUsers []db.GetUsersByIdsRow
+	var allUsers []queries.GetUsersByIdsRow
 	if len(userIDs) > 0 {
 		allUsers, err = db.Query.GetUsersByIds(ctx, userIDs)
 		if err != nil {
@@ -213,22 +214,22 @@ func processServers(ctx context.Context, userID string, servers []db.GetServersF
 		}
 	}
 
-	userMap := make(map[string]db.GetUsersByIdsRow)
+	userMap := make(map[string]queries.GetUsersByIdsRow)
 	for _, user := range allUsers {
 		userMap[user.ID] = user
 	}
 
-	channelsByServer := make(map[string][]db.Channel)
+	channelsByServer := make(map[string][]queries.Channel)
 	for _, channel := range allChannels {
 		channelsByServer[channel.ServerID] = append(channelsByServer[channel.ServerID], channel)
 	}
 
-	membersByServer := make(map[string][]db.GetMembersFromServersRow)
+	membersByServer := make(map[string][]queries.GetMembersFromServersRow)
 	for _, member := range allMembers {
 		membersByServer[member.ServerID] = append(membersByServer[member.ServerID], member)
 	}
 
-	rolesByServer := make(map[string][]db.GetRolesFromServersRow)
+	rolesByServer := make(map[string][]queries.GetRolesFromServersRow)
 	for _, role := range allRoles {
 		rolesByServer[role.ServerID] = append(rolesByServer[role.ServerID], role)
 	}
@@ -285,7 +286,7 @@ func SaveLastState(ctx context.Context, body BodySaveState) error {
 		}
 	}
 
-	err := db.Query.SaveUnreadMessagesState(ctx, db.SaveUnreadMessagesStateParams{
+	err := db.Query.SaveUnreadMessagesState(ctx, queries.SaveUnreadMessagesStateParams{
 		UserID:             body.UserID,
 		ChannelIds:         validChannelIDs,
 		LastReadMessageIds: validLastReadMessageIDs,

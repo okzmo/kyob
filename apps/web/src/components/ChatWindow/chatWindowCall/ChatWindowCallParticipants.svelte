@@ -62,6 +62,6 @@
 			</button>
 		{/each}
 	{:else}
-		<p class="text-main-500 text-lg font-bold">Nobody is in this channel</p>
+		<p class="text-main-500 text-lg font-bold select-none">Nobody is in this channel</p>
 	{/if}
 </div>

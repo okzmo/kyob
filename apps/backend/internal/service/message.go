@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 	proto "github.com/okzmo/kyob/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -50,7 +51,7 @@ type MessageResponse struct {
 
 func CreateMessage(ctx context.Context, userID, serverID, channelID string, body *MessageBody) (*proto.BroadcastChatMessage, error) {
 	if serverID != "global" {
-		res, err := db.Query.CheckChannelMembership(ctx, db.CheckChannelMembershipParams{
+		res, err := db.Query.CheckChannelMembership(ctx, queries.CheckChannelMembershipParams{
 			ID:     channelID,
 			UserID: userID,
 		})
@@ -59,7 +60,7 @@ func CreateMessage(ctx context.Context, userID, serverID, channelID string, body
 		}
 	}
 
-	m, err := db.Query.CreateMessage(ctx, db.CreateMessageParams{
+	m, err := db.Query.CreateMessage(ctx, queries.CreateMessageParams{
 		ID:               utils.Node.Generate().String(),
 		AuthorID:         userID,
 		ServerID:         serverID,
@@ -90,7 +91,7 @@ func CreateMessage(ctx context.Context, userID, serverID, channelID string, body
 }
 
 func EditMessage(ctx context.Context, userID, serverID, channelID, messageID string, body *MessageBody) (*proto.BroadcastEditMessage, error) {
-	res, err := db.Query.UpdateMessage(ctx, db.UpdateMessageParams{
+	res, err := db.Query.UpdateMessage(ctx, queries.UpdateMessageParams{
 		ID:               messageID,
 		Everyone:         body.Everyone,
 		MentionsUsers:    body.MentionsUsers,
@@ -140,7 +141,7 @@ func DeleteMessage(ctx context.Context, messageID, userID string) error {
 		}
 	}
 
-	res, err := db.Query.DeleteMessage(ctx, db.DeleteMessageParams{
+	res, err := db.Query.DeleteMessage(ctx, queries.DeleteMessageParams{
 		ID:       messageID,
 		AuthorID: userID,
 	})

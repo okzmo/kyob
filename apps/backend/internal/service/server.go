@@ -17,6 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
@@ -99,14 +100,14 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		return nil, err
 	}
 
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 	nbServers, _ := db.Query.GetServersCountFromUser(ctx, user.ID)
 	if nbServers >= 200 {
 		return nil, ErrTooManyServers
 	}
 
 	mainColor := pgtype.Text{String: "12,12,16", Valid: true}
-	newServer, err := db.Query.CreateServer(ctx, db.CreateServerParams{
+	newServer, err := db.Query.CreateServer(ctx, queries.CreateServerParams{
 		ID:          utils.Node.Generate().String(),
 		OwnerID:     user.ID,
 		Name:        server.Name,
@@ -119,7 +120,7 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		return nil, err
 	}
 
-	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+	err = db.Query.JoinServer(ctx, queries.JoinServerParams{
 		ID:       utils.Node.Generate().String(),
 		ServerID: newServer.ID,
 		UserID:   user.ID,
@@ -146,8 +147,8 @@ func CreateServer(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 }
 
 func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfileBody) error {
-	user := ctx.Value("user").(db.User)
-	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+	user := ctx.Value("user").(queries.User)
+	res, err := db.Query.OwnServer(ctx, queries.OwnServerParams{
 		ID:      id,
 		OwnerID: user.ID,
 	})
@@ -156,7 +157,7 @@ func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfi
 	}
 
 	if body.Name != "" {
-		err := db.Query.UpdateServerName(ctx, db.UpdateServerNameParams{
+		err := db.Query.UpdateServerName(ctx, queries.UpdateServerNameParams{
 			ID:      id,
 			Name:    body.Name,
 			OwnerID: user.ID,
@@ -167,7 +168,7 @@ func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfi
 	}
 
 	if len(body.Description) > 0 {
-		err := db.Query.UpdateServerDescription(ctx, db.UpdateServerDescriptionParams{
+		err := db.Query.UpdateServerDescription(ctx, queries.UpdateServerDescriptionParams{
 			ID:          id,
 			Description: body.Description,
 			OwnerID:     user.ID,
@@ -181,10 +182,10 @@ func UpdateServerProfile(ctx context.Context, id string, body *UpdateServerProfi
 }
 
 func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
-	res, err := db.Query.OwnServer(ctx, db.OwnServerParams{
+	res, err := db.Query.OwnServer(ctx, queries.OwnServerParams{
 		ID:      serverID,
 		OwnerID: user.ID,
 	})
@@ -213,7 +214,7 @@ func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileH
 	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", serverID, randomID)
 	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", serverID, randomID)
 	oldAvatarSplit := strings.Split(server.Avatar.String, "/")
-	oldBannerSplit := strings.Split(server.Banner.String, "/")
+	olqueriesannerSplit := strings.Split(server.Banner.String, "/")
 
 	// upload new avatar
 	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
@@ -252,7 +253,7 @@ func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileH
 	// delete old banner
 	if server.Banner.String != "" {
 		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
-			Key:    aws.String(oldBannerSplit[len(oldBannerSplit)-1]),
+			Key:    aws.String(olqueriesannerSplit[len(olqueriesannerSplit)-1]),
 			Bucket: aws.String("nyo-files"),
 		})
 		if err != nil {
@@ -264,7 +265,7 @@ func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileH
 	avatarURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
 	bannerURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
 	mainColor := pgtype.Text{String: body.MainColor, Valid: true}
-	err = db.Query.UpdateServerAvatarNBanner(ctx, db.UpdateServerAvatarNBannerParams{
+	err = db.Query.UpdateServerAvatarNBanner(ctx, queries.UpdateServerAvatarNBannerParams{
 		ID:        serverID,
 		OwnerID:   user.ID,
 		Avatar:    avatarURL,
@@ -283,7 +284,7 @@ func UpdateServerAvatar(ctx context.Context, serverID string, file []byte, fileH
 }
 
 func DeleteServer(ctx context.Context, id string, userID string) error {
-	res, err := db.Query.DeleteServer(ctx, db.DeleteServerParams{
+	res, err := db.Query.DeleteServer(ctx, queries.DeleteServerParams{
 		ID:      id,
 		OwnerID: userID,
 	})
@@ -297,7 +298,7 @@ func DeleteServer(ctx context.Context, id string, userID string) error {
 func CreateServerInvite(ctx context.Context, serverID string) (*string, error) {
 	inviteID := utils.GenerateRandomId(10)
 
-	res, err := db.Query.CreateInvite(ctx, db.CreateInviteParams{
+	res, err := db.Query.CreateInvite(ctx, queries.CreateInviteParams{
 		ID:       utils.Node.Generate().String(),
 		ServerID: serverID,
 		InviteID: inviteID,
@@ -311,7 +312,7 @@ func CreateServerInvite(ctx context.Context, serverID string) (*string, error) {
 }
 
 func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, error) {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 
 	pattern := regexp.MustCompile(`^(?:https:\/\/kyob\.app\/invite\/|)([a-zA-Z0-9]{10})$`)
 	matches := pattern.FindStringSubmatch(body.InviteURL)
@@ -324,7 +325,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		return nil, ErrServerNotFound
 	}
 
-	err = db.Query.JoinServer(ctx, db.JoinServerParams{
+	err = db.Query.JoinServer(ctx, queries.JoinServerParams{
 		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
 		ServerID: serverID,
@@ -363,7 +364,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 		channelMap[channel.ID] = channel
 	}
 
-	server, err := db.Query.GetServerWithChannels(ctx, db.GetServerWithChannelsParams{
+	server, err := db.Query.GetServerWithChannels(ctx, queries.GetServerWithChannelsParams{
 		ServerID: serverID,
 		UserID:   user.ID,
 	})
@@ -395,7 +396,7 @@ func JoinServer(ctx context.Context, body JoinServerBody) (*ServerWithChannels, 
 }
 
 func LeaveServer(ctx context.Context, serverID, userID string) error {
-	err := db.Query.LeaveServer(ctx, db.LeaveServerParams{
+	err := db.Query.LeaveServer(ctx, queries.LeaveServerParams{
 		UserID:   userID,
 		ServerID: serverID,
 	})

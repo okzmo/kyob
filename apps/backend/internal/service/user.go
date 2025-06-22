@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
@@ -26,17 +27,17 @@ var (
 	ErrUnauthorizedEmojiDeletion = errors.New("user cannot delete this emoji")
 )
 
-type AddFriendBody struct {
+type AddFrienqueriesody struct {
 	Username string `validate:"required" json:"username"`
 }
 
-type AcceptFriendBody struct {
+type AcceptFrienqueriesody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
 	UserID       string `validate:"required" json:"user_id"`
 	FriendID     string `validate:"required" json:"friend_id"`
 }
 
-type RemoveFriendBody struct {
+type RemoveFrienqueriesody struct {
 	FriendshipID string `validate:"required" json:"friendship_id"`
 	FriendID     string `validate:"required" json:"friend_id"`
 	UserID       string `validate:"required" json:"user_id"`
@@ -116,17 +117,17 @@ func GetUser(ctx context.Context, userID string) (*UserResponse, error) {
 }
 
 func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 
 	if body.Username != "" {
-		_, err := db.Query.GetUser(ctx, db.GetUserParams{
+		_, err := db.Query.GetUser(ctx, queries.GetUserParams{
 			Username: body.Username,
 		})
 		if err == nil {
 			return ErrUsernameInUse
 		}
 
-		_, err = db.Query.UpdateUserUsername(ctx, db.UpdateUserUsernameParams{
+		_, err = db.Query.UpdateUserUsername(ctx, queries.UpdateUserUsernameParams{
 			ID:       user.ID,
 			Username: body.Username,
 		})
@@ -136,14 +137,14 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 	}
 
 	if body.Email != "" {
-		_, err := db.Query.GetUser(ctx, db.GetUserParams{
+		_, err := db.Query.GetUser(ctx, queries.GetUserParams{
 			Email: body.Email,
 		})
 		if err == nil {
 			return ErrEmailInUse
 		}
 
-		err = db.Query.UpdateUserEmail(ctx, db.UpdateUserEmailParams{
+		err = db.Query.UpdateUserEmail(ctx, queries.UpdateUserEmailParams{
 			ID:    user.ID,
 			Email: body.Email,
 		})
@@ -156,10 +157,10 @@ func UpdateAccount(ctx context.Context, body *UpdateAccountBody) error {
 }
 
 func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte, error) {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 
 	if body.DisplayName != "" {
-		err := db.Query.UpdateUserDisplayName(ctx, db.UpdateUserDisplayNameParams{
+		err := db.Query.UpdateUserDisplayName(ctx, queries.UpdateUserDisplayNameParams{
 			ID:          user.ID,
 			DisplayName: body.DisplayName,
 		})
@@ -169,7 +170,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte
 	}
 
 	if len(body.About) > 0 {
-		err := db.Query.UpdateUserAbout(ctx, db.UpdateUserAboutParams{
+		err := db.Query.UpdateUserAbout(ctx, queries.UpdateUserAboutParams{
 			ID:    user.ID,
 			About: body.About,
 		})
@@ -191,7 +192,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte
 		return nil, nil, err
 	}
 
-	err = db.Query.UpdateUserLinks(ctx, db.UpdateUserLinksParams{
+	err = db.Query.UpdateUserLinks(ctx, queries.UpdateUserLinksParams{
 		ID:    user.ID,
 		Links: jsonLinks,
 	})
@@ -212,7 +213,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte
 		return nil, nil, err
 	}
 
-	err = db.Query.UpdateUserFacts(ctx, db.UpdateUserFactsParams{
+	err = db.Query.UpdateUserFacts(ctx, queries.UpdateUserFactsParams{
 		ID:    user.ID,
 		Facts: jsonFacts,
 	})
@@ -224,7 +225,7 @@ func UpdateProfile(ctx context.Context, body *UpdateProfileBody) ([]byte, []byte
 }
 
 func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHeader, body *UpdateAvatarBody) (*UpdateAvatarResponse, error) {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
 	avatar, err := utils.CropImage(file, body.CropAvatar.X, body.CropAvatar.Y, body.CropAvatar.Width, body.CropAvatar.Height)
@@ -243,7 +244,7 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	avatarFileName := fmt.Sprintf("avatar-%s-%s.webp", user.ID, randomId)
 	bannerFileName := fmt.Sprintf("banner-%s-%s.webp", user.ID, randomId)
 	oldAvatarSplit := strings.Split(user.Avatar.String, "/")
-	oldBannerSplit := strings.Split(user.Banner.String, "/")
+	olqueriesannerSplit := strings.Split(user.Banner.String, "/")
 	defaultAvatars := []string{"avatar_1.webp", "avatar_2.webp", "avatar_3.webp", "avatar_4.webp"}
 
 	// upload new avatars
@@ -279,10 +280,10 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 		}
 	}
 
-	if !slices.Contains(defaultAvatars, oldBannerSplit[len(oldBannerSplit)-1]) {
+	if !slices.Contains(defaultAvatars, olqueriesannerSplit[len(olqueriesannerSplit)-1]) {
 		// delete old banner
 		_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
-			Key:    aws.String(oldBannerSplit[len(oldBannerSplit)-1]),
+			Key:    aws.String(olqueriesannerSplit[len(olqueriesannerSplit)-1]),
 			Bucket: aws.String("nyo-files"),
 		})
 		if err != nil {
@@ -294,7 +295,7 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 	avatarUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
 	bannerUrl := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), bannerFileName), Valid: true}
 	mainColor := pgtype.Text{String: body.MainColor, Valid: true}
-	err = db.Query.UpdateUserAvatarNBanner(ctx, db.UpdateUserAvatarNBannerParams{
+	err = db.Query.UpdateUserAvatarNBanner(ctx, queries.UpdateUserAvatarNBannerParams{
 		ID:        user.ID,
 		Avatar:    avatarUrl,
 		Banner:    bannerUrl,
@@ -312,10 +313,10 @@ func UpdateAvatar(ctx context.Context, file []byte, fileHeader *multipart.FileHe
 }
 
 func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *UploadEmojiBody) ([]UploadEmojiResponse, error) {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 	s3Client := s3.NewFromConfig(GetAWSConfig())
 
-	var emojiData []db.CreateEmojiParams
+	var emojiData []queries.CreateEmojiParams
 	var responses []UploadEmojiResponse
 
 	for i, fileHeader := range files {
@@ -347,7 +348,7 @@ func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *Uplo
 		emojiUrl := fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), emojiFileName)
 		emojiID := utils.Node.Generate().String()
 
-		emojiData = append(emojiData, db.CreateEmojiParams{
+		emojiData = append(emojiData, queries.CreateEmojiParams{
 			ID:        emojiID,
 			UserID:    user.ID,
 			Url:       emojiUrl,
@@ -371,9 +372,9 @@ func UploadEmojis(ctx context.Context, files []*multipart.FileHeader, body *Uplo
 }
 
 func UpdateEmoji(ctx context.Context, emojiID string, body *UpdateEmojiBody) error {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 
-	err := db.Query.UpdateEmoji(ctx, db.UpdateEmojiParams{
+	err := db.Query.UpdateEmoji(ctx, queries.UpdateEmojiParams{
 		ID:        emojiID,
 		UserID:    user.ID,
 		Shortcode: body.Shortcode,
@@ -386,9 +387,9 @@ func UpdateEmoji(ctx context.Context, emojiID string, body *UpdateEmojiBody) err
 }
 
 func DeleteEmoji(ctx context.Context, emojiID string) error {
-	user := ctx.Value("user").(db.User)
+	user := ctx.Value("user").(queries.User)
 
-	err := db.Query.DeleteEmoji(ctx, db.DeleteEmojiParams{
+	err := db.Query.DeleteEmoji(ctx, queries.DeleteEmojiParams{
 		ID:     emojiID,
 		UserID: user.ID,
 	})
@@ -399,10 +400,10 @@ func DeleteEmoji(ctx context.Context, emojiID string) error {
 	return nil
 }
 
-func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error) {
-	user := ctx.Value("user").(db.User)
+func AddFriend(ctx context.Context, body *AddFrienqueriesody) (string, string, error) {
+	user := ctx.Value("user").(queries.User)
 
-	friend, err := db.Query.GetUser(ctx, db.GetUserParams{
+	friend, err := db.Query.GetUser(ctx, queries.GetUserParams{
 		Username: body.Username,
 	})
 	if err != nil {
@@ -413,7 +414,7 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 		return "", "", ErrAddingItself
 	}
 
-	invite, err := db.Query.AddFriend(ctx, db.AddFriendParams{
+	invite, err := db.Query.AddFriend(ctx, queries.AddFriendParams{
 		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
 		FriendID: friend.ID,
@@ -425,9 +426,9 @@ func AddFriend(ctx context.Context, body *AddFriendBody) (string, string, error)
 	return invite.ID, friend.ID, nil
 }
 
-func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, *db.Channel, error) {
-	user := ctx.Value("user").(db.User)
-	err := db.Query.AcceptFriend(ctx, db.AcceptFriendParams{
+func AcceptFriend(ctx context.Context, body *AcceptFrienqueriesody) (*queries.User, *queries.Channel, error) {
+	user := ctx.Value("user").(queries.User)
+	err := db.Query.AcceptFriend(ctx, queries.AcceptFriendParams{
 		ID:     body.FriendshipID,
 		UserID: user.ID,
 	})
@@ -440,7 +441,7 @@ func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, *db.Ch
 		return nil, nil, err
 	}
 
-	existingChannel, err := db.Query.GetExistingChannel(ctx, db.GetExistingChannelParams{
+	existingChannel, err := db.Query.GetExistingChannel(ctx, queries.GetExistingChannelParams{
 		Column1: body.FriendID,
 		Column2: body.UserID,
 	})
@@ -451,13 +452,13 @@ func AcceptFriend(ctx context.Context, body *AcceptFriendBody) (*db.User, *db.Ch
 	return &friend, &existingChannel, nil
 }
 
-func DeleteFriend(ctx context.Context, body *RemoveFriendBody) (string, error) {
+func DeleteFriend(ctx context.Context, body *RemoveFrienqueriesody) (string, error) {
 	err := db.Query.DeleteFriend(ctx, body.FriendshipID)
 	if err != nil {
 		return "", err
 	}
 
-	channel, err := db.Query.DeactivateChannel(ctx, db.DeactivateChannelParams{
+	channel, err := db.Query.DeactivateChannel(ctx, queries.DeactivateChannelParams{
 		Column1: body.FriendID,
 		Column2: body.UserID,
 	})

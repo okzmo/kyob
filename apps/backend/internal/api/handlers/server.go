@@ -11,7 +11,7 @@ import (
 
 	"github.com/anthdm/hollywood/actor"
 	"github.com/go-chi/chi/v5"
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
@@ -89,7 +89,7 @@ func CreateServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	serverPID := actors.ServersEngine.Spawn(actors.NewServer, "server", actor.WithID(server.ID))
 	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 	actors.UsersEngine.Send(userPID, &proto.NewServerCreated{
@@ -213,7 +213,7 @@ func UpdateServerAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteServer(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	id := chi.URLParam(r, "id")
 
 	protoMessage := &proto.BodyServerRemoved{
@@ -260,7 +260,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 
 	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 	serverPID := actors.ServersEngine.Registry.GetPID("server", server.ID)
@@ -279,7 +279,7 @@ func JoinServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func LeaveServer(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	serverID := chi.URLParam(r, "id")
 
 	err := services.LeaveServer(r.Context(), serverID, user.ID)

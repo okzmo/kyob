@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
@@ -23,7 +23,7 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	channelMessage := &proto.BodyChannelCreation{
 		CreatorId:   user.ID,
 		ServerId:    serverID,
@@ -65,7 +65,7 @@ func EditChannel(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteChannel(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	channelID := chi.URLParam(r, "channel_id")
 	serverID := chi.URLParam(r, "server_id")
 
@@ -81,7 +81,7 @@ func DeleteChannel(w http.ResponseWriter, r *http.Request) {
 }
 
 func ConnectToCall(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	channelID := chi.URLParam(r, "channel_id")
 	serverID := chi.URLParam(r, "server_id")
 
@@ -104,7 +104,7 @@ func ConnectToCall(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisconnectFromCall(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	channelID := chi.URLParam(r, "channel_id")
 	serverID := chi.URLParam(r, "server_id")
 

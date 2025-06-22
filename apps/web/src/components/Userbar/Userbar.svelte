@@ -47,7 +47,7 @@
 			<Button
 				variants="icon"
 				class={[
-					'h-[2.25rem] w-[2.25rem]',
+					'h-[2.25rem] w-[2.25rem] bg-transparent',
 					userStore.mute
 						? 'hocus:bg-red-400/25 text-red-400'
 						: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
@@ -66,7 +66,7 @@
 			<Button
 				variants="icon"
 				class={[
-					'h-[2.25rem] w-[2.25rem]',
+					'h-[2.25rem] w-[2.25rem] bg-transparent',
 					userStore.deafen
 						? 'hocus:bg-red-400/25 text-red-400'
 						: 'text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15'
@@ -84,7 +84,7 @@
 
 			<Button
 				variants="icon"
-				class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] !p-0"
+				class="text-main-400 hocus:text-accent-50 hocus:bg-accent-100/15 h-[2.25rem] w-[2.25rem] bg-transparent !p-0"
 				onclick={() => goto('/settings')}
 				tooltip="Settings"
 				corners

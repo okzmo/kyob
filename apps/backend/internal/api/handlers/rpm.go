@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
 func GetRPMAssets(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 
 	rpmService := services.NewRPMService()
 	assets, err := rpmService.GetAssets(user.RpmToken.String, user.RpmID.String)
@@ -33,7 +33,7 @@ func UpdateRPMAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	rpmService := services.NewRPMService()
 
 	err := rpmService.EquipAsset(r.Context(), user.RpmToken.String, "685470d6259f6d6e519467ee", req.AssetID, req.AssetType)

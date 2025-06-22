@@ -12,6 +12,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/utils"
 )
 
@@ -25,7 +26,7 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*stri
 		return nil, ErrInvalidHash
 	}
 
-	user, err := db.Query.GetUser(ctx, db.GetUserParams{
+	user, err := db.Query.GetUser(ctx, queries.GetUserParams{
 		Email:    emailOrUsername,
 		Username: emailOrUsername,
 	})
@@ -48,7 +49,7 @@ func SignIn(ctx context.Context, emailOrUsername string, password string) (*stri
 	}
 
 	b64Token := base64.RawStdEncoding.EncodeToString(token)
-	_, err = db.Query.CreateToken(ctx, db.CreateTokenParams{
+	_, err = db.Query.CreateToken(ctx, queries.CreateTokenParams{
 		ID:       utils.Node.Generate().String(),
 		UserID:   user.ID,
 		Token:    b64Token,
@@ -72,7 +73,7 @@ func SignUp(ctx context.Context, email, username, displayName, password, bodyURL
 	avatarFileName := fmt.Sprintf("avatar_%d.webp", rand.Intn(4)+1)
 	avatarURL := pgtype.Text{String: fmt.Sprintf("%s/%s", os.Getenv("CDN_URL"), avatarFileName), Valid: true}
 	mainColor := pgtype.Text{String: "12,12,16", Valid: true}
-	dbUser, err := db.Query.CreateUser(ctx, db.CreateUserParams{
+	queriesUser, err := db.Query.CreateUser(ctx, queries.CreateUserParams{
 		ID:          utils.Node.Generate().String(),
 		Email:       email,
 		DisplayName: displayName,
@@ -96,9 +97,9 @@ func SignUp(ctx context.Context, email, username, displayName, password, bodyURL
 	}
 
 	b64Token := base64.RawStdEncoding.EncodeToString(token)
-	_, err = db.Query.CreateToken(ctx, db.CreateTokenParams{
+	_, err = db.Query.CreateToken(ctx, queries.CreateTokenParams{
 		ID:       utils.Node.Generate().String(),
-		UserID:   dbUser.ID,
+		UserID:   queriesUser.ID,
 		Token:    b64Token,
 		ExpireAt: time.Now().Add(30 * (24 * time.Hour)),
 		Type:     "REMEMBER_ME_TOKEN",

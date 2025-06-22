@@ -5,7 +5,7 @@
 </script>
 
 <button
-	class="top-bar-button text-main-400 group hocus:bg-accent-100/15 relative flex items-center gap-x-4 py-1.5 pr-4 pl-3 transition duration-100 hover:cursor-pointer"
+	class="top-bar-button text-main-400 group hocus:bg-accent-100/15 relative flex items-center gap-x-4 py-1.5 pr-4 pl-3 transition duration-100 select-none hover:cursor-pointer"
 	onclick={() => goto('/')}
 >
 	<Corners color="border-main-300" class="group-hocus:border-accent-100 duration-100" />

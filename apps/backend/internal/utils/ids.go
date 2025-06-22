@@ -10,13 +10,13 @@ import (
 var Node *snowflake.Node
 
 func SetupSnowflake() {
-	nodeIdStr := os.Getenv("NODE_ID")
-	nodeId, err := strconv.Atoi(nodeIdStr)
+	nodeIDStr := os.Getenv("NODE_ID")
+	nodeID, err := strconv.Atoi(nodeIDStr)
 	if err != nil {
 		panic(err)
 	}
 
-	node, err := snowflake.NewNode(int64(nodeId))
+	node, err := snowflake.NewNode(int64(nodeID))
 	if err != nil {
 		panic(err)
 	}

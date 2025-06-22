@@ -9,6 +9,7 @@ import (
 
 	"github.com/anthdm/hollywood/actor"
 	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
 	protoTypes "github.com/okzmo/kyob/types"
@@ -175,7 +176,7 @@ func (s *server) StartDMChannel(ctx *actor.Context, msg *protoTypes.StartChannel
 func (s *server) CreateChannel(ctx *actor.Context, msg *protoTypes.BodyChannelCreation) {
 	channelToCreate := &services.CreateChannelBody{
 		Name:        msg.Name,
-		Type:        db.ChannelType(msg.Type),
+		Type:        queries.ChannelType(msg.Type),
 		Description: msg.Description,
 		Users:       msg.Users,
 		Roles:       msg.Roles,

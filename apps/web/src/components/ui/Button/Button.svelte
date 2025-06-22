@@ -30,7 +30,7 @@
 	<button
 		type="button"
 		class={[
-			'group inner-green-400/20 hocus:inner-green-400/40 hocus:bg-green-400/25 relative bg-green-400/15 px-2 py-1 text-green-400 transition duration-100 hover:cursor-pointer',
+			'group inner-green-400/20 hocus:inner-green-400/40 hocus:bg-green-400/25 relative bg-green-400/15 px-2 py-1 text-green-400 transition duration-100 select-none hover:cursor-pointer',
 			classes
 		]}
 		{onclick}
@@ -46,7 +46,7 @@
 	<button
 		type="button"
 		class={[
-			'group inner-red-400/20 hocus:inner-red-400/40 hocus:bg-red-400/25 relative bg-red-400/15 px-2 py-1 text-red-400 transition duration-100 hover:cursor-pointer',
+			'group inner-red-400/20 hocus:inner-red-400/40 hocus:bg-red-400/25 relative bg-red-400/15 px-2 py-1 text-red-400 transition duration-100 select-none hover:cursor-pointer',
 			classes
 		]}
 		{onclick}
@@ -62,7 +62,7 @@
 	<button
 		type="button"
 		class={[
-			'group bg-main-900 text-main-50 relative flex aspect-square items-center justify-center transition duration-100 hover:cursor-pointer',
+			'group bg-main-900 text-main-50 relative flex aspect-square items-center justify-center transition duration-100 select-none hover:cursor-pointer',
 			classes
 		]}
 		{onclick}
@@ -78,7 +78,7 @@
 {/if}
 
 {#if variants === 'nostyle'}
-	<button type="button" class={classes} {onclick}>
+	<button type="button" class={['select-none', classes]} {onclick}>
 		{#if tooltip}
 			<Tooltip text={tooltip}></Tooltip>
 		{/if}

@@ -23,7 +23,7 @@
 <button
 	transition:scale={{ start: 0, duration: 800, easing: elasticInOut }}
 	id="serverButton-{id}"
-	class="group absolute h-[4rem] w-[4rem] hover:cursor-pointer"
+	class="group absolute h-[4rem] w-[4rem] select-none hover:cursor-pointer"
 	class:unread
 	aria-label={`${name} server background`}
 	style="transform: translate({x}px, {y}px);"

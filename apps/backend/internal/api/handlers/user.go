@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/okzmo/kyob/db"
+	queries "github.com/okzmo/kyob/db/gen_queries"
 	"github.com/okzmo/kyob/internal/api/actors"
 	services "github.com/okzmo/kyob/internal/service"
 	"github.com/okzmo/kyob/internal/utils"
@@ -55,7 +55,7 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if body.Username != "" {
-		user := r.Context().Value("user").(db.User)
+		user := r.Context().Value("user").(queries.User)
 		userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 		actors.UsersEngine.Send(userPID, &proto.UserChangedInformations{
 			UserId: user.ID,
@@ -83,7 +83,7 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 	messageToSend := &proto.UserChangedInformations{
 		UserId: user.ID,
@@ -173,7 +173,7 @@ func UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	userPID := actors.UsersEngine.Registry.GetPID("user", user.ID)
 	actors.UsersEngine.Send(userPID, &proto.UserChangedInformations{
 		UserId: user.ID,
@@ -293,7 +293,7 @@ func DeleteEmoji(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddFriend(w http.ResponseWriter, r *http.Request) {
-	var body services.AddFriendBody
+	var body services.AddFrienqueriesody
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
@@ -301,7 +301,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value("user").(db.User)
+	user := r.Context().Value("user").(queries.User)
 	inviteID, friendID, err := services.AddFriend(r.Context(), &body)
 	if err != nil {
 		switch {
@@ -334,7 +334,7 @@ func AddFriend(w http.ResponseWriter, r *http.Request) {
 }
 
 func AcceptFriend(w http.ResponseWriter, r *http.Request) {
-	var body services.AcceptFriendBody
+	var body services.AcceptFrienqueriesody
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {
@@ -402,7 +402,7 @@ func AcceptFriend(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteFriend(w http.ResponseWriter, r *http.Request) {
-	var body services.RemoveFriendBody
+	var body services.RemoveFrienqueriesody
 
 	err := utils.ParseAndValidate(r, validate, &body)
 	if err != nil {

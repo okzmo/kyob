@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class="bg-main-900/80 inner-shadow-main-800 fixed right-5 bottom-5 z-50 flex items-center gap-x-6 p-1 backdrop-blur-2xl transition-colors duration-100"
+	class="bg-main-900/80 inner-shadow-main-800 fixed right-5 bottom-5 z-50 flex items-center gap-x-6 p-1 backdrop-blur-2xl transition-colors duration-100 select-none"
 >
 	<Corners color="border-main-700" />
 	<ServerProfileWithTrigger {server} y={10} align="end" alignOffset={-4}>

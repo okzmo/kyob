@@ -66,7 +66,7 @@
 	{/each}
 {:else}
 	<div class="flex h-full w-full items-center justify-center">
-		<p class="text-main-400 max-w-[20rem] text-center font-semibold">
+		<p class="text-main-400 max-w-[20rem] text-center font-semibold select-none">
 			It seems nobody sent a message here yet, be the first one!
 		</p>
 	</div>
